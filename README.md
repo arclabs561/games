@@ -22,3 +22,10 @@ This repo takes a look at simple games, and asks some questions about them.
 ## License
 
 See `LICENSE`.
+
+## Example
+
+```bash
+cd boggle
+jupyter notebook boggle.ipynb
+```
