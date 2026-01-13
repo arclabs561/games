@@ -18,3 +18,7 @@ This repo takes a look at simple games, and asks some questions about them.
 
 - **Egyptian Ratscrew**: How long does the average game last? Is this game
   really just luck?
+
+## License
+
+See `LICENSE`.
