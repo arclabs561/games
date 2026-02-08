@@ -1,31 +1,36 @@
 # Games
 
-This repo takes a look at simple games, and asks some questions about them.
+A collection of game analyses, solvers, and simulations.
 
-- **Boggle**: What words are good to memorize? What's the most beneficial
-  proportion of vowels? What's the distribution on the number of solutions?
+## Catalog
 
-- **Drive-Ya-Nuts**: How many solutions are there? What's the distribution on
-  the number of solutions over all nut permutations? Can we generalize to other
-  tiling? In other dimensions?
+| Game | Path | Content |
+|---|---|---|
+| **Boggle** | `boggle/` | Solver, board analysis (`boggle.ipynb`) |
+| **Codenames** | `codenames/` | Game logic (`game.py`) |
+| **Drive-Ya-Nuts** | `drive-ya-nuts/` | Solver for the tiling puzzle (`solver.py`) |
+| **Egyptian Ratscrew** | `egyption-ratscrew/` | Simulation (`egyptian-ratscrew.ipynb`) |
+| **Mastermind** | `mastermind/` | Solvers (`mastermind.py`) |
+| **Peggle** | `peggle/` | Physics/probability analysis (`peggle.ipynb`) |
+| **Pokémon** | `pokemon/` | Type graph analysis (`graph.py`, `pokemon.ipynb`) |
+| **Tenzi** | `tenzi/` | Dice game simulation (`tenzi.py`) |
 
-- **Mastermind**: How is this game similar to Bethesda's Fallout terminals? Are
-  there guarantees on how fast Mastermind can be solved?
+## Usage
 
-- **Tenzi**: How long does the average game last?
+Most analyses are Python scripts or Jupyter notebooks.
 
-- **Peggle**: How confident can you be that you're better than your opponent?
+```bash
+# Run a script
+python games/tenzi/tenzi.py
 
-- **Egyptian Ratscrew**: How long does the average game last? Is this game
-  really just luck?
+# Open a notebook
+jupyter notebook games/boggle/boggle.ipynb
+```
+
+### Per-project notes
+
+- **Boggle**: see `boggle/README.md` (has background + notebook pointer).
 
 ## License
 
 See `LICENSE`.
-
-## Example
-
-```bash
-cd boggle
-jupyter notebook boggle.ipynb
-```
