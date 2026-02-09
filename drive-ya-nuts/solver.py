@@ -1,4 +1,4 @@
-"""
+r"""
 Solutions to Drive-Ya-Nuts and its variations.
 
 There are 7 nuts, each of which can be rotated in 6 ways. So there are 6^7 ~=
