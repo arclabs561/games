@@ -21,10 +21,10 @@ Most analyses are Python scripts or Jupyter notebooks.
 
 ```bash
 # Run a script
-python games/tenzi/tenzi.py
+python3 tenzi/tenzi.py
 
 # Open a notebook
-jupyter notebook games/boggle/boggle.ipynb
+jupyter notebook boggle/boggle.ipynb
 ```
 
 ### Per-project notes
