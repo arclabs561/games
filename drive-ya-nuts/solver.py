@@ -38,28 +38,36 @@ over all these boards?
 """
 from collections import Counter, deque
 from itertools import permutations
+from math import comb
 from random import sample
-
-from scipy.special import binom
 
 
 class Nut(object):
     """Simple data structure for faster retrieval of adjacent nut values."""
     def __init__(self, order):
-        self.order = order
-        self.mapping = self.build_mapping(order)
-        self._hash = None  # for all possible nuts problem
+        self.order = tuple(order)
+        self.mapping = self.build_mapping(self.order)
+        self._canon = None
+        self._hash = None
 
     def __eq__(self, other):
-        return hash(self) == hash(other)
+        if not isinstance(other, Nut):
+            return NotImplemented
+        return self.canonical_order() == other.canonical_order()
 
     def __hash__(self):
         if self._hash is None:
+            self._hash = hash(self.canonical_order())
+        return self._hash
+
+    def canonical_order(self):
+        if self._canon is None:
             order = deque(self.order)
             min_ = min(self.order)
             while order[0] != min_:
                 order.rotate(1)
-            return hash(tuple(order))
+            self._canon = tuple(order)
+        return self._canon
 
     def __repr__(self):
         return 'Nut({})'.format(self.order)
@@ -148,7 +156,10 @@ if __name__ == '__main__':
     # within true probabilities. That is n >= 1/(2*epsilon^2) * log(2/alpha) ~=
     # 18444.
     trials = 18444
-    all_nuts = {Nut(perm) for perm in permutations(range(1, 7))}
+    all_nuts = sorted(
+        {Nut(perm) for perm in permutations(range(1, 7))},
+        key=lambda n: n.canonical_order(),
+    )
     counts = Counter()
 
     for _ in range(trials):
@@ -157,7 +168,7 @@ if __name__ == '__main__':
         counts[n_sols] += 1
 
     print_header('Distribution of number of solutions')
-    total = binom(len(all_nuts), 7)
+    total = comb(len(all_nuts), 7)
     for k, v in counts.most_common():
         f = v/trials
         print('{:<4}{:<10.2e}{:<8.1%}{}'.format(
