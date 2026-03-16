@@ -4,3 +4,19 @@ __pycache__/
 
 .DS_Store
 .ipynb_checkpoints/
+
+# Large data files
+boggle/ANC-token-count.txt
+
+# Hygiene (added by guardian audit)
+.env
+.env.*
+.state/
+.claude/
+*.log
+*.sqlite
+*.sqlite3
+*.db
+.venv/
+dist/
+build/
