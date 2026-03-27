@@ -11,13 +11,6 @@
 Builds the Gen 6 type chart as a weighted digraph and computes graph-theoretic
 properties: PageRank (offensive dominance), betweenness centrality (bridging
 types), and strongly connected components.
-
-graphops equivalents:
-  - Graph construction: graphops::DiGraph with typed edge weights
-  - PageRank: graphops::pagerank (power iteration on sparse adjacency)
-  - Betweenness centrality: graphops::betweenness_centrality (Brandes' algorithm)
-  - SCCs: graphops::tarjan_scc (Tarjan's algorithm, O(V+E))
-  - Edge filtering by weight: graphops edge predicates / subgraph views
 """
 
 from __future__ import annotations

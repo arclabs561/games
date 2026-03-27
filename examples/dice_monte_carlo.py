@@ -8,13 +8,6 @@ Simulates a Tenzi-like game (roll N dice, keep the most frequent face, reroll
 the rest) over millions of runs. Uses reservoir sampling to track the top-k
 luckiest games without storing all results. Demonstrates the Gumbel-max trick
 for weighted die sampling.
-
-kuji equivalents:
-  - Reservoir sampling: kuji::reservoir::ReservoirSampler (Algorithm R / L)
-  - Gumbel-max trick: kuji::gumbel::gumbel_max_sample (categorical sampling
-    without normalization, O(k) for top-k via partial sort of Gumbel variates)
-  - Monte Carlo: kuji provides seeded RNG wrappers for reproducible simulations
-  - Top-k tracking: kuji::topk::TopK (bounded heap, O(n log k))
 """
 
 from __future__ import annotations
@@ -27,9 +20,6 @@ import time
 from collections import Counter
 
 
-# ---------------------------------------------------------------------------
-# Tenzi-like dice game
-# ---------------------------------------------------------------------------
 def tenzi_game(n_dice: int = 10, rng: random.Random | None = None) -> int:
     """Play one Tenzi game. Returns the number of rolls to get all dice matching.
 
@@ -51,17 +41,12 @@ def tenzi_game(n_dice: int = 10, rng: random.Random | None = None) -> int:
     return rolls
 
 
-# ---------------------------------------------------------------------------
-# Reservoir sampling (Algorithm R)
-# ---------------------------------------------------------------------------
 class ReservoirSampler:
     """Maintains a uniform random sample of size k from a stream of items.
 
     Algorithm R (Vitter, 1985): each of the first k items goes into the
     reservoir. For the i-th item (i > k), include it with probability k/i,
     replacing a random existing item.
-
-    This is equivalent to kuji::reservoir::ReservoirSampler.
     """
 
     def __init__(self, k: int, rng: random.Random | None = None):
@@ -82,14 +67,8 @@ class ReservoirSampler:
         return sorted(self.reservoir, key=lambda x: -x[0])
 
 
-# ---------------------------------------------------------------------------
-# Top-k tracker (min-heap)
-# ---------------------------------------------------------------------------
 class TopKTracker:
-    """Track the top-k items by score using a bounded min-heap.
-
-    Equivalent to kuji::topk::TopK. O(n log k) for n insertions.
-    """
+    """Track the top-k items by score using a bounded min-heap. O(n log k)."""
 
     def __init__(self, k: int):
         self.k = k
@@ -107,9 +86,6 @@ class TopKTracker:
         return sorted([(s, item) for s, _, item in self.heap], key=lambda x: -x[0])
 
 
-# ---------------------------------------------------------------------------
-# Gumbel-max trick for weighted die sampling
-# ---------------------------------------------------------------------------
 def gumbel_max_sample(weights: list[float], rng: random.Random | None = None) -> int:
     """Sample a categorical index using the Gumbel-max trick.
 
@@ -117,8 +93,7 @@ def gumbel_max_sample(weights: list[float], rng: random.Random | None = None) ->
     noise: G_i = log(w_i) + gumbel_noise. Return argmax(G_i).
 
     This avoids computing the normalizing constant (sum of weights), which is
-    the key advantage for streaming/approximate settings. Equivalent to
-    kuji::gumbel::gumbel_max_sample.
+    the key advantage for streaming/approximate settings.
     """
     r = rng or random.Random()
     best_idx = 0
@@ -166,9 +141,6 @@ def verify_gumbel_sampling(n_samples: int = 50_000) -> None:
         print("  WARNING: frequencies diverge (may need more samples)\n")
 
 
-# ---------------------------------------------------------------------------
-# Monte Carlo simulation
-# ---------------------------------------------------------------------------
 def run_simulation(
     n_games: int = 1_000_000,
     n_dice: int = 10,
