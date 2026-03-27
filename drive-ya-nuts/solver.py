@@ -42,16 +42,18 @@ solutions over all these boards?
 
 [1] http://www.cis.uoguelph.ca/~sawada/papers/alph.pdf
 """
+
 import argparse
+import random
+import time
 from collections import Counter, deque
 from itertools import permutations
 from math import ceil, comb, log
-import random
-import time
 
 
 class Nut(object):
     """Simple data structure for faster retrieval of adjacent nut values."""
+
     def __init__(self, order):
         self.order = tuple(order)
         self.mapping = self.build_mapping(self.order)
@@ -78,14 +80,13 @@ class Nut(object):
         return self._canon
 
     def __repr__(self):
-        return 'Nut({})'.format(self.order)
+        return "Nut({})".format(self.order)
 
     @staticmethod
     def build_mapping(order):
         mapping = {}
         for i, val in enumerate(order):
-            mapping[val] = (order[i - 1],
-                            order[(i + 1) % len(order)])
+            mapping[val] = (order[i - 1], order[(i + 1) % len(order)])
         return mapping
 
     def left(self, val):
@@ -99,15 +100,18 @@ class Nut(object):
 # counter-clockwise, starting from 1.
 #
 # http://www.hasbro.com/common/instruct/DriveYaNuts.PDF
-nuts = {Nut(order) for order in [
-    (1, 2, 3, 4, 5, 6),
-    (1, 2, 5, 6, 3, 4),
-    (1, 3, 5, 2, 4, 6),
-    (1, 3, 5, 4, 2, 6),
-    (1, 4, 2, 3, 5, 6),
-    (1, 5, 3, 2, 6, 4),
-    (1, 6, 5, 4, 3, 2)
-]}
+nuts = {
+    Nut(order)
+    for order in [
+        (1, 2, 3, 4, 5, 6),
+        (1, 2, 5, 6, 3, 4),
+        (1, 3, 5, 2, 4, 6),
+        (1, 3, 5, 4, 2, 6),
+        (1, 4, 2, 3, 5, 6),
+        (1, 5, 3, 2, 6, 4),
+        (1, 6, 5, 4, 3, 2),
+    ]
+}
 
 
 def recur(pool, path, prev):
@@ -156,9 +160,11 @@ def recur(pool, path, prev):
             continue
         if prev is not None and nut.right(middle) != prev:
             continue
-        yield from recur(pool - {nut},         # remaining pool
-                         path.copy() + [nut],  # path with candidate nut
-                         nut.left(middle))     # left of nut will be prev
+        yield from recur(
+            pool - {nut},  # remaining pool
+            path.copy() + [nut],  # path with candidate nut
+            nut.left(middle),
+        )  # left of nut will be prev
 
 
 def hoeffding_trials(*, epsilon: float, alpha: float, m: int = 1) -> int:
@@ -179,16 +185,16 @@ def hoeffding_trials(*, epsilon: float, alpha: float, m: int = 1) -> int:
         n >= (1 / (2 epsilon^2)) * log(2 m / alpha).
     """
     if epsilon <= 0:
-        raise ValueError('epsilon must be > 0')
+        raise ValueError("epsilon must be > 0")
     if not (0 < alpha < 1):
-        raise ValueError('alpha must be in (0, 1)')
+        raise ValueError("alpha must be in (0, 1)")
     if m <= 0:
-        raise ValueError('m must be > 0')
+        raise ValueError("m must be > 0")
     return ceil((1 / (2 * epsilon**2)) * log((2 * m) / alpha))
 
 
 def print_header(text):
-    print('\n\033[1m\033[31m\033[4m{}\033[0m'.format(text))
+    print("\n\033[1m\033[31m\033[4m{}\033[0m".format(text))
 
 
 def count_solutions(pool, *, stop_after=None):
@@ -209,91 +215,97 @@ def count_solutions(pool, *, stop_after=None):
 def format_nut_set(pool):
     """Deterministic, copy/pasteable representation of a 7-nut piece set."""
     ordered = sorted(pool, key=lambda n: n.canonical_order())
-    return '[' + ', '.join(str(n.canonical_order()) for n in ordered) + ']'
+    return "[" + ", ".join(str(n.canonical_order()) for n in ordered) + "]"
 
 
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        '--original',
+        "--original",
         action=argparse.BooleanOptionalAction,
         default=True,
-        help='Print solutions for the original 7-nut Hasbro puzzle.',
+        help="Print solutions for the original 7-nut Hasbro puzzle.",
     )
     parser.add_argument(
-        '--distribution',
+        "--distribution",
         action=argparse.BooleanOptionalAction,
         default=False,
-        help='Estimate the solution-count distribution over random piece sets.',
+        help="Estimate the solution-count distribution over random piece sets.",
     )
     parser.add_argument(
-        '--trials',
+        "--trials",
         type=int,
         default=None,
-        help=('Number of random piece sets to sample. If omitted, compute a '
-              'sufficient value via Hoeffding using --epsilon/--alpha/--m.'),
+        help=(
+            "Number of random piece sets to sample. If omitted, compute a "
+            "sufficient value via Hoeffding using --epsilon/--alpha/--m."
+        ),
     )
     parser.add_argument(
-        '--epsilon',
+        "--epsilon",
         type=float,
         default=0.01,
-        help='Hoeffding absolute error target (per bin).',
+        help="Hoeffding absolute error target (per bin).",
     )
     parser.add_argument(
-        '--alpha',
+        "--alpha",
         type=float,
         default=0.05,
-        help='Hoeffding failure probability (e.g. 0.05 for 95%% confidence).',
+        help="Hoeffding failure probability (e.g. 0.05 for 95%% confidence).",
     )
     parser.add_argument(
-        '--m',
+        "--m",
         type=int,
         default=1,
-        help=('Union-bound size (number of k values you want the bound to hold '
-              'over). Use 1 for a single bin; for the full distribution over '
-              'k in [0, 7!], m <= 5041 is safe.'),
+        help=(
+            "Union-bound size (number of k values you want the bound to hold "
+            "over). Use 1 for a single bin; for the full distribution over "
+            "k in [0, 7!], m <= 5041 is safe."
+        ),
     )
     parser.add_argument(
-        '--seed',
+        "--seed",
         type=int,
         default=None,
-        help='RNG seed for reproducible sampling.',
+        help="RNG seed for reproducible sampling.",
     )
     parser.add_argument(
-        '--sort-by',
-        choices=['k', 'freq'],
-        default='k',
-        help='How to sort the printed distribution table.',
+        "--sort-by",
+        choices=["k", "freq"],
+        default="k",
+        help="How to sort the printed distribution table.",
     )
     parser.add_argument(
-        '--progress-every',
+        "--progress-every",
         type=int,
         default=0,
-        help='If >0, print a progress line every N trials.',
+        help="If >0, print a progress line every N trials.",
     )
     parser.add_argument(
-        '--find-k',
+        "--find-k",
         type=int,
         default=None,
-        help=('Sample random piece sets until one has exactly K solutions; '
-              'prints the set (and optionally some solutions).'),
+        help=(
+            "Sample random piece sets until one has exactly K solutions; "
+            "prints the set (and optionally some solutions)."
+        ),
     )
     parser.add_argument(
-        '--max-tries',
+        "--max-tries",
         type=int,
         default=100000,
-        help='Max random piece sets to try when using --find-k.',
+        help="Max random piece sets to try when using --find-k.",
     )
     parser.add_argument(
-        '--print-found',
+        "--print-found",
         type=int,
         default=1,
-        help='How many solutions to print when --find-k succeeds (0 for none).',
+        help="How many solutions to print when --find-k succeeds (0 for none).",
     )
     args = parser.parse_args(argv)
 
     if not args.original and not args.distribution and args.find_k is None:
-        parser.error('nothing to do (enable --original, --distribution, and/or --find-k)')
+        parser.error("nothing to do (enable --original, --distribution, and/or --find-k)")
 
     needs_all_nuts = args.distribution or (args.find_k is not None)
     all_nuts = None
@@ -304,14 +316,14 @@ def main(argv=None) -> int:
         )
 
     if args.original:
-        print_header('Original solutions')
+        print_header("Original solutions")
         sols = list(recur(nuts, [], None))
         sols.sort(key=lambda sol: tuple(n.canonical_order() for n in sol))
-        print(f'{len(sols)} solution(s)')
+        print(f"{len(sols)} solution(s)")
         print(sols)
 
     if args.distribution:
-        print_header('Distribution of number of solutions')
+        print_header("Distribution of number of solutions")
         assert all_nuts is not None
         total = comb(len(all_nuts), 7)
 
@@ -322,14 +334,18 @@ def main(argv=None) -> int:
                 alpha=args.alpha,
                 m=args.m,
             )
-            print(f'Using trials={trials} (Hoeffding, epsilon={args.epsilon}, alpha={args.alpha}, m={args.m})')
+            print(
+                f"Using trials={trials} (Hoeffding, epsilon={args.epsilon}, alpha={args.alpha}, m={args.m})"
+            )
         else:
             rec = hoeffding_trials(
                 epsilon=args.epsilon,
                 alpha=args.alpha,
                 m=args.m,
             )
-            print(f'Using trials={trials} (Hoeffding recommends >= {rec} for epsilon={args.epsilon}, alpha={args.alpha}, m={args.m})')
+            print(
+                f"Using trials={trials} (Hoeffding recommends >= {rec} for epsilon={args.epsilon}, alpha={args.alpha}, m={args.m})"
+            )
 
         rng = random.Random(args.seed)
         counts = Counter()
@@ -342,45 +358,44 @@ def main(argv=None) -> int:
 
             if args.progress_every and (i + 1) % args.progress_every == 0:
                 dt = time.perf_counter() - t0
-                print(f'... {i + 1}/{trials} piece sets ({dt:.1f}s elapsed)')
+                print(f"... {i + 1}/{trials} piece sets ({dt:.1f}s elapsed)")
 
         dt = time.perf_counter() - t0
-        print(f'Elapsed: {dt:.2f}s')
+        print(f"Elapsed: {dt:.2f}s")
 
         n0 = counts.get(0, 0)
         p0 = n0 / trials
         p_solvable = 1 - p0
         p_unique = counts.get(1, 0) / trials
         e_sols = sum(k * v for k, v in counts.items()) / trials
-        e_sols_given = (e_sols / p_solvable) if p_solvable else float('nan')
+        e_sols_given = (e_sols / p_solvable) if p_solvable else float("nan")
 
-        print('')
-        print(f'P(solvable): {p_solvable:.2%}')
-        print(f'P(unique solution): {p_unique:.2%}')
+        print("")
+        print(f"P(solvable): {p_solvable:.2%}")
+        print(f"P(unique solution): {p_unique:.2%}")
         if p_solvable:
-            print(f'P(unique | solvable): {(p_unique / p_solvable):.2%}')
-        print(f'E[#solutions]: {e_sols:.4f}')
+            print(f"P(unique | solvable): {(p_unique / p_solvable):.2%}")
+        print(f"E[#solutions]: {e_sols:.4f}")
         if p_solvable:
-            print(f'E[#solutions | solvable]: {e_sols_given:.4f}')
-        print('')
+            print(f"E[#solutions | solvable]: {e_sols_given:.4f}")
+        print("")
 
-        items = counts.most_common() if args.sort_by == 'freq' else sorted(counts.items())
+        items = counts.most_common() if args.sort_by == "freq" else sorted(counts.items())
         for k, v in items:
             f = v / trials
-            print('{:<4}{:<10.2e}{:<8.1%}{}'.format(
-                k, f * total, f, '=' * int(f * 40)))
+            print("{:<4}{:<10.2e}{:<8.1%}{}".format(k, f * total, f, "=" * int(f * 40)))
 
     if args.find_k is not None:
-        print_header(f'Find piece set with exactly {args.find_k} solution(s)')
+        print_header(f"Find piece set with exactly {args.find_k} solution(s)")
         assert all_nuts is not None
         rng = random.Random(args.seed)
         target = args.find_k
         if target < 0:
-            parser.error('--find-k must be >= 0')
+            parser.error("--find-k must be >= 0")
         if args.max_tries <= 0:
-            parser.error('--max-tries must be > 0')
+            parser.error("--max-tries must be > 0")
         if args.print_found < 0:
-            parser.error('--print-found must be >= 0')
+            parser.error("--print-found must be >= 0")
 
         t0 = time.perf_counter()
         for i in range(args.max_tries):
@@ -390,11 +405,11 @@ def main(argv=None) -> int:
                 continue
 
             dt = time.perf_counter() - t0
-            print(f'Found after {i + 1} tries ({dt:.2f}s).')
-            print('nuts =', format_nut_set(piece_set))
-            print(f'n_sols = {n_sols}')
+            print(f"Found after {i + 1} tries ({dt:.2f}s).")
+            print("nuts =", format_nut_set(piece_set))
+            print(f"n_sols = {n_sols}")
             if args.print_found and target > 0:
-                print('')
+                print("")
                 shown = 0
                 for sol in recur(piece_set, [], None):
                     print(sol)
@@ -404,10 +419,10 @@ def main(argv=None) -> int:
             break
         else:
             dt = time.perf_counter() - t0
-            print(f'No match found after {args.max_tries} tries ({dt:.2f}s).')
+            print(f"No match found after {args.max_tries} tries ({dt:.2f}s).")
 
     return 0
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     raise SystemExit(main())
