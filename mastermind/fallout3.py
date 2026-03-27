@@ -2,13 +2,12 @@ import sys
 from collections import Counter
 
 
-class Terminal(object):
+class Terminal:
     def __init__(self, words):
         len_mode, count = Counter(map(len, words)).most_common(1)[0]
         if count != len(words):
             bad_words = [w for w in words if len(w) != len_mode]
-            raise Exception('Some words have different lengths, namely:\n\t{}'\
-                .format(bad_words))
+            raise Exception("Some words have different lengths, namely:\n\t{}".format(bad_words))
         self.words = [w.upper() for w in words]
 
     def letters_common(self, word1, word2):
@@ -29,28 +28,28 @@ class Terminal(object):
     def automate(self):
         guess = self.words.pop()
         while True:
-            print('Next guess:{:>10}'.format(guess))
+            print("Next guess:{:>10}".format(guess))
             while True:
                 try:
-                    correct = int(input('How many were correct? '))
+                    correct = int(input("How many were correct? "))
                     break
                 except KeyboardInterrupt:
                     sys.exit()
                 except ValueError:
-                    print('Please input an integer...')
+                    print("Please input an integer...")
             guess = self.attempted(guess, correct)
             if guess is None:
-                print('There are no guesses left')
+                print("There are no guesses left")
                 return
             else:
                 self.words.pop()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # wl = ['doctrines', 'batteries', 'scorpions', 'generated', 'occasions',
     #     'occupants', 'officials', 'intricate', 'deformity', 'brutality',
     #     'carriages', 'accompany', 'interface']
     # t = Terminal(wl)
     # t.automate()
     # # print(t.letters_common('deadens', 'petrols'))
-    import pytesseract
+    pass
