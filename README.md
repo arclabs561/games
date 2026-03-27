@@ -20,6 +20,14 @@ A collection of game analyses, solvers, and simulations.
 Most analyses are Python scripts or Jupyter notebooks.
 
 ```bash
+# Lint and format (requires ruff)
+just check
+just fmt-check
+just fmt
+
+# Run tests (requires pytest)
+just test
+
 # Run a script
 python3 tenzi/tenzi.py
 
