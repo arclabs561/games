@@ -11,7 +11,7 @@ A collection of game analyses, solvers, and simulations.
 | **Drive-Ya-Nuts** | `drive-ya-nuts/` | Solver for the tiling puzzle (`solver.py`) |
 | **Egyptian Ratscrew** | `egyption-ratscrew/` | Simulation (`egyptian-ratscrew.ipynb`) |
 | **Mastermind** | `mastermind/` | Solvers (`mastermind.py`) |
-| **Peggle** | `peggle/` | Physics/probability analysis (`peggle.ipynb`) |
+| **Peggle** | `peggle/` | Physics/probability analysis (`peggle.nb`, `pp121-130.pdf`) |
 | **Pokémon** | `pokemon/` | Type graph analysis (`graph.py`, `pokemon.ipynb`) |
 | **Tenzi** | `tenzi/` | Dice game simulation (`tenzi.py`) |
 
