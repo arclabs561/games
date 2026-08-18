@@ -12,6 +12,7 @@ from pokemon.emerald_kaizo_iv_analysis import (
     simulate_all_at_least_count,
     sum_rows,
 )
+from pokemon.emerald_kaizo_role_query import role_probability
 
 
 def test_sum_distribution_has_exact_mass_and_symmetry():
@@ -73,3 +74,44 @@ def test_sum_rows_are_ordered_by_percentile():
 
     assert [row["percentile"] for row in rows] == sorted(row["percentile"] for row in rows)
     assert all(rows[index]["threshold"] < rows[index + 1]["threshold"] for index in range(4))
+
+
+def test_role_query_combines_explicit_filters():
+    probability = role_probability(
+        acceptable_natures=2,
+        relevant_stats=2,
+        minimum_iv=16,
+        ability_slots=2,
+        preferred_abilities=1,
+        encounter_share=1.0,
+        capture_probability=1.0,
+        synchronize=False,
+    )
+
+    assert probability == 0.01
+
+
+def test_synchronize_changes_nature_probability_only():
+    without_synchronize = role_probability(
+        acceptable_natures=1,
+        relevant_stats=0,
+        minimum_iv=0,
+        ability_slots=1,
+        preferred_abilities=1,
+        encounter_share=1.0,
+        capture_probability=1.0,
+        synchronize=False,
+    )
+    with_synchronize = role_probability(
+        acceptable_natures=1,
+        relevant_stats=0,
+        minimum_iv=0,
+        ability_slots=1,
+        preferred_abilities=1,
+        encounter_share=1.0,
+        capture_probability=1.0,
+        synchronize=True,
+    )
+
+    assert without_synchronize == 1 / 25
+    assert with_synchronize == 0.52
