@@ -191,6 +191,37 @@ Result: The default example of two acceptable natures, two relevant IVs at
 least 16, and one preferred ability of two returns probability 1%, expected
 100 attempts, and 299 attempts for 95% confidence.
 
+### Worked early target: Sandshrew
+
+Question: What does a sensible normal-play target look like in the early game?
+
+Evidence: RomHackDex lists Sandshrew in Route 102 grass at 20%, level 6, with
+one ability, Sand Veil, and Kaizo base stats of 75 Attack and 85 Defense. It
+also lists a 255 catch rate, but this case does not yet model ball failure.
+
+Rule: Accept Adamant or Impish, require Attack and Defense IVs >= 16, and do
+not filter ability. This is a physical and defensive role example, not a claim
+that those are the only good choices.
+
+Result among successfully obtained Sandshrew:
+
+- Acceptance probability: `2/25 * (16/32)^2 = 2%`.
+- Expected Sandshrew catches: 50.
+- Sandshrew catches for 95% confidence: 149.
+
+Result among all Route 102 grass encounters, using the listed 20% species
+share:
+
+- Acceptance probability: `20% * 2% = 0.4%`.
+- Expected grass encounters: 250.
+- Grass encounters for 95% confidence: 748.
+
+This is a useful sanity check, not a recommendation to hunt until 95%
+confidence. In a normal playthrough, spending hundreds of encounters before
+Roxanne is irrational. The sensible policy is likely to keep the first
+serviceable Sandshrew, or filter only for a non-harmful nature and accept its
+role-relevant IVs opportunistically.
+
 ## Next Experiments
 
 - Obtain or verify the official v2.1 patched output, then compare its hash with
@@ -223,5 +254,6 @@ least 16, and one preferred ability of two returns probability 1%, expected
 - [TASVideos: Gen 3 RNG mechanics](https://tasvideos.org/GameResources/GBA/PokemonGen3/RNG)
 - [SHF-Kaizo-Patches](https://github.com/CreamElDudJafar/SHF-Kaizo-Patches)
 - [RomHackDex: Emerald Kaizo Pokedex](https://romhackdex.net/emerald-kaizo/pokedex/)
+- [RomHackDex: Sandshrew](https://romhackdex.net/emerald-kaizo/pokedex/sandshrew/)
 - [Nuzlocke Tracker: Emerald Kaizo guide](https://nuzlocketracker.org/guides/emerald-kaizo)
 - [Third-party itch reupload metadata](https://pokemongba.itch.io/pokemon-kaizo-emerald)
