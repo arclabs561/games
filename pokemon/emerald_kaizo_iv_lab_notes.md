@@ -94,6 +94,12 @@ selecting the wrong battle profile.
   14 March 2020.
 - The public SHF-Kaizo-Patches repository contains an `Emerald Kaizo 1.1.bps`
   patch described as a later update.
+- RomHackDex exposes species-specific Emerald Kaizo location, method, rate, and
+  level rows. This is more useful for a target-species analysis than a generic
+  route summary.
+- Nuzlocke Tracker summarizes encounters and boss planning, but its readable
+  page did not expose complete raw slot tables or percentages for the early
+  routes during this research pass.
 
 ## Local ROM Evidence
 
@@ -196,6 +202,8 @@ least 16, and one preferred ability of two returns probability 1%, expected
   battle thresholds rather than generic percentiles.
 - Add Hidden Power predicates when a role depends on that move.
 - Model target-species slot odds and encounter rates when counting grass steps.
+- Use RomHackDex or the local ROM to verify the target species' actual route,
+  method, rate, and level before applying an encounter-share multiplier.
 - Add catch-rate and ball/status calculations when counting throws rather than
   successfully obtained candidates.
 - Add a deterministic Emerald LCG sequence model only after the ROM build and
@@ -214,4 +222,6 @@ least 16, and one preferred ability of two returns probability 1%, expected
 - [pret/pokeemerald: RNG implementation](https://raw.githubusercontent.com/pret/pokeemerald/master/src/random.c)
 - [TASVideos: Gen 3 RNG mechanics](https://tasvideos.org/GameResources/GBA/PokemonGen3/RNG)
 - [SHF-Kaizo-Patches](https://github.com/CreamElDudJafar/SHF-Kaizo-Patches)
+- [RomHackDex: Emerald Kaizo Pokedex](https://romhackdex.net/emerald-kaizo/pokedex/)
+- [Nuzlocke Tracker: Emerald Kaizo guide](https://nuzlocketracker.org/guides/emerald-kaizo)
 - [Third-party itch reupload metadata](https://pokemongba.itch.io/pokemon-kaizo-emerald)
