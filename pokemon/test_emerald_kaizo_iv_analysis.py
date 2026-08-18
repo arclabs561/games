@@ -1,5 +1,6 @@
 import math
 
+from pokemon.emerald_kaizo_gen3_stats import gen3_stat, stat_range
 from pokemon.emerald_kaizo_iv_analysis import (
     TOTAL_VECTORS,
     all_iv_sum_distribution,
@@ -115,3 +116,16 @@ def test_synchronize_changes_nature_probability_only():
 
     assert without_synchronize == 1 / 25
     assert with_synchronize == 0.52
+
+
+def test_gen3_sandshrew_stat_ranges_show_level_effect():
+    attack_at_six = stat_range(75, 6, "other", "boosted")
+    attack_at_twenty_two = stat_range(75, 22, "other", "boosted")
+
+    assert attack_at_six == (15, 16)
+    assert attack_at_twenty_two == (41, 48)
+
+
+def test_gen3_hp_ignores_nature_but_uses_level():
+    assert gen3_stat(50, 0, 6, "hp", "boosted") == 22
+    assert gen3_stat(50, 31, 6, "hp", "hindered") == 23

@@ -129,7 +129,7 @@ query lives in `emerald_kaizo_role_query.py`, and the generated report is
 - Known 95% geometric catch count for `p = 1/64` is 191.
 - Clopper-Pearson beta inversion passes edge-case tests.
 - Seeded simulation is reproducible.
-- Nine focused pytest tests pass.
+- Eleven focused pytest tests pass after adding the Gen III stat checks.
 - One million-candidate simulation produces a two-sided 95% exact interval for
   each displayed estimate.
 - A separate 1,000-replicate coverage check for `p = 1/64` covered the true
@@ -191,6 +191,27 @@ Result: The default example of two acceptable natures, two relevant IVs at
 least 16, and one preferred ability of two returns probability 1%, expected
 100 attempts, and 299 attempts for 95% confidence.
 
+### Early-level stat sanity
+
+Question: Does a high IV produce a meaningful stat difference at the level
+where the Pokemon is caught?
+
+Action: Add `emerald_kaizo_gen3_stats.py` with the zero-EV Generation III stat
+formulas and test Sandshrew's Attack and Defense at levels 6 and 22.
+
+Result for Kaizo Sandshrew's base Attack 75 and Defense 85:
+
+| Stat scenario | IV 0 | IV 31 | Difference |
+|---|---:|---:|---:|
+| Attack, level 6, boosted nature | 15 | 16 | 1 |
+| Defense, level 6, boosted nature | 16 | 18 | 2 |
+| Attack, level 22, boosted nature | 41 | 48 | 7 |
+| Defense, level 22, boosted nature | 46 | 53 | 7 |
+
+This is why early normal-play IV fishing is usually a poor trade. The
+statistical difference exists, but the immediate level-6 payoff is tiny; a
+useful nature, ability, moveset, and species role matter more.
+
 ### Worked early target: Sandshrew
 
 Question: What does a sensible normal-play target look like in the early game?
@@ -243,6 +264,7 @@ role-relevant IVs opportunistically.
 ## Sources
 
 - [Bulbapedia: Individual values](https://bulbapedia.bulbagarden.net/wiki/Individual_values)
+- [Bulbapedia: Stat](https://bulbapedia.bulbagarden.net/wiki/Stat)
 - [Bulbapedia: Nature](https://bulbapedia.bulbagarden.net/wiki/Nature)
 - [Bulbapedia: Personality value](https://bulbapedia.bulbagarden.net/wiki/Personality_value)
 - [Bulbapedia: Synchronize](https://bulbapedia.bulbagarden.net/wiki/Synchronize_(Ability))
