@@ -130,6 +130,7 @@ query lives in `emerald_kaizo_role_query.py`, and the generated report is
 - Clopper-Pearson beta inversion passes edge-case tests.
 - Seeded simulation is reproducible.
 - Eleven focused pytest tests pass after adding the Gen III stat checks.
+- Thirteen focused pytest tests pass after adding the Gen III capture checks.
 - One million-candidate simulation produces a two-sided 95% exact interval for
   each displayed estimate.
 - A separate 1,000-replicate coverage check for `p = 1/64` covered the true
@@ -212,6 +213,36 @@ This is why early normal-play IV fishing is usually a poor trade. The
 statistical difference exists, but the immediate level-6 payoff is tiny; a
 useful nature, ability, moveset, and species role matter more.
 
+### Capture-adjusted Sandshrew case
+
+Question: How much does the actual capture process change the grass-encounter
+estimate?
+
+Action: Add `emerald_kaizo_capture.py` using the Gen III source routine's
+integer rounding, ball bonuses, status multipliers, and four shake checks.
+
+Scenario: Sandshrew with catch rate 255, maximum HP 22, an ordinary Poké Ball,
+and the quality rule above.
+
+| Capture state | Modified value | Per-ball probability | Expected balls |
+|---|---:|---:|---:|
+| Full HP, no status | 85 | 33.6947% | 2.97 |
+| Half HP, no status | 170 | 78.4617% | 1.27 |
+| 1 HP, no status | 247 | 99.9939% | 1.00 |
+| 1 HP, paralysis | 370, automatic | 100% | 1.00 |
+
+Combining the full-HP per-ball probability with the 2% quality rule and 20%
+Route 102 species share gives:
+
+- Acceptance probability per grass encounter: `0.1347787%`.
+- Expected grass encounters: `741.96`.
+- Grass encounters for 95% confidence: `2,222`.
+
+At half HP, the corresponding values are approximately 0.3138468%, 318.63,
+and 954. These are deliberately scenario-specific. A real playthrough can
+weaken the target, inflict status, use a different ball, or lose encounters to
+failed throws and battle risk.
+
 ### Worked early target: Sandshrew
 
 Question: What does a sensible normal-play target look like in the early game?
@@ -271,12 +302,14 @@ role-relevant IVs opportunistically.
 - [Bulbapedia: Individual values](https://bulbapedia.bulbagarden.net/wiki/Individual_values)
 - [Bulbapedia: Stat](https://bulbapedia.bulbagarden.net/wiki/Stat)
 - [Bulbapedia: Nature](https://bulbapedia.bulbagarden.net/wiki/Nature)
+- [Bulbapedia: Catch rate](https://bulbapedia.bulbagarden.net/wiki/Catch_rate)
 - [Bulbapedia: Personality value](https://bulbapedia.bulbagarden.net/wiki/Personality_value)
 - [Bulbapedia: Synchronize](https://bulbapedia.bulbagarden.net/wiki/Synchronize_(Ability))
 - [Bulbapedia: Hidden Power calculation](https://bulbapedia.bulbagarden.net/wiki/Hidden_Power_(move)/Calculation)
 - [ROMHacking.net: Emerald Kaizo v2.1](https://www.romhacking.net/hacks/4291/)
 - [PokéCommunity: creator thread](https://www.pokecommunity.com/threads/pokemon-emerald-kaizo.395830/)
 - [pret/pokeemerald: wild encounter generation](https://raw.githubusercontent.com/pret/pokeemerald/master/src/wild_encounter.c)
+- [pret/pokeemerald: capture routine](https://raw.githubusercontent.com/pret/pokeemerald/master/src/battle_script_commands.c)
 - [pret/pokeemerald: RNG implementation](https://raw.githubusercontent.com/pret/pokeemerald/master/src/random.c)
 - [TASVideos: Gen 3 RNG mechanics](https://tasvideos.org/GameResources/GBA/PokemonGen3/RNG)
 - [SHF-Kaizo-Patches](https://github.com/CreamElDudJafar/SHF-Kaizo-Patches)

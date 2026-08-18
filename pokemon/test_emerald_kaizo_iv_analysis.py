@@ -1,5 +1,7 @@
 import math
+from typing import cast
 
+from pokemon.emerald_kaizo_capture import capture_probability, modified_catch_odds, result
 from pokemon.emerald_kaizo_gen3_stats import gen3_stat, stat_range
 from pokemon.emerald_kaizo_iv_analysis import (
     TOTAL_VECTORS,
@@ -129,3 +131,37 @@ def test_gen3_sandshrew_stat_ranges_show_level_effect():
 def test_gen3_hp_ignores_nature_but_uses_level():
     assert gen3_stat(50, 0, 6, "hp", "boosted") == 22
     assert gen3_stat(50, 31, 6, "hp", "hindered") == 23
+
+
+def test_gen3_capture_probability_matches_sandshrew_scenarios():
+    full_health = result(
+        catch_rate=255,
+        max_hp=22,
+        current_hp=22,
+        ball="poke",
+        status="none",
+    )
+    half_health = result(
+        catch_rate=255,
+        max_hp=22,
+        current_hp=11,
+        ball="poke",
+        status="none",
+    )
+
+    assert full_health["modified_odds"] == 85
+    assert half_health["modified_odds"] == 170
+    assert cast(float, full_health["probability"]) < cast(float, half_health["probability"])
+
+
+def test_gen3_capture_status_can_force_a_catch():
+    odds = modified_catch_odds(
+        catch_rate=255,
+        max_hp=22,
+        current_hp=1,
+        ball_bonus=10,
+        status="paralysis",
+    )
+
+    assert odds == 370
+    assert capture_probability(odds) == 1.0
