@@ -220,6 +220,11 @@ Evidence: RomHackDex lists Sandshrew in Route 102 grass at 20%, level 6, with
 one ability, Sand Veil, and Kaizo base stats of 75 Attack and 85 Defense. It
 also lists a 255 catch rate, but this case does not yet model ball failure.
 
+The Route 102 grass table has 12 slots: Meowth 20%, Sandshrew 20%, Nidoran
+male 10%, Electrike 10%, Hoothoot 10%, Gulpin 10%, Spinarak 5%, Spoink 5%,
+Farfetch'd 4%, Ralts 4%, Minun 1%, and Pikachu 1%. All are listed at level 6
+except Spinarak at level 7, Ralts at level 4, and Minun/Pikachu at level 5.
+
 Rule: Accept Adamant or Impish, require Attack and Defense IVs >= 16, and do
 not filter ability. This is a physical and defensive role example, not a claim
 that those are the only good choices.
@@ -277,5 +282,6 @@ role-relevant IVs opportunistically.
 - [SHF-Kaizo-Patches](https://github.com/CreamElDudJafar/SHF-Kaizo-Patches)
 - [RomHackDex: Emerald Kaizo Pokedex](https://romhackdex.net/emerald-kaizo/pokedex/)
 - [RomHackDex: Sandshrew](https://romhackdex.net/emerald-kaizo/pokedex/sandshrew/)
+- [RomHackDex: Route 102](https://romhackdex.net/emerald-kaizo/locations/route-102/)
 - [Nuzlocke Tracker: Emerald Kaizo guide](https://nuzlocketracker.org/guides/emerald-kaizo)
 - [Third-party itch reupload metadata](https://pokemongba.itch.io/pokemon-kaizo-emerald)
