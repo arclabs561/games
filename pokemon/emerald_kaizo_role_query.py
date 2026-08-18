@@ -27,6 +27,7 @@ def role_probability(
     ability_slots: int,
     preferred_abilities: int,
     encounter_share: float,
+    encounter_check_probability: float,
     capture_probability: float,
     synchronize: bool,
 ) -> float:
@@ -37,6 +38,8 @@ def role_probability(
         raise ValueError("preferred abilities must be between 1 and ability slots")
     if not 0.0 < encounter_share <= 1.0:
         raise ValueError("encounter share must be in (0, 1]")
+    if not 0.0 < encounter_check_probability <= 1.0:
+        raise ValueError("encounter check probability must be in (0, 1]")
     if not 0.0 < capture_probability <= 1.0:
         raise ValueError("capture probability must be in (0, 1]")
 
@@ -49,6 +52,7 @@ def role_probability(
         * probability_relevant_ivs_at_least(minimum_iv, relevant_stats)
         * (preferred_abilities / ability_slots)
         * encounter_share
+        * encounter_check_probability
         * capture_probability
     )
 
@@ -61,6 +65,7 @@ def query_result(args: argparse.Namespace) -> dict[str, float | int | bool]:
         ability_slots=args.ability_slots,
         preferred_abilities=args.preferred_abilities,
         encounter_share=args.encounter_share,
+        encounter_check_probability=args.encounter_check_probability,
         capture_probability=args.capture_probability,
         synchronize=args.synchronize,
     )
@@ -71,6 +76,7 @@ def query_result(args: argparse.Namespace) -> dict[str, float | int | bool]:
         "ability_slots": args.ability_slots,
         "preferred_abilities": args.preferred_abilities,
         "encounter_share": args.encounter_share,
+        "encounter_check_probability": args.encounter_check_probability,
         "capture_probability": args.capture_probability,
         "synchronize": args.synchronize,
         "probability": probability,
@@ -88,6 +94,7 @@ def main() -> None:
     parser.add_argument("--ability-slots", type=int, choices=(1, 2), default=2)
     parser.add_argument("--preferred-abilities", type=int, choices=(1, 2), default=1)
     parser.add_argument("--encounter-share", type=float, default=1.0)
+    parser.add_argument("--encounter-check-probability", type=float, default=1.0)
     parser.add_argument("--capture-probability", type=float, default=1.0)
     parser.add_argument("--confidence", type=float, default=0.95)
     parser.add_argument("--synchronize", action="store_true")

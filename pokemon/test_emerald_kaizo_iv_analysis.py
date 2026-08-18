@@ -87,11 +87,25 @@ def test_role_query_combines_explicit_filters():
         ability_slots=2,
         preferred_abilities=1,
         encounter_share=1.0,
+        encounter_check_probability=1.0,
         capture_probability=1.0,
         synchronize=False,
     )
 
     assert probability == 0.01
+
+    half_encounter_rate = role_probability(
+        acceptable_natures=2,
+        relevant_stats=2,
+        minimum_iv=16,
+        ability_slots=2,
+        preferred_abilities=1,
+        encounter_share=1.0,
+        encounter_check_probability=0.5,
+        capture_probability=1.0,
+        synchronize=False,
+    )
+    assert half_encounter_rate == 0.005
 
 
 def test_synchronize_changes_nature_probability_only():
@@ -102,6 +116,7 @@ def test_synchronize_changes_nature_probability_only():
         ability_slots=1,
         preferred_abilities=1,
         encounter_share=1.0,
+        encounter_check_probability=1.0,
         capture_probability=1.0,
         synchronize=False,
     )
@@ -112,6 +127,7 @@ def test_synchronize_changes_nature_probability_only():
         ability_slots=1,
         preferred_abilities=1,
         encounter_share=1.0,
+        encounter_check_probability=1.0,
         capture_probability=1.0,
         synchronize=True,
     )

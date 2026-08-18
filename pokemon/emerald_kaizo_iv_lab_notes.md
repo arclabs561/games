@@ -130,7 +130,7 @@ query lives in `emerald_kaizo_role_query.py`, and the generated report is
 - Clopper-Pearson beta inversion passes edge-case tests.
 - Seeded simulation is reproducible.
 - Eleven focused pytest tests pass after adding the Gen III stat checks.
-- Thirteen focused pytest tests pass after adding the Gen III capture checks.
+- Thirteen focused pytest tests pass after adding encounter-step validation.
 - One million-candidate simulation produces a two-sided 95% exact interval for
   each displayed estimate.
 - A separate 1,000-replicate coverage check for `p = 1/64` covered the true
@@ -186,7 +186,8 @@ that all six IVs matter equally?
 
 Action: Add `emerald_kaizo_role_query.py` with explicit inputs for acceptable
 natures, relevant IV count and threshold, ability requirement, target-species
-encounter share, capture probability, Synchronize, and confidence.
+encounter share, encounter-check probability, capture probability, Synchronize,
+and confidence.
 
 Result: The default example of two acceptable natures, two relevant IVs at
 least 16, and one preferred ability of two returns probability 1%, expected
@@ -242,6 +243,26 @@ At half HP, the corresponding values are approximately 0.3138468%, 318.63,
 and 954. These are deliberately scenario-specific. A real playthrough can
 weaken the target, inflict status, use a different ball, or lose encounters to
 failed throws and battle risk.
+
+### Grass steps versus encounter events
+
+Question: How many steps, rather than encounter events, does this represent?
+
+Evidence: The base Emerald source uses `MAX_ENCOUNTER_RATE = 2880` and
+multiplies a map's land encounter rate by 16 before comparing it with a random
+value. A base Route 102 encounter rate of 20 therefore gives `20 * 16 / 2880 =
+1/9` per eligible step before bike, repel, flute, ability, and metatile effects.
+The local Kaizo map rate is not yet verified.
+
+Using that base-mechanics scenario with the full-HP Poké Ball probability:
+
+- Acceptance probability per eligible step: `0.0149754%`.
+- Expected eligible steps: `6,677.61`.
+- Eligible steps for 95% confidence: `20,003`.
+
+At half HP, the corresponding values are approximately 0.0348719%, 2,867.64,
+and 8,590. These are not claims about the local Kaizo ROM's exact step rate;
+they show why encounter events and walking time must remain separate units.
 
 ### Worked early target: Sandshrew
 
