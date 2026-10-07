@@ -1,11 +1,11 @@
 # Emerald Kaizo ROM Fingerprint
 
-This is a local fingerprint of the ROM found in Downloads. The ROM itself is
+This is a fingerprint of the ROM used for analysis. The ROM itself is
 not copied into this repository.
 
-## Local File
+## Analyzed Artifact
 
-- Path: `/Users/arc/Downloads/kaizo-emerald.gba`
+- Filename: `kaizo-emerald.gba` (the checksums below identify the artifact)
 - Size: `16,777,216` bytes
 - GBA title header: `POKEMON EMER`
 - Game code: `BPEE01`
@@ -14,13 +14,12 @@ not copied into this repository.
 - SHA-1: `a7c4e34fafb53f2d5283eb6d43dad285c0dd40a8`
 - CRC32: `66c1cce7`
 
-The macOS download metadata points to a third-party itch.io reupload. The
-header contains no Kaizo version marker, so this file cannot be identified as
+The header contains no Kaizo version marker, so this file cannot be identified as
 v2.1 from the header alone.
 
 ## Base ROM Verification
 
-The adjacent vanilla ROM, `Pokemon - Emerald Version (USA, Europe).gba`,
+The vanilla base ROM, `Pokemon - Emerald Version (USA, Europe).gba`,
 matches the source checksums published by ROMHacking.net for the v2.1 hack:
 
 - MD5: `605b89b67018abcea91e693a4dd25be3`
@@ -29,7 +28,7 @@ matches the source checksums published by ROMHacking.net for the v2.1 hack:
 
 The public `Emerald Kaizo 1.1.bps` patch from the SHF-Kaizo-Patches repository
 was applied to that verified base in a temporary directory. Its output did
-not match the downloaded Kaizo ROM. This is expected if the downloaded file is
+not match the analyzed Kaizo ROM. This is expected if the analyzed file is
 the older published v2.1 build, a later build, or a repack, but it means the
 version is currently unresolved.
 
