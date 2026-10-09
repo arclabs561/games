@@ -9,9 +9,9 @@ A collection of game analyses, solvers, and simulations.
 | **Boggle** | `boggle/` | Solver, board analysis (`boggle.ipynb`) |
 | **Codenames** | `codenames/` | Game logic (`game.py`) |
 | **Drive-Ya-Nuts** | `drive-ya-nuts/` | Solver for the tiling puzzle (`solver.py`) |
-| **Egyptian Ratscrew** | `egyption-ratscrew/` | Simulation (`egyptian-ratscrew.ipynb`) |
+| **Egyptian Ratscrew** | `egyptian-ratscrew/` | Simulation (`egyptian-ratscrew.ipynb`) |
 | **Mastermind** | `mastermind/` | Solvers (`mastermind.py`) |
-| **Peggle** | `peggle/` | Physics/probability analysis (`peggle.nb`, `pp121-130.pdf`) |
+| **Peggle** | `peggle/` | Physics/probability analysis (`peggle.nb`; reference paper: Gutiérrez, Rodriguez and Sáez, [ETNA 11 (2000) 121-130](https://etna.ricam.oeaw.ac.at/vol.11.2000/pp121-130.dir/pp121-130.pdf)) |
 | **Pokémon** | `pokemon/` | Type graph analysis (`graph.py`, `pokemon.ipynb`) |
 | **Tenzi** | `tenzi/` | Dice game simulation (`tenzi.py`) |
 

@@ -18,4 +18,4 @@ fmt-check:
 
 # Run pytest (smoke + any future tests).
 test:
-    python -m pytest tests/ -q
+    python -m pytest -q

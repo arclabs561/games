@@ -5,6 +5,8 @@ permissions:
 on:
   push:
   pull_request:
+  schedule:
+    - cron: "17 6 * * 1"
 jobs:
   python:
     runs-on: ubuntu-latest
@@ -23,6 +25,6 @@ jobs:
       - name: Format check (ruff format)
         run: ruff format --check .
       - name: Run tests
-        run: python -m pytest tests/ -q
+        run: python -m pytest -q
       - name: Compile all Python files
         run: python -m compileall -q .
