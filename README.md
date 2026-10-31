@@ -1,6 +1,6 @@
 # Games
 
-A collection of game analyses, solvers, and simulations.
+Game analyses, solvers, and simulations.
 
 ## Catalog
 
@@ -25,20 +25,18 @@ just check
 just fmt-check
 just fmt
 
-# Run tests (requires pytest)
-just test
+# Run tests in the uv-managed environment (installs pytest)
+uv run just test
 
-# Run a script
-python3 tenzi/tenzi.py
+# Run a script (standard library only)
+python3 drive-ya-nuts/solver.py
 
 # Open a notebook
 jupyter notebook boggle/boggle.ipynb
 ```
 
-### Per-project notes
-
-- **Boggle**: see `boggle/README.md` (has background + notebook pointer).
+`boggle/` and `drive-ya-nuts/` have their own READMEs.
 
 ## License
 
-See `LICENSE`.
+MIT
