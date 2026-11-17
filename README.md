@@ -10,6 +10,7 @@ Game analyses, solvers, and simulations.
 | **Codenames** | `codenames/` | Game logic (`game.py`) |
 | **Drive-Ya-Nuts** | `drive-ya-nuts/` | Solver for the tiling puzzle (`solver.py`) |
 | **Egyptian Ratscrew** | `egyptian-ratscrew/` | Simulation (`egyptian-ratscrew.ipynb`) |
+| **Erase** | `erase/` | Which make-ten deals cannot be cleared: solver, certificates, paper (`erase.py`, `paper/erase.pdf`) |
 | **Mastermind** | `mastermind/` | Solvers (`mastermind.py`) |
 | **Peggle** | `peggle/` | Physics/probability analysis (`peggle.nb`; reference paper: Gutiérrez, Rodriguez and Sáez, [ETNA 11 (2000) 121-130](https://etna.ricam.oeaw.ac.at/vol.11.2000/pp121-130.dir/pp121-130.pdf)) |
 | **Pokémon** | `pokemon/` | Type graph analysis (`graph.py`, `pokemon.ipynb`) |
@@ -35,7 +36,7 @@ python3 drive-ya-nuts/solver.py
 jupyter notebook boggle/boggle.ipynb
 ```
 
-`boggle/` and `drive-ya-nuts/` have their own READMEs.
+`boggle/`, `drive-ya-nuts/` and `erase/` have their own READMEs.
 
 ## License
 
