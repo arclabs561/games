@@ -38,7 +38,7 @@ will be easy enough to dedup with `deque.rotate`.
 
 If we also assume that we use 7 unique nuts, then there are C(5!, 7) =
 C(120, 7) ~= 6e10 possible sets of pieces. What's the distribution of number of
-solutions over all these boards?
+solutions over all these boards? `exact.py` counts it exactly.
 
 [1] http://www.cis.uoguelph.ca/~sawada/papers/alph.pdf
 """

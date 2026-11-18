@@ -30,6 +30,9 @@ boggle = [
     "tabulate>=0.10",
     "wordfreq==3.1.1",
 ]
+drive_ya_nuts = [
+    "numpy>=2.5",
+]
 egyptian_ratscrew = [
     "matplotlib>=3.11",
     "numpy>=2.5",
