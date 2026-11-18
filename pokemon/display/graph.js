@@ -1,67 +1,91 @@
-var width = 500,
-    height = 500;
+// Force-directed drawing of display/graph.json (written by ../graph.py), using D3 v7.
+const KIND = { 2: "super", 0.5: "resisted", 0: "immune" };
+const RADIUS = 24;
 
-var canvas = document
+d3.json("graph.json").then(({ nodes, links }) => {
+  const svg = d3.select("#chart");
+  const width = +svg.attr("width");
+  const height = +svg.attr("height");
+  const arrows = links.filter((l) => l.source !== l.target);
 
-var svg = d3.select("body")
-	.append("svg")
-	.attr("width", width)
-	.attr("height", height);
+  svg.append("defs").selectAll("marker")
+    .data(Object.values(KIND))
+    .join("marker")
+    .attr("id", (k) => `arrow-${k}`)
+    .attr("viewBox", "0 -5 10 10")
+    .attr("refX", 9)
+    .attr("markerWidth", 6)
+    .attr("markerHeight", 6)
+    .attr("orient", "auto")
+    .append("path")
+    .attr("class", (k) => `head ${k}`)
+    .attr("d", "M0,-5L10,0L0,5");
 
-var force;
+  const link = svg.append("g").selectAll("path")
+    .data(arrows)
+    .join("path")
+    .attr("class", (l) => `link ${KIND[l.multiplier]}`)
+    .attr("marker-end", (l) => `url(#arrow-${KIND[l.multiplier]})`);
 
-function update(nodes, links) {
-    force = d3.layout.force()
-	.size([width, height])
-	.nodes(nodes)
-	.links(links)
-	.linkDistance(200)
-	.charge(-300)
-	.on("tick", tick)
-	.start();
+  const node = svg.append("g").selectAll("g")
+    .data(nodes)
+    .join("g")
+    .attr("class", "node");
+  node.append("circle").attr("r", RADIUS);
+  node.append("text").attr("dy", "0.35em").text((d) => d.id);
+  node.append("title").text((d) => matchups(d.id, links));
 
-    var circle = svg.append("svg:g").selectAll("circle")
-	.data(force.nodes())
-	.enter().append("svg:circle")
-	.attr("r", function(d) { return 5*Math.sqrt(d.weight); })
-	.call(force.drag);
+  const simulation = d3.forceSimulation(nodes)
+    .force("link", d3.forceLink(arrows).id((d) => d.id).distance(170).strength(0.05))
+    .force("charge", d3.forceManyBody().strength(-500))
+    .force("center", d3.forceCenter(width / 2, height / 2))
+    .force("collide", d3.forceCollide(30))
+    .on("tick", () => {
+      link.attr("d", arc);
+      node.attr("transform", (d) => `translate(${d.x},${d.y})`);
+    });
 
-    var link = svg.append("g").selectAll("line")
-	.data(force.links())
-    	.enter().append("svg:line")
-	.attr("class", "links")
-	.attr("stroke-width", function(d) { return 5; });
+  node.call(d3.drag()
+    .on("start", (event, d) => {
+      if (!event.active) simulation.alphaTarget(0.3).restart();
+      d.fx = d.x;
+      d.fy = d.y;
+    })
+    .on("drag", (event, d) => {
+      d.fx = event.x;
+      d.fy = event.y;
+    })
+    .on("end", (event, d) => {
+      if (!event.active) simulation.alphaTarget(0);
+      d.fx = null;
+      d.fy = null;
+    }));
+});
 
-    // var text = svg.append("svg:g").selectAll("g")
-    // 	.data(force.nodes())
-    // 	.enter().append("svg:g");
-
-    // text.append("svg:text")
-    // 	.attr("x", 12)
-    // 	.attr("y", ".31em")
-    // 	.attr("class", "shadow")
-    // 	.text(function(d) { return d.name; });
-
-    // text.append("svg:text")
-    // 	.attr("x", 12)
-    // 	.attr("y", ".31em")
-    // 	.text(function(d) { return d.name; });
-
-    function tick(e) {
-	link.attr("x1", function(d) { return d.source.x; })
-	    .attr("y1", function(d) { return d.source.y; })
-	    .attr("x2", function(d) { return d.target.x; })
-	    .attr("y2", function(d) { return d.target.y; });
-	circle.attr("transform", function(d) {
-	    return "translate(" + d.x + "," + d.y + ")";
-	});
-	// text.attr("transform", function(d) {
-	//     return "translate(" + d.x + "," + d.y + ")";
-	// });
-    }
+// A gentle arc from the edge of one circle to the edge of the other, so that the two
+// directions between a pair of types bend to opposite sides instead of overlapping.
+function arc({ source: s, target: t }) {
+  const dx = t.x - s.x;
+  const dy = t.y - s.y;
+  const dist = Math.hypot(dx, dy) || 1;
+  const gap = (RADIUS + 3) / dist;
+  const [x1, y1] = [s.x + dx * gap, s.y + dy * gap];
+  const [x2, y2] = [t.x - dx * gap, t.y - dy * gap];
+  return `M${x1},${y1}A${dist * 1.6},${dist * 1.6} 0 0,1 ${x2},${y2}`;
 }
 
-d3.json('graph.json', function(error, graph) {
-    console.log(graph);
-    update(graph.nodes, graph.links);
-});
+// A tooltip listing what a type does to others and what others do to it.
+function matchups(type, links) {
+  const id = (end) => (typeof end === "object" ? end.id : end);
+  const list = (rows, end, m) =>
+    rows.filter((l) => l.multiplier === m).map((l) => id(l[end])).join(", ") || "none";
+  const out = links.filter((l) => id(l.source) === type);
+  const into = links.filter((l) => id(l.target) === type);
+  return [
+    type,
+    `2× against: ${list(out, "target", 2)}`,
+    `½× against: ${list(out, "target", 0.5)}`,
+    `no effect on: ${list(out, "target", 0)}`,
+    `takes 2× from: ${list(into, "source", 2)}`,
+  ].join("\n");
+}

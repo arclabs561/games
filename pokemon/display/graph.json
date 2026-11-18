@@ -1,1 +1,660 @@
-{"graph": {}, "links": [{"target": 8, "weight": 0.5, "source": 0}, {"target": 2, "weight": 0.5, "source": 0}, {"target": 3, "weight": 2.0, "source": 0}, {"target": 4, "weight": 2.0, "source": 0}, {"target": 12, "weight": 2.0, "source": 0}, {"target": 11, "weight": 2.0, "source": 0}, {"target": 15, "weight": 2.0, "source": 0}, {"target": 14, "weight": 2.0, "source": 0}, {"target": 16, "weight": 0.5, "source": 0}, {"target": 7, "weight": 2.0, "source": 0}, {"target": 17, "weight": 0.5, "source": 0}, {"target": 8, "weight": 2.0, "source": 1}, {"target": 6, "weight": 0.0, "source": 1}, {"target": 3, "weight": 0.5, "source": 1}, {"target": 4, "weight": 2.0, "source": 1}, {"target": 5, "weight": 2.0, "source": 1}, {"target": 1, "weight": 0.5, "source": 1}, {"target": 7, "weight": 0.5, "source": 1}, {"target": 2, "weight": 0.5, "source": 2}, {"target": 3, "weight": 0.5, "source": 2}, {"target": 11, "weight": 0.5, "source": 2}, {"target": 14, "weight": 2.0, "source": 2}, {"target": 12, "weight": 0.5, "source": 2}, {"target": 13, "weight": 0.5, "source": 2}, {"target": 4, "weight": 0.5, "source": 2}, {"target": 15, "weight": 2.0, "source": 2}, {"target": 10, "weight": 0.5, "source": 2}, {"target": 3, "weight": 0.5, "source": 3}, {"target": 4, "weight": 0.5, "source": 3}, {"target": 9, "weight": 0.5, "source": 3}, {"target": 7, "weight": 2.0, "source": 3}, {"target": 10, "weight": 0.5, "source": 3}, {"target": 8, "weight": 0.0, "source": 3}, {"target": 12, "weight": 0.5, "source": 3}, {"target": 13, "weight": 0.5, "source": 3}, {"target": 14, "weight": 2.0, "source": 3}, {"target": 15, "weight": 0.5, "source": 3}, {"target": 16, "weight": 0.5, "source": 3}, {"target": 11, "weight": 0.5, "source": 3}, {"target": 17, "weight": 0.5, "source": 3}, {"target": 5, "weight": 0.5, "source": 4}, {"target": 6, "weight": 2.0, "source": 4}, {"target": 7, "weight": 0.5, "source": 4}, {"target": 8, "weight": 0.5, "source": 4}, {"target": 11, "weight": 0.5, "source": 4}, {"target": 13, "weight": 0.5, "source": 4}, {"target": 14, "weight": 0.5, "source": 4}, {"target": 17, "weight": 2.0, "source": 4}, {"target": 6, "weight": 0.5, "source": 5}, {"target": 8, "weight": 0.5, "source": 5}, {"target": 5, "weight": 2.0, "source": 5}, {"target": 16, "weight": 0.0, "source": 5}, {"target": 7, "weight": 0.0, "source": 5}, {"target": 13, "weight": 2.0, "source": 6}, {"target": 6, "weight": 0.5, "source": 6}, {"target": 7, "weight": 2.0, "source": 6}, {"target": 12, "weight": 2.0, "source": 7}, {"target": 13, "weight": 2.0, "source": 7}, {"target": 16, "weight": 2.0, "source": 7}, {"target": 8, "weight": 0.5, "source": 7}, {"target": 17, "weight": 2.0, "source": 7}, {"target": 8, "weight": 0.5, "source": 8}, {"target": 13, "weight": 0.5, "source": 8}, {"target": 11, "weight": 0.5, "source": 8}, {"target": 14, "weight": 0.5, "source": 8}, {"target": 9, "weight": 0.5, "source": 9}, {"target": 10, "weight": 0.5, "source": 9}, {"target": 11, "weight": 0.5, "source": 9}, {"target": 15, "weight": 2.0, "source": 9}, {"target": 14, "weight": 0.0, "source": 9}, {"target": 17, "weight": 0.5, "source": 9}, {"target": 10, "weight": 2.0, "source": 10}, {"target": 11, "weight": 0.5, "source": 10}, {"target": 12, "weight": 2.0, "source": 10}, {"target": 13, "weight": 2.0, "source": 10}, {"target": 15, "weight": 0.5, "source": 10}, {"target": 12, "weight": 2.0, "source": 11}, {"target": 11, "weight": 0.5, "source": 11}, {"target": 14, "weight": 2.0, "source": 11}, {"target": 15, "weight": 0.5, "source": 11}, {"target": 17, "weight": 2.0, "source": 11}, {"target": 12, "weight": 0.5, "source": 12}, {"target": 15, "weight": 0.5, "source": 12}, {"target": 14, "weight": 2.0, "source": 12}, {"target": 17, "weight": 2.0, "source": 12}, {"target": 15, "weight": 2.0, "source": 14}, {"target": 17, "weight": 0.0, "source": 14}, {"target": 15, "weight": 0.5, "source": 15}], "multigraph": false, "directed": false, "nodes": [{"id": "rock"}, {"id": "psychic"}, {"id": "fire"}, {"id": "steel"}, {"id": "bug"}, {"id": "ghost"}, {"id": "dark"}, {"id": "fighting"}, {"id": "poison"}, {"id": "electric"}, {"id": "dragon"}, {"id": "grass"}, {"id": "ice"}, {"id": "fairy"}, {"id": "ground"}, {"id": "water"}, {"id": "normal"}, {"id": "flying"}]}
+{
+ "nodes": [
+  {
+   "id": "normal"
+  },
+  {
+   "id": "fire"
+  },
+  {
+   "id": "water"
+  },
+  {
+   "id": "electric"
+  },
+  {
+   "id": "grass"
+  },
+  {
+   "id": "ice"
+  },
+  {
+   "id": "fighting"
+  },
+  {
+   "id": "poison"
+  },
+  {
+   "id": "ground"
+  },
+  {
+   "id": "flying"
+  },
+  {
+   "id": "psychic"
+  },
+  {
+   "id": "bug"
+  },
+  {
+   "id": "rock"
+  },
+  {
+   "id": "ghost"
+  },
+  {
+   "id": "dragon"
+  },
+  {
+   "id": "dark"
+  },
+  {
+   "id": "steel"
+  },
+  {
+   "id": "fairy"
+  }
+ ],
+ "links": [
+  {
+   "source": "normal",
+   "target": "rock",
+   "multiplier": 0.5
+  },
+  {
+   "source": "normal",
+   "target": "ghost",
+   "multiplier": 0.0
+  },
+  {
+   "source": "normal",
+   "target": "steel",
+   "multiplier": 0.5
+  },
+  {
+   "source": "fire",
+   "target": "fire",
+   "multiplier": 0.5
+  },
+  {
+   "source": "fire",
+   "target": "water",
+   "multiplier": 0.5
+  },
+  {
+   "source": "fire",
+   "target": "grass",
+   "multiplier": 2.0
+  },
+  {
+   "source": "fire",
+   "target": "ice",
+   "multiplier": 2.0
+  },
+  {
+   "source": "fire",
+   "target": "bug",
+   "multiplier": 2.0
+  },
+  {
+   "source": "fire",
+   "target": "rock",
+   "multiplier": 0.5
+  },
+  {
+   "source": "fire",
+   "target": "dragon",
+   "multiplier": 0.5
+  },
+  {
+   "source": "fire",
+   "target": "steel",
+   "multiplier": 2.0
+  },
+  {
+   "source": "water",
+   "target": "fire",
+   "multiplier": 2.0
+  },
+  {
+   "source": "water",
+   "target": "water",
+   "multiplier": 0.5
+  },
+  {
+   "source": "water",
+   "target": "grass",
+   "multiplier": 0.5
+  },
+  {
+   "source": "water",
+   "target": "ground",
+   "multiplier": 2.0
+  },
+  {
+   "source": "water",
+   "target": "rock",
+   "multiplier": 2.0
+  },
+  {
+   "source": "water",
+   "target": "dragon",
+   "multiplier": 0.5
+  },
+  {
+   "source": "electric",
+   "target": "water",
+   "multiplier": 2.0
+  },
+  {
+   "source": "electric",
+   "target": "electric",
+   "multiplier": 0.5
+  },
+  {
+   "source": "electric",
+   "target": "grass",
+   "multiplier": 0.5
+  },
+  {
+   "source": "electric",
+   "target": "ground",
+   "multiplier": 0.0
+  },
+  {
+   "source": "electric",
+   "target": "flying",
+   "multiplier": 2.0
+  },
+  {
+   "source": "electric",
+   "target": "dragon",
+   "multiplier": 0.5
+  },
+  {
+   "source": "grass",
+   "target": "fire",
+   "multiplier": 0.5
+  },
+  {
+   "source": "grass",
+   "target": "water",
+   "multiplier": 2.0
+  },
+  {
+   "source": "grass",
+   "target": "grass",
+   "multiplier": 0.5
+  },
+  {
+   "source": "grass",
+   "target": "poison",
+   "multiplier": 0.5
+  },
+  {
+   "source": "grass",
+   "target": "ground",
+   "multiplier": 2.0
+  },
+  {
+   "source": "grass",
+   "target": "flying",
+   "multiplier": 0.5
+  },
+  {
+   "source": "grass",
+   "target": "bug",
+   "multiplier": 0.5
+  },
+  {
+   "source": "grass",
+   "target": "rock",
+   "multiplier": 2.0
+  },
+  {
+   "source": "grass",
+   "target": "dragon",
+   "multiplier": 0.5
+  },
+  {
+   "source": "grass",
+   "target": "steel",
+   "multiplier": 0.5
+  },
+  {
+   "source": "ice",
+   "target": "fire",
+   "multiplier": 0.5
+  },
+  {
+   "source": "ice",
+   "target": "water",
+   "multiplier": 0.5
+  },
+  {
+   "source": "ice",
+   "target": "grass",
+   "multiplier": 2.0
+  },
+  {
+   "source": "ice",
+   "target": "ice",
+   "multiplier": 0.5
+  },
+  {
+   "source": "ice",
+   "target": "ground",
+   "multiplier": 2.0
+  },
+  {
+   "source": "ice",
+   "target": "flying",
+   "multiplier": 2.0
+  },
+  {
+   "source": "ice",
+   "target": "dragon",
+   "multiplier": 2.0
+  },
+  {
+   "source": "ice",
+   "target": "steel",
+   "multiplier": 0.5
+  },
+  {
+   "source": "fighting",
+   "target": "normal",
+   "multiplier": 2.0
+  },
+  {
+   "source": "fighting",
+   "target": "ice",
+   "multiplier": 2.0
+  },
+  {
+   "source": "fighting",
+   "target": "poison",
+   "multiplier": 0.5
+  },
+  {
+   "source": "fighting",
+   "target": "flying",
+   "multiplier": 0.5
+  },
+  {
+   "source": "fighting",
+   "target": "psychic",
+   "multiplier": 0.5
+  },
+  {
+   "source": "fighting",
+   "target": "bug",
+   "multiplier": 0.5
+  },
+  {
+   "source": "fighting",
+   "target": "rock",
+   "multiplier": 2.0
+  },
+  {
+   "source": "fighting",
+   "target": "ghost",
+   "multiplier": 0.0
+  },
+  {
+   "source": "fighting",
+   "target": "dark",
+   "multiplier": 2.0
+  },
+  {
+   "source": "fighting",
+   "target": "steel",
+   "multiplier": 2.0
+  },
+  {
+   "source": "fighting",
+   "target": "fairy",
+   "multiplier": 0.5
+  },
+  {
+   "source": "poison",
+   "target": "grass",
+   "multiplier": 2.0
+  },
+  {
+   "source": "poison",
+   "target": "poison",
+   "multiplier": 0.5
+  },
+  {
+   "source": "poison",
+   "target": "ground",
+   "multiplier": 0.5
+  },
+  {
+   "source": "poison",
+   "target": "rock",
+   "multiplier": 0.5
+  },
+  {
+   "source": "poison",
+   "target": "ghost",
+   "multiplier": 0.5
+  },
+  {
+   "source": "poison",
+   "target": "steel",
+   "multiplier": 0.0
+  },
+  {
+   "source": "poison",
+   "target": "fairy",
+   "multiplier": 2.0
+  },
+  {
+   "source": "ground",
+   "target": "fire",
+   "multiplier": 2.0
+  },
+  {
+   "source": "ground",
+   "target": "electric",
+   "multiplier": 2.0
+  },
+  {
+   "source": "ground",
+   "target": "grass",
+   "multiplier": 0.5
+  },
+  {
+   "source": "ground",
+   "target": "poison",
+   "multiplier": 2.0
+  },
+  {
+   "source": "ground",
+   "target": "flying",
+   "multiplier": 0.0
+  },
+  {
+   "source": "ground",
+   "target": "bug",
+   "multiplier": 0.5
+  },
+  {
+   "source": "ground",
+   "target": "rock",
+   "multiplier": 2.0
+  },
+  {
+   "source": "ground",
+   "target": "steel",
+   "multiplier": 2.0
+  },
+  {
+   "source": "flying",
+   "target": "electric",
+   "multiplier": 0.5
+  },
+  {
+   "source": "flying",
+   "target": "grass",
+   "multiplier": 2.0
+  },
+  {
+   "source": "flying",
+   "target": "fighting",
+   "multiplier": 2.0
+  },
+  {
+   "source": "flying",
+   "target": "bug",
+   "multiplier": 2.0
+  },
+  {
+   "source": "flying",
+   "target": "rock",
+   "multiplier": 0.5
+  },
+  {
+   "source": "flying",
+   "target": "steel",
+   "multiplier": 0.5
+  },
+  {
+   "source": "psychic",
+   "target": "fighting",
+   "multiplier": 2.0
+  },
+  {
+   "source": "psychic",
+   "target": "poison",
+   "multiplier": 2.0
+  },
+  {
+   "source": "psychic",
+   "target": "psychic",
+   "multiplier": 0.5
+  },
+  {
+   "source": "psychic",
+   "target": "dark",
+   "multiplier": 0.0
+  },
+  {
+   "source": "psychic",
+   "target": "steel",
+   "multiplier": 0.5
+  },
+  {
+   "source": "bug",
+   "target": "fire",
+   "multiplier": 0.5
+  },
+  {
+   "source": "bug",
+   "target": "grass",
+   "multiplier": 2.0
+  },
+  {
+   "source": "bug",
+   "target": "fighting",
+   "multiplier": 0.5
+  },
+  {
+   "source": "bug",
+   "target": "poison",
+   "multiplier": 0.5
+  },
+  {
+   "source": "bug",
+   "target": "flying",
+   "multiplier": 0.5
+  },
+  {
+   "source": "bug",
+   "target": "psychic",
+   "multiplier": 2.0
+  },
+  {
+   "source": "bug",
+   "target": "ghost",
+   "multiplier": 0.5
+  },
+  {
+   "source": "bug",
+   "target": "dark",
+   "multiplier": 2.0
+  },
+  {
+   "source": "bug",
+   "target": "steel",
+   "multiplier": 0.5
+  },
+  {
+   "source": "bug",
+   "target": "fairy",
+   "multiplier": 0.5
+  },
+  {
+   "source": "rock",
+   "target": "fire",
+   "multiplier": 2.0
+  },
+  {
+   "source": "rock",
+   "target": "ice",
+   "multiplier": 2.0
+  },
+  {
+   "source": "rock",
+   "target": "fighting",
+   "multiplier": 0.5
+  },
+  {
+   "source": "rock",
+   "target": "ground",
+   "multiplier": 0.5
+  },
+  {
+   "source": "rock",
+   "target": "flying",
+   "multiplier": 2.0
+  },
+  {
+   "source": "rock",
+   "target": "bug",
+   "multiplier": 2.0
+  },
+  {
+   "source": "rock",
+   "target": "steel",
+   "multiplier": 0.5
+  },
+  {
+   "source": "ghost",
+   "target": "normal",
+   "multiplier": 0.0
+  },
+  {
+   "source": "ghost",
+   "target": "psychic",
+   "multiplier": 2.0
+  },
+  {
+   "source": "ghost",
+   "target": "ghost",
+   "multiplier": 2.0
+  },
+  {
+   "source": "ghost",
+   "target": "dark",
+   "multiplier": 0.5
+  },
+  {
+   "source": "dragon",
+   "target": "dragon",
+   "multiplier": 2.0
+  },
+  {
+   "source": "dragon",
+   "target": "steel",
+   "multiplier": 0.5
+  },
+  {
+   "source": "dragon",
+   "target": "fairy",
+   "multiplier": 0.0
+  },
+  {
+   "source": "dark",
+   "target": "fighting",
+   "multiplier": 0.5
+  },
+  {
+   "source": "dark",
+   "target": "psychic",
+   "multiplier": 2.0
+  },
+  {
+   "source": "dark",
+   "target": "ghost",
+   "multiplier": 2.0
+  },
+  {
+   "source": "dark",
+   "target": "dark",
+   "multiplier": 0.5
+  },
+  {
+   "source": "dark",
+   "target": "fairy",
+   "multiplier": 0.5
+  },
+  {
+   "source": "steel",
+   "target": "fire",
+   "multiplier": 0.5
+  },
+  {
+   "source": "steel",
+   "target": "water",
+   "multiplier": 0.5
+  },
+  {
+   "source": "steel",
+   "target": "electric",
+   "multiplier": 0.5
+  },
+  {
+   "source": "steel",
+   "target": "ice",
+   "multiplier": 2.0
+  },
+  {
+   "source": "steel",
+   "target": "rock",
+   "multiplier": 2.0
+  },
+  {
+   "source": "steel",
+   "target": "steel",
+   "multiplier": 0.5
+  },
+  {
+   "source": "steel",
+   "target": "fairy",
+   "multiplier": 2.0
+  },
+  {
+   "source": "fairy",
+   "target": "fire",
+   "multiplier": 0.5
+  },
+  {
+   "source": "fairy",
+   "target": "fighting",
+   "multiplier": 2.0
+  },
+  {
+   "source": "fairy",
+   "target": "poison",
+   "multiplier": 0.5
+  },
+  {
+   "source": "fairy",
+   "target": "dragon",
+   "multiplier": 2.0
+  },
+  {
+   "source": "fairy",
+   "target": "dark",
+   "multiplier": 2.0
+  },
+  {
+   "source": "fairy",
+   "target": "steel",
+   "multiplier": 0.5
+  }
+ ]
+}

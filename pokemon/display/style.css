@@ -1,15 +1,16 @@
-circle {
-    fill: #ccc;
-    stroke: #333;
-    stroke-width: 3px;
-}
+body { font-family: system-ui, sans-serif; margin: 1.5rem; max-width: 900px; color: #222; }
+h1 { font-size: 1.3rem; font-weight: 600; }
+p { line-height: 1.45; }
+.key { font-weight: 600; }
 
-text {
-    font-family: Futura;
-    pointer-events: none;
-}
+/* Okabe–Ito colors, readable with common color-vision deficiencies. */
+.super { color: #009E73; stroke: #009E73; fill: #009E73; }
+.resisted { color: #777; stroke: #999; fill: #999; }
+.immune { color: #D55E00; stroke: #D55E00; fill: #D55E00; }
 
-text.shadow {
-    stroke: #fff;
-    stroke-width: 6px;
-}
+.link { stroke-width: 1.6px; stroke-opacity: 0.75; fill: none; }
+.link.resisted { stroke-dasharray: 4 3; }
+.head { stroke: none; }
+
+.node circle { fill: #fff; stroke: #333; stroke-width: 1.5px; cursor: grab; }
+.node text { font-size: 10px; text-anchor: middle; pointer-events: none; }

@@ -35,6 +35,7 @@ Scripts that use only the standard library run with any Python 3.12 or later:
 ```bash
 python3 drive-ya-nuts/solver.py
 python3 erase/erase.py 4 4 6 9 5 8 5 --center 7 5 1 8
+python3 pokemon/graph.py         # writes display/graph.json, then serves the page on port 8000
 ```
 
 Scripts that need other packages list them in an inline header (PEP 723), which `uv run` reads:
@@ -42,7 +43,6 @@ Scripts that need other packages list them in an inline header (PEP 723), which 
 ```bash
 uv run tenzi/tenzi.py
 uv run erase/smt/z3_lemmas.py
-uv run pokemon/graph.py          # rewrites display/graph.json, then serves it on port 8000
 ```
 
 Each notebook's packages are a dependency group in `pyproject.toml`, named after its folder:

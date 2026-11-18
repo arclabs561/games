@@ -1,52 +1,53 @@
-#!/usr/bin/env -S uv run --script
-# /// script
-# requires-python = ">=3.12"
-# dependencies = [
-#     "flask>=3.1",
-#     "networkx>=3.7",
-# ]
-#
-# # graph.py imports pokemon_types from its own folder.
-# [tool.ty.environment]
-# root = ["."]
-# ///
+#!/usr/bin/env python3
+"""Draw the Gen 6 type chart as a force-directed graph in the browser.
+
+Each arrow runs from an attacking type to a defending type and is colored by the damage
+multiplier: 2 (super effective), 1/2 (not very effective) or 0 (no effect). Pairs at the
+usual 1x are not drawn.
+
+    python3 pokemon/graph.py              # writes display/graph.json, serves http://localhost:8000
+    python3 pokemon/graph.py --no-serve   # only writes the JSON
+"""
+
+import argparse
+import functools
+import http.server
 import json
 from pathlib import Path
 
-import flask
-import networkx as nx
-import pokemon_types
+from pokemon_types import gen6
 
-graph = nx.Graph()
-for attack, defenders in pokemon_types.gen6.items():
-    for defend, effect in defenders.items():
-        graph.add_node(attack)
-        graph.add_edge(attack, defend, weight=effect)
-
-# display/graph.js wants D3 force-layout links: "links", with nodes given by index.
-index = {node: i for i, node in enumerate(graph.nodes)}
-data = {
-    "directed": False,
-    "multigraph": False,
-    "graph": {},
-    "nodes": [{"id": node} for node in graph.nodes],
-    "links": [
-        {"source": index[u], "target": index[v], "weight": w}
-        for u, v, w in graph.edges(data="weight")
-    ],
-}
 DISPLAY = Path(__file__).resolve().parent / "display"
-with open(DISPLAY / "graph.json", "w") as f:
-    json.dump(data, f)
 
 
-app = flask.Flask(__name__, static_folder=DISPLAY)
+def chart_graph(chart: dict[str, dict[str, float]]) -> dict:
+    """Nodes and links for D3 from a chart {attacker: {defender: multiplier}}."""
+    types = list(chart)
+    types += sorted({d for row in chart.values() for d in row} - set(types))
+    links = [
+        {"source": attacker, "target": defender, "multiplier": multiplier}
+        for attacker, row in chart.items()
+        for defender, multiplier in row.items()
+    ]
+    return {"nodes": [{"id": t} for t in types], "links": links}
 
 
-@app.route("/<path:path>")
-def static_proxy(path):
-    return app.send_static_file(path)
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("--no-serve", action="store_true", help="only write display/graph.json")
+    parser.add_argument("--port", type=int, default=8000)
+    args = parser.parse_args()
+
+    out = DISPLAY / "graph.json"
+    out.write_text(json.dumps(chart_graph(gen6), indent=1) + "\n")
+    print(f"wrote {out}")
+    if args.no_serve:
+        return
+    handler = functools.partial(http.server.SimpleHTTPRequestHandler, directory=DISPLAY)
+    with http.server.ThreadingHTTPServer(("127.0.0.1", args.port), handler) as server:
+        print(f"http://localhost:{args.port}/index.html")
+        server.serve_forever()
 
 
-print("http://localhost:8000/index.html")
-app.run(port=8000)
+if __name__ == "__main__":
+    main()

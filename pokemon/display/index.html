@@ -1,12 +1,24 @@
 <!DOCTYPE html>
-<meta charset="utf-8">
-<html>
-
+<html lang="en">
   <head>
+    <meta charset="utf-8">
+    <title>Pokémon type chart, Gen 6</title>
     <link rel="stylesheet" href="style.css">
   </head>
   <body>
-    <script src="//d3js.org/d3.v4.min.js"></script>
+    <h1>Pokémon type chart, Gen 6</h1>
+    <p>
+      Each arrow runs from an attacking type to a defending type.
+      <span class="key super">Green</span>: 2× damage.
+      <span class="key resisted">Gray</span>: ½×.
+      <span class="key immune">Red</span>: no effect.
+      Pairs at 1× are not drawn, and neither is a type's effect on itself.
+      Drag a type to move it; hover over it to see its matchups.
+    </p>
+    <svg id="chart" width="900" height="700"></svg>
+    <script src="https://cdn.jsdelivr.net/npm/d3@7.9.2/dist/d3.min.js"
+            integrity="sha384-LxfWGZyh6PaLjBRPf7NWiEYs9Mn0UQ6ZmqbLLZhxlOBBNWF2a2K0Pfc5efkrNnhQ"
+            crossorigin="anonymous"></script>
     <script src="graph.js"></script>
   </body>
 </html>
