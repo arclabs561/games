@@ -36,3 +36,14 @@ def test_committed_csv_is_current(tmp_path, monkeypatch):
     peggle.main()
     committed = (Path(peggle.__file__).parent / "better.csv").read_text()
     assert (tmp_path / "better.csv").read_text() == committed
+
+
+def test_posterior_slope_beats_the_fitted_one_and_matches_the_note():
+    note = " ".join((Path(peggle.__file__).parent / "peggle.typ").read_text().split())
+    posterior, fitted = (
+        [peggle.largest_error(slope, lowest)[0] for lowest in (1, 30)]
+        for slope in (peggle.posterior_slope, peggle.fitted_slope)
+    )
+    assert f"is {posterior[0]:.3f} with $a(n)$ and {fitted[0]:.3f} with the fitted slope" in note
+    assert f"it is {posterior[1]:.3f} and {fitted[1]:.3f}" in note
+    assert posterior[0] < fitted[0] / 4

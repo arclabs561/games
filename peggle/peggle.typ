@@ -87,30 +87,26 @@ For six wins in ten games the formula gives $1486 slash 2048 = 743 slash 1024 ap
 @tab-wins shows how many wins it takes to be 95% sure.
 
 #figure(
-  placement: auto,
   table(
-    columns: 4, align: right, stroke: none,
+    columns: 7, align: (left, ..(right,) * 6), stroke: none,
     table.hline(),
-    [games $n$], [wins needed], [share], [chance of being better],
+    [games $n$], [10], [20], [50], [100], [200], [1,000],
     table.hline(stroke: 0.5pt),
-    [10], [8], [80.0%], [0.967],
-    [20], [14], [70.0%], [0.961],
-    [50], [31], [62.0%], [0.954],
-    [100], [59], [59.0%], [0.964],
-    [200], [112], [56.0%], [0.955],
-    [1,000], [527], [52.7%], [0.956],
+    [wins needed], [8], [14], [31], [59], [112], [527],
+    [share], [80.0%], [70.0%], [62.0%], [59.0%], [56.0%], [52.7%],
+    [chance of being better], [0.967], [0.961], [0.954], [0.964], [0.955], [0.956],
     table.hline(),
   ),
-  caption: [The fewest wins in $n$ games that make $P(p > 1 slash 2) >= 0.95$ under a uniform prior. Exact.],
+  caption: [The fewest wins in $n$ games that make $P(p > 1 slash 2) >= 0.95$, uniform prior. Exact.],
 ) <tab-wins>
 
 The share of wins needed falls toward one half, roughly like $1 slash 2 + 0.82 slash sqrt(n)$, the normal approximation to the coin flips.
 
 = A one-line approximation
 
-An earlier version of this note gave the logistic curve
-$ P(p > 1/2 | k, n) approx 1 / (1 + e^(-3 n^(-0.48) (k - n slash 2))), $
-Against the exact values its error is at most 0.068 for $n <= 300$ (the worst case is $n = 1$), at most 0.016 for $10 <= n <= 300$, and at most 0.015 for $30 <= n <= 300$. @fig-better shows why it works: the exact curve is close to a normal distribution function, which a logistic curve imitates well.
+The curves in @fig-better look like normal distribution functions. Near $k = n slash 2$ the posterior has mean $(k + 1) slash (n + 2)$ and standard deviation $1 slash (2 sqrt(n + 3))$, so $P(p > 1 slash 2)$ is close to the normal distribution function $Phi(z)$ at $z = 2 (k - n slash 2) sqrt(n + 3) slash (n + 2)$. The logistic curve $1 slash (1 + e^(-1.702 z))$ stays within 0.01 of $Phi(z)$, which gives
+$ P(p > 1 slash 2 | k, n) approx 1 / (1 + e^(-a(n) (k - n slash 2))), quad a(n) = (3.404 sqrt(n + 3)) / (n + 2) approx 3.4 / sqrt(n). $
+An earlier version of this note used the fitted slope $3 n^(-0.48)$. Over every $k$ and every $n <= 300$, the largest difference from the exact chance is 0.016 with $a(n)$ and 0.068 with the fitted slope; for $30 <= n <= 300$ it is 0.010 and 0.015. `peggle.py` computes all four exactly.
 
 #figure(
   {
@@ -121,7 +117,7 @@ Against the exact values its error is at most 0.068 for $n <= 300$ (the worst ca
     }
     let colors = (rgb("#E69F00"), rgb("#009E73"), rgb("#0072B2"))
     fitw(lq.diagram(
-      width: 10cm, height: 4cm,
+      width: 10cm, height: 3.2cm,
       xlabel: [share of games won, $k slash n$], ylabel: [$P(p > 1 slash 2)$],
       xlim: (0.2, 0.8), ylim: (0, 1),
       legend: (position: left + top),
@@ -135,7 +131,7 @@ Against the exact values its error is at most 0.068 for $n <= 300$ (the worst ca
       }).flatten()),
     ))
   },
-  caption: [Exact chance of being the better player (dots) and the logistic approximation (lines), for 10, 50 and 250 games.],
+  caption: [Exact chance of being better (dots) and the approximation with slope $a(n)$ (lines), for 10, 50 and 250 games.],
 ) <fig-better>
 
 = Questions left open

@@ -11,7 +11,7 @@ Game analyses, solvers, and simulations.
 | **Egyptian Ratscrew** | `egyptian-ratscrew/` | Simulation (`egyptian-ratscrew.ipynb`) |
 | **Erase** | `erase/` | Which make-ten deals cannot be cleared: solver, certificates, paper (`erase.py`, `paper/erase.pdf`) |
 | **Mastermind** | `mastermind/` | Random codes and grading (`mastermind.py`); a filter for the Fallout 3 terminal word puzzle (`fallout3.py`) |
-| **Peggle** | `peggle/` | Who is the better player after k wins in n games (`peggle.py`, write-up `peggle.pdf`); physics/probability notebook (`peggle.nb`, Mathematica; reference paper: Gutiérrez, Rodriguez and Sáez, [ETNA 11 (2000) 121-130](https://etna.ricam.oeaw.ac.at/vol.11.2000/pp121-130.dir/pp121-130.pdf)) |
+| **Peggle** | `peggle/` | Who is the better player after k wins in n games: exact odds and a one-line approximation (`peggle.py`, write-up `peggle.pdf`) |
 | **Pokémon** | `pokemon/` | Type graph analysis (`graph.py`, `pokemon.ipynb`); IV, stat and capture-odds models for the Emerald Kaizo ROM hack (`emerald_kaizo_*.py`) |
 | **Tenzi** | `tenzi/` | How many turns a game takes, exactly and by simulation (`tenzi.py`, write-up `tenzi.pdf`) |
 
