@@ -1,0 +1,383 @@
+{
+ "n_games": 50,
+ "seed": 1,
+ "table": {
+  "Qwen/Qwen3-Embedding-0.6B": {
+   "Qwen/Qwen3-Embedding-0.6B": {
+    "games": 50,
+    "mean_turns_when_won": 4.32,
+    "wins": 50
+   },
+   "bge": {
+    "games": 50,
+    "mean_turns_when_won": 9.304347826086957,
+    "wins": 23
+   },
+   "eat": {
+    "games": 50,
+    "mean_turns_when_won": 11.0,
+    "wins": 2
+   },
+   "google/embeddinggemma-2": {
+    "games": 50,
+    "mean_turns_when_won": 8.047619047619047,
+    "wins": 21
+   },
+   "granite": {
+    "games": 50,
+    "mean_turns_when_won": 10.142857142857142,
+    "wins": 14
+   },
+   "microsoft/harrier-oss-v1-0.6b": {
+    "games": 50,
+    "mean_turns_when_won": 8.357142857142858,
+    "wins": 28
+   },
+   "microsoft/harrier-oss-v1-270m": {
+    "games": 50,
+    "mean_turns_when_won": 8.777777777777779,
+    "wins": 18
+   },
+   "potion": {
+    "games": 50,
+    "mean_turns_when_won": 8.863636363636363,
+    "wins": 22
+   },
+   "wordllama": {
+    "games": 50,
+    "mean_turns_when_won": 10.5,
+    "wins": 14
+   }
+  },
+  "bge": {
+   "Qwen/Qwen3-Embedding-0.6B": {
+    "games": 50,
+    "mean_turns_when_won": 9.25,
+    "wins": 24
+   },
+   "bge": {
+    "games": 50,
+    "mean_turns_when_won": 2.56,
+    "wins": 50
+   },
+   "eat": {
+    "games": 50,
+    "mean_turns_when_won": 10.0,
+    "wins": 1
+   },
+   "google/embeddinggemma-2": {
+    "games": 50,
+    "mean_turns_when_won": 8.722222222222221,
+    "wins": 18
+   },
+   "granite": {
+    "games": 50,
+    "mean_turns_when_won": 9.631578947368421,
+    "wins": 19
+   },
+   "microsoft/harrier-oss-v1-0.6b": {
+    "games": 50,
+    "mean_turns_when_won": 8.75,
+    "wins": 20
+   },
+   "microsoft/harrier-oss-v1-270m": {
+    "games": 50,
+    "mean_turns_when_won": 9.857142857142858,
+    "wins": 14
+   },
+   "potion": {
+    "games": 50,
+    "mean_turns_when_won": 7.0476190476190474,
+    "wins": 21
+   },
+   "wordllama": {
+    "games": 50,
+    "mean_turns_when_won": 10.416666666666666,
+    "wins": 12
+   }
+  },
+  "google/embeddinggemma-2": {
+   "Qwen/Qwen3-Embedding-0.6B": {
+    "games": 50,
+    "mean_turns_when_won": 9.105263157894736,
+    "wins": 19
+   },
+   "bge": {
+    "games": 50,
+    "mean_turns_when_won": 8.363636363636363,
+    "wins": 22
+   },
+   "eat": {
+    "games": 50,
+    "mean_turns_when_won": 12.11111111111111,
+    "wins": 9
+   },
+   "google/embeddinggemma-2": {
+    "games": 50,
+    "mean_turns_when_won": 3.06,
+    "wins": 50
+   },
+   "granite": {
+    "games": 50,
+    "mean_turns_when_won": 8.8,
+    "wins": 20
+   },
+   "microsoft/harrier-oss-v1-0.6b": {
+    "games": 50,
+    "mean_turns_when_won": 7.642857142857143,
+    "wins": 28
+   },
+   "microsoft/harrier-oss-v1-270m": {
+    "games": 50,
+    "mean_turns_when_won": 8.088235294117647,
+    "wins": 34
+   },
+   "potion": {
+    "games": 50,
+    "mean_turns_when_won": 8.478260869565217,
+    "wins": 23
+   },
+   "wordllama": {
+    "games": 50,
+    "mean_turns_when_won": 10.055555555555555,
+    "wins": 18
+   }
+  },
+  "granite": {
+   "Qwen/Qwen3-Embedding-0.6B": {
+    "games": 50,
+    "mean_turns_when_won": 8.875,
+    "wins": 16
+   },
+   "bge": {
+    "games": 50,
+    "mean_turns_when_won": 9.375,
+    "wins": 16
+   },
+   "eat": {
+    "games": 50,
+    "mean_turns_when_won": 11.75,
+    "wins": 8
+   },
+   "google/embeddinggemma-2": {
+    "games": 50,
+    "mean_turns_when_won": 8.294117647058824,
+    "wins": 17
+   },
+   "granite": {
+    "games": 50,
+    "mean_turns_when_won": 2.38,
+    "wins": 50
+   },
+   "microsoft/harrier-oss-v1-0.6b": {
+    "games": 50,
+    "mean_turns_when_won": 8.0,
+    "wins": 14
+   },
+   "microsoft/harrier-oss-v1-270m": {
+    "games": 50,
+    "mean_turns_when_won": 8.8,
+    "wins": 20
+   },
+   "potion": {
+    "games": 50,
+    "mean_turns_when_won": 8.428571428571429,
+    "wins": 14
+   },
+   "wordllama": {
+    "games": 50,
+    "mean_turns_when_won": 9.4,
+    "wins": 10
+   }
+  },
+  "microsoft/harrier-oss-v1-0.6b": {
+   "Qwen/Qwen3-Embedding-0.6B": {
+    "games": 50,
+    "mean_turns_when_won": 8.0,
+    "wins": 25
+   },
+   "bge": {
+    "games": 50,
+    "mean_turns_when_won": 8.185185185185185,
+    "wins": 27
+   },
+   "eat": {
+    "games": 50,
+    "mean_turns_when_won": 12.4,
+    "wins": 5
+   },
+   "google/embeddinggemma-2": {
+    "games": 50,
+    "mean_turns_when_won": 7.35,
+    "wins": 20
+   },
+   "granite": {
+    "games": 50,
+    "mean_turns_when_won": 8.916666666666666,
+    "wins": 24
+   },
+   "microsoft/harrier-oss-v1-0.6b": {
+    "games": 50,
+    "mean_turns_when_won": 3.2,
+    "wins": 50
+   },
+   "microsoft/harrier-oss-v1-270m": {
+    "games": 50,
+    "mean_turns_when_won": 6.9,
+    "wins": 30
+   },
+   "potion": {
+    "games": 50,
+    "mean_turns_when_won": 8.708333333333334,
+    "wins": 24
+   },
+   "wordllama": {
+    "games": 50,
+    "mean_turns_when_won": 9.058823529411764,
+    "wins": 17
+   }
+  },
+  "microsoft/harrier-oss-v1-270m": {
+   "Qwen/Qwen3-Embedding-0.6B": {
+    "games": 50,
+    "mean_turns_when_won": 9.857142857142858,
+    "wins": 21
+   },
+   "bge": {
+    "games": 50,
+    "mean_turns_when_won": 9.11111111111111,
+    "wins": 18
+   },
+   "eat": {
+    "games": 50,
+    "mean_turns_when_won": 12.0,
+    "wins": 5
+   },
+   "google/embeddinggemma-2": {
+    "games": 50,
+    "mean_turns_when_won": 6.545454545454546,
+    "wins": 22
+   },
+   "granite": {
+    "games": 50,
+    "mean_turns_when_won": 8.708333333333334,
+    "wins": 24
+   },
+   "microsoft/harrier-oss-v1-0.6b": {
+    "games": 50,
+    "mean_turns_when_won": 7.541666666666667,
+    "wins": 24
+   },
+   "microsoft/harrier-oss-v1-270m": {
+    "games": 50,
+    "mean_turns_when_won": 2.52,
+    "wins": 50
+   },
+   "potion": {
+    "games": 50,
+    "mean_turns_when_won": 8.625,
+    "wins": 24
+   },
+   "wordllama": {
+    "games": 50,
+    "mean_turns_when_won": 9.6875,
+    "wins": 16
+   }
+  },
+  "potion": {
+   "Qwen/Qwen3-Embedding-0.6B": {
+    "games": 50,
+    "mean_turns_when_won": 12.6875,
+    "wins": 32
+   },
+   "bge": {
+    "games": 50,
+    "mean_turns_when_won": 9.785714285714286,
+    "wins": 42
+   },
+   "eat": {
+    "games": 50,
+    "mean_turns_when_won": 18.0,
+    "wins": 10
+   },
+   "google/embeddinggemma-2": {
+    "games": 50,
+    "mean_turns_when_won": 10.289473684210526,
+    "wins": 38
+   },
+   "granite": {
+    "games": 50,
+    "mean_turns_when_won": 13.35483870967742,
+    "wins": 31
+   },
+   "microsoft/harrier-oss-v1-0.6b": {
+    "games": 50,
+    "mean_turns_when_won": 10.820512820512821,
+    "wins": 39
+   },
+   "microsoft/harrier-oss-v1-270m": {
+    "games": 50,
+    "mean_turns_when_won": 11.027777777777779,
+    "wins": 36
+   },
+   "potion": {
+    "games": 50,
+    "mean_turns_when_won": 8.82,
+    "wins": 50
+   },
+   "wordllama": {
+    "games": 50,
+    "mean_turns_when_won": 11.90625,
+    "wins": 32
+   }
+  },
+  "wordllama": {
+   "Qwen/Qwen3-Embedding-0.6B": {
+    "games": 50,
+    "mean_turns_when_won": 15.296296296296296,
+    "wins": 27
+   },
+   "bge": {
+    "games": 50,
+    "mean_turns_when_won": 15.15,
+    "wins": 20
+   },
+   "eat": {
+    "games": 50,
+    "mean_turns_when_won": 19.727272727272727,
+    "wins": 11
+   },
+   "google/embeddinggemma-2": {
+    "games": 50,
+    "mean_turns_when_won": 13.227272727272727,
+    "wins": 22
+   },
+   "granite": {
+    "games": 50,
+    "mean_turns_when_won": 14.105263157894736,
+    "wins": 19
+   },
+   "microsoft/harrier-oss-v1-0.6b": {
+    "games": 50,
+    "mean_turns_when_won": 13.310344827586206,
+    "wins": 29
+   },
+   "microsoft/harrier-oss-v1-270m": {
+    "games": 50,
+    "mean_turns_when_won": 12.25,
+    "wins": 20
+   },
+   "potion": {
+    "games": 50,
+    "mean_turns_when_won": 14.590909090909092,
+    "wins": 22
+   },
+   "wordllama": {
+    "games": 50,
+    "mean_turns_when_won": 8.96,
+    "wins": 50
+   }
+  }
+ },
+ "threshold": 0.4
+}

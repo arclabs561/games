@@ -1,0 +1,18 @@
+{
+ "assassin_costs": [
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  9
+ ],
+ "boards": 50,
+ "clues_checked": 267237,
+ "multi_peaked": 0,
+ "random_multi_peaked": 0,
+ "random_weightings": 100000
+}

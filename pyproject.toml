@@ -30,6 +30,12 @@ boggle = [
     "tabulate>=0.10",
     "wordfreq==3.1.1",
 ]
+codenames = [
+    "numpy>=2.5",
+    "onnxruntime>=1.32",
+    "tokenizers>=0.23",
+    "wordfreq==3.1.1",
+]
 drive_ya_nuts = [
     "numpy>=2.5",
 ]
@@ -65,7 +71,7 @@ build-backend = "uv_build"
 
 [tool.uv.build-backend]
 module-root = ""
-module-name = ["boggle", "drive_ya_nuts", "egyptian_ratscrew", "ev_nova", "hanabi", "mastermind", "peggle", "pokemon", "tenzi"]
+module-name = ["boggle", "codenames", "drive_ya_nuts", "egyptian_ratscrew", "ev_nova", "hanabi", "mastermind", "peggle", "pokemon", "tenzi"]
 
 [tool.ruff]
 line-length = 100

@@ -1,0 +1,48 @@
+name: codenames-embed
+# A copy of the workflow that computed the Hugging Face vectors, on the branch
+# compute/codenames-embed. It is inert here; to use it, put it under .github/workflows/
+# on a branch named compute/<something> and change the branch name below.
+#
+# Computes word vectors for codenames/ with models from the Hugging Face Hub, on a
+# GitHub-hosted runner (CPU), and commits them to this branch under codenames/vectors/.
+on:
+  push:
+    branches: ["compute/codenames-embed"]
+    paths: [".github/workflows/codenames-embed.yml"]
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: codenames-embed-push
+  cancel-in-progress: false
+jobs:
+  embed:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        model:
+          - Qwen/Qwen3-Embedding-0.6B
+          - microsoft/harrier-oss-v1-270m
+          - microsoft/harrier-oss-v1-0.6b
+          - google/embeddinggemma-2
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+      - name: Embed the vocabulary
+        env:
+          MODEL: ${{ matrix.model }}
+        run: |
+          uv run --group codenames --with "sentence-transformers>=5" --with torch --with torchvision --with pillow \
+            python -m codenames.embed --model "$MODEL" --template bare related query \
+            --out-dir codenames/vectors
+          ls -l codenames/vectors
+      - name: Commit the vectors to this branch
+        run: |
+          git config user.name arclabs561
+          git config user.email arclabs561@users.noreply.github.com
+          git add codenames/vectors
+          git commit -q -m "codenames: vectors for ${{ matrix.model }}"
+          for i in 1 2 3 4 5; do git pull -q --rebase && git push -q && break; sleep 10; done
