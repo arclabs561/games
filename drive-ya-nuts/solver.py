@@ -51,7 +51,7 @@ from itertools import permutations
 from math import ceil, comb, log
 
 
-class Nut(object):
+class Nut:
     """Simple data structure for faster retrieval of adjacent nut values."""
 
     def __init__(self, order):
@@ -80,7 +80,7 @@ class Nut(object):
         return self._canon
 
     def __repr__(self):
-        return "Nut({})".format(self.order)
+        return f"Nut({self.order})"
 
     @staticmethod
     def build_mapping(order):
@@ -194,7 +194,7 @@ def hoeffding_trials(*, epsilon: float, alpha: float, m: int = 1) -> int:
 
 
 def print_header(text):
-    print("\n\033[1m\033[31m\033[4m{}\033[0m".format(text))
+    print(f"\n\033[1m\033[31m\033[4m{text}\033[0m")
 
 
 def count_solutions(pool, *, stop_after=None):

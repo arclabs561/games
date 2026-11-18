@@ -15,7 +15,7 @@ class Mastermind:
         return [randint(1, self.colors) for _ in range(self.holes)]
 
     def grade(self, guess):
-        exact = sum(i == j for i, j in zip(guess, self.code))
+        exact = sum(i == j for i, j in zip(guess, self.code, strict=True))
         guess_counts = Counter(guess)
         near = sum((guess_counts & self.code_counts).values()) - exact
         return exact, near

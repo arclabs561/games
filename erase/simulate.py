@@ -12,7 +12,7 @@ be cleared with small groups only, and with every group worked as a running tota
 import random
 import sys
 from collections import Counter
-from functools import lru_cache
+from functools import cache
 
 from erase import make, solve
 
@@ -119,7 +119,7 @@ def pairs_first(cards, seed, n=N):
     print(f"cards 0 to 10: grabbing pairs first strands a card {share(bad, n)}")
 
 
-@lru_cache(maxsize=None)
+@cache
 def chain(ms):
     """Values of running totals: start with one card, then +c, -c or xc, one card at a time."""
     if len(ms) == 1:

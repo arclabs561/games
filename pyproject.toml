@@ -3,22 +3,59 @@ name = "games"
 version = "0.1.0"
 description = "Game analyses, solvers, and simulations."
 readme = "README.md"
-requires-python = ">=3.10"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.12"
+dependencies = []
 
-[tool.ruff]
-target-version = "py310"
-line-length = 100
-exclude = [".git", "__pycache__", ".ipynb_checkpoints", "*.ipynb"]
-
-[tool.ruff.lint]
-select = ["E", "F", "I", "N", "W"]
-ignore = ["E501"]  # line length handled by formatter
-
-[tool.pytest.ini_options]
-testpaths = ["tests", "pokemon"]
-pythonpath = ["."]
-
+# Scripts that need third-party packages declare them inline (PEP 723) and run with
+# `uv run path/to/script.py`. The groups below are for the notebooks, one per folder:
+#   uv run --group boggle --with jupyter jupyter lab boggle/boggle.ipynb
 [dependency-groups]
 dev = [
-    "pytest>=9.0.3",
+    "pytest>=9.2",
+    "ruff>=0.17",
+    "ty>=0.0.105",
 ]
+boggle = [
+    "matplotlib>=3.11",
+    "nltk>=3.10",
+    "numpy>=2.5",
+    "seaborn>=0.13.2",
+    "tabulate>=0.10",
+]
+egyptian-ratscrew = [
+    "matplotlib>=3.11",
+    "numpy>=2.5",
+    "seaborn>=0.13.2",
+]
+pokemon = [
+    "numpy>=2.5",
+    "pandas>=3.1",
+    "scikit-learn>=1.9",
+    "scipy>=1.18",
+    "seaborn>=0.13.2",
+]
+
+[tool.uv]
+package = false
+
+[tool.ruff]
+line-length = 100
+extend-exclude = ["*.ipynb"]
+
+[tool.ruff.lint]
+select = ["B", "E", "F", "I", "N", "UP", "W"]
+ignore = ["E501"]  # line length is left to the formatter
+
+[tool.ty.environment]
+# Tests and sibling scripts import these folders' modules by bare name.
+extra-paths = ["erase", "mastermind"]
+
+[tool.ty.src]
+exclude = ["**/*.ipynb"]  # as for ruff: the notebooks are exploratory
+
+[tool.pytest]
+testpaths = ["tests", "pokemon"]
+pythonpath = ["."]
+strict = true

@@ -1,21 +1,29 @@
-# Minimal lint/test contract for games repo.
-# See README.md for per-game usage.
+# Lint, type-check and test contract for the games repo. See README.md for per-game usage.
+
+export TY_UV := "scripts"
 
 default:
     just --list
 
-# Lint all Python under repo root (excludes notebooks).
+# Lint all Python (notebooks excluded).
 check:
-    ruff check .
+    uv run ruff check
 
-# Format all Python (in-place).
+# Format all Python in place.
 fmt:
-    ruff format .
+    uv run ruff format
 
 # Check formatting without writing.
 fmt-check:
-    ruff format --check .
+    uv run ruff format --check
 
-# Run pytest (smoke + any future tests).
+# Type-check the project and each PEP 723 script in its own environment.
+typecheck:
+    uv run ty check
+
+# Run the tests.
 test:
-    python -m pytest -q
+    uv run pytest
+
+# Everything CI runs.
+ci: check fmt-check typecheck test

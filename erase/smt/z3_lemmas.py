@@ -1,4 +1,11 @@
-"""Check the induction steps of the hand proofs with z3 (pip install z3-solver).
+#!/usr/bin/env -S uv run --script
+# /// script
+# requires-python = ">=3.12"
+# dependencies = [
+#     "z3-solver>=5.4",
+# ]
+# ///
+"""Check the induction steps of the hand proofs with z3: uv run erase/smt/z3_lemmas.py.
 
 Each step is stated for all integers and z3 is asked for a counterexample; "proved" means
 none exists. A congruence a = b (mod m) is written as a - b = m*k with an explicit

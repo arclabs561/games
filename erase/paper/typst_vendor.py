@@ -1,13 +1,18 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S uv run --script
+# /// script
+# requires-python = ">=3.12"
+# dependencies = [
+#     "typst>=0.15,<0.16",
+# ]
+# ///
 """Compile Typst documents when packages.typst.org is unreachable.
 
 Typst Universe packages are published from the GitHub monorepo typst/packages,
 so the exact files the registry serves can be fetched with git instead:
 
-    pip install typst
-    python3 typst_vendor.py erase.typ          # vendor every @preview import, then compile erase.pdf
-    python3 typst_vendor.py erase.typ --png    # also render one PNG per page
-    python3 typst_vendor.py erase.typ --all    # also erase-phone.pdf and erase.html
+    uv run typst_vendor.py erase.typ          # vendor every @preview import, then compile erase.pdf
+    uv run typst_vendor.py erase.typ --png    # also render one PNG per page
+    uv run typst_vendor.py erase.typ --all    # also erase-phone.pdf and erase.html
 
 With network access to the registry, plain `typst compile erase.typ` is simpler; add
 `--input edition=phone` for the phone edition, or `--features html --format html` for HTML.
@@ -58,7 +63,10 @@ def imports_in(entry):
 
 def entrypoint(pkg_dir):
     toml = (pkg_dir / "typst.toml").read_text()
-    return pkg_dir / re.search(r'entrypoint\s*=\s*"([^"]+)"', toml).group(1)
+    m = re.search(r'entrypoint\s*=\s*"([^"]+)"', toml)
+    if m is None:
+        sys.exit(f"{pkg_dir / 'typst.toml'}: no entrypoint")
+    return pkg_dir / m.group(1)
 
 
 def vendor(doc, cache, out):

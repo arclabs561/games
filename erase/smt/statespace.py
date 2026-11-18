@@ -4,11 +4,11 @@ Confirms that all seven cards of {1, 6, 6, 7, 7, 7, 7} cannot make 10 together, 
 exception in the big-hands theorem. Standard library only; a few seconds.
 """
 
-from functools import lru_cache
+from functools import cache
 from itertools import combinations
 
 
-@lru_cache(maxsize=None)
+@cache
 def finals(state):
     """Every value reachable by repeatedly replacing two values with a+b, a-b, b-a or a*b."""
     if len(state) == 1:

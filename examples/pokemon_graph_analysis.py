@@ -1,9 +1,10 @@
+#!/usr/bin/env -S uv run --script
 # /// script
-# requires-python = ">=3.11"
+# requires-python = ">=3.12"
 # dependencies = [
-#     "networkx>=3.2",
-#     "matplotlib>=3.8",
-#     "scipy>=1.12",
+#     "matplotlib>=3.11",
+#     "networkx>=3.7",
+#     "scipy>=1.18",
 # ]
 # ///
 """Pokemon type effectiveness as a directed graph.

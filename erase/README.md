@@ -35,7 +35,7 @@ A proof of Theorem 15 that does not check cases is still open.
 
 ## Usage
 
-The scripts need only the standard library, except for the z3 checks. Times are from one run on one machine.
+The scripts need only the standard library, except for the z3 checks and the paper build, which declare their dependencies inline (PEP 723) and run with `uv run`. Times are from one run on one machine.
 
 ```bash
 python3 erase/erase.py 4 4 6 9 5 8 5 --center 7 5 1 8   # prints one group per line
@@ -45,13 +45,12 @@ python3 erase/make_certs.py     # writes certificates.jsonl.gz (about 2.5 min)
 python3 erase/verify_certs.py   # all 265,148 cases certified (about 10 s)
 python3 erase/simulate.py       # simulated figures, 30,000 deals each (about 4 min)
 
-pip install z3-solver
-python3 erase/smt/z3_lemmas.py      # a few seconds
-python3 erase/smt/z3_programs.py    # about 2 min
+uv run erase/smt/z3_lemmas.py       # a few seconds
+uv run erase/smt/z3_programs.py     # about 2.5 min
 python3 erase/smt/statespace.py
 ```
 
-Build the paper with `typst compile erase/paper/erase.typ`; add `--input edition=phone` for the phone edition, or `--features html --format html` for a web page. If the Typst package registry is unreachable, `erase/paper/typst_vendor.py` fetches the same packages from the registry's GitHub repository and compiles with the `typst` Python package (`--all` builds all three editions).
+Build the paper with `typst compile erase/paper/erase.typ`; add `--input edition=phone` for the phone edition, or `--features html --format html` for a web page. If the Typst package registry is unreachable, `uv run erase/paper/typst_vendor.py erase/paper/erase.typ` fetches the same packages from the registry's GitHub repository and compiles with the `typst` Python package (`--all` builds all three editions).
 
 ## Files
 

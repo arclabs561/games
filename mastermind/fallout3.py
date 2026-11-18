@@ -7,11 +7,11 @@ class Terminal:
         len_mode, count = Counter(map(len, words)).most_common(1)[0]
         if count != len(words):
             bad_words = [w for w in words if len(w) != len_mode]
-            raise Exception("Some words have different lengths, namely:\n\t{}".format(bad_words))
+            raise Exception(f"Some words have different lengths, namely:\n\t{bad_words}")
         self.words = [w.upper() for w in words]
 
     def letters_common(self, word1, word2):
-        return sum(a == b for a, b in zip(word1, word2))
+        return sum(a == b for a, b in zip(word1, word2, strict=True))
 
     def attempted(self, word, correct):
         word = word.upper()
@@ -28,7 +28,7 @@ class Terminal:
     def automate(self):
         guess = self.words.pop()
         while True:
-            print("Next guess:{:>10}".format(guess))
+            print(f"Next guess:{guess:>10}")
             while True:
                 try:
                     correct = int(input("How many were correct? "))

@@ -1,5 +1,6 @@
+#!/usr/bin/env python3
 # /// script
-# requires-python = ">=3.11"
+# requires-python = ">=3.12"
 # dependencies = []
 # ///
 """Monte Carlo dice simulation with reservoir sampling and Gumbel-max trick.
@@ -41,48 +42,48 @@ def tenzi_game(n_dice: int = 10, rng: random.Random | None = None) -> int:
     return rolls
 
 
-class ReservoirSampler:
+class ReservoirSampler[T]:
     """Maintains a uniform random sample of size k from a stream of items.
 
-    Algorithm R (Vitter, 1985): each of the first k items goes into the
-    reservoir. For the i-th item (i > k), include it with probability k/i,
-    replacing a random existing item.
+    Keeps the k items with the largest scores. When each score is an independent
+    uniform random number, those k items are a uniform sample of the stream, the same
+    distribution as Algorithm R (Vitter, 1985).
     """
 
     def __init__(self, k: int, rng: random.Random | None = None):
         self.k = k
-        self.reservoir: list[tuple[float, object]] = []  # (score, item)
+        self.reservoir: list[tuple[float, T]] = []  # (score, item)
         self.n_seen = 0
         self.rng = rng or random.Random()
 
-    def push(self, score: float, item: object) -> None:
+    def push(self, score: float, item: T) -> None:
         self.n_seen += 1
         if len(self.reservoir) < self.k:
             heapq.heappush(self.reservoir, (score, item))
         elif score > self.reservoir[0][0]:
             heapq.heapreplace(self.reservoir, (score, item))
 
-    def items(self) -> list[tuple[float, object]]:
+    def items(self) -> list[tuple[float, T]]:
         """Return reservoir contents sorted by score descending."""
         return sorted(self.reservoir, key=lambda x: -x[0])
 
 
-class TopKTracker:
+class TopKTracker[T]:
     """Track the top-k items by score using a bounded min-heap. O(n log k)."""
 
     def __init__(self, k: int):
         self.k = k
-        self.heap: list[tuple[float, int, object]] = []  # (score, tiebreak, item)
+        self.heap: list[tuple[float, int, T]] = []  # (score, tiebreak, item)
         self._counter = 0
 
-    def push(self, score: float, item: object) -> None:
+    def push(self, score: float, item: T) -> None:
         self._counter += 1
         if len(self.heap) < self.k:
             heapq.heappush(self.heap, (score, self._counter, item))
         elif score > self.heap[0][0]:
             heapq.heapreplace(self.heap, (score, self._counter, item))
 
-    def items(self) -> list[tuple[float, object]]:
+    def items(self) -> list[tuple[float, T]]:
         return sorted([(s, item) for s, _, item in self.heap], key=lambda x: -x[0])
 
 
@@ -130,7 +131,7 @@ def verify_gumbel_sampling(n_samples: int = 50_000) -> None:
     print("  weights:", weights)
     print(f"  {'face':<6s} {'expected':>10s} {'observed':>10s} {'error':>10s}")
     max_error = 0.0
-    for i, (e, o) in enumerate(zip(expected, observed)):
+    for i, (e, o) in enumerate(zip(expected, observed, strict=True)):
         err = abs(e - o)
         max_error = max(max_error, err)
         print(f"  {i:<6d} {e:>10.4f} {o:>10.4f} {err:>10.4f}")
@@ -150,11 +151,11 @@ def run_simulation(
     rng = random.Random(seed)
 
     # Track luckiest (fewest rolls) and unluckiest (most rolls) games.
-    luckiest = TopKTracker(top_k)
-    unluckiest = TopKTracker(top_k)
+    luckiest = TopKTracker[int](top_k)
+    unluckiest = TopKTracker[int](top_k)
 
     # Reservoir sample: uniform random sample of game lengths.
-    reservoir = ReservoirSampler(k=100, rng=rng)
+    reservoir = ReservoirSampler[tuple[int, int]](k=100, rng=rng)
 
     total_rolls = 0
     min_rolls = n_dice + 1

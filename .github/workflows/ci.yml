@@ -10,21 +10,30 @@ on:
 jobs:
   python:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # The oldest Python that pyproject.toml allows, and the newest release.
+        python: ["3.12", "3.14"]
+    env:
+      # ty installs each PEP 723 script's dependencies with uv (a preview feature).
+      TY_UV: scripts
     steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - name: Set up Python
-        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
         with:
-          python-version: "3.12"
-      - name: Install ruff and pytest
-        run: pip install ruff pytest
-      - name: Lint (ruff check)
-        run: ruff check .
-      - name: Format check (ruff format)
-        run: ruff format --check .
-      - name: Run tests
-        run: python -m pytest -q
-      - name: Compile all Python files
-        run: python -m compileall -q .
+          python-version: ${{ matrix.python }}
+      - name: Install the locked environment
+        run: uv sync --locked
+      - name: Lint
+        run: uv run ruff check
+      - name: Format check
+        run: uv run ruff format --check
+      - name: Type check
+        run: uv run ty check
+      - name: Tests
+        run: uv run pytest
+      - name: Check the paper's lemmas (a PEP 723 script)
+        run: uv run erase/smt/z3_lemmas.py

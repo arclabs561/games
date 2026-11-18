@@ -1,9 +1,17 @@
+#!/usr/bin/env -S uv run --script
+# /// script
+# requires-python = ">=3.12"
+# dependencies = [
+#     "matplotlib>=3.11",
+#     "numpy>=2.5",
+#     "scipy>=1.18",
+# ]
+# ///
 from collections import Counter
 from random import randint
 
 import matplotlib.pyplot as plt
 import numpy as np
-import pyprind
 import scipy.stats as stats
 
 
@@ -23,12 +31,7 @@ def tenzi_turns():
 
 
 def tenzi_sample(n):
-    pbar = pyprind.ProgPercent(n)
-    samples = []
-    for _ in range(n):
-        samples.append(tenzi_turns())
-        pbar.update()
-    return samples
+    return [tenzi_turns() for _ in range(n)]
 
 
 if __name__ == "__main__":

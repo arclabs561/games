@@ -1,4 +1,11 @@
-"""Check "cannot make 10" claims with z3 (pip install z3-solver); about two minutes.
+#!/usr/bin/env -S uv run --script
+# /// script
+# requires-python = ">=3.12"
+# dependencies = [
+#     "z3-solver>=5.4",
+# ]
+# ///
+"""Check "cannot make 10" claims with z3: uv run erase/smt/z3_programs.py (about 2.5 min).
 
 A straight-line program of n-1 steps, each combining two unused values with +, - or x.
 Bit-vectors of 26 bits are exact here: with six cards of value at most 10, no value

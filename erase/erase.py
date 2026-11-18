@@ -9,11 +9,11 @@ are erased; center cards stay and may be reused.
 """
 
 import argparse
-from functools import lru_cache
+from functools import cache
 from itertools import combinations
 
 
-@lru_cache(maxsize=None)
+@cache
 def table(ms):
     """value -> expression, for a small sorted tuple of cards (each used once)."""
     if len(ms) == 1:
@@ -39,7 +39,7 @@ def table(ms):
 SMALL = 4
 
 
-@lru_cache(maxsize=None)
+@cache
 def make(ms, t):
     """An expression using every card of the sorted tuple ms exactly once with value t, or None.
 

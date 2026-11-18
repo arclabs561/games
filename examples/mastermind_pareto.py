@@ -1,7 +1,8 @@
+#!/usr/bin/env -S uv run --script
 # /// script
-# requires-python = ">=3.11"
+# requires-python = ">=3.12"
 # dependencies = [
-#     "matplotlib>=3.8",
+#     "matplotlib>=3.11",
 # ]
 # ///
 """Pareto frontier of Mastermind guessing strategies.
@@ -31,7 +32,7 @@ HOLES = 4
 
 def grade(code: list[int], guess: list[int]) -> tuple[int, int]:
     """Return (exact_matches, color_matches) for guess against code."""
-    exact = sum(c == g for c, g in zip(code, guess))
+    exact = sum(c == g for c, g in zip(code, guess, strict=True))
     code_counts = Counter(code)
     guess_counts = Counter(guess)
     total_color = sum(min(code_counts[c], guess_counts[c]) for c in code_counts)
@@ -71,7 +72,7 @@ def strategy_minimax(code: list[int]) -> int:
             guess = candidates[0]
         else:
             # Among candidates, pick the one that minimizes max partition.
-            best_guess = None
+            best_guess = candidates[0]
             best_max_part = len(candidates) + 1
             # Only search over candidates (not full universe) for speed.
             sample = candidates if len(candidates) <= 50 else random.sample(candidates, 50)
@@ -84,7 +85,7 @@ def strategy_minimax(code: list[int]) -> int:
                 if max_part < best_max_part:
                     best_max_part = max_part
                     best_guess = g
-            guess = best_guess  # type: ignore[assignment]
+            guess = best_guess
         guesses += 1
     return guesses
 
@@ -104,7 +105,7 @@ def strategy_entropy(code: list[int]) -> int:
         if len(candidates) == 1:
             guess = candidates[0]
         else:
-            best_guess = None
+            best_guess = candidates[0]
             best_entropy = -1.0
             sample = candidates if len(candidates) <= 50 else random.sample(candidates, 50)
             for g in sample:
@@ -117,7 +118,7 @@ def strategy_entropy(code: list[int]) -> int:
                 if entropy > best_entropy:
                     best_entropy = entropy
                     best_guess = g
-            guess = best_guess  # type: ignore[assignment]
+            guess = best_guess
         guesses += 1
     return guesses
 
