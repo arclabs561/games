@@ -1,7 +1,7 @@
 #import "@preview/fletcher:0.5.8" as fletcher: node, edge
 #import "@preview/lilaq:0.6.0" as lq
 
-// Every number in this note is printed by tenzi.py; the plot reads turns.csv, which it writes.
+// Every number in this note is printed by tenzi.py or optimal.py; the plot reads turns.csv, which tenzi.py writes.
 #set document(title: "How Many Turns Does Tenzi Take?", date: none)
 #set page(paper: "us-letter", margin: (x: 1.55in, y: 1.1in), numbering: "1")
 #set text(font: "New Computer Modern", size: 12pt)
@@ -104,27 +104,82 @@ The switching strategy is also a chain on the matched count, with a different st
 
 Switching rarely matters because it needs the rerolled dice to beat the kept ones. With three kept, seven rerolled dice must show four of some other face, and later in the game the kept group is too large to beat.
 
-= Checks
+= Naming the face first
 
-`tenzi.py` computes everything above with exact fractions, and also plays 100,000 seeded games with each strategy:
+Some players name the face before the first roll. Then each die is on its own: it needs a geometric number of rolls, with chance $1 slash 6$ each time, and the game lasts as long as the slowest of the ten. With $q = 5 slash 6$,
+$ P(T > k) = 1 - (1 - q^k)^10 = sum_(j=1)^10 (-1)^(j+1) binom(10, j) q^(j k), $
+and summing over $k$ gives the mean,
+$ E[T] = sum_(k >= 0) P(T > k) = sum_(j=1)^10 (-1)^(j+1) binom(10, j) / (1 - q^j) = 16.565 "turns," $
+with standard deviation 6.834. The chain started from no matched dice gives the same mean exactly. Choosing the face after the first roll is worth 1.2 turns.
+
+Bacinski and Pennings @slides play this way and report a mean of 15.565 with standard deviation 6.834. Their mean is the exact one less one: their table of finishing times puts, beside each roll $k$, the exact chance of finishing on roll $k + 1$, to within 0.0006. Their state vectors do count the first roll ($S_20 - S_19 = 0.0401 = P(T = 20)$). A shift changes the mean but not the spread, so their standard deviation is exact.
+
+= The race
+
+With $n$ players who roll together, the game ends on the first turn on which someone finishes. If one player is still going after turn $t$ with chance $S(t)$, the first finish comes on turn $t$ with chance $S(t-1)^n - S(t)^n$. Taking away the chance that exactly one player finishes then gives the chance of a tie. The chain also gives the chance of nine matched dice after each turn, and from it the expected number of players left one die short when the game ends (@tab-race).
 
 #figure(
+  placement: auto,
+  text(10.5pt, table(
+    columns: 6, align: right, stroke: none, inset: (x: 5pt, y: 3.5pt),
+    table.hline(),
+    table.header([players], [winning turn], [slides], [P(tie)], [one die left], [slides]),
+    table.hline(stroke: 0.5pt),
+    [2], [12.90], [13.0], [0.048], [0.52], [0.53],
+    [3], [11.41], [11.4], [0.080], [0.91], [0.91],
+    [4], [10.54], [10.6], [0.103], [1.22], [1.21],
+    [6], [9.52], [9.6], [0.137], [1.70], [1.71],
+    [10], [8.48], [8.5], [0.181], [2.41], [2.37],
+    [30], [6.84], [6.8], [0.276], [4.38], [4.36],
+    table.hline(),
+  )),
+  caption: [A race in which the face is named first, exact, against the slides @slides. The slides label each row with the number of other players. Their race means count the first roll, unlike their single-player mean. With switching, the winning turn comes about one turn sooner: 11.68 for two players and 5.89 for thirty.],
+) <tab-race>
+
+The slides' figures differ from the exact ones by up to 0.1 turns and 0.05 players, as a simulation would. A seeded simulation of 20,000 races of four players gives $10.515 plus.minus 0.041$, $0.107 plus.minus 0.004$ and $1.208 plus.minus 0.013$, against the exact 10.542, 0.103 and 1.216.
+
+= The best strategy
+
+Is there anything better than switching? After a roll, all that matters is how many dice show each face, such as $(4, 3, 2, 1)$. The player keeps some dice and rerolls the rest, and each roll costs a turn. This is a Markov decision process with 34 kinds of roll, small enough to solve with exact fractions. Policy iteration starts from switching and stops at once: no keep improves on it. That holds when the kept dice must share one face, as the rules require, and also when any dice may be kept. So 15.2944 turns is the best possible mean.
+
+After keeping $k$ dice of one face, the expected turns still to come are
+
+#align(center, text(10.5pt, table(
+  columns: 10, align: right, stroke: none, inset: (x: 4pt, y: 3.5pt),
+  table.hline(),
+  [$k$], [0, 1], [2], [3], [4], [5], [6], [7], [8], [9],
+  table.hline(stroke: 0.5pt),
+  [turns], [15.29], [15.11], [14.66], [13.93], [13.02], [11.93], [10.56], [8.73], [6.00],
+  table.hline(),
+)))
+
+These fall as $k$ grows, so keeping more is always better, and every other keep loses at least 0.05 turns. One kept die is worth nothing: since faces are interchangeable, it is as good as rolling it. On small games, up to four dice on three faces, the method agrees with value iteration over every ordered roll and every subset of dice to keep.
+
+= Checks
+
+`tenzi.py` and `optimal.py` compute everything above with exact fractions, and `tenzi.py` also plays 100,000 seeded games with each strategy (@tab-checks).
+
+#figure(
+  placement: auto,
   table(
     columns: 3, align: (left, right, right), stroke: none,
     table.hline(),
     [strategy], [exact mean], [simulated mean (95% interval)],
     table.hline(stroke: 0.5pt),
+    [face named first], [16.565], [16.535 ± 0.042],
     [fixed face], [15.349], [15.319 ± 0.042],
     [switching], [15.294], [15.255 ± 0.042],
     table.hline(),
   ),
   caption: [Exact means and simulated ones; each exact mean lies inside its simulated interval. Game $i$ of each simulation is seeded with $i$.],
-)
+) <tab-checks>
 
-The tests check that each distribution sums to 1 within $10^(-12)$, that its mean agrees with the value from the equations above, and that the committed `turns.csv` matches what the script writes.
+The tests check that each distribution sums to 1 within $10^(-12)$, that its mean agrees with the value from the equations above, that the committed `turns.csv` matches what the script writes, that the race agrees with a seeded simulation of 3,000 races, and that policy iteration agrees with value iteration on small games.
 
 = Questions left open
 
-- *The best strategy.* Keeping every die of the most common face is natural, but a player could keep fewer, or switch on a tie. A Markov decision process over the multiset of faces would find the optimum.
-- *The race.* With $p$ players, the game ends when the fastest finishes. The number of turns is the minimum of $p$ independent draws from @fig-turns, so its distribution follows directly from the cumulative chances.
-- *Other sizes.* The same chain works for any number of dice and faces.
+- *Playing to win.* The best strategy above minimizes the expected number of turns. In a race the aim is to finish first, and a player who can see the others' dice might take more risk when behind.
+- *Speed.* The slides @slides also ask how much a faster player gains; in a lockstep race every player rolls at the same pace.
+- *Other sizes.* The same chain and decision process work for any number of dice and faces.
+
+#bibliography("tenzi.yml", style: "ieee")

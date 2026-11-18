@@ -1,11 +1,13 @@
-"""How many turns does a game of Tenzi take?
+"""How many turns does a game of Tenzi take, and who wins the race?
 
 Each player rolls ten dice, keeps the dice showing one face, and rerolls the rest until all
-ten match. Under the **fixed-face** strategy the player picks the most common face after the
-first roll and never changes it. The **switching** strategy changes face whenever the rerolled
-dice show more of another face than are kept. Either way the number of matching dice is a
-Markov chain, so the distribution of turns can be computed exactly; a seeded simulation of
-each strategy checks the exact numbers.
+ten match. Three strategies are compared. The **target-first** strategy names a face before the
+first roll. The **fixed-face** strategy picks the most common face after the first roll and
+never changes it. The **switching** strategy changes face whenever the rerolled dice show more
+of another face than are kept. In each the number of matching dice is a Markov chain, so the
+distribution of turns can be computed exactly; so can a race between n players who roll in
+lockstep. Seeded simulations check the exact numbers. `tenzi.optimal` shows that no strategy
+beats switching.
 
     uv run python -m tenzi.tenzi           # exact summary, simulations, and tenzi/turns.csv
     uv run python -m tenzi.tenzi --plot    # also a histogram with a fitted gamma density
@@ -68,34 +70,97 @@ def reroll_switching(m: int) -> Dist:
     return dict(dist)
 
 
-def turn_distribution(max_turns: int = 200, step=reroll) -> Dist:
-    """P(the strategy finishes on turn t), for t = 1 .. max_turns; `step` is its reroll."""
-    dist, state = {}, first_roll()
-    for t in range(1, max_turns + 1):
-        dist[t] = state.get(DICE, Fraction(0))
+def target_first() -> Dist:
+    """Matching dice after the first roll when the face is named before it: Bin(10, 1/6)."""
+    return reroll(0)
+
+
+def state_distributions(max_turns: int = 200, step=reroll, first: Dist | None = None) -> list[Dist]:
+    """Element t - 1 gives P(m dice match after turn t, and the game did not end earlier).
+
+    `first` is the count after the first roll (default `first_roll()`), `step` the reroll.
+    """
+    states, state = [], first_roll() if first is None else first
+    for _ in range(max_turns):
+        states.append(state)
         nxt: defaultdict[int, Fraction] = defaultdict(Fraction)
         for m, pr in state.items():
             if m < DICE:
                 for m2, q in step(m).items():
                     nxt[m2] += pr * q
         state = nxt
-    return dist
+    return states
+
+
+def turn_distribution(max_turns: int = 200, step=reroll, first: Dist | None = None) -> Dist:
+    """P(the strategy finishes on turn t), for t = 1 .. max_turns; `step` is its reroll."""
+    states = state_distributions(max_turns, step, first)
+    return {t: s.get(DICE, Fraction(0)) for t, s in enumerate(states, 1)}
 
 
 def turns_left(step=reroll) -> Dist:
     """Expected further turns to finish from m matching dice (0 when m = 10)."""
     e: Dist = {DICE: Fraction(0)}
-    for m in range(DICE - 1, 0, -1):
+    for m in range(DICE - 1, -1, -1):
         moves = step(m)
         gain = sum((q * e[m2] for m2, q in moves.items() if m2 != m), Fraction(0))
         e[m] = (1 + gain) / (1 - moves.get(m, Fraction(0)))
     return e
 
 
-def expected_turns(step=reroll) -> Fraction:
+def expected_turns(step=reroll, first: Dist | None = None) -> Fraction:
     """Expected turns for the strategy, counting the first roll."""
-    e = turns_left(step)
-    return 1 + sum((pr * e[m] for m, pr in first_roll().items()), Fraction(0))
+    e, first = turns_left(step), first_roll() if first is None else first
+    return 1 + sum((pr * e[m] for m, pr in first.items()), Fraction(0))
+
+
+STRATEGIES = {  # name: (count after the first roll, reroll step)
+    "target first": (target_first(), reroll),
+    "fixed face": (first_roll(), reroll),
+    "switching": (first_roll(), reroll_switching),
+}
+
+
+def target_first_moments() -> tuple[Fraction, Fraction]:
+    """Mean and variance of the turns when the face is named first, in closed form.
+
+    Each die needs a Geometric(1/6) number of turns, and the game lasts the longest of the ten:
+    P(T > k) = 1 - (1 - q^k)^10 = sum_j (-1)^(j+1) C(10, j) q^(jk) with q = 5/6. Summing over
+    k gives E[T] = sum P(T > k) and E[T^2] = sum (2k + 1) P(T > k).
+    """
+    q = 1 - P
+    terms = [((-1) ** (j + 1) * comb(DICE, j), q**j) for j in range(1, DICE + 1)]
+    mean_t = sum(c / (1 - x) for c, x in terms)
+    square = sum(c * (1 + x) / (1 - x) ** 2 for c, x in terms)
+    return mean_t, square - mean_t**2
+
+
+def moments(dist: Dist) -> tuple[Fraction, Fraction]:
+    """Mean and variance of a distribution over turns."""
+    m = sum((t * p for t, p in dist.items()), Fraction(0))
+    return m, sum(((t - m) ** 2 * p for t, p in dist.items()), Fraction(0))
+
+
+def race(n: int, states: list) -> tuple[list, float | Fraction, float | Fraction]:
+    """Race of n players who roll together, from one player's `state_distributions`.
+
+    Returns P(the first finish is on turn t) for t = 1, 2, ..., P(two or more players finish
+    on that turn), and the expected number of players with nine dice matched when it comes.
+    The numbers can be Fractions or floats; the sums stop where `states` does.
+    """
+    done = [s.get(DICE, 0) for s in states]
+    survive = [1]  # survive[t] = P(one player is not done after turn t)
+    for p in done:
+        survive.append(survive[-1] - p)
+    win = [survive[t - 1] ** n - survive[t] ** n for t in range(1, len(states) + 1)]
+    tie = sum(
+        w - n * p * survive[t] ** (n - 1) for t, (w, p) in enumerate(zip(win, done, strict=True), 1)
+    )
+    one_left = n * sum(
+        s.get(DICE - 1, 0) * (survive[t - 1] ** (n - 1) - survive[t] ** (n - 1))
+        for t, s in enumerate(states, 1)
+    )
+    return win, tie, one_left
 
 
 assert sum(first_roll().values()) == 1
@@ -131,10 +196,38 @@ def play_switching(rng: random.Random) -> int:
     return turns
 
 
+def play(rng: random.Random, strategy: str) -> list[int]:
+    """Dice matching the chosen face after each turn, for one of the names in STRATEGIES."""
+    dice = [rng.randint(1, FACES) for _ in range(DICE)]
+    face = 1 if strategy == "target first" else Counter(dice).most_common(1)[0][0]
+    matched = [dice.count(face)]
+    while matched[-1] < DICE:
+        dice = [d if d == face else rng.randint(1, FACES) for d in dice]
+        if strategy == "switching":
+            counts = Counter(dice)
+            if counts[face] < max(counts.values()):
+                face = counts.most_common(1)[0][0]
+        matched.append(dice.count(face))
+    return matched
+
+
+def play_race(rng: random.Random, n: int, strategy: str) -> tuple[int, int, int]:
+    """One simulated race: the winning turn, how many finish on it, how many have nine matched."""
+    games = [play(rng, strategy) for _ in range(n)]
+    turn = min(len(g) for g in games)
+    at_end = [g[turn - 1] for g in games]
+    return turn, at_end.count(DICE), at_end.count(DICE - 1)
+
+
+def interval(samples: list[int] | list[float]) -> str:
+    """Mean with a 95% interval."""
+    half = 1.96 * stdev(samples) / len(samples) ** 0.5
+    return f"{mean(samples):.3f} ± {half:.3f}"
+
+
 def summary(samples: list[int]) -> str:
     """Mean with a 95% interval, and the largest sample."""
-    half = 1.96 * stdev(samples) / len(samples) ** 0.5
-    return f"mean {mean(samples):.3f} ± {half:.3f}, longest {max(samples)}"
+    return f"mean {interval(samples)}, longest {max(samples)}"
 
 
 def write_csv(upto: int = 60) -> None:
@@ -157,24 +250,54 @@ def main() -> None:
     print("  " + ", ".join(f"{m}: {float(left[m]):.2f}" for m in range(2, DICE)))
     tail = 1 - sum(p for t, p in dist.items() if t <= 30)
     print(f"Fixed face, P(more than 30 turns) = {float(tail):.4f}")
-    print("\nExact, by strategy:")
-    for name, step in [("fixed face", reroll), ("switching", reroll_switching)]:
-        d = turn_distribution(step=step)
+    print("\nExact, by strategy (turns count the first roll):")
+    for name, (first, step) in STRATEGIES.items():
+        d = turn_distribution(step=step, first=first)
         cum, median = Fraction(0), None
         for t in sorted(d):
             cum += d[t]
             if median is None and cum >= Fraction(1, 2):
                 median = t
         mode = max(d, key=lambda t: d[t])
-        mean_t = float(expected_turns(step))
-        print(f"  {name:11}  mean {mean_t:.4f} turns, median {median}, most likely {mode}")
+        mean_t, var = moments(d)
+        assert abs(mean_t - expected_turns(step, first)) < Fraction(1, 10**9)
+        print(
+            f"  {name:12}  mean {float(mean_t):.4f}, sd {float(var) ** 0.5:.4f},"
+            f" median {median}, most likely {mode}"
+        )
+    mean_t, var = target_first_moments()
+    print(f"  target first, closed form: mean {float(mean_t):.6f}, sd {float(var) ** 0.5:.6f}")
 
     n = 100_000
+    target = [len(play(random.Random(i), "target first")) for i in range(n)]
     fixed = [play_fixed(random.Random(i)) for i in range(n)]
     switching = [play_switching(random.Random(i)) for i in range(n)]
     print(f"\nSimulated, {n:,} games each (game i seeded with i):")
-    print(f"  fixed face:  {summary(fixed)}")
-    print(f"  switching:   {summary(switching)}")
+    print(f"  target first: {summary(target)}")
+    print(f"  fixed face:   {summary(fixed)}")
+    print(f"  switching:    {summary(switching)}")
+
+    print("\nRace of n players rolling together, exact (sums stop at 200 turns):")
+    for name in ("target first", "switching"):
+        first, step = STRATEGIES[name]
+        states = [
+            {m: float(p) for m, p in s.items()} for s in state_distributions(200, step, first)
+        ]
+        print(f"  {name}:  n, mean winning turn, P(tie), players with nine dice matched")
+        for players in (2, 3, 4, 5, 6, 10, 20, 30):
+            win, tie, one_left = race(players, states)
+            mean_win = sum(t * w for t, w in enumerate(win, 1))
+            print(f"    {players:2}  {mean_win:7.3f}  {tie:.4f}  {one_left:.3f}")
+
+    races, players = 20_000, 4
+    for name in ("target first", "switching"):
+        sims = [play_race(random.Random(i), players, name) for i in range(races)]
+        turns = [t for t, _, _ in sims]
+        ties = [float(k > 1) for _, k, _ in sims]
+        nines = [c for _, _, c in sims]
+        print(f"\nSimulated, {races:,} races of {players} players, {name} (race i seeded with i):")
+        print(f"  winning turn {interval(turns)}, P(tie) {interval(ties)},", end=" ")
+        print(f"players with nine dice matched {interval(nines)}")
 
     write_csv()
     print(f"\nwrote {CSV}")

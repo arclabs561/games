@@ -11,7 +11,7 @@ Questions about games and puzzles, answered with code. Each answer says how it i
 | **Mastermind** | Guessing to split the remaining codes into the most parts averages 4.373 guesses; of the five strategies tried, only minimax never needs a sixth. Exact, over all 1,296 codes. | [`mastermind/`](mastermind) |
 | **Peggle** | Six wins in ten games make a player the better one with chance 743/1024, the chance of at most six heads in eleven fair coin flips. Playing equal players until one is 95% sure, for up to 100 games, declares someone better with chance 0.528. Exact. | [`peggle/`](peggle) |
 | **Pokémon** | No six attacking types are super-effective against all 18 types; ten sets of seven are. Exact. | [`pokemon/`](pokemon) |
-| **Tenzi** | A game takes 15.35 turns on average, or 15.29 when switching faces. Exact, by a Markov chain. | [`tenzi/`](tenzi) |
+| **Tenzi** | A game takes 15.35 turns on average, or 15.29 when switching faces, and no strategy does better. Exact, by a Markov chain and a Markov decision process. | [`tenzi/`](tenzi) |
 
 Each folder's README gives the rest of its results, its files and how to run them. Erase, Peggle and Tenzi have write-ups as PDFs.
 
