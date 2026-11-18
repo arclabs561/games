@@ -10,14 +10,32 @@ A code is four pegs in six colors, 1,296 codes in all. Each strategy below is pl
 | minimax | 5,801 | 4.476 | 5 |
 | first consistent | 7,471 | 5.765 | 9 |
 
-The totals match Table 7 of B. Kooi, "Yet another Mastermind strategy", *ICGA Journal* 28(1), 2005. Two strategies are on the Pareto frontier of average and worst case: most parts has the lowest average, and minimax is the only one that never needs a sixth guess.
+The totals match Table 7 of B. Kooi, "Yet another Mastermind strategy", *ICGA Journal* 28(1), 2005. They depend on how ties are broken: like Knuth, each strategy prefers a guess that could be the secret, then the lowest-numbered code, and guesses the first candidate when two or fewer remain. Among these five, most parts has the lowest average and minimax is the only one that never needs a sixth guess, so those two are the Pareto frontier of average and worst case within the table.
+
+They are not on the frontier over all strategies. K. Koyama and T. W. Lai, "An optimal Mastermind strategy", *J. Recreational Mathematics* 25 (1993), found by exhaustive search that the least possible total is 5,625 guesses (average 4.340), and the least with at most five guesses for every code is 5,626 (average 4.341). The second beats every row of the table in both average and worst case. `optimal.py` repeats that search and gets the same two numbers:
+
+| Best strategy | Total guesses | Average | Worst case | Codes solved in 1, 2, 3, 4, 5, 6 guesses |
+|---|---:|---:|---:|---|
+| any worst case | 5,625 | 4.340 | 6 | 1, 8, 83, 663, 539, 2 |
+| at most five guesses | 5,626 | 4.341 | 5 | 1, 8, 83, 660, 544 |
+
+These are exact. The search also shows that no strategy solves every code within four guesses. The totals are the optimal values; the distributions belong to the particular optimal trees the program reads back, and other optimal trees can spread the guesses differently. Both trees open with 1123 (a color twice, then two others), as Koyama and Lai's does. How the search works, and how it is checked:
+
+- The search tries every code as a guess, including codes ruled out by the replies so far. Permuting colors and permuting positions keep every reply, so it stores each set of candidates once under its least image, and tries one guess from each class that those maps fix. It skips a guess when a lower bound on its cost already reaches the best found, and it remembers each set's cost. It takes about ten minutes here.
+- The tests compare it with the plain recursion (every guess, every set, no bounds or symmetry) on six smaller games, from 2 colors and 2 pegs to 3 colors and 3 pegs, with and without depth limits.
+- The tree read back from the search is played against every code with `score` alone, and its total equals the cost the search reports. That checks that 5,625 and 5,626 can be reached; that nothing lower can rests on the search, and on its agreement with Koyama and Lai.
+
+How the number of guesses grows with the number of pegs n and colors k is a different question, studied with asymptotic bounds. Each reply is one of at most (n + 1)<sup>2</sup> pairs, so any strategy needs at least about n log k / (2 log(n + 1)) guesses. V. Chvátal, "Mastermind", *Combinatorica* 3 (1983), showed that for k up to n<sup>1−ε</sup>, with ε > 0 fixed, random guesses determine the code within a constant factor of that bound, and that n colors need at most of order n log n guesses. B. Doerr, C. Doerr, R. Spöhel and H. Thomas, ["Playing Mastermind with many colors"](https://doi.org/10.1145/2987372), *J. ACM* 63 (2016), lowered that to order n log log n for k = n, using black pegs only. They also showed that any strategy fixed in advance needs order n log n. The known lower bound for k = n is of order n. These bounds hide constants and say nothing about four pegs and six colors; there only the exact search answers. (Chvátal's statements are given here as Doerr et al. summarize them; his paper was not read.)
 
 - `mastermind.py` has the codemaker's reply, `score`, which everything else uses.
 - `strategies.py` compiles each strategy into a guess tree and plays it against every code.
+- `optimal.py` finds the best strategies by exhaustive search.
 - `fallout3.py` applies the same strategies to the Fallout 3 terminal hacking game, described below.
 
 ```bash
 uv run python -m mastermind.strategies          # about half a minute
+uv run python -m mastermind.optimal             # about ten minutes
+uv run python -m mastermind.optimal 4 3         # 4 colors, 3 pegs, under a second
 uv run python -m mastermind.fallout3 --best doctrines batteries scorpions generated occasions   # prints SCORPIONS
 uv run python -m mastermind.fallout3 --best doctrines=3 batteries scorpions generated occasions # after DOCTRINES got 3
 uv run python -m mastermind.fallout3 doctrines batteries scorpions generated occasions   # asks for each likeness

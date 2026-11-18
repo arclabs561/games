@@ -49,6 +49,7 @@ egyptian_ratscrew = [
 ]
 mastermind = [
     "matplotlib>=3.11",
+    "numpy>=2.5",
 ]
 pokemon = [
     "matplotlib>=3.11",

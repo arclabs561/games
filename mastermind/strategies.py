@@ -9,14 +9,15 @@ the reply each one would give.
 Each strategy below picks its next guess from the partitions. Deterministic strategies are
 compiled once into a guess tree and then played against all 1,296 codes, so the averages are
 exact. The random strategy plays every code once with a fixed seed. The script prints each
-strategy's average, worst case and distribution, and which strategies are on the Pareto
-frontier of (average, worst case), both minimized. The same dominance test is
-`pare::pareto_front` in the Rust crate pare.
+strategy's average, worst case and distribution, and which of these strategies are on the
+Pareto frontier of (average, worst case), both minimized, among themselves. The same dominance
+test is `pare::pareto_front` in the Rust crate pare.
 
 The four published strategies and the first-consistent one reproduce, guess for guess, the
 distributions in Table 7 of B. Kooi, "Yet another Mastermind strategy", ICGA Journal 28(1),
-2005. The best possible average, found by exhaustive search, is 4.340 (Koyama and Lai, 1993);
-only minimax never needs a sixth guess.
+2005. Of these, only minimax never needs a sixth guess. None is on the frontier over all
+strategies: exhaustive search finds a total of 5,625 guesses (average 4.340) with worst case
+6, and 5,626 (4.341) with worst case 5 (Koyama and Lai, 1993; reproduced by optimal.py).
 
     uv run python -m mastermind.strategies          # about half a minute
     uv run python -m mastermind.strategies --plot   # also writes mastermind_strategies.png
@@ -197,7 +198,7 @@ def main() -> None:
         print(f"{name:<28}{sum(counts):>7}{float(average):>9.3f}{max(counts):>7}{row}")
 
     front = pareto_front(points)
-    print("\nPareto frontier (average and worst case both minimized):")
+    print("\nPareto frontier among these strategies (average and worst case both minimized):")
     for name in sorted(front, key=lambda n: points[n]):
         print(f"  {name}: average {points[name][0]:.3f}, worst {points[name][1]}")
 

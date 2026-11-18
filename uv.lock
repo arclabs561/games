@@ -555,6 +555,7 @@ ev-nova = [
 ]
 mastermind = [
     { name = "matplotlib" },
+    { name = "numpy" },
 ]
 pokemon = [
     { name = "matplotlib" },
@@ -602,7 +603,10 @@ egyptian-ratscrew = [
     { name = "seaborn", specifier = ">=0.13.2" },
 ]
 ev-nova = [{ name = "numpy", specifier = ">=2.5" }]
-mastermind = [{ name = "matplotlib", specifier = ">=3.11" }]
+mastermind = [
+    { name = "matplotlib", specifier = ">=3.11" },
+    { name = "numpy", specifier = ">=2.5" },
+]
 pokemon = [
     { name = "matplotlib", specifier = ">=3.11" },
     { name = "networkx", specifier = ">=3.7" },
