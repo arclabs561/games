@@ -33,6 +33,20 @@ The printed rules make 10 from pairs only. The first listed variation lets playe
 
 A proof of Theorem 15 that does not check cases is still open.
 
+## The 24 game
+
+`twenty_four.py` applies the same exact search to the classic 24 game: four cards from 1 to 13, with repeats, so C(16, 4) = 1,820 hands; +, −, × and ÷ with any brackets, each card used once. These counts are exact and checked against a brute-force listing of every order, operator choice and bracketing.
+
+| Rule for division | Hands that make 24 | Chance for four cards dealt from a 52-card deck |
+|---|---|---|
+| Fractions allowed along the way | 1,362 of 1,820 | 0.8046 |
+| Every intermediate result a whole number | 1,346 | 0.7985 |
+| No division | 1,163 | 0.7100 |
+
+The 1,362 matches the count given by [4nums.com](https://www.4nums.com/24_game/facts/) and [gottfriedville.net](https://gottfriedville.net/games/24/index.shtml), and 0.8046 matches the deck chance on 4nums.com. Restricted to 1–9 and 1–10, the script gives 404 of 495 and 566 of 715, as [solve24game.com](https://solve24game.com/24-game-solvable-combinations/) reports. Sixteen hands make 24 only through a fraction, also as [puzzletip.com](https://puzzletip.com/24-game-solver/) reports: 1 3 4 6, 1 4 5 6, 1 5 5 5, 1 6 6 8, 1 8 12 12, 2 2 11 11, 2 2 13 13, 2 3 5 12, 2 4 10 10, 2 5 5 10, 2 7 7 10, 3 3 7 7, 3 3 8 8, 4 4 7 7, 5 5 7 11 and 5 7 7 11 (for example 8 ÷ (3 − 8 ÷ 3)).
+
+Informally, Erase's rule is the "no division" row with a smaller target, cards from 0 to 10, and groups of any size: without ÷ every value stays a whole number, which is why the remainder arguments above can rule hands out. In the 24 game, division adds 199 hands, and only 16 of those need a fraction.
+
 ## Usage
 
 The scripts need only the standard library, except for the z3 checks and the paper build, which declare their dependencies inline (PEP 723) and run with `uv run`. Their lock files (`*.py.lock`) pin the versions that produced the paper: z3-solver 5.4.1.0 and typst 0.15.2. Times are from one run on one machine.
@@ -44,6 +58,9 @@ python3 erase/count.py          # 12362536 2530881913560 1 in 204,722 (about 35 
 python3 erase/make_certs.py     # writes certificates.jsonl.gz (about 2.5 min)
 python3 erase/verify_certs.py   # all 265,148 cases certified (about 10 s)
 python3 erase/simulate.py       # simulated figures, 30,000 deals each (about 4 min)
+python3 erase/twenty_four.py    # 24-game counts for three division rules (about 10 s)
+python3 erase/twenty_four.py 3 3 8 8   # one expression per rule, or "none"
+python3 erase/twenty_four.py --check   # adds a brute-force check of every hand (about 2 min)
 
 uv run erase/smt/z3_lemmas.py       # a few seconds
 uv run erase/smt/z3_programs.py     # about 2.5 min
@@ -61,5 +78,6 @@ Build the paper with `typst compile --ignore-system-fonts --font-path erase/pape
 | `make_certs.py` | Writes the certificates for Theorem 15 (`certificates.jsonl.gz`, 2.1 MB, not committed) |
 | `verify_certs.py` | Independent checker for the certificates |
 | `simulate.py` | Seeded simulations: addition only, + and −, pairs first, small groups, no brackets |
+| `twenty_four.py` | The 24 game: exact counts under three division rules, with a brute-force check |
 | `smt/` | z3 checks of the lemmas and of the impossible cases, plus a state-space search |
 | `paper/` | Typst source, print and phone PDFs, and build script |
