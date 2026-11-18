@@ -7,7 +7,6 @@ Game analyses, solvers, and simulations.
 | Game | Path | Content |
 |---|---|---|
 | **Boggle** | `boggle/` | Solver, board analysis (`boggle.ipynb`) |
-| **Codenames** | `codenames/` | Placeholder; `game.py` is empty |
 | **Drive-Ya-Nuts** | `drive-ya-nuts/` | Solver for the tiling puzzle (`solver.py`) |
 | **Egyptian Ratscrew** | `egyptian-ratscrew/` | Simulation (`egyptian-ratscrew.ipynb`) |
 | **Erase** | `erase/` | Which make-ten deals cannot be cleared: solver, certificates, paper (`erase.py`, `paper/erase.pdf`) |

@@ -35,7 +35,7 @@ A proof of Theorem 15 that does not check cases is still open.
 
 ## Usage
 
-The scripts need only the standard library, except for the z3 checks and the paper build, which declare their dependencies inline (PEP 723) and run with `uv run`. Times are from one run on one machine.
+The scripts need only the standard library, except for the z3 checks and the paper build, which declare their dependencies inline (PEP 723) and run with `uv run`. Their lock files (`*.py.lock`) pin the versions that produced the paper: z3-solver 5.4.1.0 and typst 0.15.2. Times are from one run on one machine.
 
 ```bash
 python3 erase/erase.py 4 4 6 9 5 8 5 --center 7 5 1 8   # prints one group per line
