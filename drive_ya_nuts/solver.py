@@ -218,7 +218,7 @@ def format_nut_set(pool):
     return "[" + ", ".join(str(n.canonical_order()) for n in ordered) + "]"
 
 
-def main(argv=None) -> int:
+def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--original",
@@ -302,125 +302,137 @@ def main(argv=None) -> int:
         default=1,
         help="How many solutions to print when --find-k succeeds (0 for none).",
     )
-    args = parser.parse_args(argv)
+    return parser
 
-    if not args.original and not args.distribution and args.find_k is None:
-        parser.error("nothing to do (enable --original, --distribution, and/or --find-k)")
 
-    needs_all_nuts = args.distribution or (args.find_k is not None)
-    all_nuts = None
-    if needs_all_nuts:
-        all_nuts = sorted(
-            {Nut(perm) for perm in permutations(range(1, 7))},
-            key=lambda n: n.canonical_order(),
+def all_nut_kinds() -> list[Nut]:
+    """Every distinct nut: the 720 orders of 1 to 6, up to rotation."""
+    return sorted(
+        {Nut(perm) for perm in permutations(range(1, 7))},
+        key=lambda n: n.canonical_order(),
+    )
+
+
+def show_original() -> None:
+    print_header("Original solutions")
+    sols = list(recur(nuts, [], None))
+    sols.sort(key=lambda sol: tuple(n.canonical_order() for n in sol))
+    print(f"{len(sols)} solution(s)")
+    print(sols)
+
+
+def estimate_distribution(args: argparse.Namespace, all_nuts: list[Nut]) -> None:
+    print_header("Distribution of number of solutions")
+    total = comb(len(all_nuts), 7)
+
+    trials = args.trials
+    if trials is None:
+        trials = hoeffding_trials(
+            epsilon=args.epsilon,
+            alpha=args.alpha,
+            m=args.m,
+        )
+        print(
+            f"Using trials={trials} (Hoeffding, epsilon={args.epsilon}, alpha={args.alpha}, m={args.m})"
+        )
+    else:
+        rec = hoeffding_trials(
+            epsilon=args.epsilon,
+            alpha=args.alpha,
+            m=args.m,
+        )
+        print(
+            f"Using trials={trials} (Hoeffding recommends >= {rec} for epsilon={args.epsilon}, alpha={args.alpha}, m={args.m})"
         )
 
-    if args.original:
-        print_header("Original solutions")
-        sols = list(recur(nuts, [], None))
-        sols.sort(key=lambda sol: tuple(n.canonical_order() for n in sol))
-        print(f"{len(sols)} solution(s)")
-        print(sols)
+    rng = random.Random(args.seed)
+    counts = Counter()
+    t0 = time.perf_counter()
 
-    if args.distribution:
-        print_header("Distribution of number of solutions")
-        assert all_nuts is not None
-        total = comb(len(all_nuts), 7)
+    for i in range(trials):
+        piece_set = set(rng.sample(all_nuts, 7))
+        n_sols = count_solutions(piece_set)
+        counts[n_sols] += 1
 
-        trials = args.trials
-        if trials is None:
-            trials = hoeffding_trials(
-                epsilon=args.epsilon,
-                alpha=args.alpha,
-                m=args.m,
-            )
-            print(
-                f"Using trials={trials} (Hoeffding, epsilon={args.epsilon}, alpha={args.alpha}, m={args.m})"
-            )
-        else:
-            rec = hoeffding_trials(
-                epsilon=args.epsilon,
-                alpha=args.alpha,
-                m=args.m,
-            )
-            print(
-                f"Using trials={trials} (Hoeffding recommends >= {rec} for epsilon={args.epsilon}, alpha={args.alpha}, m={args.m})"
-            )
+        if args.progress_every and (i + 1) % args.progress_every == 0:
+            dt = time.perf_counter() - t0
+            print(f"... {i + 1}/{trials} piece sets ({dt:.1f}s elapsed)")
 
-        rng = random.Random(args.seed)
-        counts = Counter()
-        t0 = time.perf_counter()
+    dt = time.perf_counter() - t0
+    print(f"Elapsed: {dt:.2f}s")
 
-        for i in range(trials):
-            piece_set = set(rng.sample(all_nuts, 7))
-            n_sols = count_solutions(piece_set)
-            counts[n_sols] += 1
+    n0 = counts.get(0, 0)
+    p0 = n0 / trials
+    p_solvable = 1 - p0
+    p_unique = counts.get(1, 0) / trials
+    e_sols = sum(k * v for k, v in counts.items()) / trials
+    e_sols_given = (e_sols / p_solvable) if p_solvable else float("nan")
 
-            if args.progress_every and (i + 1) % args.progress_every == 0:
-                dt = time.perf_counter() - t0
-                print(f"... {i + 1}/{trials} piece sets ({dt:.1f}s elapsed)")
+    print("")
+    print(f"P(solvable): {p_solvable:.2%}")
+    print(f"P(unique solution): {p_unique:.2%}")
+    if p_solvable:
+        print(f"P(unique | solvable): {(p_unique / p_solvable):.2%}")
+    print(f"E[#solutions]: {e_sols:.4f}")
+    if p_solvable:
+        print(f"E[#solutions | solvable]: {e_sols_given:.4f}")
+    print("")
+
+    items = counts.most_common() if args.sort_by == "freq" else sorted(counts.items())
+    for k, v in items:
+        f = v / trials
+        print("{:<4}{:<10.2e}{:<8.1%}{}".format(k, f * total, f, "=" * int(f * 40)))
+
+
+def find_piece_set(args: argparse.Namespace, all_nuts: list[Nut]) -> None:
+    print_header(f"Find piece set with exactly {args.find_k} solution(s)")
+    rng = random.Random(args.seed)
+    target = args.find_k
+
+    t0 = time.perf_counter()
+    for i in range(args.max_tries):
+        piece_set = set(rng.sample(all_nuts, 7))
+        n_sols = count_solutions(piece_set, stop_after=target)
+        if n_sols != target:
+            continue
 
         dt = time.perf_counter() - t0
-        print(f"Elapsed: {dt:.2f}s")
+        print(f"Found after {i + 1} tries ({dt:.2f}s).")
+        print("nuts =", format_nut_set(piece_set))
+        print(f"n_sols = {n_sols}")
+        if args.print_found and target > 0:
+            print("")
+            shown = 0
+            for sol in recur(piece_set, [], None):
+                print(sol)
+                shown += 1
+                if shown >= args.print_found:
+                    break
+        break
+    else:
+        dt = time.perf_counter() - t0
+        print(f"No match found after {args.max_tries} tries ({dt:.2f}s).")
 
-        n0 = counts.get(0, 0)
-        p0 = n0 / trials
-        p_solvable = 1 - p0
-        p_unique = counts.get(1, 0) / trials
-        e_sols = sum(k * v for k, v in counts.items()) / trials
-        e_sols_given = (e_sols / p_solvable) if p_solvable else float("nan")
 
-        print("")
-        print(f"P(solvable): {p_solvable:.2%}")
-        print(f"P(unique solution): {p_unique:.2%}")
-        if p_solvable:
-            print(f"P(unique | solvable): {(p_unique / p_solvable):.2%}")
-        print(f"E[#solutions]: {e_sols:.4f}")
-        if p_solvable:
-            print(f"E[#solutions | solvable]: {e_sols_given:.4f}")
-        print("")
-
-        items = counts.most_common() if args.sort_by == "freq" else sorted(counts.items())
-        for k, v in items:
-            f = v / trials
-            print("{:<4}{:<10.2e}{:<8.1%}{}".format(k, f * total, f, "=" * int(f * 40)))
-
+def main(argv=None) -> int:
+    parser = build_parser()
+    args = parser.parse_args(argv)
+    if not args.original and not args.distribution and args.find_k is None:
+        parser.error("nothing to do (enable --original, --distribution, and/or --find-k)")
     if args.find_k is not None:
-        print_header(f"Find piece set with exactly {args.find_k} solution(s)")
-        assert all_nuts is not None
-        rng = random.Random(args.seed)
-        target = args.find_k
-        if target < 0:
+        if args.find_k < 0:
             parser.error("--find-k must be >= 0")
         if args.max_tries <= 0:
             parser.error("--max-tries must be > 0")
         if args.print_found < 0:
             parser.error("--print-found must be >= 0")
-
-        t0 = time.perf_counter()
-        for i in range(args.max_tries):
-            piece_set = set(rng.sample(all_nuts, 7))
-            n_sols = count_solutions(piece_set, stop_after=target)
-            if n_sols != target:
-                continue
-
-            dt = time.perf_counter() - t0
-            print(f"Found after {i + 1} tries ({dt:.2f}s).")
-            print("nuts =", format_nut_set(piece_set))
-            print(f"n_sols = {n_sols}")
-            if args.print_found and target > 0:
-                print("")
-                shown = 0
-                for sol in recur(piece_set, [], None):
-                    print(sol)
-                    shown += 1
-                    if shown >= args.print_found:
-                        break
-            break
-        else:
-            dt = time.perf_counter() - t0
-            print(f"No match found after {args.max_tries} tries ({dt:.2f}s).")
-
+    all_nuts = all_nut_kinds() if args.distribution or args.find_k is not None else []
+    if args.original:
+        show_original()
+    if args.distribution:
+        estimate_distribution(args, all_nuts)
+    if args.find_k is not None:
+        find_piece_set(args, all_nuts)
     return 0
 
 

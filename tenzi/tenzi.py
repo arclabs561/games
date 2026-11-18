@@ -192,8 +192,9 @@ def main() -> None:
         plt.xlabel("turns")
         plt.ylabel("probability")
         plt.legend()
-        plt.savefig("tenzi.png", dpi=150)
-        print("wrote tenzi.png")
+        png = Path(__file__).with_name("tenzi.png")
+        plt.savefig(png, dpi=150)
+        print(f"wrote {png}")
 
 
 if __name__ == "__main__":

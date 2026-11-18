@@ -29,6 +29,7 @@ import sys
 from collections import Counter
 from collections.abc import Callable
 from fractions import Fraction
+from pathlib import Path
 
 from mastermind.mastermind import score
 
@@ -197,8 +198,9 @@ def main() -> None:
         ax.set_ylabel("Most guesses for any code")
         ax.set_title("Mastermind strategies (blue: Pareto frontier)")
         fig.tight_layout()
-        fig.savefig("mastermind_strategies.png", dpi=150)
-        print("\nwrote mastermind_strategies.png")
+        png = Path(__file__).with_name("mastermind_strategies.png")
+        fig.savefig(png, dpi=150)
+        print(f"\nwrote {png}")
 
 
 if __name__ == "__main__":

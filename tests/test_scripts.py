@@ -86,3 +86,13 @@ def test_third_party_imports_are_declared():
         if imports - declared:
             missing[str(rel)] = sorted(imports - declared)
     assert not missing, f"declare these in the folder's dependency group or inline: {missing}"
+
+
+def test_scripts_with_a_shebang_are_executable_and_only_they():
+    out = subprocess.run(
+        ["git", "ls-files", "-s", "*.py"], cwd=ROOT, capture_output=True, text=True, check=True
+    )
+    for line in out.stdout.splitlines():
+        mode, path = line.split()[0], line.split()[-1]
+        has_shebang = (ROOT / path).read_text().startswith("#!")
+        assert has_shebang == (mode == "100755"), path

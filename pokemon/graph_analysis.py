@@ -8,6 +8,7 @@ types), and strongly connected components.
 from __future__ import annotations
 
 import sys
+from pathlib import Path
 
 import matplotlib.pyplot as plt
 import networkx as nx
@@ -117,8 +118,9 @@ def plot_type_graph(g: nx.DiGraph) -> None:
     ax.set_title("Pokemon type super-effective graph (node size = PageRank)")
     ax.axis("off")
     fig.tight_layout()
-    plt.savefig("pokemon_type_graph.png", dpi=150)
-    print("\nSaved pokemon_type_graph.png")
+    png = Path(__file__).with_name("pokemon_type_graph.png")
+    plt.savefig(png, dpi=150)
+    print(f"\nwrote {png}")
     plt.close()
 
 
