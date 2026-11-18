@@ -4,9 +4,10 @@ import hashlib
 import multiprocessing as mp
 import random
 from collections import Counter
-from collections.abc import Iterable, Iterator
+from collections.abc import Iterable, Iterator, Sequence
+from fractions import Fraction
 from itertools import product
-from math import ceil, log, sqrt
+from math import ceil, factorial, log, sqrt
 from pathlib import Path
 
 type Board = list[list[str]]  # 4 rows of 4 faces; a face is a letter, or "qu"
@@ -35,12 +36,20 @@ CUBES: list[tuple[str, ...]] = [
 NEIGHBORS = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
 
 
+def rand_layout(
+    rng: random.Random | None = None, cubes: list[tuple[str, ...]] = CUBES
+) -> tuple[list[int], Board]:
+    """Shake the cubes into the 16 slots and show a random face of each. Returns which
+    cube went into each slot (as an index into `cubes`, row by row) and the board."""
+    rng = rng or random.Random()
+    order = rng.sample(range(len(cubes)), len(cubes))  # same draws as sampling the cubes
+    faces = [rng.choice(cubes[c]) for c in order]
+    return order, [faces[i : i + 4] for i in range(0, 16, 4)]
+
+
 def rand_board(rng: random.Random | None = None, cubes: list[tuple[str, ...]] = CUBES) -> Board:
     """Shake the cubes into the 16 slots and show a random face of each."""
-    rng = rng or random.Random()
-    order = rng.sample(cubes, len(cubes))
-    faces = [rng.choice(cube) for cube in order]
-    return [faces[i : i + 4] for i in range(0, 16, 4)]
+    return rand_layout(rng, cubes)[1]
 
 
 def make_trie(words: Iterable[str]) -> Trie:
@@ -80,10 +89,15 @@ def get_words(board: Board, trie: Trie, min_len: int = 3) -> Iterator[str]:
                 yield word
 
 
+def sample_layouts(n: int, seed: int) -> list[tuple[list[int], Board]]:
+    """n layouts (cube order and board) drawn from a single random.Random(seed) stream."""
+    rng = random.Random(seed)
+    return [rand_layout(rng) for _ in range(n)]
+
+
 def sample_boards(n: int, seed: int) -> list[Board]:
     """n boards drawn one after another from a single random.Random(seed) stream."""
-    rng = random.Random(seed)
-    return [rand_board(rng) for _ in range(n)]
+    return [board for _, board in sample_layouts(n, seed)]
 
 
 def count_words(
@@ -113,6 +127,10 @@ def _board_words(board: Board) -> list[str]:
     return list(get_words(board, _WORKER["trie"], _WORKER["min_len"]))
 
 
+def _layout_losses(layout: tuple[list[int], Board]) -> list[int]:
+    return cube_losses(*layout, _WORKER["trie"], _WORKER["min_len"])
+
+
 def load_words(path: str | Path, sha256: str | None = None) -> list[str]:
     """The words of a word list, one per line, after checking the file's SHA-256 digest."""
     data = Path(path).read_bytes()
@@ -125,6 +143,126 @@ def points(word: str) -> int:
     """Official score of a word: 3-4 letters 1, 5 letters 2, 6 letters 3, 7 letters 5, 8+ 11."""
     n = len(word)
     return 0 if n < 3 else 1 if n <= 4 else {5: 2, 6: 3, 7: 5}.get(n, 11)
+
+
+def score(board: Board, trie: Trie) -> int:
+    """Total points of the words on a board, each word counted once."""
+    return sum(map(points, get_words(board, trie)))
+
+
+def parse_board(letters: str) -> Board:
+    """A board from 16 letters read row by row; "q" stands for the "qu" face."""
+    faces = ["qu" if c == "q" else c for c in letters.lower()]
+    assert len(faces) == 16, letters
+    return [faces[i : i + 4] for i in range(0, 16, 4)]
+
+
+def orientations(board: Board) -> list[Board]:
+    """The different boards among the 4 rotations and 4 reflections of `board`."""
+    seen, out = set(), []
+    b = board
+    for _ in range(4):
+        b = [list(row) for row in zip(*b[::-1], strict=True)]  # a quarter turn clockwise
+        for c in (b, [row[::-1] for row in b]):  # and its mirror image
+            key = tuple(map(tuple, c))
+            if key not in seen:
+                seen.add(key)
+                out.append(c)
+    return out
+
+
+def permanent(matrix: list[list[int]]) -> int:
+    """The permanent of a square matrix, by Ryser's formula with a Gray code:
+    perm(A) = (-1)^n sum over column sets S of (-1)^|S| prod_i sum_{j in S} A[i][j]."""
+    n = len(matrix)
+    sums = [0] * n  # row sums over the current column set S
+    total = 0
+    for k in range(1, 2**n):
+        j = (k & -k).bit_length() - 1  # the column that enters or leaves S at step k
+        sign = 1 if (k ^ (k >> 1)) >> j & 1 else -1  # is it in the Gray code set now?
+        for i in range(n):
+            sums[i] += sign * matrix[i][j]
+        prod = 1
+        for s in sums:
+            prod *= s
+            if not prod:
+                break
+        total += -prod if (k ^ (k >> 1)).bit_count() % 2 else prod
+    return total * (-1) ** n
+
+
+def face_counts(faces: list[str], cubes: Sequence[tuple[str, ...]] = CUBES) -> list[list[int]]:
+    """Entry [i][j] is how many faces of cube i show the face wanted in slot j."""
+    return [[cube.count(face) for face in faces] for cube in cubes]
+
+
+def roll_ways(board: Board, cubes: Sequence[tuple[str, ...]] = CUBES) -> int:
+    """How many of the len(cubes)! * 6**len(cubes) outcomes of a shake (which cube goes in
+    each slot, and which face of it is up) give exactly this board: the permanent of the
+    face counts, since an outcome is a matching of cubes to slots and a face per cube."""
+    return permanent(face_counts([face for row in board for face in row], cubes))
+
+
+def roll_chance(
+    board: Board, cubes: Sequence[tuple[str, ...]] = CUBES, turned: bool = True
+) -> Fraction:
+    """The exact chance that a shake gives this board; with `turned`, the chance that it
+    gives the board in any of its orientations (rotated or reflected)."""
+    boards = orientations(board) if turned else [board]
+    outcomes = factorial(len(cubes)) * 6 ** len(cubes)
+    return Fraction(sum(roll_ways(b, cubes) for b in boards), outcomes)
+
+
+# The slots adjacent to each slot, numbering the slots 0 to 15 row by row.
+ADJACENT = [
+    [4 * (i + di) + j + dj for di, dj in NEIGHBORS if 0 <= i + di < 4 and 0 <= j + dj < 4]
+    for i, j in product(range(4), range(4))
+]
+
+
+def word_slots(board: Board, trie: Trie, min_len: int = 3) -> dict[str, int]:
+    """Each word on the board, with the slots that every path spelling it passes through,
+    as a bit mask (bit k for slot k, row by row). Blanking the cube in one of those slots
+    takes the word off the board; blanking any other cube leaves a path for it."""
+    faces = [face for row in board for face in row]
+    masks: dict[str, int] = {}
+
+    def recur(k: int, path: str, seen: int, node: Trie) -> None:
+        for letter in faces[k]:
+            child = node.get(letter)
+            if child is None:
+                return
+            node = child
+        path += faces[k]
+        seen |= 1 << k
+        if None in node and len(path) >= min_len:
+            masks[path] = masks.get(path, seen) & seen
+        for n in ADJACENT[k]:
+            if not seen >> n & 1:
+                recur(n, path, seen, node)
+
+    for k in range(16):
+        recur(k, "", 0, trie)
+    return masks
+
+
+def cube_losses(order: list[int], board: Board, trie: Trie, min_len: int = 3) -> list[int]:
+    """Points the board loses when each cube is replaced by a blank, indexed by cube
+    (`order` says which cube is in each slot, row by row, as rand_layout returns it)."""
+    losses = [0] * len(order)
+    for word, mask in word_slots(board, trie, min_len).items():
+        for k in range(16):
+            if mask >> k & 1:
+                losses[order[k]] += points(word)
+    return losses
+
+
+def all_cube_losses(
+    layouts: list[tuple[list[int], Board]], trie: Trie, processes: int | None = None
+) -> list[list[int]]:
+    """cube_losses for each layout, computed in a pool of processes like count_words."""
+    with mp.Pool(processes, initializer=_set_trie, initargs=(trie, 3)) as pool:
+        return list(pool.imap(_layout_losses, layouts, chunksize=500))
 
 
 def wilson(successes: int, trials: int, z: float = 1.96) -> tuple[float, float]:
