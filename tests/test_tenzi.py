@@ -45,3 +45,12 @@ def test_committed_csv_is_current(tmp_path, monkeypatch):
     tenzi.write_csv()
     committed = (Path(tenzi.__file__).parent / "turns.csv").read_text()
     assert (tmp_path / "turns.csv").read_text() == committed
+
+
+def test_examples_tenzi_game_is_the_fixed_face_strategy():
+    sys.path.insert(0, str(Path(__file__).parent.parent / "examples"))
+    from dice_monte_carlo import tenzi_game
+
+    games = [tenzi_game(rng=random.Random(i)) for i in range(4000)]
+    half = 4 * stdev(games) / len(games) ** 0.5
+    assert abs(mean(games) - float(tenzi.expected_turns())) < half

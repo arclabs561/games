@@ -1,3 +1,6 @@
+"""Narrow down the password in a Fallout 3 terminal: each guess reports how many letters
+are right and in the right place, as in Mastermind."""
+
 import sys
 from collections import Counter
 
@@ -46,10 +49,7 @@ class Terminal:
 
 
 if __name__ == "__main__":
-    # wl = ['doctrines', 'batteries', 'scorpions', 'generated', 'occasions',
-    #     'occupants', 'officials', 'intricate', 'deformity', 'brutality',
-    #     'carriages', 'accompany', 'interface']
-    # t = Terminal(wl)
-    # t.automate()
-    # # print(t.letters_common('deadens', 'petrols'))
-    pass
+    # python3 mastermind/fallout3.py doctrines batteries scorpions generated ...
+    if len(sys.argv) < 3:
+        sys.exit("usage: fallout3.py WORD WORD ... (the words shown on the terminal)")
+    Terminal(sys.argv[1:]).automate()

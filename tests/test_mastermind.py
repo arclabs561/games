@@ -25,3 +25,14 @@ def test_highest_colour_counts_toward_near():
 def test_near_respects_multiplicity():
     # code has one 5; guess has three: only one can be a near/exact.
     assert _game([5, 1, 2, 3]).grade([4, 5, 5, 5]) == (0, 1)
+
+
+def test_fallout_terminal_keeps_words_with_that_many_letters_in_place():
+    sys.path.insert(0, str(Path(__file__).parent.parent / "mastermind"))
+    from fallout3 import Terminal
+
+    words = ["doctrines", "batteries", "scorpions", "generated", "occasions"]
+    t = Terminal(words)
+    assert t.letters_common("BATTERIES", "DOCTRINES") == 3  # T, E and S line up
+    t.attempted("doctrines", 3)
+    assert t.words == ["BATTERIES", "OCCASIONS"]
