@@ -8,7 +8,7 @@ Game analyses, solvers, and simulations.
 |---|---|---|
 | **Boggle** | `boggle/` | Solver, board analysis (`board.py`, `boggle.ipynb`) |
 | **Drive-Ya-Nuts** | `drive_ya_nuts/` | Solver for the tiling puzzle (`solver.py`) |
-| **Egyptian Ratscrew** | `egyptian_ratscrew/` | Simulation (`egyptian_ratscrew.ipynb`) |
+| **Egyptian Ratscrew** | `egyptian_ratscrew/` | Exact odds of answering a challenge, and simulated games: how long they last and how much slapping speed matters (`game.py`, `egyptian_ratscrew.ipynb`) |
 | **Erase** | `erase/` | Which make-ten deals cannot be cleared: solver, certificates, paper (`erase.py`, `paper/erase.pdf`) |
 | **Mastermind** | `mastermind/` | The reply to a guess (`mastermind.py`); five guessing strategies scored on every code (`strategies.py`); a filter for the Fallout 3 terminal word puzzle (`fallout3.py`) |
 | **Peggle** | `peggle/` | Who is the better player after k wins in n games: exact odds and a one-line approximation (`peggle.py`, write-up `peggle.pdf`) |
