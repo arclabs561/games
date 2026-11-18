@@ -1,19 +1,19 @@
 # Games
 
-Game analyses, solvers, and simulations.
+Questions about games and puzzles, answered with code. Each answer says how it is known: exact (by counting or proof), or simulated (with the number of trials).
 
-## Catalog
-
-| Game | Path | Content |
+| Game | One result | Folder |
 |---|---|---|
-| **Boggle** | `boggle/` | Solver, board analysis (`board.py`, `boggle.ipynb`) |
-| **Drive-Ya-Nuts** | `drive_ya_nuts/` | Solver for the tiling puzzle (`solver.py`) |
-| **Egyptian Ratscrew** | `egyptian_ratscrew/` | Exact odds of answering a challenge, and simulated games: how long they last and how much slapping speed matters (`game.py`, `egyptian_ratscrew.ipynb`) |
-| **Erase** | `erase/` | Which make-ten deals cannot be cleared: solver, certificates, paper (`erase.py`, `paper/erase.pdf`) |
-| **Mastermind** | `mastermind/` | The reply to a guess (`mastermind.py`); five guessing strategies scored on every code (`strategies.py`); a filter for the Fallout 3 terminal word puzzle (`fallout3.py`) |
-| **Peggle** | `peggle/` | Who is the better player after k wins in n games: exact odds and a one-line approximation (`peggle.py`, write-up `peggle.pdf`) |
-| **Pokémon** | `pokemon/` | The type chart as a graph (`graph.py`, `graph_analysis.py`, `pokemon.ipynb`); IV, stat and capture-odds models for the Emerald Kaizo ROM hack (`emerald_kaizo/`) |
-| **Tenzi** | `tenzi/` | How many turns a game takes, exactly and by simulation (`tenzi.py`, `monte_carlo.py`, write-up `tenzi.pdf`) |
+| **Boggle** | "toe" is the most common word, on 19.1% of random boards; a board holds 97.8 words and 140 points on average. Simulated, 15,000 boards. | [`boggle/`](boggle) |
+| **Drive Ya Nuts** | The original seven nuts fit together in exactly one way. Exact, by exhaustive search. | [`drive_ya_nuts/`](drive_ya_nuts) |
+| **Egyptian Ratscrew** | Winning 55% of the slaps wins 64% of two-player games. Simulated, 4,000 games. | [`egyptian_ratscrew/`](egyptian_ratscrew) |
+| **Erase** | 12,362,536 of the 2,530,881,913,560 deals of this make-ten game cannot be cleared, about 1 in 204,722. Exact, with a proof and machine-checked certificates. | [`erase/`](erase) |
+| **Mastermind** | Guessing to split the remaining codes into the most parts averages 4.373 guesses; of the five strategies tried, only minimax never needs a sixth. Exact, over all 1,296 codes. | [`mastermind/`](mastermind) |
+| **Peggle** | Six wins in ten games make a player the better one with chance 743/1024, the chance of at most six heads in eleven fair coin flips. Exact. | [`peggle/`](peggle) |
+| **Pokémon** | No six attacking types are super-effective against all 18 types; ten sets of seven are. Exact. | [`pokemon/`](pokemon) |
+| **Tenzi** | A game takes 15.35 turns on average, or 15.29 when switching faces. Exact, by a Markov chain. | [`tenzi/`](tenzi) |
+
+Each folder's README gives the rest of its results, its files and how to run them. Erase, Peggle and Tenzi have write-ups as PDFs.
 
 ## Usage
 
@@ -43,7 +43,7 @@ python3 erase/erase.py 4 4 6 9 5 8 5 --center 7 5 1 8
 uv run erase/smt/z3_lemmas.py
 ```
 
-The write-ups in `erase/paper/`, `peggle/` and `tenzi/` are Typst. `uv run erase/paper/typst_vendor.py peggle/peggle.typ` builds one, even when the Typst package registry is unreachable. It uses only Typst's own fonts and any committed beside the paper, and the PDFs record no build date, so a rebuild gives the same bytes; CI rebuilds every PDF and fails if one differs from the committed file (`just papers`).
+The write-ups in `erase/paper/`, `peggle/` and `tenzi/` are Typst. `uv run erase/paper/typst_vendor.py peggle/peggle.typ` builds one, even when the Typst package registry is unreachable. It uses only Typst's own fonts and any committed beside the paper, and the PDFs record no build date, so a rebuild gives the same bytes. CI rebuilds every PDF and fails if one differs from the committed file (`just papers`).
 
 A notebook uses its folder's dependency group:
 
@@ -57,8 +57,6 @@ The committed outputs are checked: CI reruns every notebook with [nbval](https:/
 uv run pytest --nbval --nbval-current-env --sanitize-with tests/nbval_sanitize.cfg boggle/boggle.ipynb
 ```
 
-`boggle/`, `drive_ya_nuts/` and `erase/` have their own READMEs.
-
 ## License
 
-MIT
+The code is under the MIT license. The data files come from the sources named in each folder's README, and keep those sources' terms.

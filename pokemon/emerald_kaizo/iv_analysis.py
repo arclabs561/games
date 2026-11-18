@@ -388,7 +388,7 @@ def render_report(trials: int, seed: int) -> str:
             "## Kaizo-Specific Scope",
             "",
             "The ROMHacking.net listing identifies the published Emerald Kaizo release as v2.1 and documents changed encounter tables, trainer data, map obstacles, and battle restrictions. The creator's thread says EV gains are disabled and warns that EV grinding is unnecessary, but neither source documents a grass-specific IV distribution change.",
-            "The local Downloads ROM has an unresolved build identity and does not match the public 2023 1.1 patch output. This report therefore uses the intended marginal Gen 3 IV model rather than claiming binary-level verification for that file. A different Kaizo fork, an unofficial add-on, or an RNG-manipulation workflow needs a separate model.",
+            "The analyzed ROM has an unresolved build identity and does not match the public 2023 1.1 patch output. This report therefore uses the intended marginal Gen 3 IV model rather than claiming binary-level verification for that file. A different Kaizo fork, an unofficial add-on, or an RNG-manipulation workflow needs a separate model.",
             "",
             "## All Six IVs Above a Threshold",
             "",

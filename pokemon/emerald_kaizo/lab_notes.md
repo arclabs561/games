@@ -8,7 +8,7 @@ is a decision model for a particular species, role, encounter method, and
 play style.
 
 The current analysis is intentionally conservative about what is known from
-the downloaded ROM. The file in Downloads has a verified Emerald base header,
+the downloaded ROM. The analyzed file has a verified Emerald base header,
 but its Kaizo build identity is unresolved.
 
 ## Better Questions
