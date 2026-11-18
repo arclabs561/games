@@ -4,7 +4,7 @@ Questions about games and puzzles, answered with code. Each answer says how it i
 
 | Game | One result | Folder |
 |---|---|---|
-| **Boggle** | "toe" is the most common word, on 19.1% of random boards; a board holds 97.8 words and 140 points on average. Simulated, 15,000 boards. | [`boggle/`](boggle) |
+| **Boggle** | "toe" is the most common word, on 19.1% of random boards; a board holds 97.8 words and 140 points on average. Simulated, 15,000 boards. Of the 172,723 words of three or more letters in the word list, 12,004 cannot appear with these cubes at all. Exact, by matching letters to cubes. | [`boggle/`](boggle) |
 | **Codenames** | A clue giver built on word embeddings expects about two of its words per clue from a guesser that shares its model, and gets 57% to 73% of that from a guesser built on another model. Exact expected values over 200 boards, for eight models. | [`codenames/`](codenames) |
 | **Drive Ya Nuts** | The original seven nuts fit together in exactly one way. Of all 59,487,568,920 sets of seven distinct nuts, 6.805% can be solved and 5.346% have exactly one solution. Exact, by counting every arrangement. | [`drive_ya_nuts/`](drive_ya_nuts) |
 | **Egyptian Ratscrew** | Winning 55% of the slaps wins 64% of two-player games, and the player who lays the first card wins 49.77%, not half. Simulated, 20,000 and 1,000,000 games. | [`egyptian_ratscrew/`](egyptian_ratscrew) |

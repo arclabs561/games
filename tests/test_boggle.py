@@ -197,3 +197,88 @@ def test_best_board_scores():
     found = set(get_words(best, trie))
     assert len(found) == 1044 and score(best, trie) == 3623
     assert "tenge" not in found and "tenge" in set(get_words(best, make_trie(["tenge"])))
+
+
+def brute_possible(word, cubes):
+    """Whether some choice of distinct cubes shows the word's faces, by trying them all."""
+    from boggle.board import word_faces
+
+    faces = word_faces(word)
+    if faces is None or len(faces) > len(cubes):
+        return False
+    return any(
+        all(f in cubes[c] for f, c in zip(faces, pick, strict=True))
+        for pick in permutations(range(len(cubes)), len(faces))
+    )
+
+
+def test_possible_matches_trying_every_choice_of_cubes():
+    from boggle.board import possible
+
+    rng = random.Random(4)
+    for _ in range(300):
+        cubes = [tuple(rng.choice("abcq") for _ in range(6)) for _ in range(rng.randint(1, 5))]
+        cubes = [tuple("qu" if f == "q" else f for f in cube) for cube in cubes]
+        word = "".join(rng.choice(["a", "b", "c", "qu", "q"]) for _ in range(rng.randint(1, 6)))
+        assert possible(word, cubes) == brute_possible(word, cubes), (word, cubes)
+
+
+def test_possible_words_have_witness_boards():
+    from boggle.board import CLASSIC_CUBES, possible, roll_ways, witness_board
+
+    words = sorted({w for w in load_words("boggle/enable1.txt") if len(w) >= 3})
+    for cubes in (CUBES, CLASSIC_CUBES):
+        for word in words[::997]:
+            if possible(word, cubes):
+                board = witness_board(word, cubes)
+                assert roll_ways(board, cubes) > 0
+                assert list(get_words(board, make_trie([word]))) == [word]
+            elif len(word) <= 4:
+                assert not brute_possible(word, cubes)
+
+
+def test_obstructions_are_hall_violations():
+    from boggle.board import CLASSIC_CUBES, obstruction, possible, word_faces
+
+    words = sorted({w for w in load_words("boggle/enable1.txt") if len(w) >= 3})
+    for cubes in (CUBES, CLASSIC_CUBES):
+        for word in words[::101]:
+            why = obstruction(word, cubes)
+            assert (why == ()) == possible(word, cubes), word
+            if why and why not in (("q",), ("length",)):
+                faces = word_faces(word) or []
+                need = sum(f in why for f in faces)
+                have = sum(any(f in cube for f in why) for cube in cubes)
+                assert need > have, (word, why)
+    assert obstruction("jazz") == ("z",) and obstruction("fake") == ("f", "k")
+    assert obstruction("qat") == ("q",) and obstruction("a" * 17) == ("length",)
+
+
+def test_possible_word_counts_and_the_qu_rule():
+    from boggle.board import CLASSIC_CUBES, possible, word_faces
+
+    one = {w for w in load_words("boggle/enable1.txt") if len(w) >= 3}
+    two = {w for w in load_words("boggle/enable2k.txt") if len(w) >= 3}
+    assert len(one) == 172_723 and len(two) == 173_432
+    # Vanderkam's hybrid-boggle wordlists/README.md: 173,402 ENABLE2K words are "Boggle OK".
+    assert sum(word_faces(w) is not None for w in two) == 173_402
+    assert sum(possible(w) for w in one) == 160_719
+    assert sum(possible(w, CLASSIC_CUBES) for w in one) == 169_378
+    assert sum(possible(w) for w in two) == 161_361
+    assert sum(possible(w, CLASSIC_CUBES) for w in two) == 170_084
+
+
+def test_classic_cubes_and_the_best_board():
+    from boggle.board import CLASSIC_CUBES
+
+    assert len(CLASSIC_CUBES) == 16 and all(len(c) == 6 for c in CLASSIC_CUBES)
+    assert sum(c.count("qu") for c in CLASSIC_CUBES) == 1
+    best = parse_board("perslatgsineters")
+    assert roll_ways(best, CLASSIC_CUBES) == 221_616
+    assert roll_chance(best, CLASSIC_CUBES) == Fraction(8 * 221_616, factorial(16) * 6**16)
+
+
+def test_best_board_scores_with_enable2k():
+    trie = make_trie(w for w in load_words("boggle/enable2k.txt") if len(w) >= 3)
+    best = parse_board("perslatgsineters")
+    assert len(set(get_words(best, trie))) == 1045 and score(best, trie) == 3625

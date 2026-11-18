@@ -13,7 +13,10 @@ from pathlib import Path
 type Board = list[list[str]]  # 4 rows of 4 faces; a face is a letter, or "qu"
 type Trie = dict  # letter -> Trie, with the key None marking the end of a word
 
-# The 16 cubes of a standard Boggle set, one tuple of six faces per cube.
+# The 16 cubes of the "New Boggle" set, sold from 1987 (or 1992; sources differ) until the
+# sealed-case edition of about 2008, one tuple of six faces per cube. Listed alike by
+# bananagrammer.com (2013), luke-g.com/boggle/dice.html, robertgamble.net (2016) and Princeton's
+# algs4 BoggleBoard.java ("1992 version").
 CUBES: list[tuple[str, ...]] = [
     ("a", "a", "e", "e", "g", "n"),
     ("a", "b", "b", "j", "o", "o"),
@@ -31,6 +34,16 @@ CUBES: list[tuple[str, ...]] = [
     ("e", "l", "r", "t", "t", "y"),
     ("h", "i", "m", "n", "qu", "u"),
     ("h", "l", "n", "n", "r", "z"),
+]
+
+# The 16 cubes of the classic set, sold from about 1976 to 1986, from the same four listings
+# (Princeton calls it the "1983 version").
+CLASSIC_CUBES: list[tuple[str, ...]] = [
+    tuple("qu" if c == "q" else c for c in cube)
+    for cube in (
+        "aaciot abilty abjmoq acdemp acelrs adenvz ahmors biforx "
+        "denosw dknotu eefhiy egintv egkluy ehinps elpstu gilruw"
+    ).split()
 ]
 
 NEIGHBORS = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
@@ -279,6 +292,106 @@ def hoeffding_boards(epsilon: float, delta: float, words: int = 1) -> int:
     return ceil(log(2 * words / delta) / (2 * epsilon**2))
 
 
+def word_faces(word: str) -> list[str] | None:
+    """The faces that spell `word`, with "qu" as one face; None if some q is not followed by
+    u, since no face shows a q alone."""
+    faces, i = [], 0
+    while i < len(word):
+        if word[i] == "q":
+            if word[i + 1 : i + 2] != "u":
+                return None
+            faces.append("qu")
+            i += 2
+        else:
+            faces.append(word[i])
+            i += 1
+    return faces
+
+
+def cube_matching(
+    faces: Sequence[str], cubes: Sequence[tuple[str, ...]] = CUBES
+) -> list[int] | None:
+    """A different cube for each face, each cube showing that face on one of its sides
+    (as a list of cube indices), or None if there is none. Kuhn's augmenting paths."""
+    owner: dict[int, int] = {}  # cube -> position of the face it is matched to
+
+    def augment(pos: int, seen: set[int]) -> bool:
+        for c, cube in enumerate(cubes):
+            if faces[pos] in cube and c not in seen:
+                seen.add(c)
+                if c not in owner or augment(owner[c], seen):
+                    owner[c] = pos
+                    return True
+        return False
+
+    if len(faces) > len(cubes) or not all(augment(pos, set()) for pos in range(len(faces))):
+        return None
+    match = [0] * len(faces)
+    for c, pos in owner.items():
+        match[pos] = c
+    return match
+
+
+# The slots of a path through all 16 slots, row by row and turning at each end; each slot
+# is a neighbor of the one before.
+SNAKE = [4 * i + (j if i % 2 == 0 else 3 - j) for i in range(4) for j in range(4)]
+
+
+def possible(word: str, cubes: Sequence[tuple[str, ...]] = CUBES) -> bool:
+    """Whether some shake of the cubes shows `word` along some path.
+
+    That holds exactly when each face of the word can be given its own cube carrying that
+    face: the cubes can then be laid along SNAKE, which visits neighboring slots in turn,
+    with the right faces up. Where the letters fall on a real board does not matter.
+    """
+    faces = word_faces(word)
+    return faces is not None and cube_matching(faces, cubes) is not None
+
+
+def witness_board(word: str, cubes: Sequence[tuple[str, ...]] = CUBES) -> Board:
+    """A board the cubes can roll that shows `word` along SNAKE; the other slots get the
+    unused cubes, each showing its first face. Raises ValueError if the word is impossible."""
+    faces = word_faces(word)
+    match = cube_matching(faces, cubes) if faces is not None else None
+    if faces is None or match is None:
+        raise ValueError(f"{word} cannot be rolled")
+    rest = [c for c in range(len(cubes)) if c not in match]
+    slots = [""] * 16
+    for k, slot in enumerate(SNAKE):
+        slots[slot] = faces[k] if k < len(faces) else cubes[rest[k - len(faces)]][0]
+    return [slots[i : i + 4] for i in range(0, 16, 4)]
+
+
+def obstruction(word: str, cubes: Sequence[tuple[str, ...]] = CUBES) -> tuple[str, ...]:
+    """Why `word` is impossible: ("q",) for a q without u, ("length",) for more than 16
+    faces, or else a set of faces that the word uses more often than there are cubes
+    carrying any of them (Hall's condition fails for it). Empty if the word is possible."""
+    faces = word_faces(word)
+    if faces is None:
+        return ("q",)
+    if len(faces) > len(cubes):
+        return ("length",)
+    for end in range(1, len(faces) + 1):  # the first prefix with no matching
+        if cube_matching(faces[:end], cubes) is None:
+            prefix = faces[:end]
+            break
+    else:
+        return ()
+    # Faces reachable from the last face by alternating paths form a Hall violator.
+    match = cube_matching(prefix[:-1], cubes) or []
+    owner = {c: pos for pos, c in enumerate(match)}
+    reached, stack = {len(prefix) - 1}, [len(prefix) - 1]
+    while stack:
+        pos = stack.pop()
+        for c, cube in enumerate(cubes):
+            if prefix[pos] in cube and c in owner and owner[c] not in reached:
+                reached.add(owner[c])
+                stack.append(owner[c])
+    return tuple(sorted({prefix[pos] for pos in reached}))
+
+
+assert word_faces("quit") == ["qu", "i", "t"] and word_faces("qat") is None
+assert [SNAKE.index(k) for k in (0, 3, 7, 4, 8)] == [0, 3, 4, 7, 8]
 assert make_trie(["at"]) == {"a": {"t": {None: None}}}
 assert set(
     get_words(
