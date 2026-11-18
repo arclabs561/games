@@ -1,10 +1,13 @@
 """Boggle boards and word search, used by boggle.ipynb and the tests."""
 
+import hashlib
 import multiprocessing as mp
 import random
 from collections import Counter
 from collections.abc import Iterable, Iterator
 from itertools import product
+from math import ceil, log, sqrt
+from pathlib import Path
 
 type Board = list[list[str]]  # 4 rows of 4 faces; a face is a letter, or "qu"
 type Trie = dict  # letter -> Trie, with the key None marking the end of a word
@@ -77,18 +80,24 @@ def get_words(board: Board, trie: Trie, min_len: int = 3) -> Iterator[str]:
                 yield word
 
 
+def sample_boards(n: int, seed: int) -> list[Board]:
+    """n boards drawn one after another from a single random.Random(seed) stream."""
+    rng = random.Random(seed)
+    return [rand_board(rng) for _ in range(n)]
+
+
 def count_words(
-    n_boards: int, trie: Trie, min_len: int = 4, processes: int | None = None
+    boards: list[Board], trie: Trie, min_len: int = 3, processes: int | None = None
 ) -> Counter:
-    """How many of boards 0 .. n_boards - 1 contain each word, where board i comes from Random(i).
+    """How many of the boards contain each word (a word counts once per board).
 
     The workers get the trie once each, through the pool initializer. Because the work
-    functions live in this module, this also runs where processes start by spawn or
+    function lives in this module, this also runs where processes start by spawn or
     forkserver (macOS, and Linux from Python 3.14), not only by fork.
     """
     counts: Counter = Counter()
     with mp.Pool(processes, initializer=_set_trie, initargs=(trie, min_len)) as pool:
-        for found in pool.imap_unordered(_board_words, range(n_boards), chunksize=500):
+        for found in pool.imap(_board_words, boards, chunksize=500):
             counts.update(found)
     return counts
 
@@ -100,8 +109,36 @@ def _set_trie(trie: Trie, min_len: int) -> None:
     _WORKER.update(trie=trie, min_len=min_len)
 
 
-def _board_words(i: int) -> list[str]:
-    return list(get_words(rand_board(random.Random(i)), _WORKER["trie"], _WORKER["min_len"]))
+def _board_words(board: Board) -> list[str]:
+    return list(get_words(board, _WORKER["trie"], _WORKER["min_len"]))
+
+
+def load_words(path: str | Path, sha256: str | None = None) -> list[str]:
+    """The words of a word list, one per line, after checking the file's SHA-256 digest."""
+    data = Path(path).read_bytes()
+    if sha256 is not None and hashlib.sha256(data).hexdigest() != sha256:
+        raise ValueError(f"{path}: SHA-256 digest does not match")
+    return [w for line in data.decode().splitlines() if (w := line.strip().lower()).isalpha()]
+
+
+def points(word: str) -> int:
+    """Official score of a word: 3-4 letters 1, 5 letters 2, 6 letters 3, 7 letters 5, 8+ 11."""
+    n = len(word)
+    return 0 if n < 3 else 1 if n <= 4 else {5: 2, 6: 3, 7: 5}.get(n, 11)
+
+
+def wilson(successes: int, trials: int, z: float = 1.96) -> tuple[float, float]:
+    """The Wilson score interval for a binomial proportion (95% for z = 1.96)."""
+    p = successes / trials
+    center = (p + z * z / (2 * trials)) / (1 + z * z / trials)
+    margin = z * sqrt(p * (1 - p) / trials + z * z / (4 * trials * trials)) / (1 + z * z / trials)
+    return center - margin, center + margin
+
+
+def hoeffding_boards(epsilon: float, delta: float, words: int = 1) -> int:
+    """Boards needed so that every one of `words` fixed words is within epsilon of its
+    probability, with chance at least 1 - delta (Hoeffding, with a union bound)."""
+    return ceil(log(2 * words / delta) / (2 * epsilon**2))
 
 
 assert make_trie(["at"]) == {"a": {"t": {None: None}}}
@@ -110,3 +147,12 @@ assert set(
         [list("cat."), list("...."), list("...."), list("....")], make_trie(["cat", "act", "tac"])
     )
 ) == {"cat", "tac"}
+assert [points(w) for w in ("tea", "tees", "teens", "tenets", "setters", "teenager")] == [
+    1,
+    1,
+    2,
+    3,
+    5,
+    11,
+]
+assert hoeffding_boards(0.01, 0.1) == 14979

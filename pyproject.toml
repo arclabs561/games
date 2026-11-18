@@ -20,10 +20,10 @@ dev = [
 ]
 boggle = [
     "matplotlib>=3.11",
-    "nltk>=3.10",
     "numpy>=2.5",
     "seaborn>=0.13.2",
     "tabulate>=0.10",
+    "wordfreq==3.1.1",
 ]
 egyptian-ratscrew = [
     "matplotlib>=3.11",
