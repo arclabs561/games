@@ -111,20 +111,44 @@ def main():
     # Only Typst's own fonts and any in a fonts/ folder beside the document, never the
     # system's, so that a PDF comes out byte for byte the same on every machine.
     fonts = [str(f) for f in [a.doc.parent / "fonts"] if f.is_dir()]
-    common = {"package_path": str(a.packages), "font_paths": fonts, "ignore_system_fonts": True}
+    pkgs = str(a.packages)
     pdf = a.doc.with_suffix(".pdf")
-    typst.compile(str(a.doc), output=str(pdf), **common)
+    typst.compile(
+        str(a.doc), output=str(pdf), package_path=pkgs, font_paths=fonts, ignore_system_fonts=True
+    )
     print(f"wrote {pdf}")
     if a.png:
         pattern = str(a.doc.with_name(a.doc.stem + "-{p}.png"))
-        typst.compile(str(a.doc), output=pattern, format="png", ppi=110, **common)
+        typst.compile(
+            str(a.doc),
+            output=pattern,
+            format="png",
+            ppi=110,
+            package_path=pkgs,
+            font_paths=fonts,
+            ignore_system_fonts=True,
+        )
         print(f"wrote {pattern}")
     if a.all:
         phone = a.doc.with_name(a.doc.stem + "-phone.pdf")
-        typst.compile(str(a.doc), output=str(phone), sys_inputs={"edition": "phone"}, **common)
+        typst.compile(
+            str(a.doc),
+            output=str(phone),
+            sys_inputs={"edition": "phone"},
+            package_path=pkgs,
+            font_paths=fonts,
+            ignore_system_fonts=True,
+        )
         print(f"wrote {phone}")
         html = a.doc.with_suffix(".html")
-        typst.compile(str(a.doc), output=str(html), format="html", **common)
+        typst.compile(
+            str(a.doc),
+            output=str(html),
+            format="html",
+            package_path=pkgs,
+            font_paths=fonts,
+            ignore_system_fonts=True,
+        )
         print(f"wrote {html}")
 
 
