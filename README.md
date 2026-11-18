@@ -9,7 +9,7 @@ Questions about games and puzzles, answered with code. Each answer says how it i
 | **Egyptian Ratscrew** | Winning 55% of the slaps wins 64% of two-player games. Simulated, 4,000 games. | [`egyptian_ratscrew/`](egyptian_ratscrew) |
 | **Erase** | 12,362,536 of the 2,530,881,913,560 deals of this make-ten game cannot be cleared, about 1 in 204,722. Exact, with a proof and machine-checked certificates. | [`erase/`](erase) |
 | **Mastermind** | Guessing to split the remaining codes into the most parts averages 4.373 guesses; of the five strategies tried, only minimax never needs a sixth. Exact, over all 1,296 codes. | [`mastermind/`](mastermind) |
-| **Peggle** | Six wins in ten games make a player the better one with chance 743/1024, the chance of at most six heads in eleven fair coin flips. Exact. | [`peggle/`](peggle) |
+| **Peggle** | Six wins in ten games make a player the better one with chance 743/1024, the chance of at most six heads in eleven fair coin flips. Playing equal players until one is 95% sure, for up to 100 games, declares someone better with chance 0.528. Exact. | [`peggle/`](peggle) |
 | **Pokémon** | No six attacking types are super-effective against all 18 types; ten sets of seven are. Exact. | [`pokemon/`](pokemon) |
 | **Tenzi** | A game takes 15.35 turns on average, or 15.29 when switching faces. Exact, by a Markov chain. | [`tenzi/`](tenzi) |
 

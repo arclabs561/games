@@ -134,7 +134,34 @@ An earlier version of this note used the fitted slope $3 n^(-0.48)$. Over every 
   caption: [Exact chance of being better (dots) and the approximation with slope $a(n)$ (lines), for 10, 50 and 250 games.],
 ) <fig-better>
 
+= Playing until someone is sure
+
+Suppose instead that the friends play until one of them is 95% sure of being better, or until $N$ games. The rule looks only at $k$ and $n$, so the number of win-loss sequences that first stop at each $(k, n)$ does not depend on $p$; a dynamic program counts them, and each has chance $p^k (1 - p)^(n - k)$. `stopping.py` sums these exactly (@tab-stop), agrees with seeded simulation, and with a binomial test in place of the posterior reproduces Table 1 of Armitage, McPherson and Rowe#footnote[P. Armitage, C. K. McPherson and B. C. Rowe, "Repeated significance tests on accumulating data," _J. Roy. Statist. Soc. A_ 132 (1969), 235--244.].
+
+#figure(
+  table(
+    columns: 6, align: (left, right, right, right, right, right), stroke: none,
+    table.hline(),
+    [$p$], [$N$], [better declared], [worse declared], [no verdict], [mean games],
+    table.hline(stroke: 0.5pt),
+    [0.5], [100], [0.528], [], [0.472], [59.6],
+    [0.5], [1,000], [0.728], [], [0.272], [355.6],
+    [0.55], [100], [0.521], [0.120], [0.359], [53.2],
+    [0.55], [1,000], [0.866], [0.123], [0.011], [138.0],
+    [0.6], [1,000], [0.945], [0.055], [0.000], [48.4],
+    [0.7], [1,000], [0.988], [0.012], [0.000], [16.4],
+    table.hline(),
+  ),
+  caption: [Play until one player is 95% sure, or $N$ games. For $p = 0.5$ the first column is the chance that either player is declared better. Exact.],
+) <tab-stop>
+
+Between equal players someone is declared better 53% of the time with $N = 100$ and 73% with $N = 1000$, against 8.9% and 9.4% for one look after $N$ games. The threshold on $k - n slash 2$ grows like $0.82 sqrt(n)$, and by the law of the iterated logarithm a fair random walk passes any multiple of $sqrt(n)$, so the chance tends to one as $N$ grows.
+
+Yet each verdict means what it says. Draw $p$ from the uniform prior and play by the same rule: 3.6% of verdicts are wrong with $N = 100$ and 3.7% with $N = 1000$, exactly. The stopping rule multiplies the likelihood by a factor free of $p$, so the posterior at $(k, n)$ is unchanged. The 5% is an average over the prior, not a promise for each $p$; at $p = 0.55$ the worse player is declared better 12% of the time.
+
+Laplace's rule of succession is the same calculation read one game at a time: after $k$ wins in $n$ games the next is won with chance $(k + 1) slash (n + 2)$, the posterior mean. Multiplying these along a sequence gives $k! (n - k)! slash (n + 1)!$, the prior average of $p^k (1 - p)^(n - k)$ and the weight the Bayesian check gives each sequence. Under these chances the posterior is a martingale: when play stops, by any rule, its average is still 1/2.
+
 = Questions left open
 
 - *Other priors.* A Beta$(a, a)$ prior with a whole number $a$ adds $2a - 1$ points to the billiard table: the chance becomes that of at most $k + a - 1$ heads in $n + 2a - 1$ flips.
-- *Stopping when ahead* leaves the posterior unchanged, but fools frequentist tests more often.
+- *A stricter threshold.* How sure must each look be so that equal players get a verdict only 5% of the time?
