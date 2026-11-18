@@ -1,0 +1,99 @@
+"""Other targets than 10 (erase/targets.py, verify_targets.py) and Countdown (countdown.py)."""
+
+import gzip
+import json
+import random
+from itertools import combinations_with_replacement
+
+import countdown
+import targets
+import verify_targets
+
+from erase import in_families, multisets, table
+
+
+def test_residues_match_the_values_of_small_multisets():
+    """The remainders targets.residues finds are those of the actual values, for 1 to 4 cards."""
+    for n in range(1, 5):
+        for cards in combinations_with_replacement(range(1, 11), n):
+            values = set(table(cards))
+            for m in (2, 3, 4, 5, 7, 12):
+                rs = tuple(sorted(c % m for c in cards))
+                assert targets.residues(rs, m) == sum(1 << r for r in {v % m for v in values})
+
+
+def test_both_remainder_searches_agree():
+    rng = random.Random(5)
+    for _ in range(200):
+        cards = tuple(sorted(rng.randint(1, 10) for _ in range(rng.randint(1, 7))))
+        t = rng.randint(1, 30)
+        assert bool(targets.blocking_moduli(cards, t)) == verify_targets.blocked(cards, t)
+
+
+def test_ten_matches_the_paper():
+    """For 10, the blocked multisets of 7 to 9 cards are the paper's two families, and the
+    only exception is {1, 6, 6, 7, 7, 7, 7}."""
+    r = targets.study(10, 9)
+    assert targets.threshold(r["exceptions"]) == 8
+    assert r["exceptions"][7] == [(1, 6, 6, 7, 7, 7, 7)]
+    for n in (8, 9):
+        assert set(r["least_moduli"][n]) == {3, 4}
+        family = [c for c in multisets(n, [0] + [4] * 10) if in_families(c)]
+        assert all(targets.blocking_moduli(c, 10) for c in family)
+        assert sum(r["least_moduli"][n].values()) == len(family)  # and nothing else is blocked
+
+
+def test_checker_accepts_fresh_certificates_and_rejects_a_bad_one(tmp_path, capsys):
+    certs = []
+    r = targets.study(7, 7, certs)
+    s = targets.threshold(r["exceptions"])
+    path = tmp_path / "c.jsonl.gz"
+    lines: list[dict[str, object]] = [{"target": 7, "threshold": s, "max": 7}]
+    lines += [{"target": 7, "cards": c, "expr": e} for n, c, e in certs if n >= s]
+    with gzip.open(path, "wt") as f:
+        f.writelines(json.dumps(x) + "\n" for x in lines)
+    verify_targets.main(path)
+    assert "t= 7: sizes 7 to 7" in capsys.readouterr().out
+    lines[1]["expr"] = str(lines[1]["expr"]).replace("+", "*", 1)
+    with gzip.open(path, "wt") as f:
+        f.writelines(json.dumps(x) + "\n" for x in lines)
+    try:
+        verify_targets.main(path)
+    except AssertionError:
+        pass
+    else:
+        raise AssertionError("a wrong expression must be rejected")
+
+
+def test_countdown_values_match_a_search_over_moves():
+    sels = countdown.selections()
+    assert len(sels) == 13_243
+    for s in sels[::1500] + [(1, 1, 2, 2, 3, 3)]:
+        assert countdown.reachable(s) == countdown.reachable_by_moves(s)
+    values = sorted(countdown.reachable((1, 1, 2, 2, 3, 3)))
+    assert not set(values) & set(countdown.TARGETS)  # Alliot: this selection reaches no target
+    assert countdown.distance(values, 101) == 101 - max(values)
+    assert countdown.combine(6, 3) == {9, 18, 3, 2} and countdown.combine(4, 4) == {8, 16, 1}
+
+
+def test_fourteen_has_an_exception_of_eight_cards():
+    """9 9 9 9 10 10 10 10 cannot make 14, by listing every value of those cards; only a
+    9 or a 10 differs between parts, so each part is a count of 9s and a count of 10s."""
+    from functools import cache
+
+    @cache
+    def values(nines: int, tens: int) -> frozenset[int]:
+        if nines + tens == 1:
+            return frozenset([9 if nines else 10])
+        out = set()
+        for i in range(nines + 1):
+            for j in range(tens + 1):
+                if 0 < i + j < nines + tens:
+                    for x in values(i, j):
+                        for y in values(nines - i, tens - j):
+                            out |= {x + y, x - y, x * y}
+        return frozenset(out)
+
+    cards = (9, 9, 9, 9, 10, 10, 10, 10)
+    assert len(values(4, 4)) == 17_982 and 14 not in values(4, 4)
+    assert targets.make(cards, 14) is None and not targets.blocking_moduli(cards, 14)
