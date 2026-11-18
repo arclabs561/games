@@ -6,7 +6,7 @@ Questions about games and puzzles, answered with code. Each answer says how it i
 |---|---|---|
 | **Boggle** | "toe" is the most common word, on 19.1% of random boards; a board holds 97.8 words and 140 points on average. Simulated, 15,000 boards. | [`boggle/`](boggle) |
 | **Drive Ya Nuts** | The original seven nuts fit together in exactly one way. Exact, by exhaustive search. | [`drive_ya_nuts/`](drive_ya_nuts) |
-| **Egyptian Ratscrew** | Winning 55% of the slaps wins 64% of two-player games. Simulated, 4,000 games. | [`egyptian_ratscrew/`](egyptian_ratscrew) |
+| **Egyptian Ratscrew** | Winning 55% of the slaps wins 64% of two-player games, and the player who lays the first card wins 49.77%, not half. Simulated, 20,000 and 1,000,000 games. | [`egyptian_ratscrew/`](egyptian_ratscrew) |
 | **Erase** | 12,362,536 of the 2,530,881,913,560 deals of this make-ten game cannot be cleared, about 1 in 204,722. Exact, with a proof and machine-checked certificates. | [`erase/`](erase) |
 | **Mastermind** | Guessing to split the remaining codes into the most parts averages 4.373 guesses; of the five strategies tried, only minimax never needs a sixth. Exact, over all 1,296 codes. On Fallout 3 terminals of 20 short words, the best play cracks 92.5% of passwords within four attempts and random consistent guessing 67.8%. Simulated, 1,000 screens drawn from a word list. | [`mastermind/`](mastermind) |
 | **Peggle** | Six wins in ten games make a player the better one with chance 743/1024, the chance of at most six heads in eleven fair coin flips. Playing equal players until one is 95% sure, for up to 100 games, declares someone better with chance 0.528. Exact. | [`peggle/`](peggle) |

@@ -14,6 +14,7 @@ from collections.abc import Sequence
 from fractions import Fraction
 from functools import cache
 from math import comb
+from typing import NamedTuple
 
 type Card = int | str
 CHANCES: dict[Card, int] = {"J": 1, "Q": 2, "K": 3, "A": 4}
@@ -98,27 +99,47 @@ def simulate_challenge(royal: str, rng: random.Random) -> bool:
     return challenger == 0
 
 
-def play(
+class Game(NamedTuple):
+    """How one game went: cards laid, the winner (None if unfinished), the number of times a
+    pile was picked up, and the number of cards paid for misslaps."""
+
+    cards: int
+    winner: int | None
+    tricks: int
+    paid: int
+
+
+def play_game(
     slap_shares: Sequence[float],
     rng: random.Random,
     max_cards: int = 100_000,
-    hands: list[deque[Card]] | None = None,
+    hands: Sequence[Sequence[Card]] | None = None,
     slaps: bool = True,
-):
-    """Play one game and return (cards laid, winner).
+    misslaps: Sequence[float] | None = None,
+) -> Game:
+    """Play one game.
 
     Every slappable pile is slapped, and player i wins the slap with chance slap_shares[i];
     players with no cards may still slap back in. The game ends when one player holds every
     card that is not on the pile and no challenge is open. The winner is None if that has not
     happened after max_cards cards. `hands` replaces the random deal; with slaps=False the
     game is Beggar-my-neighbour.
+
+    With `misslaps`, after each card that cannot be slapped player i slaps by mistake with
+    chance misslaps[i], and pays for it with the top card of their hand, face down under the
+    pile, where it goes to whoever takes the pile. A player with no cards who misslaps is out
+    of the game and slaps no more. A pile left on the table at the end counts as a trick, the
+    last one, which the winner picks up.
     """
     players = len(slap_shares)
     hands = deal(players, rng) if hands is None else [deque(h) for h in hands]
     pile: list[Card] = []
+    burned: list[Card] = []  # cards paid for misslaps, face down under the pile
+    out: set[int] = set()  # players who misslapped with no cards to pay
     challenger: int | None = None  # who laid the royal now being answered
     owed = 0  # cards the current player still owes the challenger
     player = 0
+    tricks = paid = 0
 
     def next_with_cards(i: int) -> int:
         """The next player after i who holds cards, or i itself if nobody else does."""
@@ -129,14 +150,25 @@ def play(
         return i
 
     def collect(winner: int) -> None:
-        nonlocal player, challenger, owed
+        nonlocal player, challenger, owed, tricks
+        hands[winner].extend(burned)
         hands[winner].extend(pile)
+        burned.clear()
         pile.clear()
         player, challenger, owed = winner, None, 0
+        tricks += 1
+
+    def slapper() -> int | None:
+        """Who wins a slap: drawn by slap share among the players still in the game."""
+        if not out:
+            return rng.choices(range(players), weights=slap_shares)[0]
+        weights = [0 if i in out else s for i, s in enumerate(slap_shares)]
+        return rng.choices(range(players), weights=weights)[0] if any(weights) else None
 
     for laid in range(max_cards):
         if challenger is None and sum(map(bool, hands)) == 1:
-            return laid, next(i for i in range(players) if hands[i])
+            last = tricks + bool(pile or burned)
+            return Game(laid, next(i for i in range(players) if hands[i]), last, paid)
         if not hands[player]:
             if challenger is not None:  # cannot answer: the challenger takes the pile
                 collect(challenger)
@@ -144,9 +176,20 @@ def play(
                 player = next_with_cards(player)
         card = hands[player].popleft()
         pile.append(card)
-        if slaps and slappable(pile):
-            collect(rng.choices(range(players), weights=slap_shares)[0])
-        elif card in CHANCES:
+        if slaps and slappable(pile) and (winner := slapper()) is not None:
+            collect(winner)
+            continue
+        if misslaps:
+            for i, chance in enumerate(misslaps):
+                if chance and i not in out and rng.random() < chance:
+                    if hands[i]:
+                        burned.append(hands[i].popleft())
+                        paid += 1
+                    else:
+                        out.add(i)
+                        if challenger == i:  # an open challenge lapses with its player
+                            challenger, owed = None, 0
+        if card in CHANCES:
             challenger, owed = player, CHANCES[card]
             player = next_with_cards(player)
             if player == challenger:  # nobody else can answer
@@ -157,7 +200,19 @@ def play(
                 collect(challenger)
         else:
             player = next_with_cards(player)
-    return max_cards, None
+    return Game(max_cards, None, tricks, paid)
+
+
+def play(
+    slap_shares: Sequence[float],
+    rng: random.Random,
+    max_cards: int = 100_000,
+    hands: Sequence[Sequence[Card]] | None = None,
+    slaps: bool = True,
+) -> tuple[int, int | None]:
+    """Play one game with `play_game` and return (cards laid, winner)."""
+    game = play_game(slap_shares, rng, max_cards, hands, slaps)
+    return game.cards, game.winner
 
 
 def main() -> None:

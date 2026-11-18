@@ -15,6 +15,7 @@ from egyptian_ratscrew.game import (
     deal,
     first_challenge,
     play,
+    play_game,
     simulate_challenge,
     slappable,
 )
@@ -97,3 +98,66 @@ def test_a_player_who_wins_every_slap_usually_wins():
     rng = random.Random(5)
     wins = sum(play([1, 0], rng)[1] == 0 for _ in range(300))
     assert wins > 290
+
+
+def test_tricks_match_the_beggar_my_neighbour_checker():
+    """Cards and tricks for four record deals, as BeggarMyPython (the checker linked from
+    Richard Mann's list) counts them. Mann's list gives 713 tricks for Manasse's deal and 6,914
+    cards for Collins's; the checker and this code give 712 and 6,913."""
+    deals = [
+        ("---AJ--Q---------QAKQJJ-QK", "-----A----KJ-K--------A---", 8344, 1164),
+        ("--A-Q--J--J---Q--AJ-K---K-", "-J-------Q------A--A--QKK-", 7225, 1016),
+        ("A-QK------Q----KA-----J---", "-JAK----A--Q----J---QJ--K-", 6913, 960),
+        ("Q--J----K--K-J---Q---A---A", "---K-K--JA-QA--J-----Q----", 5104, 712),
+    ]
+    for first, second, cards, tricks in deals:
+        game = play_game([1, 1], random.Random(0), hands=[hand(first), hand(second)], slaps=False)
+        assert (game.cards, game.tricks) == (cards, tricks)
+
+
+def test_one_trick_deals():
+    """Truman Collins lists four deals that end in one trick, and they do. (His page labels
+    their winners the other way round from his 960-trick deal, so the winners are not checked.)"""
+    deals = [
+        ("0000000K00Q000J00Q00JQK000", "00000000K0AA0AQJA000000KJ0"),
+        ("0000000000000KA00J0JJ0K00Q", "0000000000000Q00AKKA0AQJQ0"),
+        ("0000000000KA00Q00KAAQ0J00Q", "000000000J00J00KA0Q0K000J0"),
+        ("0000000000A0Q00JAKKQ00A0J0", "000000000000Q0KK0J0J0Q0A00"),
+    ]
+    for first, second in deals:
+        game = play_game([1, 1], random.Random(0), hands=[hand(first), hand(second)], slaps=False)
+        assert game.tricks == 1
+
+
+def test_play_is_play_game_without_misslaps():
+    for seed in range(5):
+        game = play_game([0.6, 0.4], random.Random(seed))
+        assert play([0.6, 0.4], random.Random(seed)) == (game.cards, game.winner)
+        assert game.paid == 0
+    assert play_game([0.6, 0.4], random.Random(1), misslaps=[0, 0]) == play_game(
+        [0.6, 0.4], random.Random(1)
+    )
+
+
+def test_games_with_misslaps_end():
+    """With heavy misslapping, games of two, three and four players still end."""
+    rng = random.Random(11)
+    for players in (2, 3, 4):
+        for _ in range(100):
+            game = play_game([1 / players] * players, rng, misslaps=[0.2] * players)
+            assert game.winner is not None and game.paid > 0
+
+
+def test_misslap_pays_one_card_under_the_pile():
+    """Player 1 misslaps after every card. Player 0 lays the 2, and player 1 pays the 3 for
+    misslapping. Player 1 lays the 6, their last card, and misslaps with nothing to pay, which
+    puts them out. Player 0 holds every card not on the table and wins after two cards, with
+    one card paid and one pile left to pick up."""
+    game = play_game([0.5, 0.5], random.Random(0), hands=[[2, 4, 5], [3, 6]], misslaps=[0, 1])
+    assert game == (2, 0, 1, 1)
+
+
+def test_a_careless_player_loses_more():
+    rng = random.Random(4)
+    careful = sum(play_game([0.5, 0.5], rng, misslaps=[0, 0.1]).winner == 0 for _ in range(400))
+    assert careful > 300
