@@ -10,6 +10,12 @@ those counts gives every exact answer: a sequence with k wins in n games has cha
 p^k (1 - p)^(n - k) when p is fixed, and 1 / ((n + 1) C(n, k)) when p is drawn from the
 uniform prior.
 
+Two other rules use the same program. The **Bayes factor rule** stops when the record is at
+least 20 times as likely if p is drawn from the uniform prior as if p = 1/2. That ratio is a
+nonnegative martingale with mean 1 when p = 1/2, so by Ville's inequality it reaches 20 with
+chance at most 1/20, however long the friends play. **Wald's test** of p = 0.45 against
+p = 0.55 stops when one player leads by 15 games; its chances follow from the gambler's ruin.
+
     uv run python -m peggle.stopping
 """
 
@@ -18,7 +24,7 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from fractions import Fraction
 from functools import cache
-from math import comb, sqrt
+from math import comb, lgamma, log, sqrt
 
 from peggle.peggle import beta_integral, better, heads_at_most
 
@@ -83,6 +89,95 @@ def stops(cap: int, rule: Rule = verdict) -> tuple[Stop, ...]:
             else:
                 alive[k] = paths
     return tuple(found)
+
+
+EVIDENCE = 20  # the Bayes factor rule stops when the record favors "unequal" by this factor
+
+
+def bayes_factor(k: int, n: int) -> Fraction:
+    """How many times likelier k wins in n games are under the uniform prior than with p = 1/2:
+    the integral of p^k (1 - p)^(n - k), divided by 2^-n, or 2^n / ((n + 1) C(n, k))."""
+    return Fraction(2**n, (n + 1) * comb(n, k))
+
+
+def bayes_factor_rule(k: int, n: int) -> int:
+    """A verdict once the Bayes factor reaches EVIDENCE, for whoever has won more games."""
+    if 2**n < EVIDENCE * (n + 1) * comb(n, k):
+        return 0
+    return 1 if 2 * k > n else -1  # the factor is below 1 when k = n / 2, so 2k != n here
+
+
+@cache
+def lead_rule(lead: int) -> Rule:
+    """Stop when one player leads by `lead` games. For p = 0.45 against 0.55 the log-likelihood
+    ratio after k wins in n games is (2k - n) ln(11/9), so Wald's test has this form."""
+
+    def rule(k: int, n: int) -> int:
+        return 1 if 2 * k - n >= lead else -1 if n - 2 * k >= lead else 0
+
+    return rule
+
+
+def lead_exact(p: Fraction, lead: int) -> tuple[Fraction, Fraction]:
+    """Chance that the worse player is declared better, and mean games, with no cap on games.
+
+    The lead is a random walk that starts at 0 and stops at +lead or -lead: the gambler's ruin.
+    With r = (1 - p) / p, the first player reaches +lead first with chance 1 / (1 + r^lead), and
+    the mean length is lead (1 - r^lead) / ((1 + r^lead)(2p - 1)); for p = 1/2 it is lead^2.
+    For p = 1/2 the first number is the chance that the first player is declared better.
+    """
+    if p == Fraction(1, 2):
+        return Fraction(1, 2), Fraction(lead**2)
+    r = ((1 - p) / p) ** lead
+    worse = r / (1 + r) if p > Fraction(1, 2) else 1 / (1 + r)
+    return worse, lead * (1 - r) / ((1 + r) * (2 * p - 1))
+
+
+def wald_lead(alpha: Fraction = Fraction(5, 100), p: Fraction = Fraction(55, 100)) -> int:
+    """The smallest lead whose test errs with chance at most alpha at p (and, by symmetry,
+    at 1 - p). Wald's approximation ln((1 - alpha) / alpha) / ln(p / (1 - p)) is 14.7 here."""
+    return next(c for c in range(1, 10**4) if lead_exact(p, c)[0] <= alpha)
+
+
+def bayes_factor_bounds(cap: int) -> list[tuple[int, int]]:
+    """Like `thresholds(cap, bayes_factor_rule)`, but fast for large caps.
+
+    The factor depends on k only through C(n, k), so it grows as k moves away from n / 2, and
+    the smallest winning k changes by at most one from one n to the next.
+    The comparison is made in floating point, and exactly when the two are within 10^-9.
+    """
+
+    def reaches(k: int, n: int) -> bool:
+        log_factor = n * log(2) - log(n + 1) - lgamma(n + 1) + lgamma(k + 1) + lgamma(n - k + 1)
+        if abs(log_factor - log(EVIDENCE)) > 1e-9:
+            return log_factor > log(EVIDENCE)
+        return bayes_factor_rule(k, n) != 0
+
+    rows, hi = [(-1, 1)], 1
+    for n in range(1, cap + 1):
+        hi = min(max(hi, (n + 1) // 2), n + 1)
+        while hi > (n + 1) // 2 and reaches(hi - 1, n):
+            hi -= 1
+        while hi <= n and not reaches(hi, n):
+            hi += 1
+        rows.append((n - hi, hi))
+    return rows
+
+
+def verdict_chance_float(bounds: list[tuple[int, int]]) -> float:
+    """With p = 1/2, the chance of a verdict within len(bounds) - 1 games, in floating point."""
+    alive, low, total = [1.0], 0, 0.0  # alive[i]: chance of k = low + i wins without a verdict
+    for n in range(1, len(bounds)):
+        step = [0.0] * (len(alive) + 1)
+        for i, x in enumerate(alive):
+            step[i] += x / 2
+            step[i + 1] += x / 2
+        lo, hi = bounds[n]
+        first = max(lo + 1, low)  # the smallest k with no verdict
+        last = min(hi - 1, low + len(step) - 1)
+        total += sum(step) - sum(step[first - low : last + 1 - low])
+        alive, low = step[first - low : last + 1 - low], first
+    return total
 
 
 def path_chance(k: int, n: int, p: Fraction) -> Fraction:
@@ -213,7 +308,14 @@ assert all(
     for k in range(n + 1)
 )
 assert sum(s.paths for s in stops(1)) == 2
+assert bayes_factor(4, 4) == Fraction(16, 5) and bayes_factor(1, 2) == Fraction(2, 3)
+assert lead_exact(Fraction(55, 100), 1) == (Fraction(45, 100), Fraction(1))
 assert all(sum(s.paths * 2 ** (10 - s.n) for s in stops(m)) == 2**10 for m in (1, 5, 10))
+
+
+def bounds_hi(n: int) -> int:
+    """The fewest wins in n games that give the Bayes factor rule a verdict."""
+    return bayes_factor_bounds(n)[n][1]
 
 
 def main() -> None:
@@ -243,6 +345,37 @@ def main() -> None:
             f"  N = {cap:4}: verdict {float(b.declared):.4f},"
             f" wrong verdicts {float(b.wrong):.4f},"
             f" wrong given a verdict {float(b.wrong_given_declared):.4f}"
+        )
+
+    print(f"\nBayes factor rule: stop when the factor reaches {EVIDENCE}. Exact.")
+    print("     p      N  better declared  worse declared  undecided  mean games")
+    for p in (Fraction(1, 2), Fraction(55, 100), Fraction(6, 10), Fraction(7, 10)):
+        for cap in caps:
+            o = outcome(p, cap, bayes_factor_rule)
+            print(
+                f"  {float(p):4}  {cap:5}  {float(o.first):15.4f}  {float(o.second):14.4f}"
+                f"  {float(o.neither):9.4f}  {float(o.games):10.1f}"
+            )
+    for cap in caps:
+        o = outcome(Fraction(1, 2), cap, bayes_factor_rule)
+        print(
+            f"  equal players, N = {cap}: someone declared better {float(o.first + o.second):.4f}"
+        )
+    for n in (20, 100, 1000):
+        print(f"  wins needed in {n} games: {bounds_hi(n)}")
+    cap = 10_000
+    chance = verdict_chance_float(bayes_factor_bounds(cap))
+    print(f"  equal players, N = {cap:,}: {chance:.4f} (floating point)")
+
+    lead = wald_lead()
+    print(f"\nWald's test of 0.45 against 0.55 at 5% error: play until someone leads by {lead}.")
+    for p in (Fraction(1, 2), Fraction(55, 100), Fraction(6, 10), Fraction(7, 10)):
+        worse, games = lead_exact(p, lead)
+        o = outcome(p, 1000, lead_rule(lead))
+        print(
+            f"  p = {float(p)}: no cap, worse declared {float(worse):.4f}, mean {float(games):.1f};"
+            f" N = 1000: better {float(o.first):.4f}, worse {float(o.second):.4f},"
+            f" undecided {float(o.neither):.4f}, mean {float(o.games):.1f}"
         )
 
     print("\nCheck against Armitage, McPherson and Rowe (1969), Table 1: repeated two-sided")

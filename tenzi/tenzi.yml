@@ -7,3 +7,16 @@ slides:
   organization: Davenport University
   note: Slides, MAA MathFest
   url: http://sigmaa.maa.org/mcst/documents/TenziforMathfest.pdf
+eisenberg:
+  type: article
+  title: On the expectation of the maximum of IID geometric random variables
+  author: Eisenberg, Bennett
+  date: 2008
+  page-range: 135-143
+  parent:
+    type: periodical
+    title: Statistics & Probability Letters
+    volume: 78
+    issue: 2
+  serial-number:
+    doi: 10.1016/j.spl.2007.05.011

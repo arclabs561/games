@@ -1,7 +1,7 @@
 #import "@preview/cetz:0.4.2"
 #import "@preview/lilaq:0.6.0" as lq
 
-// Every number in this note is printed by peggle.py; the plot reads better.csv, which it writes.
+// Every number in this note is printed by peggle.py or stopping.py; the plot reads better.csv, which peggle.py writes.
 #set document(title: "Who Is the Better Player?", date: none)
 #set page(paper: "us-letter", margin: (x: 1.55in, y: 1.1in), numbering: "1")
 #set text(font: "New Computer Modern", size: 12pt)
@@ -136,7 +136,7 @@ An earlier version of this note used the fitted slope $3 n^(-0.48)$. Over every 
 
 = Playing until someone is sure
 
-Suppose instead that the friends play until one of them is 95% sure of being better, or until $N$ games. The rule looks only at $k$ and $n$, so the number of win-loss sequences that first stop at each $(k, n)$ does not depend on $p$; a dynamic program counts them, and each has chance $p^k (1 - p)^(n - k)$. `stopping.py` sums these exactly (@tab-stop), agrees with seeded simulation, and with a binomial test in place of the posterior reproduces Table 1 of Armitage, McPherson and Rowe#footnote[P. Armitage, C. K. McPherson and B. C. Rowe, "Repeated significance tests on accumulating data," _J. Roy. Statist. Soc. A_ 132 (1969), 235--244.].
+Suppose instead that the friends play until one of them is 95% sure of being better, or until $N$ games. The rule looks only at $k$ and $n$, so the number of win-loss sequences that first stop at each $(k, n)$ does not depend on $p$; a dynamic program counts them, and each has chance $p^k (1 - p)^(n - k)$. `stopping.py` sums these exactly (@tab-stop), agrees with seeded simulation, and with a binomial test in place of the posterior reproduces Table 1 of Armitage, McPherson and Rowe @armitage.
 
 #figure(
   table(
@@ -161,7 +161,66 @@ Yet each verdict means what it says. Draw $p$ from the uniform prior and play by
 
 Laplace's rule of succession is the same calculation read one game at a time: after $k$ wins in $n$ games the next is won with chance $(k + 1) slash (n + 2)$, the posterior mean. Multiplying these along a sequence gives $k! (n - k)! slash (n + 1)!$, the prior average of $p^k (1 - p)^(n - k)$ and the weight the Bayesian check gives each sequence. Under these chances the posterior is a martingale: when play stops, by any rule, its average is still 1/2.
 
+= A verdict that is safe for equal players <sec-bayes-factor>
+
+The 95% rule keeps its promise on average over the prior, and the uniform prior gives $p = 1 slash 2$ no weight at all. To protect equal players we need a number whose behavior is known when $p = 1 slash 2$ exactly. The *Bayes factor* compares how likely the record is under the two views. After $k$ wins in $n$ games, the uniform prior gives the record the chance $integral_0^1 p^k (1 - p)^(n - k) dif p = 1 slash ((n + 1) binom(n, k))$ (the `prior_path_chance` of `stopping.py`), and equal players give it $2^(-n)$.
+
+#block(breakable: false, width: 100%)[
+  Their ratio is
+  $ B_n = 2^n / ((n + 1) binom(n, k)). $
+]
+Six wins in ten games give $B_10 = 1024 slash 2310 approx 0.44$: that record is more likely between equal players. The *Bayes factor rule* plays until $B_n >= 20$, or until $N$ games, and then declares better whoever has won more games. It takes 66 wins in 100 games, or 556 in 1,000, against 59 and 527 for the 95% rule.
+
+*The Bayes factor is a fair bet against equal players.* Suppose $p = 1 slash 2$. The next game is won or lost with chance one half each, and the average of the two new factors is the old one:
+$ 1/2 B_(n + 1)(k + 1) + 1/2 B_(n + 1)(k) = B_n (k). $
+(Both sides equal the prior average of $(2p)^k (2 - 2p)^(n - k)$, and the next game multiplies that by $2p$ or $2 - 2p$, which average to 1.) So $B_n$ is a *test martingale*: a nonnegative fair game that starts at 1. It is the wealth of a gambler who starts with one unit and bets at even odds, spreading the stake over every $p$ by the uniform prior @shafer2011 @savi. A fair game cannot be made favorable by choosing when to stop. Stopped at a verdict or at $N$ games, $B$ still averages exactly 1; `stopping.py` checks this with exact fractions for several caps up to 200.
+
+#block(width: 100%, inset: (y: 2pt))[
+  *Proposition (Ville's inequality, here).* Suppose $p = 1 slash 2$. However long the friends play, the Bayes factor rule declares someone better with chance at most $1 slash 20$.
+]
+
+_Proof._ Fix a cap $N$. When play stops, $B >= 20$ if there is a verdict and $B >= 0$ otherwise, and $B$ averages 1. So $1 >= 20 P("verdict")$. The bound does not depend on $N$, so it holds for unlimited play too. #h(1fr)$qed$
+
+Ville proved this for every test martingale @ville @savi, and Shafer and Vovk @shafervovk build probability itself on such betting games. The exact chances are 0.0276 for $N = 100$ and 0.0357 for $N = 1000$, against 0.528 and 0.728 for the 95% rule (@tab-rules). The chance grows with $N$, to 0.0387 at $N = 10000$ (computed in floating point), but it never reaches 0.05. Between equal players $B_n$ drifts to 0 on almost every path that never reaches 20 (by the law of the iterated logarithm it is at most about $(log n)^(1 + epsilon) slash sqrt(n)$), so in unlimited play the chance of a verdict is exactly 1 divided by the average factor at the verdict. That factor jumps past 20 rather than landing on it: the first possible verdict, eight wins in eight games, has $B_8 = 256 slash 9 approx 28.4$.
+
+The two rules answer different questions. The 95% rule says that, of all the pairs of players a uniform prior could produce, about 95% of those declared better are better; it says nothing about a pair who are exactly equal. The Bayes factor rule promises that a pair of equal players is declared unequal at most one time in twenty, whenever the friends stop. It is also a Bayesian rule, with a prior that takes equality seriously: give "equal" chance one half, and spread the other half uniformly over $p$. The posterior chance of "equal" is then $1 slash (1 + B_n)$, and $B_n >= 20$ means that it has fallen to $1 slash 21$ or less. The two priors disagree about records such as 527 wins in 1,000 games, where the uniform prior is 95.6% sure while $B_1000 approx 0.17$ favors equality. This disagreement is Lindley's paradox.
+
+The safety has a price. At $p = 0.55$ the Bayes factor rule wrongly favors the worse player only 0.4% of the time, but within 1,000 games it reaches a verdict only 51% of the time, after 745 games on average.
+
+#figure(
+  placement: auto,
+  text(10pt, table(
+    columns: 7, align: (left, right, right, right, right, right, right), stroke: none,
+    inset: (x: 4.5pt, y: 3.5pt),
+    table.hline(),
+    table.header(
+      table.cell(rowspan: 2, align: bottom)[rule], table.cell(rowspan: 2, align: bottom + right)[$N$],
+      table.cell(colspan: 2, align: center)[equal players], table.cell(colspan: 3, align: center)[$p = 0.55$],
+      table.hline(start: 2, end: 4, stroke: 0.4pt), table.hline(start: 4, end: 7, stroke: 0.4pt),
+      [verdict], [games], [better], [worse], [games],
+    ),
+    table.hline(stroke: 0.5pt),
+    [posterior 95%], [100], [0.528], [59.6], [0.521], [0.120], [53.2],
+    [posterior 95%], [1,000], [0.728], [355.6], [0.866], [0.123], [138.0],
+    [Bayes factor 20], [100], [0.028], [98.0], [0.061], [0.004], [96.2],
+    [Bayes factor 20], [1,000], [0.036], [967.7], [0.512], [0.004], [745.0],
+    [lead of 15], [1,000], [0.995], [224.0], [0.953], [0.047], [135.9],
+    [lead of 15], [none], [1], [225], [0.953], [0.047], [135.9],
+    table.hline(),
+  )),
+  caption: [Three stopping rules. For equal players, the chance that someone is declared better and the mean number of games; for $p = 0.55$, the chances that the better or the worse player is declared better, and the mean number of games. Exact, by the dynamic program; the last row, with no cap, by the gambler's ruin.],
+) <tab-rules>
+
+= Wald's test: play until someone leads by 15 <sec-wald>
+
+Suppose the friends only want to tell $p = 0.45$ from $p = 0.55$, a 55–45 edge for one of them. After $k$ wins in $n$ games the likelihood ratio of the two is $(11 slash 9)^(2k - n)$, which depends only on the lead $2k - n$. Wald's sequential probability ratio test @wald stops when the ratio leaves a fixed interval, so it is *play until one player leads by $c$ games*. The lead then moves one step up or down after each game until it hits a wall at $+c$ or $-c$: the gambler's ruin. If the first player wins each game with chance $p$ and $r = (1 - p) slash p$, the first player reaches $+c$ first with chance $1 slash (1 + r^c)$, and play lasts $c (1 - r^c) slash ((1 + r^c)(2p - 1))$ games on average, or $c^2$ when $p = 1 slash 2$. At $p = 0.55$ the worse player is declared better with chance $9^15 slash (9^15 + 11^15) = 0.0470$, after 135.9 games on average. A lead of 14 would err 5.7% of the time, so 15 is the smallest lead that errs at most 5%. Because the lead moves one game at a time, it lands exactly on $plus.minus 15$, and Wald's approximations, which ignore overshoot, are exact here.
+
+Wald and Wolfowitz @waldwolfowitz proved that no test with error chances at most these, at $p = 0.45$ and at $p = 0.55$, uses fewer games on average at either value. The 95% rule with $N = 1000$ also needs about 138 games at $p = 0.55$, but errs 12.3% of the time. Wald's test is not a test of equality: at $p = 1 slash 2$ it declares someone better after 225 games on average, as it must, since it only chooses between 0.45 and 0.55.
+
+
 = Questions left open
 
 - *Other priors.* A Beta$(a, a)$ prior with a whole number $a$ adds $2a - 1$ points to the billiard table: the chance becomes that of at most $k + a - 1$ heads in $n + 2a - 1$ flips.
-- *A stricter threshold.* How sure must each look be so that equal players get a verdict only 5% of the time?
+- *A stricter threshold.* The Bayes factor rule keeps the verdict chance for equal players below 5%. How sure must each look of the posterior rule be to do the same with $N = 100$ or $N = 1000$, and how much power at $p = 0.55$ does each rule give up?
+
+#bibliography("peggle.yml", style: "ieee")

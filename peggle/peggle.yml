@@ -1,0 +1,89 @@
+armitage:
+  type: article
+  title: Repeated significance tests on accumulating data
+  author:
+    - Armitage, P.
+    - McPherson, C. K.
+    - Rowe, B. C.
+  date: 1969
+  page-range: 235-244
+  parent:
+    type: periodical
+    title: Journal of the Royal Statistical Society, Series A
+    volume: 132
+ville:
+  type: book
+  title: Étude critique de la notion de collectif
+  author: Ville, Jean
+  date: 1939
+  publisher: Gauthier-Villars
+  location: Paris
+shafer2011:
+  type: article
+  title: Test martingales, Bayes factors and p-values
+  author:
+    - Shafer, Glenn
+    - Shen, Alexander
+    - Vereshchagin, Nikolai
+    - Vovk, Vladimir
+  date: 2011
+  page-range: 84-101
+  parent:
+    type: periodical
+    title: Statistical Science
+    volume: 26
+    issue: 1
+  serial-number:
+    arxiv: "0912.4269"
+shafervovk:
+  type: book
+  title: Game-Theoretic Foundations for Probability and Finance
+  author:
+    - Shafer, Glenn
+    - Vovk, Vladimir
+  date: 2019
+  publisher: Wiley
+  location: Hoboken, NJ
+savi:
+  type: article
+  title: Game-theoretic statistics and safe anytime-valid inference
+  author:
+    - Ramdas, Aaditya
+    - Grünwald, Peter
+    - Vovk, Vladimir
+    - Shafer, Glenn
+  date: 2023
+  page-range: 576-601
+  parent:
+    type: periodical
+    title: Statistical Science
+    volume: 38
+    issue: 4
+  serial-number:
+    doi: 10.1214/23-STS894
+wald:
+  type: article
+  title: Sequential tests of statistical hypotheses
+  author: Wald, Abraham
+  date: 1945
+  page-range: 117-186
+  parent:
+    type: periodical
+    title: The Annals of Mathematical Statistics
+    volume: 16
+    issue: 2
+waldwolfowitz:
+  type: article
+  title: Optimum character of the sequential probability ratio test
+  author:
+    - Wald, Abraham
+    - Wolfowitz, Jacob
+  date: 1948
+  page-range: 326-339
+  parent:
+    type: periodical
+    title: The Annals of Mathematical Statistics
+    volume: 19
+    issue: 3
+  serial-number:
+    doi: 10.1214/aoms/1177730197

@@ -11,7 +11,7 @@ from peggle.peggle import better
 HALF = Fraction(1, 2)
 
 
-def brute_force(p: Fraction, cap: int) -> stopping.Outcome:
+def brute_force(p: Fraction, cap: int, rule: stopping.Rule = stopping.verdict) -> stopping.Outcome:
     """Enumerate all 2^cap sequences of cap games and stop each one at its first verdict."""
     totals = {1: Fraction(0), -1: Fraction(0), 0: Fraction(0)}
     games = Fraction(0)
@@ -19,7 +19,7 @@ def brute_force(p: Fraction, cap: int) -> stopping.Outcome:
         k = 0
         for n, won in enumerate(wins, 1):
             k += won
-            v = stopping.verdict(k, n)
+            v = rule(k, n)
             if v or n == cap:
                 break
         # The 2^(cap - n) sequences that share this prefix all stop here; count each prefix once.
@@ -34,6 +34,66 @@ def test_dynamic_program_matches_brute_force():
     for cap in range(1, 13):
         for p in (HALF, Fraction(3, 5), Fraction(1, 7)):
             assert stopping.outcome(p, cap) == brute_force(p, cap)
+
+
+def test_other_rules_match_brute_force():
+    for cap in (8, 10, 12):
+        for p in (HALF, Fraction(3, 5)):
+            for rule in (stopping.bayes_factor_rule, stopping.lead_rule(3)):
+                assert stopping.outcome(p, cap, rule) == brute_force(p, cap, rule)
+
+
+def test_bayes_factor_is_a_martingale_for_equal_players():
+    for n in range(40):
+        for k in range(n + 1):
+            after = (stopping.bayes_factor(k + 1, n + 1) + stopping.bayes_factor(k, n + 1)) / 2
+            assert after == stopping.bayes_factor(k, n)
+            # It is the prior average of the likelihood ratio (2p)^k (2 - 2p)^(n - k).
+            assert stopping.bayes_factor(k, n) == 2**n * stopping.prior_path_chance(k, n)
+
+
+def test_bayes_factor_rule_and_ville():
+    for cap in (1, 5, 9, 30, 200):
+        # Optional stopping: the factor where play stops still averages exactly 1.
+        assert (
+            sum(
+                s.paths * Fraction(1, 2**s.n) * stopping.bayes_factor(s.k, s.n)
+                for s in stopping.stops(cap, stopping.bayes_factor_rule)
+            )
+            == 1
+        )
+    chances = []
+    for cap in (100, 1000):
+        o = stopping.outcome(HALF, cap, stopping.bayes_factor_rule)
+        chances.append(o.first + o.second)
+    # The chance only grows with the cap; Ville's inequality keeps it below 1/20 for every cap.
+    assert [f"{float(c):.4f}" for c in chances] == ["0.0276", "0.0357"]
+    assert chances[0] < chances[1] < Fraction(1, stopping.EVIDENCE)
+    assert stopping.bayes_factor_bounds(1000) == stopping.thresholds(
+        1000, stopping.bayes_factor_rule
+    )
+    far = stopping.verdict_chance_float(stopping.bayes_factor_bounds(1000))
+    assert abs(far - float(chances[1])) < 1e-12
+    far = stopping.verdict_chance_float(stopping.bayes_factor_bounds(10_000))
+    assert f"{far:.4f}" == "0.0387" and far < 1 / stopping.EVIDENCE
+    assert [stopping.bounds_hi(n) for n in (20, 100, 1000)] == [17, 66, 556]
+
+
+def test_wald_test_is_a_lead_of_fifteen():
+    assert stopping.wald_lead() == 15
+    assert stopping.lead_exact(Fraction(55, 100), 14)[0] > Fraction(5, 100)
+    worse, games = stopping.lead_exact(Fraction(55, 100), 15)
+    assert worse == Fraction(9**15, 9**15 + 11**15)
+    assert f"{float(worse):.4f}" == "0.0470" and f"{float(games):.1f}" == "135.9"
+    assert stopping.lead_exact(HALF, 15) == (HALF, 225)
+    for p in (HALF, Fraction(55, 100), Fraction(7, 10)):
+        o = stopping.outcome(p, 1000, stopping.lead_rule(15))
+        worse, games = stopping.lead_exact(p, 15)
+        assert abs(o.second - worse) <= o.neither
+        assert o.games <= games and (p != HALF or o.neither > Fraction(1, 1000))
+        if p != HALF:
+            # Undecided after 1,000 games: 4.3e-5 at p = 0.55, 1.2e-39 at p = 0.7.
+            assert o.neither < Fraction(1, 10**4) and games - o.games < Fraction(1, 100)
 
 
 def test_chances_add_up_and_equal_players_are_symmetric():
@@ -143,3 +203,52 @@ def test_note_numbers_are_current():
         assert f"[{float(o.games):.1f}]" in note
     for cap in (100, 1000):
         assert f"{float(stopping.bayes(cap).wrong_given_declared):.1%}" in note
+
+
+def test_new_rules_in_the_note_and_readme():
+    folder = Path(stopping.__file__).parent
+    note = " ".join((folder / "peggle.typ").read_text().split())
+    readme = (folder / "README.md").read_text()
+    bf = {cap: stopping.outcome(HALF, cap, stopping.bayes_factor_rule) for cap in (100, 1000)}
+    for cap, o in bf.items():
+        assert f"{float(o.first + o.second):.4f} for $N = {cap}$" in note
+        assert f"{float(o.first + o.second):.4f} (N = {cap:,})" in readme
+    far = f"{stopping.verdict_chance_float(stopping.bayes_factor_bounds(10_000)):.4f}"
+    assert f"to {far} at $N = 10000$" in note and f"{far} at N = 10,000" in readme
+    assert (
+        f"It takes {stopping.bounds_hi(100)} wins in 100 games, or {stopping.bounds_hi(1000)}"
+        in note
+    )
+    assert f"$B_10 = 1024 slash 2310 approx {float(stopping.bayes_factor(6, 10)):.2f}$" in note
+    assert f"$B_1000 approx {float(stopping.bayes_factor(527, 1000)):.2f}$" in note
+    assert stopping.bayes_factor(8, 8) == Fraction(256, 9) and stopping.bounds_hi(8) == 8
+    p55 = Fraction(55, 100)
+    o = stopping.outcome(p55, 1000, stopping.bayes_factor_rule)
+    assert f"{float(o.second):.1%}" == "0.4%" and f"{float(o.first):.0%}" == "51%"
+    assert f"after {float(o.games):.0f} games on average" in note
+    worse, games = stopping.lead_exact(p55, 15)
+    assert f"= {float(worse):.4f}$, after {float(games):.1f} games" in note
+    assert f"= {float(worse):.4f}, after {float(games):.1f} games" in readme
+    assert f"lead of 14 would err {float(stopping.lead_exact(p55, 14)[0]):.1%}" in note
+    # Every row of the table of rules.
+    rows = [
+        ("posterior 95%", 100, stopping.verdict),
+        ("posterior 95%", 1000, stopping.verdict),
+        ("Bayes factor 20", 100, stopping.bayes_factor_rule),
+        ("Bayes factor 20", 1000, stopping.bayes_factor_rule),
+        ("lead of 15", 1000, stopping.lead_rule(15)),
+    ]
+    for name, cap, rule in rows:
+        equal, edge = stopping.outcome(HALF, cap, rule), stopping.outcome(p55, cap, rule)
+        cells = [
+            name,
+            f"{cap:,}",
+            f"{float(equal.first + equal.second):.3f}",
+            f"{float(equal.games):.1f}",
+            f"{float(edge.first):.3f}",
+            f"{float(edge.second):.3f}",
+            f"{float(edge.games):.1f}",
+        ]
+        assert "[" + "], [".join(cells) + "]" in note, cells
+    cells = ["lead of 15", "none", "1", "225", f"{1 - float(worse):.3f}", f"{float(worse):.3f}"]
+    assert "[" + "], [".join(cells) + f"], [{float(games):.1f}]" in note

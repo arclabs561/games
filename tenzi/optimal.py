@@ -13,6 +13,12 @@ the most common face) and stops when no keep improves on it. For ten dice and si
 stops at once under both rule sets, so switching is optimal; `brute_force` confirms the method
 on small games by value iteration over every ordered roll and every subset of dice.
 
+`by_turn` asks a stronger question: does switching also give the largest chance of being done
+by turn t, for every t at once? A finite-horizon dynamic program per t, in whole numbers,
+says yes for ten dice up to the turn where that chance is within 10^-12 of 1. A strategy that
+is best for every deadline is best for any race (see tenzi.typ). `brute_force_by_turn` checks
+the program on small games over every ordered roll and every subset of dice.
+
     uv run python -m tenzi.optimal
 """
 
@@ -165,6 +171,72 @@ def brute_force(dice: int, faces: int, tol: float = 1e-13) -> float:
             return 1 + sum(value.values()) / len(rolls)
 
 
+def by_turn(
+    dice: int = 10, faces: int = 6, any_dice: bool = False, within: Fraction = Fraction(1, 10**12)
+) -> tuple[list[Fraction], list[tuple[int, Counts, list[Counts]]]]:
+    """The best chance of being done by turn t, for t = 1, 2, ... until it is within `within` of 1.
+
+    V_t(roll) is the best chance of finishing within t more rolls after seeing `roll`; it is the
+    largest, over keeps, of sum P(keep -> next) V_(t-1)(next). Values are kept as whole numbers
+    times faces^(-dice t), so the arithmetic is exact and fast. Returns the best chances from the
+    start, and every (t, roll, best keeps) where keeping every die of the most common face is
+    not among the best keeps; switching is best for every deadline when that list is empty.
+    """
+    scale, done = faces**dice, (dice,)
+    weights = {  # outcomes(keep) times faces^dice, as whole numbers
+        keep: {nxt: int(p * scale) for nxt, p in outcomes(keep, dice, faces).items()}
+        for roll in partitions(dice, faces)
+        for keep in keeps(roll, any_dice)
+    }
+    rolls = [roll for roll in partitions(dice, faces) if roll != done]
+    value = {roll: int(roll == done) for roll in partitions(dice, faces)}  # V_0
+    best_chances, worse = [], []
+    for t in range(1, 10**6):
+        start = sum(w * value[nxt] for nxt, w in weights[()].items())
+        best_chances.append(Fraction(start, scale**t))  # first roll, then t - 1 more
+        if 1 - best_chances[-1] < within:
+            return best_chances, worse
+        new = {done: scale * value[done]}
+        for roll in rolls:
+            options = {
+                keep: sum(w * value[nxt] for nxt, w in weights[keep].items())
+                for keep in keeps(roll, any_dice)
+            }
+            new[roll] = max(options.values())
+            if options[(roll[0],)] != new[roll]:
+                worse.append((t, roll, [k for k, v in options.items() if v == new[roll]]))
+        value = new
+    raise AssertionError("unreachable")
+
+
+def brute_force_by_turn(dice: int, faces: int, turns: int) -> list[float]:
+    """The best chance of being done by turn t, for t = 1 .. turns, over ordered rolls and every
+    subset of dice to keep. Feasible only for small games."""
+    rolls = list(product(range(faces), repeat=dice))
+    value = {roll: float(len(set(roll)) == 1) for roll in rolls}  # done within 0 more rolls
+    chances = []
+    for _ in range(turns):
+        chances.append(sum(value.values()) / len(rolls))
+        new = {}
+        for roll in rolls:
+            if len(set(roll)) == 1:
+                new[roll] = 1.0
+                continue
+            best = 0.0
+            for mask in range(2**dice - 1):  # bit i set: keep die i
+                free = [i for i in range(dice) if not mask >> i & 1]
+                total = 0.0
+                for faces_rolled in product(range(faces), repeat=len(free)):
+                    after = list(roll)
+                    for i, face in zip(free, faces_rolled, strict=True):
+                        after[i] = face
+                    total += value[tuple(after)]
+                best = max(best, total / faces ** len(free))
+            new[roll] = best
+        value = new
+    return chances
+
+
 def main() -> None:
     print("Small games: exact optimum (one face, any dice) and value iteration over subsets")
     for dice, faces in [(3, 2), (4, 2), (5, 2), (3, 3), (4, 3)]:
@@ -190,6 +262,27 @@ def main() -> None:
     print("\nExpected turns still to come after keeping k dice of one face (exact):")
     print("  " + ", ".join(f"{k}: {float(values[(k,) if k else ()]):.3f}" for k in range(10)))
     print(f"  as a fraction, the optimal mean is {best}")
+
+    print("\nBest chance of being done by turn t, one finite-horizon program per t:")
+    for any_dice in (False, True):
+        chances, worse = by_turn(any_dice=any_dice)
+        rule = "any dice" if any_dice else "one face"
+        print(
+            f"  {rule}: up to t = {len(chances)}, where it is {float(chances[-1]):.13f},"
+            f" switching is among the best keeps at every roll and every t: {not worse}"
+        )
+    small = [
+        (dice, faces, any_dice)
+        for dice in range(2, 7)
+        for faces in range(2, 7)
+        for any_dice in (False, True)
+        if by_turn(dice, faces, any_dice)[1]
+    ]
+    print(f"  two to six dice on two to six faces, games where switching is not best: {small}")
+    print("  t, best chance by turn t:", end="")
+    for t in (5, 10, 14, 20, 30, 50):
+        print(f"  {t}: {float(chances[t - 1]):.4f}", end="")
+    print()
 
 
 if __name__ == "__main__":
