@@ -13,12 +13,15 @@ plot gives about 0.3. A cell tagged `nbval-ignore-output` is not compared, as in
 """
 
 import base64
+import io
 import tempfile
 from pathlib import Path
 
+import numpy as np
 import pytest
-from matplotlib.testing.compare import compare_images
+from matplotlib.testing.compare import calculate_rms, compare_images
 from matplotlib.testing.exceptions import ImageComparisonFailure
+from PIL import Image
 
 TOLERANCE = 0.05
 
@@ -32,8 +35,20 @@ def pngs(outputs) -> list[bytes]:
     ]
 
 
+def rms_difference(expected: bytes, actual: bytes) -> float:
+    """The root mean square difference of two PNGs' RGB pixels, on the 0-255 scale."""
+    exp, act = (
+        np.asarray(Image.open(io.BytesIO(png)).convert("RGB")) for png in (expected, actual)
+    )
+    return calculate_rms(exp.astype(float), act.astype(float))
+
+
+# (notebook cell, figure number, RMS difference or None for equal bytes), for the summary.
+COMPARED: list[tuple[str, int, float | None]] = []
+
+
 def figure_mismatches(
-    expected: list[bytes], actual: list[bytes], tol: float, where: Path
+    expected: list[bytes], actual: list[bytes], tol: float, where: Path, name: str = ""
 ) -> list[str]:
     """Describe each pair of PNGs that differ by more than tol; write the pair and their diff under where."""
     if len(expected) != len(actual):
@@ -41,20 +56,22 @@ def figure_mismatches(
     problems = []
     for i, (exp, act) in enumerate(zip(expected, actual, strict=True), 1):
         if exp == act:
+            COMPARED.append((name, i, None))
+            continue
+        try:
+            rms = rms_difference(exp, act)
+        except ImageComparisonFailure as e:  # the images have different sizes
+            rms, err = float("inf"), str(e)
+        COMPARED.append((name, i, rms))
+        if rms <= tol:
             continue
         where.mkdir(parents=True, exist_ok=True)
         exp_path, act_path = where / f"figure{i}-expected.png", where / f"figure{i}.png"
         exp_path.write_bytes(exp)
         act_path.write_bytes(act)
-        try:
-            err = compare_images(str(exp_path), str(act_path), tol)
-        except ImageComparisonFailure as e:  # the images have different sizes
-            err = str(e)
-        if err is None:
-            for p in (exp_path, act_path):
-                p.unlink()
-        else:
-            problems.append(f"figure {i}: {err}")
+        if rms != float("inf"):
+            err = compare_images(str(exp_path), str(act_path), tol)  # also writes the diff
+        problems.append(f"figure {i}: {err}")
     return problems
 
 
@@ -75,8 +92,22 @@ def pytest_runtest_call(item):
         / nb.parent.name
         / f"{nb.stem}-cell{item.cell_num}"
     )
-    problems = figure_mismatches(pngs(cell.outputs), pngs(outputs), TOLERANCE, where)
+    problems = figure_mismatches(pngs(cell.outputs), pngs(outputs), TOLERANCE, where, item.nodeid)
     if problems:
         problems.append(f"The committed and new PNGs, and any diffs, are in {where}")
         pytest.fail("Cell figures differ:\n" + "\n".join(problems), pytrace=False)
     return result
+
+
+def pytest_terminal_summary(terminalreporter):
+    """Say how many figures matched byte for byte, and the largest difference among the rest."""
+    if not COMPARED:
+        return
+    inexact = [(name, i, rms) for name, i, rms in COMPARED if rms is not None]
+    line = (
+        f"{len(COMPARED)} notebook figures compared, {len(COMPARED) - len(inexact)} byte for byte"
+    )
+    if inexact:
+        name, i, rms = max(inexact, key=lambda t: t[2])
+        line += f"; largest RMS difference {rms:.4f} (figure {i} of {name})"
+    terminalreporter.write_line(line)

@@ -6,7 +6,7 @@ import matplotlib
 import numpy as np
 import pytest
 
-from tests.nbval_figures import TOLERANCE, figure_mismatches
+from tests.nbval_figures import TOLERANCE, figure_mismatches, rms_difference
 
 matplotlib.use("agg")
 import matplotlib.pyplot as plt  # noqa: E402
@@ -41,10 +41,12 @@ def test_same_bytes_match(base, tmp_path):
 def test_drawing_order_is_within_tolerance(base, tmp_path):
     shuffled = scatter(RNG.permutation(200))
     assert shuffled != base
+    assert rms_difference(base, shuffled) < 0.01 < TOLERANCE  # the README says about 0.004
     assert figure_mismatches([base], [shuffled], TOLERANCE, tmp_path) == []
 
 
 def test_one_missing_point_fails(base, tmp_path):
+    assert rms_difference(base, scatter(range(199))) > 0.2 > TOLERANCE  # the README says about 0.3
     problems = figure_mismatches([base], [scatter(range(199))], TOLERANCE, tmp_path)
     assert len(problems) == 1 and problems[0].startswith("figure 1:")
     assert (tmp_path / "figure1-failed-diff.png").exists()
