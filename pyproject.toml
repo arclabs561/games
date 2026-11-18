@@ -33,6 +33,9 @@ boggle = [
 drive_ya_nuts = [
     "numpy>=2.5",
 ]
+ev_nova = [
+    "numpy>=2.5",
+]
 egyptian_ratscrew = [
     "matplotlib>=3.11",
     "numpy>=2.5",
@@ -62,7 +65,7 @@ build-backend = "uv_build"
 
 [tool.uv.build-backend]
 module-root = ""
-module-name = ["boggle", "drive_ya_nuts", "egyptian_ratscrew", "mastermind", "peggle", "pokemon", "tenzi"]
+module-name = ["boggle", "drive_ya_nuts", "egyptian_ratscrew", "ev_nova", "mastermind", "peggle", "pokemon", "tenzi"]
 
 [tool.ruff]
 line-length = 100
