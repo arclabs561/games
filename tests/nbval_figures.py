@@ -6,7 +6,9 @@ compared its text, the plugin compares the cell's PNG outputs with the committed
 so each notebook still runs once.
 
 Two PNGs match if their bytes are equal, or else if the root mean square difference of
-their pixels is at most TOLERANCE on the 0-255 scale (matplotlib.testing.compare). A figure
+their pixels is at most TOLERANCE on the 0-255 scale (matplotlib.testing.compare). On the
+GitHub runners the PNG bytes differed from locally saved ones even where every pixel was
+equal, so the pixel comparison is the one that usually decides. A figure
 drawn from the same data in another order differs by about 0.004 at most, since only the
 antialiased edges of overlapping markers change; removing one small marker from a scatter
 plot gives about 0.3. A cell tagged `nbval-ignore-output` is not compared, as in nbval.
