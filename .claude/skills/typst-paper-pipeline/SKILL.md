@@ -98,6 +98,23 @@ The local gallery is at `~/.cache/typst-vendored/preview/fletcher/0.5.8/docs/gal
   theorem numbers); figure and proposition numbers shift, and comments in code that cite them
   must follow.
 
+## Numbers, data and ports
+
+- The script that computes a document's numbers also writes a CSV next to the `.typ`; plots
+  read it with `csv("x.csv", row-type: dictionary)`. A test checks that the committed CSV is
+  exactly what the script writes, so a figure cannot drift from the code.
+- Porting from LyX or TeXmacs: rewrite rather than convert, and recompute every claim before
+  keeping it. A ported Bayes integral had lost its $q^k$ and its $dq$; a TeXmacs note stopped
+  mid-derivation and was finished by computing the distribution exactly.
+- In markup `<` starts a label: write `\<0.001%` in a table cell.
+- An ordinal built from a formula breaks badly at a line end; keep it whole with
+  `#box[$(k + 1)$th]`.
+- fletcher self-loops: `edge(<a>, <a>, "-|>", bend: 130deg, loop-angle: 90deg)`. A row of nine
+  6.5 mm circles at spacing 5.5 mm fits a 5.4 in column without scaling; at 9.5 mm it was
+  scaled down until the loop labels were unreadable.
+- To keep a short last page from holding a lone bullet, cut words (drop the weakest item),
+  and let a table float (`placement: auto`, introduced by a reference rather than a colon).
+
 ## Visual QA procedure (every version)
 
 1. Contact sheets for layout: `pdftoppm -r 45 -png doc.pdf p`, then paste eight pages per image
