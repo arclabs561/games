@@ -81,25 +81,50 @@ def best_guess(consistent: list[int], cost: Callable[[list[int]], float]) -> int
     )
 
 
+# The cost of a partition, given only its part sizes; each strategy picks the guess of
+# lowest cost. `fallout3.py` uses the same four costs on terminal word lists.
+
+
+def largest_part(sizes: list[int]) -> float:
+    """Knuth (1977): the size of the largest part."""
+    return max(sizes)
+
+
+def fewer_parts(sizes: list[int]) -> float:
+    """Kooi (2005): minus the number of parts."""
+    return -len(sizes)
+
+
+def sum_of_squares(sizes: list[int]) -> float:
+    """Irving (1979): the sum of squared part sizes, which is n times the expected size of
+    the part the secret falls in."""
+    return sum(k * k for k in sizes)
+
+
+def negative_entropy(sizes: list[int]) -> float:
+    """Neuwirth (1982): minus the entropy of the reply, in bits."""
+    n = sum(sizes)
+    return sum(k / n * math.log2(k / n) for k in sizes)
+
+
 def minimax(consistent: list[int]) -> int:
     """Knuth (1977): make the largest partition as small as possible."""
-    return best_guess(consistent, max)
+    return best_guess(consistent, largest_part)
 
 
 def most_parts(consistent: list[int]) -> int:
     """Kooi (2005): make as many partitions as possible."""
-    return best_guess(consistent, lambda sizes: -len(sizes))
+    return best_guess(consistent, fewer_parts)
 
 
 def expected_size(consistent: list[int]) -> int:
     """Irving (1979): make the expected size of the remaining partition as small as possible."""
-    return best_guess(consistent, lambda sizes: sum(k * k for k in sizes))
+    return best_guess(consistent, sum_of_squares)
 
 
 def entropy(consistent: list[int]) -> int:
     """Neuwirth (1982): make the reply as informative as possible (maximum entropy)."""
-    n = len(consistent)
-    return best_guess(consistent, lambda sizes: sum(k / n * math.log2(k / n) for k in sizes))
+    return best_guess(consistent, negative_entropy)
 
 
 def first_consistent(consistent: list[int]) -> int:
