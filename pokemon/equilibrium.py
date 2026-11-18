@@ -17,63 +17,93 @@ The duel and log-ratio games are symmetric (g = -gᵀ), so their value is 0.
 Floating-point LP (scipy's HiGHS) finds an equilibrium; ``exact_equilibrium`` then solves the
 indifference equations on its support with Fractions and checks every equilibrium inequality
 exactly. ``has_unique_certificate`` proves, also exactly, that no other equilibrium exists
-when the solution is strict; otherwise ``weight_ranges`` finds by LP the least and greatest
-weight each strategy takes over all optimal strategies.
+when the solution is strict. Otherwise ``optimal_weight_bound`` finds the least and greatest
+weight a strategy takes over all optimal strategies: LP suggests a primal and a dual vertex,
+both are rebuilt in Fractions, and they prove the bound when their values meet.
+
+Every game can be played on the chart of Generation 1, of Generations 2 to 5, or of
+Generation 6 on (``CHARTS``), and over the typings that exist in a generation.
 
     uv run --group pokemon python -m pokemon.equilibrium
 """
 
 from __future__ import annotations
 
-import csv
 from collections.abc import Callable, Sequence
 from fractions import Fraction
 from itertools import combinations, permutations
-from pathlib import Path
 
 import numpy as np
 from scipy.optimize import linprog
 
-from pokemon.pokemon_types import gen6
+from pokemon import pokedex
+from pokemon.pokemon_types import chart, gen6
 
 Matrix = list[list[Fraction]]
 Strategy = list[Fraction]
+Chart = dict[str, dict[str, float]]
+Typing = tuple[str, ...]
 
 TYPES: tuple[str, ...] = tuple(gen6)  # the chart's order: normal, fire, water, ...
-# A Pokémon's typing: one type, or two in chart order. 18 + 153 = 171.
-TYPINGS: tuple[tuple[str, ...], ...] = tuple((t,) for t in TYPES) + tuple(combinations(TYPES, 2))
-GEN7_CSV = Path(__file__).with_name("pokemon_gen7.csv")
 
 
-def existing_typings(path: Path = GEN7_CSV) -> tuple[tuple[str, ...], ...]:
-    """The typings that some Pokémon or form in ``pokemon_gen7.csv`` has, in TYPINGS order."""
-    with path.open(encoding="utf-8") as f:
-        found = {
-            tuple(sorted((t.lower() for t in (r["type1"], r["type2"]) if t), key=TYPES.index))
-            for r in csv.DictReader(f)
-        }
-    return tuple(t for t in TYPINGS if t in found)
+def singles(c: Chart = gen6) -> tuple[Typing, ...]:
+    """Each type of a chart as a typing of its own."""
+    return tuple((t,) for t in c)
 
 
-def multiplier(attack: str, typing: Sequence[str]) -> Fraction:
+def typings(c: Chart = gen6) -> tuple[Typing, ...]:
+    """One type, or two in chart order: 18 + 153 = 171 with 18 types."""
+    return singles(c) + tuple(combinations(c, 2))
+
+
+TYPINGS: tuple[Typing, ...] = typings()
+
+# The three charts: Generation 1, Generations 2 to 5 (Steel and Dark), 6 on (Fairy).
+CHARTS: dict[str, Chart] = {"1": chart(1), "2-5": chart(2), "6-9": chart(6)}
+
+
+def generation_6_split() -> dict[str, Chart]:
+    """Generation 6 made two changes; each alone, applied to the Generation 2 to 5 chart.
+
+    'steel change': Steel no longer resists Ghost and Dark, and there is no Fairy.
+    'fairy': Fairy is added, and Steel still resists Ghost and Dark.
+    """
+    six = chart(6)
+    steel = {a: {d: m for d, m in row.items() if d != "fairy"} for a, row in six.items()}
+    del steel["fairy"]
+    fairy = {a: dict(row) for a, row in six.items()}
+    fairy["ghost"]["steel"] = fairy["dark"]["steel"] = 0.5
+    return {"steel change": steel, "fairy": fairy}
+
+
+def existing_typings(generation: int = 7) -> tuple[Typing, ...]:
+    """The typings that some form has as of a generation, in ``typings`` order."""
+    found = pokedex.existing_typings(generation)
+    return tuple(t for t in typings(chart(generation)) if t in found)
+
+
+def multiplier(attack: str, typing: Sequence[str], c: Chart = gen6) -> Fraction:
     """Damage multiplier of an attack against a typing: the product over its types."""
     m = Fraction(1)
     for t in typing:
-        m *= Fraction(gen6[attack].get(t, 1.0))
+        m *= Fraction(c[attack].get(t, 1.0))
     return m
 
 
-def best_multiplier(attacker: Sequence[str], defender: Sequence[str]) -> Fraction:
+def best_multiplier(attacker: Sequence[str], defender: Sequence[str], c: Chart = gen6) -> Fraction:
     """The larger multiplier among the attacker's own types (it picks its better move)."""
-    return max(multiplier(t, defender) for t in attacker)
+    return max(multiplier(t, defender, c) for t in attacker)
 
 
 # The games.
 
 
-def attack_matrix(defenders: Sequence[Sequence[str]] = tuple((t,) for t in TYPES)) -> Matrix:
+def attack_matrix(defenders: Sequence[Sequence[str]] | None = None, c: Chart = gen6) -> Matrix:
     """Rows are attacking types, columns are defending typings, entries are multipliers."""
-    return [[multiplier(a, d) for d in defenders] for a in TYPES]
+    if defenders is None:
+        defenders = singles(c)
+    return [[multiplier(a, d, c) for d in defenders] for a in c]
 
 
 def duel_score(a: Fraction, b: Fraction) -> Fraction:
@@ -98,20 +128,26 @@ def log_ratio(a: Fraction, b: Fraction, immune: int) -> Fraction:
 
 def symmetric_matrix(
     score: Callable[[Fraction, Fraction], Fraction],
-    typings: Sequence[Sequence[str]] = tuple((t,) for t in TYPES),
+    players: Sequence[Sequence[str]] | None = None,
+    c: Chart = gen6,
 ) -> Matrix:
     """g[i][j] = score(damage i deals j, damage j deals i), each using its best own type."""
-    return [[score(best_multiplier(p, q), best_multiplier(q, p)) for q in typings] for p in typings]
+    if players is None:
+        players = singles(c)
+    return [
+        [score(best_multiplier(p, q, c), best_multiplier(q, p, c)) for q in players]
+        for p in players
+    ]
 
 
-def duel_matrix(typings: Sequence[Sequence[str]] = tuple((t,) for t in TYPES)) -> Matrix:
+def duel_matrix(players: Sequence[Sequence[str]] | None = None, c: Chart = gen6) -> Matrix:
     """The duel game of Schmitz (2021), over single types or over typings."""
-    return symmetric_matrix(duel_score, typings)
+    return symmetric_matrix(duel_score, players, c)
 
 
-def log_ratio_matrix(immune: int = -2) -> Matrix:
+def log_ratio_matrix(immune: int = -2, c: Chart = gen6) -> Matrix:
     """The log-ratio game over single types."""
-    return symmetric_matrix(lambda a, b: log_ratio(a, b, immune))
+    return symmetric_matrix(lambda a, b: log_ratio(a, b, immune), None, c)
 
 
 # Solving.
@@ -229,22 +265,85 @@ def exact_equilibrium(g: Matrix, tol: float = 1e-7) -> tuple[Strategy, Strategy,
     return x, y, v
 
 
-def weight_ranges(g: Matrix, v: Fraction) -> list[tuple[float, float]]:
-    """Least and greatest weight each row gets over all of the row player's optimal strategies.
+def optimal_weight_bound(
+    g: Matrix, v: Fraction, c: Sequence[Fraction]
+) -> tuple[Fraction, Strategy]:
+    """The greatest c·x over the row player's optimal strategies, and an x reaching it.
 
-    The optimal strategies are the polytope {x >= 0, sum x = 1, xᵀg >= v}; two LPs per row.
+    The optimal strategies are P = {x >= 0, sum x = 1, (xᵀg)_j >= v for every column j}.
+    Floating-point LP finds a vertex x of P and a vertex (y, λ) of the dual problem: minimize
+    λ - v·sum(y) subject to y >= 0 and λ >= c_i + (gy)_i for every row i. Both are rebuilt in
+    Fractions from the equations that hold at them. Then for every x' in P,
+
+        c·x' <= sum_i x'_i (λ - (gy)_i) = λ - x'ᵀgy <= λ - v·sum(y),
+
+    so if the exact primal x reaches λ - v·sum(y), that number is the maximum. Both
+    vectors are checked exactly; floating point only suggests which equations to solve.
     """
-    arr = np.array(g, dtype=float)
+    arr, cf = np.array(g, dtype=float), np.array([float(q) for q in c])
     m, n = arr.shape
-    a_ub, b_ub, a_eq = -arr.T, -float(v) * np.ones(n), np.ones((1, m))
+    tol = 1e-7
+
+    primal = linprog(
+        -cf,
+        A_ub=-arr.T,
+        b_ub=-float(v) * np.ones(n),
+        A_eq=np.ones((1, m)),
+        b_eq=[1],
+        method="highs-ds",
+    )
+    assert primal.status == 0, primal.message
+    rows = [i for i in range(m) if primal.x[i] > tol]
+    tight = [j for j, u in enumerate(primal.x @ arr) if abs(u - float(v)) < tol]
+    eqs = [[g[i][j] for i in rows] for j in tight] + [[Fraction(1)] * len(rows)]
+    sol = solve_linear(eqs, [v] * len(tight) + [Fraction(1)])
+    assert sol is not None
+    x = [Fraction(0)] * m
+    for i, p in zip(rows, sol, strict=True):
+        x[i] = p
+    assert all(p >= 0 for p in x) and sum(x) == 1
+    assert all(u >= v for u in payoffs_against_columns(g, x)), "primal is infeasible"
+    best = sum((ci * xi for ci, xi in zip(c, x, strict=True)), Fraction(0))
+
+    # Dual variables y_1..y_n, λ: minimize λ - v·sum(y) with (gy)_i - λ <= -c_i.
+    dual = linprog(
+        np.concatenate([-float(v) * np.ones(n), [1.0]]),
+        A_ub=np.hstack([arr, -np.ones((m, 1))]),
+        b_ub=-cf,
+        bounds=[(0, None)] * n + [(None, None)],
+        method="highs-ds",
+    )
+    assert dual.status == 0, dual.message
+    cols = [j for j in range(n) if dual.x[j] > tol]
+    lam_f = dual.x[-1]
+    tight_rows = [i for i in range(m) if abs(cf[i] + arr[i] @ dual.x[:n] - lam_f) < tol]
+    # Unknowns y_cols, λ: tight rows hold with equality, and the bound equals c·x.
+    eqs = [[g[i][j] for j in cols] + [Fraction(-1)] for i in tight_rows]
+    eqs.append([-v] * len(cols) + [Fraction(1)])
+    sol = solve_linear(eqs, [-c[i] for i in tight_rows] + [best])
+    assert sol is not None
+    y = [Fraction(0)] * n
+    for j, q in zip(cols, sol[:-1], strict=True):
+        y[j] = q
+    lam = sol[-1]
+    assert all(q >= 0 for q in y), "dual is infeasible"
+    assert all(ci + u <= lam for ci, u in zip(c, payoffs_of_rows(g, y), strict=True))
+    assert lam - v * sum(y) == best, "the bounds do not meet"
+    return best, x
+
+
+def weight_ranges(g: Matrix, v: Fraction) -> list[tuple[Fraction, Fraction]]:
+    """Least and greatest weight of each row over the row player's optimal strategies, exactly.
+
+    Two calls of ``optimal_weight_bound`` per row: maximize x_i, and maximize -x_i.
+    """
+    m = len(g)
     ranges = []
     for i in range(m):
-        c = np.zeros(m)
-        c[i] = 1
-        lo = linprog(c, A_ub=a_ub, b_ub=b_ub, A_eq=a_eq, b_eq=[1])
-        hi = linprog(-c, A_ub=a_ub, b_ub=b_ub, A_eq=a_eq, b_eq=[1])
-        assert lo.status == 0 and hi.status == 0
-        ranges.append((max(lo.fun, 0.0), -hi.fun))
+        e = [Fraction(int(k == i)) for k in range(m)]
+        hi = optimal_weight_bound(g, v, e)[0]
+        lo = -optimal_weight_bound(g, v, [-q for q in e])[0]
+        ranges.append((lo, hi))
     return ranges
 
 
@@ -286,52 +385,106 @@ def has_unique_certificate(g: Matrix, x: Strategy, y: Strategy, v: Fraction) -> 
     return rank(rows_eqs) == len(s_rows) + 1 and rank(cols_eqs) == len(t_cols) + 1
 
 
-def is_unique(g: Matrix, v: Fraction, tol: float = 1e-9) -> bool:
-    """Whether each player has exactly one optimal strategy.
+def spread(g: Matrix, v: Fraction) -> tuple[str, int, Fraction, Fraction] | None:
+    """A strategy whose weight differs between two optimal strategies, or None if none does.
 
-    Tries the exact certificate first; if it does not apply, compares the least and greatest
-    weight of every strategy by LP. In a symmetric game (g = -gᵀ) both players have the same
-    optimal strategies, so one side is enough.
+    Returns (side, index, least weight, greatest weight), side 'row' or 'column'. Each
+    weight is proved exactly by ``optimal_weight_bound``. In a symmetric game (g = -gᵀ) both
+    players have the same optimal strategies, so one side is enough.
+    """
+    sides = [("row", g, v)]
+    if g != transpose_negated(g):
+        sides.append(("column", transpose_negated(g), -v))
+    for side, h, w in sides:
+        m = len(h)
+        for i in range(m):
+            e = [Fraction(int(k == i)) for k in range(m)]
+            hi = optimal_weight_bound(h, w, e)[0]
+            lo = -optimal_weight_bound(h, w, [-q for q in e])[0]
+            if lo != hi:
+                return side, i, lo, hi
+    return None
+
+
+def optimal_vertices(g: Matrix, v: Fraction) -> list[Strategy]:
+    """Optimal row strategies that maximize and minimize each weight in turn, without repeats."""
+    m = len(g)
+    found: list[Strategy] = []
+    for i in range(m):
+        for sign in (1, -1):
+            e = [Fraction(sign * int(k == i)) for k in range(m)]
+            x = optimal_weight_bound(g, v, e)[1]
+            if x not in found:
+                found.append(x)
+    return found
+
+
+def optimal_set_dimension(g: Matrix, v: Fraction, points: Sequence[Strategy]) -> int:
+    """The dimension of the row player's optimal set in a symmetric game, proved exactly.
+
+    ``points`` are optimal strategies. Their average y is optimal, and so is y for the
+    column player (g = -gᵀ). Any optimal x then uses only rows i with (gy)_i = v and earns
+    exactly v on every column y uses. Those equations, with sum x = 1, cut out an affine
+    space containing the optimal set; its dimension bounds the set's from above. The points
+    span an affine space of their own inside the set, which bounds it from below. The two
+    must meet, or this fails.
+    """
+    assert g == transpose_negated(g)
+    k = len(points)
+    y = [sum((p[i] for p in points), Fraction(0)) / k for i in range(len(g))]
+    rows = [i for i, u in enumerate(payoffs_of_rows(g, y)) if u == v]
+    cols = [j for j, q in enumerate(y) if q > 0]
+    eqs = [[g[i][j] for i in rows] for j in cols] + [[Fraction(1)] * len(rows)]
+    upper = len(rows) - rank(eqs)
+    diffs = [[p[i] - points[0][i] for i in range(len(g))] for p in points[1:]]
+    lower = rank(diffs) if diffs else 0
+    assert lower == upper, (lower, upper)
+    return upper
+
+
+def is_unique(g: Matrix, v: Fraction) -> bool:
+    """Whether each player has exactly one optimal strategy, decided exactly.
+
+    Tries the certificate first; if it does not apply, looks for a strategy whose least and
+    greatest optimal weights differ (``spread``).
     """
     x, y, w = exact_equilibrium(g)
     assert w == v
-    if has_unique_certificate(g, x, y, v):
-        return True
-    sides = [(g, v)] if g == transpose_negated(g) else [(g, v), (transpose_negated(g), -v)]
-    return all(hi - lo <= tol for h, w in sides for lo, hi in weight_ranges(h, w))
+    return has_unique_certificate(g, x, y, v) or spread(g, v) is None
 
 
-def never_played(names: Sequence, g: Matrix, v: Fraction, tol: float = 1e-9) -> list:
-    """Row strategies with weight 0 in every optimal strategy."""
-    return [n for n, (_, hi) in zip(names, weight_ranges(g, v), strict=True) if hi <= tol]
+def never_played(names: Sequence, g: Matrix, v: Fraction) -> list:
+    """Row strategies with weight 0 in every optimal strategy, decided exactly."""
+    return [n for n, (_, hi) in zip(names, weight_ranges(g, v), strict=True) if hi == 0]
 
 
 # Rock-paper-scissors triangles.
 
 
-def super_effective(a: str, b: str) -> bool:
+def super_effective(a: str, b: str, c: Chart = gen6) -> bool:
     """Whether type a's attacks do double damage to type b."""
-    return gen6[a].get(b, 1.0) == 2.0
+    return c[a].get(b, 1.0) == 2.0
 
 
-def triangles() -> list[tuple[str, str, str]]:
+def triangles(c: Chart = gen6) -> list[tuple[str, str, str]]:
     """Every 3-cycle a -> b -> c -> a of super-effective attacks, once each.
 
     A cycle is written starting from its type earliest in the chart's order.
     """
+    order = list(c)
     found = []
-    for a, b, c in permutations(TYPES, 3):
-        if TYPES.index(a) < min(TYPES.index(b), TYPES.index(c)) and (
-            super_effective(a, b) and super_effective(b, c) and super_effective(c, a)
+    for a, b, d in permutations(order, 3):
+        if order.index(a) < min(order.index(b), order.index(d)) and (
+            super_effective(a, b, c) and super_effective(b, d, c) and super_effective(d, a, c)
         ):
-            found.append((a, b, c))
+            found.append((a, b, d))
     return found
 
 
-def is_strict(cycle: tuple[str, str, str]) -> bool:
+def is_strict(cycle: tuple[str, str, str], c: Chart = gen6) -> bool:
     """Whether each type also resists (or is immune to) the type it hits."""
-    a, b, c = cycle
-    return all(gen6[y].get(x, 1.0) < 1 for x, y in ((a, b), (b, c), (c, a)))
+    a, b, d = cycle
+    return all(c[y].get(x, 1.0) < 1 for x, y in ((a, b), (b, d), (d, a)))
 
 
 def support(names: Sequence, p: Strategy) -> dict:
@@ -359,28 +512,101 @@ def report(title: str, g: Matrix, row_names: Sequence, col_names: Sequence) -> N
     print()
 
 
+def leaders(names: Sequence, p: Strategy, k: int = 3) -> str:
+    """'water/ground 0.108, ...': the k heaviest strategies, and how many there are."""
+    s = list(support(names, p).items())
+    top = ", ".join(f"{n if isinstance(n, str) else label(n)} {float(q):.3f}" for n, q in s[:k])
+    return f"{len(s)} [{top}]"
+
+
+def uniqueness(g: Matrix, x: Strategy, y: Strategy, v: Fraction, names: Sequence) -> str:
+    """'unique (certificate)', or one strategy whose optimal weight is not fixed."""
+    if has_unique_certificate(g, x, y, v):
+        return "unique (certificate)"
+    found = spread(g, v)
+    if found is None:
+        return "unique (exact weight ranges)"
+    side, i, lo, hi = found
+    name = names[0][i] if side == "row" else names[1][i]
+    return f"not unique: {side} {name if isinstance(name, str) else label(name)} from {lo} to {hi}"
+
+
+def chart_games(c: Chart) -> dict[str, tuple[Matrix, Sequence, Sequence]]:
+    """The games on one chart: (matrix, row names, column names)."""
+    t, ty = list(c), [label(p) for p in typings(c)]
+    return {
+        "attack": (attack_matrix(None, c), t, t),
+        "attack vs typings": (attack_matrix(typings(c), c), t, ty),
+        "duel": (duel_matrix(None, c), t, t),
+        "duel over typings": (duel_matrix(typings(c), c), ty, ty),
+        "log-ratio k=1": (log_ratio_matrix(-1, c), t, t),
+        "log-ratio k=2": (log_ratio_matrix(-2, c), t, t),
+    }
+
+
 def main() -> None:
     singles = list(TYPES)
-    typings = [label(t) for t in TYPINGS]
+    names = [label(t) for t in TYPINGS]
     report("Attack game, single defending types", attack_matrix(), singles, singles)
-    report("Attack game, defending typings", attack_matrix(TYPINGS), singles, typings)
+    report("Attack game, defending typings", attack_matrix(TYPINGS), singles, names)
     report("Duel game, single types", duel_matrix(), singles, singles)
-    report("Duel game, typings", duel_matrix(TYPINGS), typings, typings)
-    existing = existing_typings()
-    names = [label(t) for t in existing]
-    report(
-        f"Duel game, the {len(existing)} typings in pokemon_gen7.csv",
-        duel_matrix(existing),
-        names,
-        names,
-    )
-    print("== Log-ratio game: types never played, by the log2 given to an immunity ==")
+    report("Duel game, typings", duel_matrix(TYPINGS), names, names)
+
+    print("== Log-ratio game: an immunity counts as -k; exact ==")
     for immune in (-1, -2, -3, -4, -6, -10):
         g = log_ratio_matrix(immune)
-        _, _, v = exact_equilibrium(g)
-        never = never_played(singles, g, v)
-        print(f"  {immune:>3}: unique {is_unique(g, v)!s:<5} never ({len(never)}): {never}")
+        vertices = optimal_vertices(g, Fraction(0))
+        dim = optimal_set_dimension(g, Fraction(0), vertices)
+        never = never_played(singles, g, Fraction(0))
+        print(
+            f"  k={-immune:>2}: optimal set of dimension {dim}; never played ({len(never)}): {never}"
+        )
+        if dim == 1:
+            ghost = TYPES.index("ghost")
+            a, b = sorted(vertices, key=lambda x: x[ghost])
+            t = b[ghost]
+            assert all(b[i] == (1 - t) * a[i] + t * (i == ghost) for i in range(len(a)))
+            print(
+                f"        a segment: from a strategy without Ghost to (1 - t) it + t Ghost, t = {t}"
+            )
     print()
+
+    print("== Each chart: Generation 1, Generations 2 to 5, Generation 6 on ==")
+    for name, c in CHARTS.items():
+        print(f"-- Generation {name}: {len(c)} types --")
+        for game, (g, rows, cols) in chart_games(c).items():
+            x, y, v = exact_equilibrium(g)
+            print(f"  {game}: value {v}; {uniqueness(g, x, y, v, (rows, cols))}")
+            print(f"    row {leaders(rows, x)}; column {leaders(cols, y)}")
+    print()
+
+    print("== Generation 6's two changes, each alone ==")
+    for name, c in generation_6_split().items():
+        t = list(c)
+        for game, g in (
+            ("duel", duel_matrix(None, c)),
+            ("log-ratio k=1", log_ratio_matrix(-1, c)),
+            ("log-ratio k=2", log_ratio_matrix(-2, c)),
+        ):
+            x, y, v = exact_equilibrium(g)
+            print(f"  {name}, {game}: {uniqueness(g, x, y, v, (t, t))}; {leaders(t, x, 4)}")
+    print()
+
+    print("== Typings that exist, by generation, with that generation's chart ==")
+    for gen in range(1, 10):
+        c, existing = chart(gen), existing_typings(gen)
+        damage = {t: sum((multiplier(a, t, c) for a in c), Fraction(0)) for t in existing}
+        least = min(damage.values())
+        best = [label(t) for t in existing if damage[t] == least]
+        g = duel_matrix(existing, c)
+        x, y, v = exact_equilibrium(g)
+        print(
+            f"  {gen}: {len(pokedex.forms_as_of(gen))} forms, {len(existing)} typings; "
+            f"least damage {least} ({', '.join(best)}) of {len(c)} neutral"
+        )
+        print(f"     duel: {leaders(existing, x)}; {uniqueness(g, x, y, v, (existing, existing))}")
+    print()
+
     cycles = triangles()
     strict = [c for c in cycles if is_strict(c)]
     print(f"== {len(cycles)} super-effective triangles, {len(strict)} strict ==")

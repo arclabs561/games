@@ -146,3 +146,33 @@ gen6 = {
         "steel": 0.5,
     },
 }
+
+# Earlier charts. Steel and Dark arrived in Generation 2 and Fairy in Generation 6. Six
+# multipliers differ from the Generation 6 chart: (attacker, defender, multiplier, the last
+# generation in which it applies). Source: PokeAPI's type_efficacy_past.csv (see the README).
+INTRODUCED = {"steel": 2, "dark": 2, "fairy": 6}
+PAST = (
+    ("bug", "poison", 2.0, 1),
+    ("poison", "bug", 2.0, 1),
+    ("ghost", "psychic", 0.0, 1),
+    ("ice", "fire", 1.0, 1),
+    ("ghost", "steel", 0.5, 5),
+    ("dark", "steel", 0.5, 5),
+)
+
+
+def chart(generation: int) -> dict[str, dict[str, float]]:
+    """The chart in force in a generation (1 to 9), over the types that exist then.
+
+    Like ``gen6``, a pair at 1.0 is not written.
+    """
+    if not 1 <= generation <= 9:
+        raise ValueError(f"no generation {generation}")
+    types = [t for t in gen6 if INTRODUCED.get(t, 1) <= generation]
+    out = {a: {d: m for d, m in gen6[a].items() if d in types} for a in types}
+    for attacker, defender, multiplier, last in PAST:
+        if generation <= last and attacker in out and defender in out:
+            out[attacker][defender] = multiplier
+            if multiplier == 1.0:
+                del out[attacker][defender]
+    return out
