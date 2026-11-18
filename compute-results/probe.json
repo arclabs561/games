@@ -1,0 +1,13 @@
+{
+ "model": "Qwen/Qwen3-Embedding-0.6B",
+ "dim": 1024,
+ "sim_to_bat": {
+  "bat": 0.998,
+  "baseball": 0.653,
+  "vampire": 0.71,
+  "cave": 0.648,
+  "glove": 0.656,
+  "night": 0.681
+ },
+ "seconds": 13.6
+}
