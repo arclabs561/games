@@ -49,7 +49,7 @@ class Terminal:
 
 
 if __name__ == "__main__":
-    # python3 mastermind/fallout3.py doctrines batteries scorpions generated ...
+    # uv run python -m mastermind.fallout3 doctrines batteries scorpions generated ...
     if len(sys.argv) < 3:
         sys.exit("usage: fallout3.py WORD WORD ... (the words shown on the terminal)")
     Terminal(sys.argv[1:]).automate()

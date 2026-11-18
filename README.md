@@ -6,48 +6,46 @@ Game analyses, solvers, and simulations.
 
 | Game | Path | Content |
 |---|---|---|
-| **Boggle** | `boggle/` | Solver, board analysis (`boggle.ipynb`) |
-| **Drive-Ya-Nuts** | `drive-ya-nuts/` | Solver for the tiling puzzle (`solver.py`) |
-| **Egyptian Ratscrew** | `egyptian-ratscrew/` | Simulation (`egyptian-ratscrew.ipynb`) |
+| **Boggle** | `boggle/` | Solver, board analysis (`board.py`, `boggle.ipynb`) |
+| **Drive-Ya-Nuts** | `drive_ya_nuts/` | Solver for the tiling puzzle (`solver.py`) |
+| **Egyptian Ratscrew** | `egyptian_ratscrew/` | Simulation (`egyptian_ratscrew.ipynb`) |
 | **Erase** | `erase/` | Which make-ten deals cannot be cleared: solver, certificates, paper (`erase.py`, `paper/erase.pdf`) |
-| **Mastermind** | `mastermind/` | Random codes and grading (`mastermind.py`); a filter for the Fallout 3 terminal word puzzle (`fallout3.py`) |
+| **Mastermind** | `mastermind/` | The reply to a guess (`mastermind.py`); five guessing strategies scored on every code (`strategies.py`); a filter for the Fallout 3 terminal word puzzle (`fallout3.py`) |
 | **Peggle** | `peggle/` | Who is the better player after k wins in n games: exact odds and a one-line approximation (`peggle.py`, write-up `peggle.pdf`) |
-| **Pokémon** | `pokemon/` | Type graph analysis (`graph.py`, `pokemon.ipynb`); IV, stat and capture-odds models for the Emerald Kaizo ROM hack (`emerald_kaizo_*.py`) |
-| **Tenzi** | `tenzi/` | How many turns a game takes, exactly and by simulation (`tenzi.py`, write-up `tenzi.pdf`) |
-
-`examples/` holds three standalone scripts: a Tenzi Monte Carlo, Mastermind strategies compared, and the Pokémon type chart as a directed graph.
+| **Pokémon** | `pokemon/` | The type chart as a graph (`graph.py`, `graph_analysis.py`, `pokemon.ipynb`); IV, stat and capture-odds models for the Emerald Kaizo ROM hack (`emerald_kaizo/`) |
+| **Tenzi** | `tenzi/` | How many turns a game takes, exactly and by simulation (`tenzi.py`, `monte_carlo.py`, write-up `tenzi.pdf`) |
 
 ## Usage
 
 The repository is a [uv](https://docs.astral.sh/uv/) project and needs Python 3.12 or later.
 
 ```bash
-uv sync                          # pytest, ruff and ty, from uv.lock
+uv sync --all-groups             # every game's packages, plus pytest, ruff and ty
 uv run pytest
 uv run ruff check
-TY_UV=scripts uv run ty check    # also checks each script below in its own environment
-just ci                          # all four, if `just` is installed
+TY_UV=scripts uv run ty check    # also checks each Erase script in its own environment
+just ci                          # the checks CI runs, if `just` is installed
 ```
 
-Scripts that use only the standard library run with any Python 3.12 or later:
+Each game except Erase is a Python package. Run a module from the repository root:
 
 ```bash
-python3 drive-ya-nuts/solver.py
+uv run python -m drive_ya_nuts.solver
+uv run python -m peggle.peggle
+uv run python -m pokemon.graph   # writes display/graph.json, then serves the page on port 8000
+uv run python -m tenzi.tenzi
+```
+
+A game's third-party packages are the dependency group named after its folder (`uv run --group tenzi ...`). The Erase scripts stay standalone, as the paper describes: most need only the standard library, and the z3 checks list their packages in an inline header (PEP 723) that `uv run` reads:
+
+```bash
 python3 erase/erase.py 4 4 6 9 5 8 5 --center 7 5 1 8
-python3 pokemon/graph.py         # writes display/graph.json, then serves the page on port 8000
-python3 peggle/peggle.py
-```
-
-Scripts that need other packages list them in an inline header (PEP 723), which `uv run` reads:
-
-```bash
-uv run tenzi/tenzi.py
 uv run erase/smt/z3_lemmas.py
 ```
 
 The write-ups in `erase/paper/`, `peggle/` and `tenzi/` are Typst; `uv run erase/paper/typst_vendor.py peggle/peggle.typ` builds one even when the Typst package registry is unreachable.
 
-Each notebook's packages are a dependency group in `pyproject.toml`, named after its folder:
+A notebook uses its folder's dependency group:
 
 ```bash
 uv run --group boggle --with jupyter jupyter lab boggle/boggle.ipynb
@@ -59,7 +57,7 @@ The committed outputs are checked: CI reruns every notebook with [nbval](https:/
 uv run pytest --nbval --nbval-current-env --sanitize-with tests/nbval_sanitize.cfg boggle/boggle.ipynb
 ```
 
-`boggle/`, `drive-ya-nuts/` and `erase/` have their own READMEs.
+`boggle/`, `drive_ya_nuts/` and `erase/` have their own READMEs.
 
 ## License
 

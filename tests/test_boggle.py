@@ -1,13 +1,9 @@
-"""Boggle word search (boggle/boggle.py, which boggle.ipynb imports)."""
+"""Boggle word search (boggle/board.py, which boggle.ipynb imports)."""
 
 import random
-import sys
 from collections import Counter
-from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent.parent / "boggle"))
-
-from boggle import (  # noqa: E402
+from boggle.board import (
     CUBES,
     count_words,
     get_words,

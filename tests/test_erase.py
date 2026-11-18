@@ -1,15 +1,10 @@
 import ast
 import operator
-import sys
 from itertools import combinations, combinations_with_replacement, islice
-from pathlib import Path
 
-DIR = Path(__file__).parent.parent / "erase"
-sys.path.insert(0, str(DIR))
+from verify_certs import check
 
-from verify_certs import check  # noqa: E402
-
-from erase import in_families, make, multisets, solve  # noqa: E402
+from erase import in_families, make, multisets, solve
 
 
 def _evaluate(expr):

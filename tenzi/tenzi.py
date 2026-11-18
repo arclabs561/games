@@ -1,12 +1,3 @@
-#!/usr/bin/env -S uv run --script
-# /// script
-# requires-python = ">=3.12"
-# dependencies = [
-#     "matplotlib>=3.11",
-#     "numpy>=2.5",
-#     "scipy>=1.18",
-# ]
-# ///
 """How many turns does a game of Tenzi take?
 
 Each player rolls ten dice, keeps the dice showing one face, and rerolls the rest until all
@@ -16,8 +7,8 @@ dice show more of another face than are kept. Either way the number of matching 
 Markov chain, so the distribution of turns can be computed exactly; a seeded simulation of
 each strategy checks the exact numbers.
 
-    uv run tenzi/tenzi.py           # exact summary, simulations, and tenzi/turns.csv
-    uv run tenzi/tenzi.py --plot    # also a histogram with a fitted gamma density
+    uv run python -m tenzi.tenzi           # exact summary, simulations, and tenzi/turns.csv
+    uv run python -m tenzi.tenzi --plot    # also a histogram with a fitted gamma density
 
 Only --plot needs the packages in the header; the rest uses the standard library.
 """

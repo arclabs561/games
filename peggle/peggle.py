@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Who is the better player, after k wins in n games?
 
 With a uniform prior on a player's chance p of winning a game, the chance that p > 1/2 after k wins
@@ -6,7 +5,7 @@ in n games equals the chance of at most k heads in n + 1 fair coin flips. This s
 that identity against the Beta integral, prints how many wins it takes to be 95% sure, measures
 two logistic approximations, and writes peggle/better.csv for the figure in peggle.typ.
 
-    python3 peggle/peggle.py
+    uv run python -m peggle.peggle
 """
 
 from fractions import Fraction

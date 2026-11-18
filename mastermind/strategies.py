@@ -1,10 +1,3 @@
-#!/usr/bin/env -S uv run --script
-# /// script
-# requires-python = ">=3.12"
-# dependencies = [
-#     "matplotlib>=3.11",
-# ]
-# ///
 """Mastermind guessing strategies, scored on every secret code.
 
 A **code** is four pegs, each one of six colors, so there are 6^4 = 1,296 codes. After each
@@ -25,8 +18,8 @@ distributions in Table 7 of B. Kooi, "Yet another Mastermind strategy", ICGA Jou
 2005. The best possible average, found by exhaustive search, is 4.340 (Koyama and Lai, 1993);
 only minimax never needs a sixth guess.
 
-    uv run examples/mastermind_pareto.py          # about half a minute
-    uv run examples/mastermind_pareto.py --plot   # also writes mastermind_pareto.png
+    uv run python -m mastermind.strategies          # about half a minute
+    uv run python -m mastermind.strategies --plot   # also writes mastermind_strategies.png
 """
 
 import itertools
@@ -36,6 +29,8 @@ import sys
 from collections import Counter
 from collections.abc import Callable
 from fractions import Fraction
+
+from mastermind.mastermind import score
 
 COLORS = 6
 HOLES = 4
@@ -50,10 +45,9 @@ WIN: Reply = 10 * HOLES
 
 
 def reply(code: Code, guess: Code) -> Reply:
-    """The codemaker's reply to `guess` when the secret is `code`."""
-    exact = sum(c == g for c, g in zip(code, guess, strict=True))
-    common = sum(min(code.count(k), guess.count(k)) for k in range(COLORS))
-    return 10 * exact + (common - exact)
+    """The codemaker's reply to `guess` when the secret is `code`, as one number."""
+    exact, near = score(code, guess)
+    return 10 * exact + near
 
 
 assert reply((0, 0, 1, 1), (0, 0, 1, 1)) == WIN
@@ -71,8 +65,9 @@ def partition_sizes(guess: int, consistent: list[int]) -> list[int]:
     return list(Counter(row[s] for s in consistent).values())
 
 
-def best_guess(consistent: list[int], score: Callable[[list[int]], float]) -> int:
-    """The guess with the lowest score, preferring a consistent code, then the lowest index.
+def best_guess(consistent: list[int], cost: Callable[[list[int]], float]) -> int:
+    """The guess whose partition sizes have the lowest cost, preferring a consistent code,
+    then the lowest index.
 
     This is Knuth's tie-break. Any of the 1,296 codes may be guessed, consistent or not.
     """
@@ -81,7 +76,7 @@ def best_guess(consistent: list[int], score: Callable[[list[int]], float]) -> in
     preferred = set(consistent)
     return min(
         range(len(CODES)),
-        key=lambda g: (score(partition_sizes(g, consistent)), g not in preferred, g),
+        key=lambda g: (cost(partition_sizes(g, consistent)), g not in preferred, g),
     )
 
 
@@ -202,8 +197,8 @@ def main() -> None:
         ax.set_ylabel("Most guesses for any code")
         ax.set_title("Mastermind strategies (blue: Pareto frontier)")
         fig.tight_layout()
-        fig.savefig("mastermind_pareto.png", dpi=150)
-        print("\nwrote mastermind_pareto.png")
+        fig.savefig("mastermind_strategies.png", dpi=150)
+        print("\nwrote mastermind_strategies.png")
 
 
 if __name__ == "__main__":

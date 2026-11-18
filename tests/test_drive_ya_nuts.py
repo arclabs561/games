@@ -1,14 +1,10 @@
 """Drive-Ya-Nuts: the solver's counts against an independent brute force."""
 
 import random
-import sys
 from collections.abc import Sequence
 from itertools import permutations
-from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent.parent / "drive-ya-nuts"))
-
-from solver import Nut, count_solutions, hoeffding_trials, nuts  # noqa: E402
+from drive_ya_nuts.solver import Nut, count_solutions, hoeffding_trials, nuts
 
 
 def brute_force(pool: Sequence[Sequence[int]]) -> int:

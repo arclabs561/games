@@ -1,4 +1,4 @@
-"""Scripts that import third-party packages declare them inline (PEP 723)."""
+"""Every third-party import is declared: in the game's dependency group, or inline (PEP 723)."""
 
 import ast
 import re
@@ -56,10 +56,33 @@ def test_every_script_block_parses():
             assert isinstance(meta.get("dependencies", []), list), path
 
 
+# Import names that differ from the distribution names in pyproject.toml.
+DISTRIBUTION = {"sklearn": "scikit-learn", "z3": "z3-solver"}
+
+
+def normalize(name):
+    return re.sub(r"[-_.]+", "-", name).lower()
+
+
+def group_packages(group):
+    """Distribution names in one dependency group of pyproject.toml."""
+    groups = tomllib.loads((ROOT / "pyproject.toml").read_text())["dependency-groups"]
+    specs = {normalize(k): v for k, v in groups.items()}.get(group, [])
+    return {normalize(re.split(r"[<>=!~;\[ ]", spec)[0]) for spec in specs}
+
+
 def test_third_party_imports_are_declared():
     missing = {}
     for path in tracked_python_files():
-        imports = third_party_imports(path)
-        if imports and script_metadata(path) is None:
-            missing[str(path.relative_to(ROOT))] = sorted(imports)
-    assert not missing, f"add a PEP 723 block to: {missing}"
+        rel = path.relative_to(ROOT)
+        if rel.parts[0] == "tests":
+            continue
+        imports = {normalize(DISTRIBUTION.get(m, m)) for m in third_party_imports(path)}
+        meta = script_metadata(path)
+        if meta is not None:
+            declared = {normalize(re.split(r"[<>=!~;\[ ]", d)[0]) for d in meta["dependencies"]}
+        else:
+            declared = group_packages(normalize(rel.parts[0]))
+        if imports - declared:
+            missing[str(rel)] = sorted(imports - declared)
+    assert not missing, f"declare these in the folder's dependency group or inline: {missing}"

@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Calculate Generation III capture odds with the game's integer rounding."""
 
 from __future__ import annotations

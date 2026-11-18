@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Calculate Generation III stat values for an IV and nature scenario.
 
 This uses the zero-EV stat formulas relevant to Emerald Kaizo's documented

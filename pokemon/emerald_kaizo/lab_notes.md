@@ -103,7 +103,7 @@ selecting the wrong battle profile.
 
 ## Local ROM Evidence
 
-The local file is recorded in `emerald_kaizo_rom_fingerprint.md`.
+The local file is recorded in `rom_fingerprint.md`.
 
 - Local filename: `kaizo-emerald.gba`.
 - Size: 16 MiB.
@@ -118,9 +118,9 @@ The local file is recorded in `emerald_kaizo_rom_fingerprint.md`.
 
 ## Validation Log
 
-The analysis lives in `emerald_kaizo_iv_analysis.py`, the parameterized role
-query lives in `emerald_kaizo_role_query.py`, and the generated report is
-`emerald_kaizo_iv_analysis.md`.
+The analysis lives in `iv_analysis.py`, the parameterized role
+query lives in `role_query.py`, and the generated report is
+`iv_analysis.md`.
 
 - Exact IV-sum distribution mass equals `32^6`.
 - Exact IV-sum distribution is symmetric around sum 93.
@@ -184,7 +184,7 @@ specific build remains unresolved.
 Question: Can the analysis answer a real acceptance rule without pretending
 that all six IVs matter equally?
 
-Action: Add `emerald_kaizo_role_query.py` with explicit inputs for acceptable
+Action: Add `role_query.py` with explicit inputs for acceptable
 natures, relevant IV count and threshold, ability requirement, target-species
 encounter share, encounter-check probability, capture probability, Synchronize,
 and confidence.
@@ -198,7 +198,7 @@ least 16, and one preferred ability of two returns probability 1%, expected
 Question: Does a high IV produce a meaningful stat difference at the level
 where the Pokemon is caught?
 
-Action: Add `emerald_kaizo_gen3_stats.py` with the zero-EV Generation III stat
+Action: Add `gen3_stats.py` with the zero-EV Generation III stat
 formulas and test Sandshrew's Attack and Defense at levels 6 and 22.
 
 Result for Kaizo Sandshrew's base Attack 75 and Defense 85:
@@ -219,7 +219,7 @@ useful nature, ability, moveset, and species role matter more.
 Question: How much does the actual capture process change the grass-encounter
 estimate?
 
-Action: Add `emerald_kaizo_capture.py` using the Gen III source routine's
+Action: Add `capture.py` using the Gen III source routine's
 integer rounding, ball bonuses, status multipliers, and four shake checks.
 
 Scenario: Sandshrew with catch rate 255, maximum HP 22, an ordinary Poké Ball,

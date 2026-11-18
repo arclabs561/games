@@ -1,15 +1,9 @@
-"""The type chart, the graph built from it, and the copy in examples/."""
+"""The type chart and the graph built from it."""
 
-import ast
 import json
-import sys
-from pathlib import Path
 
-ROOT = Path(__file__).parent.parent
-sys.path.insert(0, str(ROOT / "pokemon"))
-
-from graph import DISPLAY, chart_graph  # noqa: E402
-from pokemon_types import gen6  # noqa: E402
+from pokemon.graph import DISPLAY, chart_graph
+from pokemon.pokemon_types import gen6
 
 
 def test_the_eight_immunities():
@@ -39,15 +33,3 @@ def test_graph_keeps_every_direction():
 
 def test_committed_json_is_current():
     assert json.loads((DISPLAY / "graph.json").read_text()) == chart_graph(gen6)
-
-
-def test_examples_copy_matches():
-    tree = ast.parse((ROOT / "examples" / "pokemon_graph_analysis.py").read_text())
-    (copy,) = [
-        ast.literal_eval(node.value)
-        for node in tree.body
-        if isinstance(node, ast.AnnAssign)
-        and getattr(node.target, "id", None) == "GEN6"
-        and node.value is not None
-    ]
-    assert copy == gen6

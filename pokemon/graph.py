@@ -1,12 +1,11 @@
-#!/usr/bin/env python3
 """Draw the Gen 6 type chart as a force-directed graph in the browser.
 
 Each arrow runs from an attacking type to a defending type and is colored by the damage
 multiplier: 2 (super effective), 1/2 (not very effective) or 0 (no effect). Pairs at the
 usual 1x are not drawn.
 
-    python3 pokemon/graph.py              # writes display/graph.json, serves http://localhost:8000
-    python3 pokemon/graph.py --no-serve   # only writes the JSON
+    uv run python -m pokemon.graph              # writes display/graph.json, serves http://localhost:8000
+    uv run python -m pokemon.graph --no-serve   # only writes the JSON
 """
 
 import argparse
@@ -15,7 +14,7 @@ import http.server
 import json
 from pathlib import Path
 
-from pokemon_types import gen6
+from pokemon.pokemon_types import gen6
 
 DISPLAY = Path(__file__).resolve().parent / "display"
 

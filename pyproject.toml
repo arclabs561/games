@@ -8,10 +8,12 @@ license-files = ["LICENSE"]
 requires-python = ">=3.12"
 dependencies = []
 
-# Scripts that need third-party packages declare them inline (PEP 723) and run with
-# `uv run path/to/script.py`. The groups below are for the notebooks, one per folder:
+# Each game is a package; run one with `uv run python -m <package>.<module>`. Its
+# third-party packages are a dependency group named after its folder:
 #   uv run --group boggle --with jupyter jupyter lab boggle/boggle.ipynb
-# CI installs every group so that ty can check the notebooks.
+# The Erase scripts stay standalone; the ones that need packages declare them inline
+# (PEP 723). CI installs every group so that ty can check everything.
+
 [dependency-groups]
 dev = [
     "ipykernel>=7",
@@ -28,21 +30,36 @@ boggle = [
     "tabulate>=0.10",
     "wordfreq==3.1.1",
 ]
-egyptian-ratscrew = [
+egyptian_ratscrew = [
     "matplotlib>=3.11",
     "numpy>=2.5",
     "seaborn>=0.13.2",
 ]
+mastermind = [
+    "matplotlib>=3.11",
+]
 pokemon = [
+    "matplotlib>=3.11",
+    "networkx>=3.7",
     "numpy>=2.5",
     "pandas>=3.1",
     "scikit-learn>=1.9",
     "scipy>=1.18",
     "seaborn>=0.13.2",
 ]
+tenzi = [
+    "matplotlib>=3.11",
+    "numpy>=2.5",
+    "scipy>=1.18",
+]
 
-[tool.uv]
-package = false
+[build-system]
+requires = ["uv_build>=0.13.9,<0.14"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-root = ""
+module-name = ["boggle", "drive_ya_nuts", "mastermind", "peggle", "pokemon", "tenzi"]
 
 [tool.ruff]
 line-length = 100
@@ -55,10 +72,9 @@ select = ["B", "E", "F", "I", "N", "UP", "W"]
 ignore = ["E501"]  # line length is left to the formatter
 
 [tool.ty.environment]
-# Tests and sibling scripts import these folders' modules by bare name.
-extra-paths = ["boggle", "drive-ya-nuts", "erase", "examples", "mastermind", "peggle", "pokemon", "tenzi"]
+extra-paths = ["erase"]  # the Erase scripts import each other by bare name
 
 [tool.pytest]
-testpaths = ["tests", "pokemon"]
-pythonpath = ["."]
+testpaths = ["tests"]
+pythonpath = ["erase"]  # the Erase scripts are not a package
 strict = true

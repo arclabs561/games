@@ -1,14 +1,13 @@
-#!/usr/bin/env python3
-# /// script
-# requires-python = ">=3.12"
-# dependencies = []
-# ///
-"""Monte Carlo dice simulation with reservoir sampling and Gumbel-max trick.
+"""Tenzi by Monte Carlo, with reservoir sampling and the Gumbel-max trick.
 
-Simulates a Tenzi-like game (roll N dice, keep the most frequent face, reroll
-the rest) over millions of runs. Uses reservoir sampling to track the top-k
-luckiest games without storing all results. Demonstrates the Gumbel-max trick
-for weighted die sampling.
+Plays a million games of Tenzi with the fixed-face strategy (keep the face that is most
+common after the first roll, and reroll the rest until all ten dice show it). Two heaps keep
+the ten shortest and ten longest games, and reservoir sampling keeps a uniform sample of 100
+games, without storing every result. The Gumbel-max trick samples a die whose faces are not
+equally likely, and the script checks it against the face weights.
+
+    uv run python -m tenzi.monte_carlo          # a million games, about 15 seconds
+    uv run python -m tenzi.monte_carlo --fast   # a hundred thousand
 """
 
 from __future__ import annotations

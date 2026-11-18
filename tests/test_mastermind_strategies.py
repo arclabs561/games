@@ -1,12 +1,8 @@
-"""The Mastermind strategies in examples/ reproduce the published distributions."""
+"""The Mastermind strategies reproduce the published distributions."""
 
-import sys
 from collections import Counter
-from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent.parent / "examples"))
-
-import mastermind_pareto as mm  # noqa: E402
+from mastermind import strategies as mm
 
 # B. Kooi, "Yet another Mastermind strategy", ICGA Journal 28(1), 2005, Table 7:
 # how many of the 1,296 codes each strategy solves in 1, 2, 3, ... guesses.

@@ -1,12 +1,9 @@
 """Peggle: the chance of being the better player, by coin flips and by the Beta integral."""
 
-import sys
 from fractions import Fraction
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent.parent / "peggle"))
-
-import peggle  # noqa: E402
+from peggle import peggle
 
 
 def test_coin_flips_equal_the_beta_integral():

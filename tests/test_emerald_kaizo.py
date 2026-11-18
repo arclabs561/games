@@ -1,9 +1,9 @@
 import math
 from typing import cast
 
-from pokemon.emerald_kaizo_capture import capture_probability, modified_catch_odds, result
-from pokemon.emerald_kaizo_gen3_stats import gen3_stat, stat_range
-from pokemon.emerald_kaizo_iv_analysis import (
+from pokemon.emerald_kaizo.capture import capture_probability, modified_catch_odds, result
+from pokemon.emerald_kaizo.gen3_stats import gen3_stat, stat_range
+from pokemon.emerald_kaizo.iv_analysis import (
     TOTAL_VECTORS,
     all_iv_sum_distribution,
     beta_quantile,
@@ -15,7 +15,7 @@ from pokemon.emerald_kaizo_iv_analysis import (
     simulate_all_at_least_count,
     sum_rows,
 )
-from pokemon.emerald_kaizo_role_query import role_probability
+from pokemon.emerald_kaizo.role_query import role_probability
 
 
 def test_sum_distribution_has_exact_mass_and_symmetry():
@@ -181,3 +181,13 @@ def test_gen3_capture_status_can_force_a_catch():
 
     assert odds == 370
     assert capture_probability(odds) == 1.0
+
+
+def test_committed_report_is_current():
+    from pathlib import Path
+
+    from pokemon.emerald_kaizo import iv_analysis
+
+    committed = Path(iv_analysis.__file__).with_name("iv_analysis.md").read_text(encoding="utf-8")
+    report = iv_analysis.render_report(iv_analysis.DEFAULT_SIMULATIONS, iv_analysis.DEFAULT_SEED)
+    assert report == committed

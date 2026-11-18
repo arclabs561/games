@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Query an explicit Emerald Kaizo catch-quality acceptance rule.
 
 This is an independent-candidate model. It is useful for comparing a few
@@ -11,7 +10,7 @@ from __future__ import annotations
 import argparse
 import json
 
-from emerald_kaizo_iv_analysis import (
+from pokemon.emerald_kaizo.iv_analysis import (
     catches_for_confidence,
     expected_catches,
     probability_nature_set,
