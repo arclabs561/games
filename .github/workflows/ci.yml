@@ -41,3 +41,23 @@ jobs:
         run: for lock in $(git ls-files '*.py.lock'); do uv lock --script "${lock%.lock}" --check; done
       - name: Check the paper's lemmas (a PEP 723 script)
         run: uv run erase/smt/z3_lemmas.py
+
+  papers:
+    # Rebuild every Typst PDF and fail if any differs from the committed file. The build
+    # uses only Typst's own fonts and those committed beside a paper, and no PDF records
+    # its build date, so the same source gives the same bytes on any machine.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          python-version: "3.14"
+      - name: Rebuild the PDFs
+        run: |
+          uv run erase/paper/typst_vendor.py erase/paper/erase.typ --all
+          uv run erase/paper/typst_vendor.py peggle/peggle.typ
+          uv run erase/paper/typst_vendor.py tenzi/tenzi.typ
+      - name: The committed PDFs are current
+        run: git diff --exit-code --stat -- '*.pdf'

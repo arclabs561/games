@@ -37,10 +37,10 @@
 #show align: it => context if target() == "html" { it.body } else { it }
 
 // ---------- look ----------
-#set document(title: "Can You Always Make Ten?")  // no author: the owner's name stays out
+#set document(title: "Can You Always Make Ten?", date: none)  // no date: every build is identical
 #set page(..if phone { (width: 4.4in, height: 7.6in, margin: (x: 0.32in, top: 0.42in, bottom: 0.55in)) }
   else { (paper: "us-letter", margin: (x: 1.55in, y: 1.1in)) }, numbering: "1")
-#set text(font: "New Computer Modern", size: 12pt)  // about 72 characters per line
+#set text(font: ("New Computer Modern", "Noto Serif CJK JP"), size: 12pt)  // about 72 characters per line; the katakana font is in fonts/
 #show math.equation: set text(font: "New Computer Modern Math", weight: 400)  // Regular, to match the text weight (the default is Book)
 #set par(justify: true, leading: 0.6em, spacing: 1em)
 #set heading(numbering: "1.")

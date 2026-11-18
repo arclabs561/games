@@ -14,8 +14,9 @@ so the exact files the registry serves can be fetched with git instead:
     uv run typst_vendor.py erase.typ --png    # also render one PNG per page
     uv run typst_vendor.py erase.typ --all    # also erase-phone.pdf and erase.html
 
-With network access to the registry, plain `typst compile erase.typ` is simpler; add
-`--input edition=phone` for the phone edition, or `--features html --format html` for HTML.
+With network access to the registry, plain `typst compile --ignore-system-fonts
+--font-path fonts erase.typ` gives the same PDF; add `--input edition=phone` for the phone
+edition, or `--features html --format html` for HTML.
 
 It scans the document for "@preview/name:version" imports, sparse-checks-out just
 those package directories, scans them for their own imports (recursively), and
@@ -107,26 +108,23 @@ def main():
     a = ap.parse_args()
     a.packages.mkdir(parents=True, exist_ok=True)
     vendor(a.doc, a.cache, a.packages)
+    # Only Typst's own fonts and any in a fonts/ folder beside the document, never the
+    # system's, so that a PDF comes out byte for byte the same on every machine.
+    fonts = [str(f) for f in [a.doc.parent / "fonts"] if f.is_dir()]
+    common = {"package_path": str(a.packages), "font_paths": fonts, "ignore_system_fonts": True}
     pdf = a.doc.with_suffix(".pdf")
-    typst.compile(str(a.doc), output=str(pdf), package_path=str(a.packages))
+    typst.compile(str(a.doc), output=str(pdf), **common)
     print(f"wrote {pdf}")
     if a.png:
         pattern = str(a.doc.with_name(a.doc.stem + "-{p}.png"))
-        typst.compile(
-            str(a.doc), output=pattern, format="png", ppi=110, package_path=str(a.packages)
-        )
+        typst.compile(str(a.doc), output=pattern, format="png", ppi=110, **common)
         print(f"wrote {pattern}")
     if a.all:
         phone = a.doc.with_name(a.doc.stem + "-phone.pdf")
-        typst.compile(
-            str(a.doc),
-            output=str(phone),
-            package_path=str(a.packages),
-            sys_inputs={"edition": "phone"},
-        )
+        typst.compile(str(a.doc), output=str(phone), sys_inputs={"edition": "phone"}, **common)
         print(f"wrote {phone}")
         html = a.doc.with_suffix(".html")
-        typst.compile(str(a.doc), output=str(html), format="html", package_path=str(a.packages))
+        typst.compile(str(a.doc), output=str(html), format="html", **common)
         print(f"wrote {html}")
 
 

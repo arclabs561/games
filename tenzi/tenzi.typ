@@ -2,7 +2,7 @@
 #import "@preview/lilaq:0.6.0" as lq
 
 // Every number in this note is printed by tenzi.py; the plot reads turns.csv, which it writes.
-#set document(title: "How Many Turns Does Tenzi Take?")
+#set document(title: "How Many Turns Does Tenzi Take?", date: none)
 #set page(paper: "us-letter", margin: (x: 1.55in, y: 1.1in), numbering: "1")
 #set text(font: "New Computer Modern", size: 12pt)
 #show math.equation: set text(font: "New Computer Modern Math", weight: 400)

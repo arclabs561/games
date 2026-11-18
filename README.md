@@ -43,7 +43,7 @@ python3 erase/erase.py 4 4 6 9 5 8 5 --center 7 5 1 8
 uv run erase/smt/z3_lemmas.py
 ```
 
-The write-ups in `erase/paper/`, `peggle/` and `tenzi/` are Typst; `uv run erase/paper/typst_vendor.py peggle/peggle.typ` builds one even when the Typst package registry is unreachable.
+The write-ups in `erase/paper/`, `peggle/` and `tenzi/` are Typst. `uv run erase/paper/typst_vendor.py peggle/peggle.typ` builds one, even when the Typst package registry is unreachable. It uses only Typst's own fonts and any committed beside the paper, and the PDFs record no build date, so a rebuild gives the same bytes; CI rebuilds every PDF and fails if one differs from the committed file (`just papers`).
 
 A notebook uses its folder's dependency group:
 

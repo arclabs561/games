@@ -33,5 +33,11 @@ notebooks:
 execute:
     for nb in $(git ls-files '*.ipynb'); do uv run jupyter execute --inplace "$nb"; done
 
-# Everything CI runs, except the script lock and z3 checks.
+# Rebuild the Typst PDFs; CI fails if they differ from the committed ones.
+papers:
+    uv run erase/paper/typst_vendor.py erase/paper/erase.typ --all
+    uv run erase/paper/typst_vendor.py peggle/peggle.typ
+    uv run erase/paper/typst_vendor.py tenzi/tenzi.typ
+
+# Everything CI runs, except the script lock and z3 checks and the PDF rebuild.
 ci: check fmt-check typecheck test notebooks
