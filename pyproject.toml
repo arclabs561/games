@@ -50,7 +50,7 @@ ignore = ["E501"]  # line length is left to the formatter
 
 [tool.ty.environment]
 # Tests and sibling scripts import these folders' modules by bare name.
-extra-paths = ["erase", "mastermind", "pokemon"]
+extra-paths = ["erase", "examples", "mastermind", "pokemon"]
 
 [tool.ty.src]
 exclude = ["**/*.ipynb"]  # as for ruff: the notebooks are exploratory
