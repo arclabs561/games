@@ -11,6 +11,7 @@ dependencies = []
 # Scripts that need third-party packages declare them inline (PEP 723) and run with
 # `uv run path/to/script.py`. The groups below are for the notebooks, one per folder:
 #   uv run --group boggle --with jupyter jupyter lab boggle/boggle.ipynb
+# CI installs every group so that ty can check the notebooks.
 [dependency-groups]
 dev = [
     "pytest>=9.2",
@@ -42,7 +43,9 @@ package = false
 
 [tool.ruff]
 line-length = 100
-extend-exclude = ["*.ipynb"]
+
+[tool.ruff.format]
+exclude = ["*.ipynb"]  # lint the notebooks, but keep their authors' formatting
 
 [tool.ruff.lint]
 select = ["B", "E", "F", "I", "N", "UP", "W"]
@@ -50,10 +53,7 @@ ignore = ["E501"]  # line length is left to the formatter
 
 [tool.ty.environment]
 # Tests and sibling scripts import these folders' modules by bare name.
-extra-paths = ["erase", "examples", "mastermind", "pokemon"]
-
-[tool.ty.src]
-exclude = ["**/*.ipynb"]  # as for ruff: the notebooks are exploratory
+extra-paths = ["boggle", "erase", "examples", "mastermind", "pokemon"]
 
 [tool.pytest]
 testpaths = ["tests", "pokemon"]

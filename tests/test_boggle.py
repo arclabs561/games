@@ -1,23 +1,16 @@
-"""Boggle word search, loaded from the notebook's code cells."""
+"""Boggle word search (boggle/boggle.py, which boggle.ipynb imports)."""
 
-import json
+import random
+import sys
+from collections import Counter
 from pathlib import Path
 
-NOTEBOOK = Path(__file__).parent.parent / "boggle" / "boggle.ipynb"
+sys.path.insert(0, str(Path(__file__).parent.parent / "boggle"))
 
-
-def _load_boggle():
-    ns = {}
-    cells = json.loads(NOTEBOOK.read_text())["cells"]
-    for cell in cells:
-        src = "".join(cell["source"])
-        if cell["cell_type"] == "code" and ("def make_trie" in src or "def get_words" in src):
-            exec(compile(src, str(NOTEBOOK), "exec"), ns)
-    return ns["make_trie"], ns["get_words"]
+from boggle import CUBES, count_words, get_words, make_trie, rand_board  # noqa: E402
 
 
 def test_qu_face_is_matched_as_one_unit():
-    make_trie, get_words = _load_boggle()
     board = [
         ["qu", "i", "t", "x"],
         ["x", "x", "x", "x"],
@@ -29,7 +22,6 @@ def test_qu_face_is_matched_as_one_unit():
 
 
 def test_single_letter_faces_still_match():
-    make_trie, get_words = _load_boggle()
     board = [
         ["c", "a", "t", "x"],
         ["x", "x", "x", "x"],
@@ -38,3 +30,32 @@ def test_single_letter_faces_still_match():
     ]
     trie = make_trie(["cat", "act", "tac", "dog"])
     assert set(get_words(board, trie)) == {"cat", "tac"}
+
+
+def test_a_cube_is_used_once_but_a_letter_may_repeat():
+    board = [
+        ["e", "y", "e", "x"],
+        ["x", "x", "x", "x"],
+        ["x", "x", "x", "x"],
+        ["x", "x", "x", "x"],
+    ]
+    assert set(get_words(board, make_trie(["eye", "eyey"]))) == {"eye"}
+
+
+def test_random_board_uses_each_cube_once():
+    cubes = [(letter,) * 6 for letter in "abcdefghijklmnop"]  # one letter per cube
+    board = rand_board(random.Random(0), cubes)
+    assert sorted(face for row in board for face in row) == list("abcdefghijklmnop")
+    assert rand_board(random.Random(0)) == rand_board(random.Random(0))
+    assert all(len(row) == 4 for row in rand_board(random.Random(1), CUBES))
+
+
+def test_count_words_is_reproducible_across_processes():
+    trie = make_trie(["tee", "toe", "ten", "net", "tea", "set", "eat", "the"])
+    one = count_words(40, trie, min_len=3, processes=1)
+    two = count_words(40, trie, min_len=3, processes=2)
+    assert one == two and sum(one.values()) > 0
+    serial = Counter()
+    for i in range(40):
+        serial.update(get_words(rand_board(random.Random(i)), trie, 3))
+    assert one == serial
