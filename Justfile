@@ -25,9 +25,9 @@ typecheck:
 test:
     uv run pytest
 
-# Rerun every notebook and compare its outputs with the committed ones.
+# Rerun every notebook and compare its text and figures with the committed ones.
 notebooks:
-    uv run pytest --nbval --nbval-current-env --sanitize-with tests/nbval_sanitize.cfg $(git ls-files '*.ipynb')
+    uv run pytest -p tests.nbval_figures --nbval --nbval-current-env --nbval-sanitize-with tests/nbval_sanitize.cfg $(git ls-files '*.ipynb')
 
 # Rerun every notebook and save its new outputs.
 execute:
