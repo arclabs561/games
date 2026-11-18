@@ -53,6 +53,12 @@ Each notebook's packages are a dependency group in `pyproject.toml`, named after
 uv run --group boggle --with jupyter jupyter lab boggle/boggle.ipynb
 ```
 
+The committed outputs are checked: CI reruns every notebook with [nbval](https://github.com/computationalmodelling/nbval) and fails if any output differs, after replacing memory addresses (`tests/nbval_sanitize.cfg`). To save new outputs after a change, run `jupyter execute --inplace` on the notebook, or `just execute` for all of them.
+
+```bash
+uv run pytest --nbval --sanitize-with tests/nbval_sanitize.cfg boggle/boggle.ipynb
+```
+
 `boggle/`, `drive-ya-nuts/` and `erase/` have their own READMEs.
 
 ## License

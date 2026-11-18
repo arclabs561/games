@@ -5,7 +5,7 @@ export TY_UV := "scripts"
 default:
     just --list
 
-# Lint all Python (notebooks excluded).
+# Lint all Python, notebooks included.
 check:
     uv run ruff check
 
@@ -25,5 +25,13 @@ typecheck:
 test:
     uv run pytest
 
-# Everything CI runs.
-ci: check fmt-check typecheck test
+# Rerun every notebook and compare its outputs with the committed ones.
+notebooks:
+    uv run pytest --nbval --sanitize-with tests/nbval_sanitize.cfg $(git ls-files '*.ipynb')
+
+# Rerun every notebook and save its new outputs.
+execute:
+    for nb in $(git ls-files '*.ipynb'); do uv run jupyter execute --inplace "$nb"; done
+
+# Everything CI runs, except the script lock and z3 checks.
+ci: check fmt-check typecheck test notebooks
