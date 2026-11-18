@@ -1,0 +1,35 @@
+name: compute-probe
+on:
+  push:
+    branches: ["compute/probe"]
+    paths: [".github/workflows/compute-probe.yml"]
+permissions:
+  contents: write
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - name: Embed a few words with a current model from Hugging Face
+        run: |
+          cat > probe.py <<'PY'
+          # /// script
+          # dependencies = ["sentence-transformers>=5", "torch"]
+          # ///
+          import json, time
+          from sentence_transformers import SentenceTransformer
+          t = time.time()
+          m = SentenceTransformer("Qwen/Qwen3-Embedding-0.6B", device="cpu")
+          words = ["bat", "baseball", "vampire", "cave", "glove", "night"]
+          e = m.encode(words, normalize_embeddings=True)
+          sims = {w: round(float(e[0] @ e[i]), 3) for i, w in enumerate(words)}
+          json.dump({"model": "Qwen/Qwen3-Embedding-0.6B", "dim": int(e.shape[1]), "sim_to_bat": sims, "seconds": round(time.time() - t, 1)}, open("probe.json", "w"), indent=1)
+          PY
+          uv run --quiet probe.py && cat probe.json
+      - name: Commit the result to this branch
+        run: |
+          git config user.name arclabs561
+          git config user.email arclabs561@users.noreply.github.com
+          mkdir -p compute-results && mv probe.json compute-results/
+          git add compute-results && git commit -q -m "compute-probe result" && git push -q
