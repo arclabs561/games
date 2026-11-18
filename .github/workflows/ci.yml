@@ -36,7 +36,7 @@ jobs:
       - name: Tests
         run: uv run pytest
       - name: Notebooks reproduce their committed outputs
-        run: uv run pytest --nbval --sanitize-with tests/nbval_sanitize.cfg $(git ls-files '*.ipynb')
+        run: uv run pytest --nbval --nbval-current-env --sanitize-with tests/nbval_sanitize.cfg $(git ls-files '*.ipynb')
       - name: Script lock files are current
         run: for lock in $(git ls-files '*.py.lock'); do uv lock --script "${lock%.lock}" --check; done
       - name: Check the paper's lemmas (a PEP 723 script)

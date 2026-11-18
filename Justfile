@@ -27,7 +27,7 @@ test:
 
 # Rerun every notebook and compare its outputs with the committed ones.
 notebooks:
-    uv run pytest --nbval --sanitize-with tests/nbval_sanitize.cfg $(git ls-files '*.ipynb')
+    uv run pytest --nbval --nbval-current-env --sanitize-with tests/nbval_sanitize.cfg $(git ls-files '*.ipynb')
 
 # Rerun every notebook and save its new outputs.
 execute:
