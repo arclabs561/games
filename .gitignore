@@ -12,7 +12,8 @@ boggle/ANC-token-count.txt
 .env
 .env.*
 .state/
-.claude/
+.claude/*
+!.claude/skills/
 *.log
 *.sqlite
 *.sqlite3
