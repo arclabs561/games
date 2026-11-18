@@ -53,7 +53,7 @@ ignore = ["E501"]  # line length is left to the formatter
 
 [tool.ty.environment]
 # Tests and sibling scripts import these folders' modules by bare name.
-extra-paths = ["boggle", "erase", "examples", "mastermind", "pokemon"]
+extra-paths = ["boggle", "erase", "examples", "mastermind", "peggle", "pokemon", "tenzi"]
 
 [tool.pytest]
 testpaths = ["tests", "pokemon"]
