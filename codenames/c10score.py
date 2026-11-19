@@ -274,7 +274,8 @@ def test_rows(runs: Path) -> tuple[list[dict], list[BoardData], dict]:
     k, w, temp = val["K"], val["w"], load_temperature()
     rk = read_rankings((runs / "c10-rankings.txt").read_text())
     n = 1 + max(b for s, b, r in rk if s == TEST)
-    chosen = read_choice_lines((runs / "c10-choices.txt").read_text())
+    choices = runs / "c10-choices.txt"
+    chosen = read_choice_lines(choices.read_text()) if choices.exists() else {}
     data = board_data(TEST, n)
     rows = []
     for i, d in enumerate(data):
@@ -378,7 +379,9 @@ def score(runs: Path, out: Path) -> dict:
         "seed": TEST,
         **cfg,
         "rankings_sha256": sha256((runs / "c10-rankings.txt").read_text()),
-        "choices_sha256": sha256((runs / "c10-choices.txt").read_text()),
+        "choices_sha256": sha256((runs / "c10-choices.txt").read_text())
+        if (runs / "c10-choices.txt").exists()
+        else None,
         "lists_sha256": sha256(LISTS.read_text()),
         "actions_sha256": sha256(ACTIONS.read_text()),
         "primary": primary,
