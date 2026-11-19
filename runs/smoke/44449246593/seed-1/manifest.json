@@ -1,0 +1,21 @@
+{
+ "experiment": "smoke",
+ "run": "seed-1",
+ "commit": "622745b196e9dadc9c9e4f4fa036c39e55639c79",
+ "platform": "actions",
+ "command": [
+  "python",
+  "-m",
+  "pytest",
+  "-q",
+  "tests/test_tenzi.py",
+  "--junitxml",
+  "OUT/junit.xml"
+ ],
+ "returncode": 0,
+ "seconds": 9.0,
+ "job_id": "44449246593",
+ "hardware": "GitHub Actions 1000097189",
+ "gpu": null,
+ "python": "3.14.4"
+}
