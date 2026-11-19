@@ -13,6 +13,7 @@ Short answers, with how each is known:
 - Fine-tuning Qwen3-Embedding-0.6B with LoRA on the same training games raises its match from 43.4% to 62.6%, level with the potion map: LoRA minus the map is −0.7 points (−4.1 to 2.8). Same method, three training seeds, on an A10G GPU.
 - A giver expects to find 1.8 to 2.1 of its words per clue when the guesser shares its vectors. A guesser built on another model finds 57% to 73% of that, on average over the other seven models. A guesser that follows association counts from people finds 37% to 53%. Exact expected values for each of 200 random boards, one clue each, for eight models.
 - Hosted language models, asked with a fixed prompt, predict human guesses better than untrained embeddings and give worse clues. gpt-oss-120b picks the person's word in 65.0% of the 551 test turns (60.8% to 69.3%), 10.2 points (7.1 to 13.5) above EmbeddingGemma 2 and level with the trained guessers above. As givers, all four models tested give clues worth 0.29 to 0.89 words less per turn to seven embedding guessers they never met than the EmbeddingGemma 2 giver's. Paired intervals from resampling games or boards; one reply per prompt.
+- Choosing from a list of 120 legal actions (30 clues times counts 1 to 4) proposed by the EmbeddingGemma 2 giver does not rescue the language models. The model selected on validation boards, Qwen3.8-27B, is 0.059 words per turn below the giver's own first choice (−0.116 to −0.005), and none of six models is above it. The best action in each list is 0.44 above the first choice, so the list leaves room. Exact expected values on 200 test boards with seven unseen embedding guessers; one reply per prompt.
 - A giver trained by policy gradient against its own model reaches an expected turn value of 1.60 with that model, 0.75 with a held-out model, and −0.05 with the association counts. Trained against six other models instead, it reaches 1.03, 0.92 and 0.35. The gap between self-play and cross-play shrinks from 0.85 to 0.11, at a cost of 0.57 in self-play. A second giver shows the same pattern. Exact rewards on 200 test boards, one training seed per giver.
 
 ## The game as modeled
@@ -341,6 +342,45 @@ The language-model guessers also do best with the embedding giver's clues, so th
 
 **Cost.** Every job ran on `cpu-basic` through `experiments/hfrun.py`, at the commit in its manifest. The meter adds the tokens each provider reported times the price the router lists (no provider reported a cost). Calls cost $0.00002 to $0.00006 each. The 13 jobs spent at most $0.51 on model calls (`results/c4-runs.json`). That includes upper bounds for the first pilot, which ran before the prices were read, and for two jobs stopped by hand. About 4 hours of `cpu-basic` add about $0.04. The plan expected $1 to $3, under a cap of $3.
 
+## Language models choosing among legal clues
+
+Experiment C6 (`experiments/plans/C6.md`, with its amendments of 2026-11-19) removes one of C4's two causes of failure. On each board, EmbeddingGemma 2 proposes 30 legal clues (`actions.py`, wrapping `rl.actions`), and each clue may be given with a count from 1 to 4: 120 actions. A hosted model sees the prompt of `llm.py` followed by the numbered list and names one clue and a count. Every action is legal and has a vector in every space, so only the choice differs between arms. Six models chose, each pinned to one provider, at temperature 0 and seed 0: gpt-oss-120b (low reasoning effort), Llama 3.3 70B, Qwen3-32B, DeepSeek-V3.2, Qwen3.8-27B and Gemma 4 31B, the last two with thinking off.
+
+Every action is scored by its exact expected turn value under the seven calibrated embedding guessers other than EmbeddingGemma 2 (the strangers, as in C4) and under the potion guesser with C1's linear map, the guesser in this folder that is closest to people (five training seeds, averaged; each rebuilt map reproduces C1's per-turn hits). The arms are compared on the same boards. The **first choice** is the action EmbeddingGemma 2 values most, so it is the embedding giver choosing from its own list. **Uniform** is the mean over the 120 actions. The **oracle** is the best action for the scoring guessers themselves, which no giver can know. A reply that names no listed clue with a count from 1 to 4 gets the first choice. The chooser for the primary test was selected on 50 validation boards (seed 6005) before any test board was sent: Qwen3.8-27B, with a mean stranger value of 0.667 against 0.660 for Gemma 4 and 0.470 to 0.551 for the others. The first choice scored 0.750 on those boards. The test has 200 fresh boards (seed 6004). Intervals come from 10,000 resamples of boards, and differences are paired by board (`results/c6.json`).
+
+| Chooser | Strangers: turn value (95% interval) | Minus first choice | Human-fitted guesser: minus first choice | No action read | Same action as the first choice |
+|---|---|---|---|---|---|
+| first choice (EmbeddingGemma 2) | 0.699 (0.626–0.771) | | | | |
+| oracle for the strangers | 1.143 (1.111–1.178) | 0.444 (0.387 to 0.504) | 0.469 (0.355 to 0.590) | | |
+| oracle for the human-fitted guesser | 0.741 (0.673–0.808) | 0.042 (−0.033 to 0.116) | 0.993 (0.877 to 1.118) | | |
+| uniform over the 120 actions | 0.315 (0.290–0.339) | −0.384 (−0.449 to −0.318) | −0.434 (−0.555 to −0.309) | | |
+| Qwen3.8-27B (selected) | 0.640 (0.566–0.712) | −0.059 (−0.116 to −0.005) | −0.064 (−0.174 to 0.042) | 57% | 58% |
+| gpt-oss-120b | 0.652 (0.574–0.725) | −0.047 (−0.119 to 0.025) | −0.027 (−0.175 to 0.126) | 20% | 23% |
+| Gemma 4 31B | 0.591 (0.517–0.663) | −0.108 (−0.186 to −0.030) | −0.046 (−0.194 to 0.100) | 0.5% | 5% |
+| Llama 3.3 70B | 0.527 (0.449–0.598) | −0.172 (−0.262 to −0.085) | −0.234 (−0.393 to −0.076) | 12% | 13% |
+| Qwen3-32B | 0.496 (0.406–0.575) | −0.203 (−0.295 to −0.116) | −0.247 (−0.410 to −0.086) | 21% | 21% |
+| DeepSeek-V3.2 | 0.427 (0.338–0.510) | −0.272 (−0.358 to −0.187) | −0.437 (−0.590 to −0.291) | 5% | 6% |
+
+- **Neither primary hypothesis holds.** Qwen3.8-27B's picks are worth 0.059 words per turn less to the strangers than the first choice (bootstrap p = 0.029, on the wrong side of 0), and 0.064 less to the human-fitted guesser (p = 0.24). Given the same legal options, no model chooses better than the embedding score. C4's loss was therefore not only a matter of illegal clues.
+- **There was room.** The best action in each list is worth 0.444 (0.387 to 0.504) more to the strangers than the first choice, and 0.993 more to the human-fitted guesser. The plan's condition for a detectable effect (a gap above 0.1) is met. The selected model closes −0.13 of the stranger gap (−0.28 to −0.01), and the best of the six, gpt-oss-120b, closes −0.11 (−0.29 to 0.05).
+- **The selection was carried by the fallback.** Qwen3.8-27B still reasons in its reply on many boards, although thinking is off. At the 64-token cap, 84 of its 200 test replies were cut off before the answer, and 30 more named no listed clue. On 58% of the boards its action is the first choice. On the 86 boards where it named an action, it trails the first choice by 0.136 (−0.265 to −0.014). gpt-oss-120b returned an empty reply on 40 test boards (none of 50 on validation), with the provider reporting a normal stop; why is not known. On its 160 own choices it trails by 0.059 (−0.148 to 0.028). Llama 3.3 named a count outside 1 to 4 on 16 boards.
+- **Rank.** Under EmbeddingGemma 2's own values, the median rank of each model's pick among the 120 actions is 19.5 for gpt-oss-120b and 46 to 68 for the other models that named an action on most boards. The models ask for more words than the oracle does: 2.4 to 3.4 on average, against 1.9 for the stranger oracle and 2.6 for the first choice.
+- **The association guesser** (secondary, no significance claim). With EAT counts as guesser, every model's pick is level with or above the first choice: by 0.167 (0.079 to 0.262) for gpt-oss-120b and by −0.001 to 0.082 for the rest. All values with this guesser are near zero (−0.15 to 0.04 per turn). Its picks are random when the clue is not an EAT cue, as 44% of the candidates are not. gpt-oss-120b picks an EAT cue on 70% of the boards and the first choice is one on 54%, so part of its advantage may come from that.
+- **The strangers are embedding models.** The proposer and the first choice use an embedding model's similarities, and every primary scorer is an embedding model or a linear map on one. This favors the first choice, as the plan's threats section says, and the result with the association guesser points the same way. No person guessed here.
+
+**Language-model guessers** (secondary). On the 200 test boards, Llama 3.3, DeepSeek-V3.2 and gpt-oss-120b each guessed once on Qwen3.8-27B's pick and once on the first choice, with the pick's count. Each turn is played out from the reply's order, with the costs above. The selected model's fallbacks are included, so on 58% of the boards both arms gave the same clue.
+
+| Giver | Turn value, mean of three guessers (95% interval) | Words found | Minus the first choice |
+|---|---|---|---|
+| first choice (EmbeddingGemma 2) | 1.49 (1.34–1.63) | 1.80 | |
+| Qwen3.8-27B | 1.21 (1.03–1.39) | 1.68 | −0.28 (−0.43 to −0.13) |
+
+The language-model guessers also do better with the embedding giver's first choice, so the primary result is not only an effect of scoring with embedding guessers. These are single sampled turns, not exact expectations.
+
+**Repeat check.** The first 20 validation prompts were sent twice more to each model. The action read from the reply changed at least once for 1 of 20 prompts with Llama 3.3, 4 with gpt-oss-120b and Gemma 4, 6 with Qwen3-32B, 7 with Qwen3.8-27B and 13 with DeepSeek-V3.2, at temperature 0 with a fixed seed.
+
+**Cost.** Five jobs ran on `cpu-basic` through `experiments/hfrun.py`, each at the commit in its manifest (`results/c6-runs.json`). The meter adds the tokens each provider reported times the price that the router listed. Model calls cost $0.171 in all, $0.00002 to $0.00012 per call; about 50 minutes of `cpu-basic` add about $0.01. The plan expected $0.40 to $0.80, under a cap of $1.50. The plan's prompt evolution (GEPA) was not run, for the reasons in the plan's last amendment.
+
 ## Related work
 
 - Summerville et al. (2019) set up the Codenames AI competition. Kim et al. (2019) compared word2vec, GloVe and WordNet codemasters and guessers in it. They found twin pairs always win and mixed pairs often lose, and the folder reproduces that pattern with current models.
@@ -359,6 +399,7 @@ The language-model guessers also do best with the embedding giver's clues, so th
 | Vectors for Qwen3-Embedding-0.6B, harrier-oss-v1-270m, harrier-oss-v1-0.6b, EmbeddingGemma 2 | GitHub-hosted runner (CPU), workflow on `compute/codenames-embed` |
 | LoRA fine-tuning (`lora.py`) | Hugging Face Jobs, `a10g-small`, through `experiments/hfrun.py` |
 | Language-model players (`llm.py`, `hosted.py`, `c4.py`) | Hugging Face Jobs, `cpu-basic`, through `experiments/hfrun.py`, calling Inference Providers; scored on this machine (`c4score.py`) |
+| Language models choosing among legal clues (`rerank.py`) | Hugging Face Jobs, `cpu-basic`, calling Inference Providers; action lists and scoring on this machine (`actions.py`, `c6score.py`) |
 | Vectors for the 15 clue words of the language models that had none | GitHub-hosted runner, workflow on `compute/codenames-embed`, for the four Hugging Face models; this machine for the other four |
 
 ## Open questions
@@ -370,6 +411,8 @@ The language-model guessers also do best with the embedding giver's clues, so th
 - Would LoRA beat the potion map with more human data or other settings (a larger learning rate, more epochs, harrier-oss-v1-0.6b)?
 - Would language-model givers do better with a prompt that states the whole clue rule (no word contained in a board word) and the cost of the assassin, or with a retry after an illegal clue?
 - Do language-model clues fare better with people than with embedding guessers?
+- Why does gpt-oss-120b return an empty reply on a fifth of C6's test boards and none of its validation boards?
+- Would the language models choose better than the embedding giver's first choice with a prompt found by GEPA, or with room to reason before the answer? C6's prompt evolution was not run.
 
 ## Usage
 
@@ -397,6 +440,13 @@ uv run python -m codenames.c4 guess --models all --split val --cap 0.6 --out OUT
 uv run python -m codenames.c4 give --models all --seed 4005 4004 0 --n 50 200 200 --cap 0.4 --out OUT
 uv run python -m codenames.c4 crossguess --models all --seed 4004 --clues codenames/results/c4-clues-4004.txt --cap 0.3 --out OUT
 uv run python -m codenames.c4 score --clues clues.txt --guesses guesses.txt --crossguess crossguess.txt --out codenames/results/c4.json   # 15 min
+# C6: the action lists here, the choices in a Hugging Face Job, the scores here:
+uv run python -m codenames.actions --seed 6999 6005 6004 --n 5 50 200 --out codenames/results/c6-actions.txt   # 15 s
+uv run python -m codenames.rerank choose --models all --seed 6005 --n 50 --repeat 20 --cap 0.2 --out OUT
+uv run python -m codenames.rerank choose --models all --seed 6004 --n 200 --cap 0.5 --out OUT
+uv run python -m codenames.rerank score --out codenames/results/c6.json   # 1 min, also writes c6-boards.json
+uv run python -m codenames.rerank picks --models qwen3.8-27b --seed 6004 --out codenames/results/c6-picks-6004.txt
+uv run python -m codenames.rerank crossguess --models gpt-oss-120b --clues codenames/results/c6-picks-6004.txt --seed 6004 --cap 0.15 --out OUT
 ```
 
 ## Files
@@ -418,6 +468,8 @@ uv run python -m codenames.c4 score --clues clues.txt --guesses guesses.txt --cr
 | `stats.py` | the bootstrap over games, Kendall's τ |
 | `c1.py`, `heldout.py` | human guesses split by game: the plan's run, and the exploratory one |
 | `rl.py` | section 5 |
+| `actions.py` | the 120 legal actions an embedding giver proposes on a board (C6 and C7) |
+| `rerank.py`, `c6score.py` | C6: language models choosing among those actions, and the scoring |
 | `llm.py` | language-model players: prompts and parsing |
 | `hosted.py` | calls to Inference Providers, with retries, a cost meter and a log of every call |
 | `c4.py`, `c4score.py` | experiment C4: the jobs that call the models, and the scoring |
