@@ -5,14 +5,16 @@ prompt as a user message and returns the reply text. Every call, failed or not, 
 written to the log as one JSON line with the model id, the provider, the time, every
 request parameter, the prompt, the reply and the usage the provider reported.
 
-The **meter** adds up the cost of each call. The router reports it in the usage object
-(`usage["cost"]`, in dollars); when a reply has no cost, the meter charges the tokens at
-a deliberately high price (FALLBACK_PRICE) and marks the call. Before each call the
-meter reserves room for it, and raises OverBudgetError instead of calling when the reserved
-and spent amounts would pass the cap. So a job that is given a cap stops below it.
+The **meter** adds up the cost of each call: the cost in the usage object when the
+router reports one (`usage["cost"]`, in dollars), and otherwise the reported tokens
+times the provider's listed price (`listed_prices`, read from the router when the job
+starts). With neither, it charges a deliberately high price (FALLBACK_PRICE). Each
+call's record says which of the three it used. Before each call the meter reserves
+room for it, and raises OverBudgetError instead of calling when the reserved and spent
+amounts would pass the cap. So a job that is given a cap stops below it.
 
-A reply whose text is empty after three attempts is returned as "", which the players
-in codenames.llm treat as a reply that cannot be parsed.
+A call that fails five times (with waits of 2, 4, 8, 16 and 32 seconds) is returned as
+"", which the players in codenames.llm treat as a reply that cannot be parsed.
 
 No call is made when this module is imported, and the tests use a stub client.
 """
@@ -66,14 +68,40 @@ class Meter:
             self.largest = max(self.largest, cost)
 
 
-def call_cost(usage: dict) -> tuple[float, str]:
+ROUTER_MODELS = "https://router.huggingface.co/v1/models"
+Price = tuple[float, float]  # dollars per million prompt tokens, per million completion tokens
+
+
+def parse_prices(listing: dict) -> dict[str, dict[str, Price]]:
+    """{model id: {provider: price}} from the router's model list."""
+    out: dict[str, dict[str, Price]] = {}
+    for m in listing.get("data", []):
+        for p in m.get("providers") or []:
+            price = p.get("pricing") or {}
+            if isinstance(price.get("input"), int | float) and isinstance(
+                price.get("output"), int | float
+            ):
+                out.setdefault(m["id"], {})[p["provider"]] = (price["input"], price["output"])
+    return out
+
+
+def listed_prices() -> dict[str, dict[str, Price]]:
+    """The providers' listed prices, from the router (needs network access to it)."""
+    from urllib.request import Request, urlopen
+
+    req = Request(ROUTER_MODELS, headers={"Authorization": f"Bearer {os.environ['HF_TOKEN']}"})
+    with urlopen(req, timeout=60) as r:
+        return parse_prices(json.load(r))
+
+
+def call_cost(usage: dict, price: Price | None = None) -> tuple[float, str]:
     """The cost of one call in dollars, and where it came from."""
     cost = usage.get("cost")
     if isinstance(cost, int | float):
         return float(cost), "reported"
-    p, c = FALLBACK_PRICE
+    p, c = price or FALLBACK_PRICE
     tokens_in, tokens_out = usage.get("prompt_tokens") or 0, usage.get("completion_tokens") or 0
-    return (p * tokens_in + c * tokens_out) / 1e6, "fallback price"
+    return (p * tokens_in + c * tokens_out) / 1e6, "listed price" if price else "fallback price"
 
 
 def visible(text: str) -> str:
@@ -89,6 +117,7 @@ class Model:
     repo: str
     provider: str
     extra: dict = field(default_factory=dict)
+    price: Price | None = None
 
 
 class Hosted:
@@ -103,7 +132,7 @@ class Hosted:
         temperature: float = 0.0,
         seed: int = 0,
         client=None,
-        attempts: int = 3,
+        attempts: int = 5,
         sleep=time.sleep,
     ):
         self.model, self.meter, self.log = model, meter, log
@@ -154,7 +183,7 @@ class Hosted:
                 choice = out["choices"][0]
                 message = choice["message"]
                 usage = dict(out.get("usage") or {})
-                cost, source = call_cost(usage)
+                cost, source = call_cost(usage, self.model.price)
                 record.update(
                     raw=message.get("content") or "",
                     reasoning=message.get("reasoning_content") or message.get("reasoning"),

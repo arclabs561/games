@@ -6,7 +6,15 @@ import pytest
 
 from codenames import c4
 from codenames.game import Board
-from codenames.hosted import Hosted, Meter, Model, OverBudgetError, call_cost, visible
+from codenames.hosted import (
+    Hosted,
+    Meter,
+    Model,
+    OverBudgetError,
+    call_cost,
+    parse_prices,
+    visible,
+)
 from codenames.luce import ASSASSIN, NEUTRAL, OPPONENT, TEAM
 
 
@@ -132,3 +140,21 @@ def test_boards_follow_the_study_deal():
     a, b = c4.boards(4004, 3), c4.boards(4004, 3)
     assert [x.words for x in a] == [x.words for x in b]
     assert a[0].words != c4.boards(4005, 1)[0].words
+
+
+def test_prices_are_read_from_the_router_listing():
+    listing = {
+        "data": [
+            {
+                "id": "org/model",
+                "providers": [
+                    {"provider": "a", "pricing": {"input": 0.1, "output": 0.5}},
+                    {"provider": "b"},
+                ],
+            }
+        ]
+    }
+    prices = parse_prices(listing)
+    assert prices == {"org/model": {"a": (0.1, 0.5)}}
+    usage = {"prompt_tokens": 2_000_000, "completion_tokens": 1_000_000}
+    assert call_cost(usage, prices["org/model"]["a"]) == (pytest.approx(0.7), "listed price")
