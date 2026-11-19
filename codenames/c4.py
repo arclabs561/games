@@ -177,6 +177,59 @@ def guess(models, split: str, meter: Meter, out: Path, workers: int = 8) -> dict
     return results
 
 
+def play_turn(board: Board, ranking: list[str], count: int, nmax: int = 4) -> tuple[int, float]:
+    """Team words found and the turn's value when a guesser picks in this order, up to
+    min(count, nmax) words, stopping at the first word that is not the team's. The costs
+    are those of codenames.players.costs_for: 1 for an opponent word, 0 for a neutral
+    word, and the team words still to find for the assassin."""
+    found, left = 0, board.left("T")
+    for word in ranking[: min(count, nmax)]:
+        kind = board.kind(word)
+        if kind == "T":
+            found += 1
+            continue
+        cost = {"O": 1.0, "N": 0.0, "A": float(left)}[kind]
+        return found, found - cost
+    return found, float(found)
+
+
+def crossguess(guessers, clues_text: str, seed: int, meter: Meter, out: Path) -> str:
+    """Language-model guessers on clues from givers of other families: each guesser hears
+    every board's clue from every giver in the file except itself, once, with the giver's
+    count. Returns one line per (giver, guesser): found/value per board."""
+    given = read_clue_lines(clues_text)
+    lines = []
+    for (giver, s), rows in sorted(given.items()):
+        if s != seed:
+            continue
+        bs = boards(seed, len(rows))
+        for name in guessers:
+            if name == giver:
+                continue
+            hosted = Hosted(MODELS[name], meter, out / f"calls-{name}.jsonl", tokens(name, "guess"))
+            jobs = [
+                (
+                    guesser_prompt(word, count, b.unrevealed()),
+                    {"part": "crossguess", "seed": seed, "board": i, "giver": giver},
+                )
+                for i, (b, (word, count, _)) in enumerate(zip(bs, rows, strict=True))
+                if word is not None and count is not None
+            ]
+            assert len(jobs) == len(rows), f"{giver} has boards without a clue"
+            recs = run_many(hosted.call, jobs, WORKERS.get(name, 8))
+            cells = []
+            for b, (_, count, _), rec in zip(bs, rows, recs, strict=True):
+                if rec is None:
+                    cells.append("-")
+                    continue
+                ranking = read_ranking(rec["reply"], b.unrevealed())["ranking"]
+                found, value = play_turn(b, ranking, count or 1)
+                cells.append(f"{found}/{value:g}")
+            lines.append(" ".join([giver, name, str(seed), *cells]))
+            print(giver, name, f"${meter.spent:.4f}", flush=True)
+    return "\n".join(lines) + "\n"
+
+
 def guess_lines(guessed: dict[str, dict[str, list[dict]]]) -> str:
     """One line per model and split, one character per turn: 1 or 0 for a hit or a miss
     when the reply named a board word, b or a when it named none (the guess is then the
@@ -366,7 +419,9 @@ def model_list(arg: str) -> list[str]:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("what", choices=["pilot", "give", "guess", "newwords", "score"])
+    parser.add_argument(
+        "what", choices=["pilot", "give", "guess", "crossguess", "newwords", "score"]
+    )
     parser.add_argument("--workers", type=int, default=8, help="calls in flight per model")
     parser.add_argument("--repeat", type=int, default=20, help="boards sent three times")
     parser.add_argument("--split", nargs="+", default=["val"], choices=["val", "test"])
@@ -394,6 +449,12 @@ def main() -> None:
     price_models(models, args.out)
     if args.what == "pilot":
         pilot(models, args.seed[0], args.n[0], meter, args.out)
+    elif args.what == "crossguess":
+        text = crossguess(models, args.clues.read_text(), args.seed[0], meter, args.out)
+        (args.out / "crossguess.txt").write_text(text)
+        stats = {m: call_stats(args.out / f"calls-{m}.jsonl") for m in models}
+        record = {"spent": meter.spent, "cap": args.cap, "sha256": sha256(text), "calls": stats}
+        (args.out / "crossguess.json").write_text(json.dumps(record, indent=1) + "\n")
     elif args.what == "guess":
         guessed = {s: guess(models, s, meter, args.out, args.workers) for s in args.split}
         text = guess_lines(guessed)

@@ -227,3 +227,11 @@ def test_bootstrap_and_holm():
     assert holm({"a": 0.01, "b": 0.04}) == {"a": True, "b": True}
     assert holm({"a": 0.03, "b": 0.04}) == {"a": False, "b": False}
     assert holm({"a": 0.001, "b": 0.2}) == {"a": True, "b": False}
+
+
+def test_a_turn_stops_at_the_first_wrong_word():
+    assert c4.play_turn(BOARD, ["whale", "ship", "bank"], 3) == (2, 1.0)
+    assert c4.play_turn(BOARD, ["whale", "pen"], 3) == (1, 1.0)
+    # The assassin costs the team words still to find: 3 before the turn.
+    assert c4.play_turn(BOARD, ["whale", "bomb"], 2) == (1, -2.0)
+    assert c4.play_turn(BOARD, ["whale", "ship", "sail", "bank", "pen"], 9) == (3, 2.0)

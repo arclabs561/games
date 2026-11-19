@@ -181,9 +181,21 @@ def main(clues: Path | None, guesses: Path | None, out: Path) -> None:
     result: dict = {"plan": "experiments/plans/C4.md"}
     if guesses is not None:
         result["guess"] = score_guess(guesses.read_text())
+        result["guess"]["per_turn"] = guesses.read_text().splitlines()
     if clues is not None:
         result["give"] = score(clues.read_text())
-    out.write_text(json.dumps(result, indent=1, sort_keys=True) + "\n")
+    out.write_text(json.dumps(rounded(result), indent=1, sort_keys=True) + "\n")
+
+
+def rounded(x, digits: int = 5):
+    """The same structure with every float rounded, to keep the file small."""
+    if isinstance(x, float):
+        return round(x, digits)
+    if isinstance(x, dict):
+        return {k: rounded(v, digits) for k, v in x.items()}
+    if isinstance(x, list | tuple):
+        return [rounded(v, digits) for v in x]
+    return x
 
 
 def read_guess_lines(text: str) -> dict[tuple[str, str], str]:
