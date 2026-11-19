@@ -16,6 +16,11 @@ nonnegative martingale with mean 1 when p = 1/2, so by Ville's inequality it rea
 chance at most 1/20, however long the friends play. **Wald's test** of p = 0.45 against
 p = 0.55 stops when one player leads by 15 games; its chances follow from the gambler's ruin.
 
+The posterior rule can also be made safe for equal players at a fixed cap N by raising its
+threshold. The chance of a verdict between equal players only falls as the threshold rises,
+and it changes only at thresholds equal to a posterior that occurs, so bisection followed by
+a search over the few posteriors left finds the least strict threshold that keeps it at 5%.
+
     uv run python -m peggle.stopping
 """
 
@@ -90,6 +95,9 @@ def stops(cap: int, rule: Rule = verdict) -> tuple[Stop, ...]:
                 alive[k] = paths
     return tuple(found)
 
+
+# Short decimal thresholds that give the same rules as `safe_threshold` for these caps.
+STRICT = {100: Fraction("0.99704"), 1000: Fraction("0.9987003")}
 
 EVIDENCE = 20  # the Bayes factor rule stops when the record favors "unequal" by this factor
 
@@ -313,6 +321,74 @@ assert lead_exact(Fraction(55, 100), 1) == (Fraction(45, 100), Fraction(1))
 assert all(sum(s.paths * 2 ** (10 - s.n) for s in stops(m)) == 2**10 for m in (1, 5, 10))
 
 
+@cache
+def posterior_rule(sure: Fraction) -> Rule:
+    """The posterior rule with threshold `sure` in place of 95%."""
+
+    def rule(k: int, n: int) -> int:
+        return verdict(k, n, sure)
+
+    return rule
+
+
+def equal_verdict_chance(cap: int, rule: Rule) -> Fraction:
+    """With p = 1/2, the chance that someone is declared better within cap games, in integers."""
+    return Fraction(sum(s.paths << (cap - s.n) for s in stops(cap, rule) if s.verdict), 2**cap)
+
+
+def fewest_wins(n: int, sure: Fraction, strict: bool = False) -> int:
+    """The fewest wins k in n games with better(k, n) >= sure (> sure if strict); n + 1 if none."""
+    counts, total = heads_at_most(n + 1), 2 ** (n + 1)
+    lo, hi = 0, n + 1
+    while lo < hi:
+        mid = (lo + hi) // 2
+        a, b = counts[mid] * sure.denominator, sure.numerator * total
+        if a > b or (a == b and not strict):
+            hi = mid
+        else:
+            lo = mid + 1
+    return lo
+
+
+def posteriors_between(lo: Fraction, hi: Fraction, cap: int, limit: int) -> list[Fraction] | None:
+    """The posteriors better(k, n) with lo < better <= hi and n <= cap, sorted; None if > limit."""
+    found: set[Fraction] = set()
+    for n in range(1, cap + 1):
+        k = fewest_wins(n, lo, strict=True)
+        while k <= n and (b := better(k, n)) <= hi:
+            found.add(b)
+            k += 1
+            if len(found) > limit:
+                return None
+    return sorted(found)
+
+
+def safe_threshold(cap: int, alpha: Fraction = Fraction(5, 100)) -> tuple[Fraction, Fraction]:
+    """Thresholds (w, s) for the posterior rule with a cap of cap games.
+
+    Every threshold t with w < t <= s gives the same rule, under which equal players are
+    declared unequal with chance at most alpha. Every threshold t <= w gives a chance above
+    alpha. Here s is a posterior that occurs, and w is the next smaller one.
+    """
+    lo, hi = SURE, better(cap, cap)  # the chance is above alpha at lo and below it at hi
+    assert equal_verdict_chance(cap, posterior_rule(lo)) > alpha
+    while (values := posteriors_between(lo, hi, cap, 200)) is None:
+        mid = (lo + hi) / 2
+        if equal_verdict_chance(cap, posterior_rule(mid)) <= alpha:
+            hi = mid
+        else:
+            lo = mid
+    # The rule changes only at the posteriors in (lo, hi], and the largest of them is safe.
+    i, j = 0, len(values) - 1
+    while i < j:
+        m = (i + j) // 2
+        if equal_verdict_chance(cap, posterior_rule(values[m])) <= alpha:
+            j = m
+        else:
+            i = m + 1
+    return (values[i - 1] if i else lo), values[i]
+
+
 def bounds_hi(n: int) -> int:
     """The fewest wins in n games that give the Bayes factor rule a verdict."""
     return bayes_factor_bounds(n)[n][1]
@@ -366,6 +442,22 @@ def main() -> None:
     cap = 10_000
     chance = verdict_chance_float(bayes_factor_bounds(cap))
     print(f"  equal players, N = {cap:,}: {chance:.4f} (floating point)")
+
+    print("\nThe least strict posterior threshold that keeps equal players' verdict chance at 5%:")
+    for cap, shown in STRICT.items():
+        w, t = safe_threshold(cap)
+        rule = posterior_rule(shown)
+        equal, edge = outcome(Fraction(1, 2), cap, rule), outcome(Fraction(55, 100), cap, rule)
+        print(
+            f"  N = {cap:4}: any threshold above {float(w):.9f} and up to {float(t):.9f};"
+            f" {float(shown)} is one. Equal players: verdict {float(equal.first + equal.second):.4f},"
+            f" mean {float(equal.games):.1f} games."
+        )
+        print(
+            f"           p = 0.55: better declared {float(edge.first):.4f},"
+            f" worse {float(edge.second):.4f}, mean {float(edge.games):.1f} games;"
+            f" wins needed in {cap} games: {fewest_wins(cap, shown)}"
+        )
 
     lead = wald_lead()
     print(f"\nWald's test of 0.45 against 0.55 at 5% error: play until someone leads by {lead}.")
