@@ -44,13 +44,23 @@ TAU = 0.05
 RESULTS = Path(__file__).parent / "results"
 
 
-def items(sp: Space, seed: int = 0, eat: bool = True, cultural: bool = True):
-    """(clue index, candidate indices with the positive first, weight) for training."""
+def items(
+    sp: Space,
+    seed: int = 0,
+    eat: bool = True,
+    cultural: bool = True,
+    split="train",
+    scheme: str = "published",
+):
+    """(clue index, candidate indices with the positive first, weight) for training.
+
+    split and scheme name the Cultural Codes turns to train on (see
+    norms.cultural_guesses); split may also be a sequence of Guess."""
     rng = random.Random(seed)
     idx = sp.index
     out = []
     if cultural:
-        for g in cultural_guesses("train"):
+        for g in cultural_guesses(split, scheme) if isinstance(split, str) else split:
             if g.clue in idx and all(w in idx for w in g.words) and len(g.words) >= 2:
                 others = [idx[w] for w in g.words if w != g.picked]
                 cand = [idx[g.picked], *rng.sample(others, min(24, len(others)))]
@@ -131,14 +141,26 @@ def main() -> None:
     parser.add_argument("--epochs", type=int, default=3)
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--save", default=None, help="write A to this .npy file")
+    parser.add_argument(
+        "--scheme", default="published", help="game: the split of codenames.split (see below)"
+    )
+    parser.add_argument("--seeds", type=int, nargs="+", default=[1, 2, 3, 4, 5])
+    parser.add_argument("--score", default="test", help="with --scheme game: test, or val")
     args = parser.parse_args()
+    if args.scheme != "published":
+        by_game(args.model, args.template, args.scheme, args.seeds, args.epochs, args.score)
+        return
     words = all_words()
     sp = space(args.model, args.template, "bare", words)
     held = association_items(eat_counts(), set(words))
     results = {"model": args.model, "seed": args.seed, "epochs": args.epochs, "tau": TAU}
     results["before"] = {"guess": guess_scores(sp, "test"), "assoc": association_top1(sp, held)}
-    for name, kw in [("cultural", {"eat": False}), ("eat", {"cultural": False}), ("both", {})]:
-        data = items(sp, args.seed, **kw)
+    for name, eat, cultural in [
+        ("cultural", False, True),
+        ("eat", True, False),
+        ("both", True, True),
+    ]:
+        data = items(sp, args.seed, eat=eat, cultural=cultural)
         t = time.perf_counter()
         a, hist = train(sp, data, args.epochs, seed=args.seed)
         tuned = adapted(sp, a, f"{args.model}+{name}")
@@ -159,6 +181,31 @@ def main() -> None:
     out = RESULTS / f"train-{args.model.replace('/', '--')}.json"
     out.parent.mkdir(exist_ok=True)
     out.write_text(text + "\n")
+
+
+def by_game(model: str, template: str, scheme: str, seeds, epochs: int, score: str) -> dict:
+    """The map trained on the Cultural Codes train turns of a scheme only (no EAT), once per
+    seed, scored on that scheme's test turns (or val turns, for a dry run). This is the
+    trained arm of experiments/plans/C1.md; results/train-<model>-<scheme>.json."""
+    sp = space(model, template, "bare", all_words())
+    out: dict = {"model": model, "template": template, "scheme": scheme, "scored": score}
+    out["epochs"], out["tau"], out["runs"] = epochs, TAU, {}
+    for seed in seeds:
+        data = items(sp, seed, eat=False, split="train", scheme=scheme)
+        t = time.perf_counter()
+        a, hist = train(sp, data, epochs, seed=seed)
+        tuned = adapted(sp, a, f"{model}+cultural")
+        out["runs"][str(seed)] = {
+            "items": len(data),
+            "loss": hist,
+            "seconds": round(time.perf_counter() - t, 1),
+            "guess": guess_scores(tuned, score, None, scheme),
+        }
+        print(model, seed, round(out["runs"][str(seed)]["guess"]["top1"], 3), flush=True)
+    name = f"train-{model.replace('/', '--')}-{scheme}"
+    path = RESULTS / (f"{name}.json" if score == "test" else f"{name}-{score}.json")
+    path.write_text(json.dumps(out, indent=1) + "\n")
+    return out
 
 
 def codenames_scores(before: Space, after: Space, n_boards: int, seed: int) -> dict:

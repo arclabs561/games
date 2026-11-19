@@ -47,26 +47,34 @@ def wilson(k: int, n: int, z: float = 1.96) -> tuple[float, float]:
     return centre - half, centre + half
 
 
-def guess_scores(sp: Space, split: str, tau: float | None = None) -> dict:
-    """Top-1 accuracy and mean log-likelihood on human guesses; tau fitted on train if None."""
+def guess_scores(sp: Space, split: str, tau: float | None = None, scheme="published") -> dict:
+    """Top-1 accuracy and mean log-likelihood on human guesses; tau fitted on train if None.
+
+    Under a scheme other than the published one, the result also lists each turn's hit
+    as a string of 0s and 1s, in the order of norms.cultural_guesses, so that two
+    guessers can be compared turn by turn."""
     if tau is None:
-        tau = max(TAUS, key=lambda t: guess_loglik(sp, "train", t))
-    data = cultural_guesses(split)
-    hits = sum(int(g.words[int(np.argmax(sp.sims(g.clue, g.words)))] == g.picked) for g in data)
+        tau = max(TAUS, key=lambda t: guess_loglik(sp, "train", t, scheme))
+    data = cultural_guesses(split, scheme)
+    each = [int(g.words[int(np.argmax(sp.sims(g.clue, g.words)))] == g.picked) for g in data]
+    hits = sum(each)
     lo, hi = wilson(hits, len(data))
-    return {
+    out = {
         "n": len(data),
         "top1": hits / len(data),
         "top1_ci": [lo, hi],
         "tau": tau,
-        "loglik": guess_loglik(sp, split, tau),
+        "loglik": guess_loglik(sp, split, tau, scheme),
         "chance_loglik": float(np.mean([-math.log(len(g.words)) for g in data])),
     }
+    if scheme != "published":
+        out["hits"] = "".join(map(str, each))
+    return out
 
 
-def guess_loglik(sp: Space, split: str, tau: float) -> float:
+def guess_loglik(sp: Space, split: str, tau: float, scheme: str = "published") -> float:
     total = 0.0
-    data = cultural_guesses(split)
+    data = cultural_guesses(split, scheme)
     for g in data:
         w = luce_weights(sp.sims(g.clue, g.words), tau)[0]
         total += math.log(w[g.words.index(g.picked)] / w.sum())
@@ -110,13 +118,14 @@ def all_words() -> list[str]:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--out", default=None, help="write the table as JSON here")
+    parser.add_argument("--scheme", default="published", help="published or game")
     args = parser.parse_args()
     words = all_words()
     items = association_items(eat_counts(), set(words))
     rows: list[dict] = []
     for model, ct, wt in SETTINGS:
         sp = space(model, ct, wt, words)
-        g = guess_scores(sp, "test")
+        g = guess_scores(sp, "test", scheme=args.scheme)
         a = association_top1(sp, items)
         rows.append({"model": model, "clue": ct, "word": wt, "guess": g, "assoc": a})
         print(

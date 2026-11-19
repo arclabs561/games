@@ -76,13 +76,13 @@ def mean_se(xs) -> tuple[float, float]:
     return float(a.mean()), float(a.std(ddof=1) / math.sqrt(len(a)))
 
 
-def eat_eps() -> float:
-    """The eps that makes the EAT guesser fit the human guesses (train split) best."""
+def eat_eps(split: str = "train", scheme: str = "published") -> float:
+    """The eps that makes the EAT guesser fit the human guesses of a split best."""
     counts = eat_counts()
 
     def loglik(eps: float) -> float:
         total = 0.0
-        data = cultural_guesses("train")
+        data = cultural_guesses(split, scheme)
         for g in data:
             w = norm_weigher(counts, eps)(g.clue, g.words)
             total += math.log(w[g.words.index(g.picked)] / w.sum())
@@ -91,9 +91,12 @@ def eat_eps() -> float:
     return max(EPS, key=loglik)
 
 
-def calibrate() -> dict:
+def calibrate(scheme: str = "published", score: str = "test") -> dict:
     """For each model: the template pair with the best fit to human guesses on the
-    validation split, its temperature (fitted on train), and its test scores."""
+    validation split, its temperature (fitted on train), and its test scores.
+
+    scheme "game" uses the split of codenames.split and writes calibrate-game.json.
+    score names the split that is scored ("val" for a dry run that leaves test unseen)."""
     words = all_words()
     out: dict = {}
     for model in models():
@@ -101,28 +104,33 @@ def calibrate() -> dict:
         best_val = -math.inf
         for ct, wt in templates(model):
             sp = space(model, ct, wt, words)
-            tau = max(TAUS, key=lambda t: guess_loglik(sp, "train", t))
-            val = guess_loglik(sp, "val", tau)
+            tau = max(TAUS, key=lambda t: guess_loglik(sp, "train", t, scheme))
+            val = guess_loglik(sp, "val", tau, scheme)
             row: dict = {"clue": ct, "word": wt, "tau": tau, "val_loglik": val}
-            row["test"] = guess_scores(sp, "test", tau)
+            row["test"] = guess_scores(sp, score, tau, scheme)
             out.setdefault(model, {"settings": []})["settings"].append(row)
             if val > best_val:
                 best, best_val = row, val
             print(model, ct, wt, tau, round(val, 3), round(row["test"]["top1"], 3), flush=True)
         out[model]["best"] = best
-    eps = eat_eps()
+    eps = eat_eps("train", scheme)
     counts = eat_counts()
-    data = cultural_guesses("test")
-    hits = 0
+    data = cultural_guesses(score, scheme)
+    each = []
     total = 0.0
     for g in data:
         w = norm_weigher(counts, eps)(g.clue, g.words)
-        hits += int(g.words[int(np.argmax(w))] == g.picked and w.max() > eps)
+        each.append(int(g.words[int(np.argmax(w))] == g.picked and w.max() > eps))
         total += math.log(w[g.words.index(g.picked)] / w.sum())
     covered = sum(1 for g in data if g.clue in counts)
-    out["eat"] = {"eps": eps, "test_top1": hits / len(data), "test_loglik": total / len(data)}
-    out["eat"]["test_clues_in_eat"] = covered
-    save("calibrate", out)
+    eat: dict = {"eps": eps, "test_top1": sum(each) / len(data), "test_loglik": total / len(data)}
+    eat["test_clues_in_eat"] = covered
+    if scheme != "published":
+        eat["hits"] = "".join(map(str, each))
+        out["scheme"], out["scored"] = scheme, score
+    out["eat"] = eat
+    name = "calibrate" if scheme == "published" else f"calibrate-{scheme}"
+    save(name if score == "test" else f"{name}-{score}", out)
     return out
 
 
@@ -326,9 +334,10 @@ def main() -> None:
     )
     parser.add_argument("--boards", type=int, default=200)
     parser.add_argument("--games", type=int, default=50)
+    parser.add_argument("--scheme", default="published", help="calibrate: published or game")
     args = parser.parse_args()
     if args.what in ("calibrate", "all"):
-        calibrate()
+        calibrate(args.scheme)
     if args.what in ("crossplay", "all"):
         crossplay(args.boards)
     if args.what in ("games", "all"):

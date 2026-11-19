@@ -75,8 +75,13 @@ PATTERN = re.compile(r"remaining: (\[.*?\]), hint: (\S+)")
 
 
 @cache
-def cultural_guesses(split: str) -> tuple[Guess, ...]:
-    """Human guesses from Cultural Codes, in one of its splits: train, val or test."""
+def cultural_guesses(split: str, scheme: str = "published") -> tuple[Guess, ...]:
+    """Human guesses from Cultural Codes, in one of its splits (train, val or test) under
+    a scheme of codenames.split: as published (the default), or by game, or "all"."""
+    if scheme != "published" or split == "all":
+        from codenames.split import turns
+
+        return tuple(t.guess for t in turns("all" if split == "all" else f"{scheme}:{split}"))
     csv.field_size_limit(10**9)
     out = []
     with (fetch("cultural") / f"guess_{split}.csv").open() as f:
