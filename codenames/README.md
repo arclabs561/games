@@ -422,6 +422,17 @@ The language-model guessers also do better with the embedding giver's first choi
 
 **Cost.** Five jobs ran on `cpu-basic` through `experiments/hfrun.py`, each at the commit in its manifest (`results/c6-runs.json`). The meter adds the tokens each provider reported times the price that the router listed. Model calls cost $0.171 in all, $0.00002 to $0.00012 per call; about 50 minutes of `cpu-basic` add about $0.01. The plan expected $0.40 to $0.80, under a cap of $1.50. The plan's prompt evolution (GEPA) was not run, for the reasons in the plan's last amendment.
 
+## A language model trained to choose among legal clues
+
+Experiment C7 (`experiments/plans/C7.md`, with its amendment of 2026-11-19) trains Qwen3.5-2B with LoRA by group-relative policy optimization (GRPO, as implemented in TRL 1.18.1) to choose one of C6's 120 legal actions on a board: 30 clues proposed by EmbeddingGemma 2, times the counts 1 to 4. The reward is exact. It is the expected turn value of the chosen action, averaged over four embedding guessers (wordllama, granite, bge and harrier-oss-v1-270m), and −1 for a reply that names no listed clue. The comparison is the seven-feature policy of section 5, trained against the same four guessers on the same boards and candidates. Both are scored with three guessers that neither trained with: potion, Qwen3-Embedding-0.6B and harrier-oss-v1-0.6b.
+
+**Status: not run.** The plan waits for C6's list of actions to be merged, since both experiments must use the same list. What exists so far:
+
+- `c7.py table` computes, on this machine, the 30 clues and the value of every action under every guesser for 4,800 training boards, C6's 50 validation boards and its 200 test boards. It took 7.3 minutes. The job reads the training part from the branch `compute/codenames-c7` and checks its SHA-256. On all 5,050 boards the clue lists equal those of C6's `actions.shortlist` as of its run.
+- The potion maps of C1, rebuilt for scoring, give the same top-1 on C1's test turns as `results/train-potion-game.json`, for each of the five seeds.
+- `rlvr.py` is the GPU job. It was run on this machine with `--tiny`: a randomly initialized Qwen3.5 model in the layout of the real checkpoint (a vision tower that loading drops, Gated DeltaNet and attention layers) and a word-level tokenizer. Two steps take about 10 seconds. A test checks that each step trains on its own 16 boards with 8 replies each, and that the LoRA weights move when the reward varies. A random model never names a listed clue, so with the real reward every advantage is 0, which is why that test uses another reward.
+- Arm 2 takes 0.2 seconds a seed here.
+
 ## Related work
 
 - Summerville et al. (2019) set up the Codenames AI competition. Kim et al. (2019) compared word2vec, GloVe and WordNet codemasters and guessers in it. They found twin pairs always win and mixed pairs often lose, and the folder reproduces that pattern with current models.
@@ -479,6 +490,10 @@ uv run python -m codenames.c2                     # LoRA results from results/c2
 uv run python -m codenames.rl --giver potion --held-out bge --out codenames/results/rl-potion.json
 uv run python -m codenames.c3 --slice 0 --out OUT     # plan C3: one of its 70 runs (1 to 2 min)
 uv run python -m codenames.c3 --runs runs/C3/44547011858-1 --out codenames/results/c3.json   # from compute/codenames-c3
+uv run python -m codenames.c7 table --steps 300 --out DIR          # C7 tables (7 min)
+uv run python -m codenames.c7 feature --data DIR --seed 1 --out OUT  # C7 arm 2 (1 s)
+# C7 arm 1, inside a Hugging Face Job on an L4 (group codenames-gpu); --tiny runs it on a CPU:
+uv run --group codenames-gpu python -m codenames.rlvr --seed 1 --steps 300 --eval test --table URL --out OUT
 uv run --with sentence-transformers python -m codenames.embed --model Qwen/Qwen3-Embedding-0.6B
 # C4, inside a Hugging Face Job (needs HF_TOKEN), then scored here:
 uv run python -m codenames.c4 guess --models all --split val --cap 0.6 --out OUT
@@ -516,6 +531,7 @@ uv run python -m codenames.rerank crossguess --models gpt-oss-120b --clues coden
 | `c3.py` | section 5 across seeds and held-out guessers: the runs of plan C3 and their analysis |
 | `actions.py` | the 120 legal actions an embedding giver proposes on a board (C6 and C7) |
 | `rerank.py`, `c6score.py` | C6: language models choosing among those actions, and the scoring |
+| `rlvr.py`, `c7.py` | C7: the GRPO job, its tables, the feature policy on the same candidates, and the analysis |
 | `llm.py` | language-model players: prompts and parsing |
 | `hosted.py` | calls to Inference Providers, with retries, a cost meter and a log of every call |
 | `c4.py`, `c4score.py` | experiment C4: the jobs that call the models, and the scoring |
