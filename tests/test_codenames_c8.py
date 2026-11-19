@@ -185,6 +185,14 @@ def test_committed_c8_results_match_the_run_summaries():
     if "primary" in out:
         lo, hi = out["primary"]["ci"]
         assert lo <= out["primary"]["mean"] <= hi
+        c2_runs = c8.read_runs(c8.RESULTS / "c2-runs")
+        a = np.mean(
+            [c8.as_hits(c2_runs[r]["after"]["hits"]) for r in ("lora-s1", "lora-s2", "lora-s3")],
+            axis=0,
+        )
+        b = np.mean([c8.as_hits(summaries[r]["after"]["hits"]) for r in c8.ARMS["B"]], axis=0)
+        assert out["primary"]["mean"] == pytest.approx((b - a).mean())
+        assert len(a) == len(b) == out["turns"] == 551
 
 
 def test_label_job_writes_its_files(monkeypatch, tmp_path):
@@ -230,3 +238,17 @@ def test_compact_summary_keeps_what_the_analysis_reads():
     assert small == {"config": full["config"], "after": {k: full["after"][k] for k in
                      ("hits", "top1", "loglik", "split")}}  # fmt: skip
     assert c8.compact_text(small) == text  # compacting a compact summary changes nothing
+
+
+def test_run_copies_match_the_digests_written_in_the_job():
+    import hashlib
+
+    folder = c8.RESULTS / "c8-runs"
+    listed = {}
+    for line in (folder / "sha256.txt").read_text().splitlines():
+        run, _, full, _, small = line.split()
+        listed[run] = (full, small)
+    assert set(listed) == set(c8.RUNS)
+    for run, (full, small) in listed.items():
+        digest = hashlib.sha256((folder / f"{run}.json").read_bytes()).hexdigest()
+        assert digest in (full, small), run  # the job's summary.json, or its compact form

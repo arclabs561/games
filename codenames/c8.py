@@ -136,7 +136,11 @@ def lr_record(runs: dict[str, dict]) -> dict:
 
 def teacher_agreement(label: dict) -> dict:
     """The teacher's agreement with people on the training turns it labeled, with an
-    interval from resampling training games."""
+    interval from resampling training games. The per-turn hits (label.json's train_hits)
+    show which teacher labels equal the person's word, so they stay in the private
+    dataset; the committed copy of label.json keeps only this result."""
+    if "train_hits" not in label:
+        return label["agreement_with_people_on_train"]
     from codenames.split import turns
     from codenames.stats import cluster_draws, clustered
 
