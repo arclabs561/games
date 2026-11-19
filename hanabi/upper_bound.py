@@ -193,13 +193,13 @@ def rerun(rules: Rules, seed: int, budget: int = 5_000_000, extra: bool = True) 
         ok, actions = dfs_solver.solve(rules, deck, 2_000_000, cuts="all", free_nodes=20000)
         if ok:
             assert dfs_solver.replay_actions(rules, deck, actions) == rules.max_score
-        extra = {"b_all_cuts": {True: "won", False: "lost", None: "undecided"}[ok]}
-        extra["seconds_b_all_cuts"] = round(time.time() - t0, 2)
+        more = {"b_all_cuts": {True: "won", False: "lost", None: "undecided"}[ok]}
+        more["seconds_b_all_cuts"] = round(time.time() - t0, 2)
         t0 = time.time()
         ok = dfs_solver.free_order_test(rules, deck, 2_000_000)
-        extra["free_order"] = {True: "won", False: "lost", None: "unknown"}[ok]
-        extra["seconds_free"] = round(time.time() - t0, 2)
-        out["extra"] = extra
+        more["free_order"] = {True: "won", False: "lost", None: "unknown"}[ok]
+        more["seconds_free"] = round(time.time() - t0, 2)
+        out["extra"] = more
     return out
 
 
