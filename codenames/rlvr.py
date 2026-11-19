@@ -1,7 +1,7 @@
 """Plan C7: a small language model trained by GRPO to choose among legal clues.
 
 Each board comes with C6's 120 actions: 30 legal clues, proposed by EmbeddingGemma 2,
-times the counts 1 to 4 (codenames.c7.actions). The model reads C6's prompt (the board,
+times the counts 1 to 4 (codenames.actions.legal_actions). The model reads C6's prompt (the board,
 then the numbered clues) and answers CLUE NUMBER. Its reward is the exact expected turn
 value of that action (codenames.luce, the README's costs), averaged over the four
 training guessers, and -1 for a reply that names no listed clue or a count outside 1 to
@@ -46,7 +46,8 @@ import numpy as np
 
 from codenames.game import Board
 from codenames.lora import Clock
-from codenames.rl import NMAX
+from codenames.rerank import action_index, rerank_prompt
+from codenames.rerank import read_choice as c6_read_choice
 
 MODEL = "Qwen/Qwen3.5-2B"
 BOARDS_PER_STEP = 16
@@ -55,37 +56,28 @@ INVALID = -1.0
 EVAL_SETS = ("val", "test")
 
 
-# The prompt and the parser. They are C6's (experiments/plans/C6.md): llm.giver_prompt
-# followed by the numbered clues and the instruction to answer with one of them.
+# The prompt and the parser are C6's (codenames/rerank.py): llm.giver_prompt, then the
+# numbered clues and the instruction to answer with one of them; the action is read from
+# the last line that names a listed clue with a number after it.
 def prompt(board: Board, clues: list[str]) -> str:
-    from codenames.llm import giver_prompt
-
-    listed = "\n".join(f"{i}. {c}" for i, c in enumerate(clues, 1))
-    return (
-        giver_prompt(board).rsplit("\n\n", 1)[0]
-        + f"\n\nChoose the clue from this list:\n{listed}\n\n"
-        + f"Answer on one line as: CLUE NUMBER, with a clue from the list and a number "
-        f"from 1 to {NMAX}."
-    )
+    return rerank_prompt(board, clues)
 
 
-CHOICE = re.compile(r"([A-Za-z]+)\W+(\d+)")
+def parse(reply: str, clues: list[str], truncated: bool = False) -> dict:
+    """C6's reading of a reply, with its reason when there is no action (empty,
+    truncated, unlisted, count out of range), and the action index 4 i + n - 1."""
+    row = c6_read_choice(reply, clues, "length" if truncated else None)
+    return row | {"action": action_index(row, clues)}
 
 
-def read_choice(reply: str, clues: list[str]) -> int | None:
-    """The action index 4 i + n - 1 of the first 'word number' pair in the reply whose
-    word is listed clue i and whose number n is 1 to 4; None if there is none."""
-    pos = {c: i for i, c in enumerate(clues)}
-    for m in CHOICE.finditer(reply):
-        word, n = m[1].lower(), int(m[2])
-        if word in pos:
-            return NMAX * pos[word] + n - 1 if 1 <= n <= NMAX else None
-    return None
+def read_choice(reply: str, clues: list[str], truncated: bool = False) -> int | None:
+    return parse(reply, clues, truncated)["action"]
 
 
-def reward(reply: str, clues: list[str], values: np.ndarray) -> float:
-    """values[a] is the mean expected turn value of action a over the training guessers."""
-    a = read_choice(reply, clues)
+def reward(reply: str, clues: list[str], values: np.ndarray, truncated: bool = False) -> float:
+    """values[a] is the mean expected turn value of action a over the training guessers.
+    A reply cut off at the token cap has no action, as in C6."""
+    a = read_choice(reply, clues, truncated)
     return INVALID if a is None else float(values[a])
 
 
@@ -230,16 +222,20 @@ def chat(tok, text: str) -> str:
     )
 
 
+def end_tokens(model, tok) -> list[int]:
+    """The checkpoint's own end token is <|endoftext|>; a chat reply ends with the
+    tokenizer's <|im_end|>. Either ends a reply."""
+    eos = model.generation_config.eos_token_id
+    return [tok.eos_token_id, *([eos] if isinstance(eos, int) else eos or [])]
+
+
 def decode_greedy(model, tok, data: Boards, batch: int = 25, max_new: int = 16) -> list[dict]:
     """Greedy replies on every board of data, each with its parsed action (or None)."""
     torch = importlib.import_module("torch")
     model.eval()
     out = []
     device = next(model.parameters()).device
-    # The checkpoint's own end token is <|endoftext|>; a chat reply ends with the
-    # tokenizer's <|im_end|>.
-    eos = model.generation_config.eos_token_id
-    eos = [tok.eos_token_id, *([eos] if isinstance(eos, int) else eos or [])]
+    eos = end_tokens(model, tok)
     for start in range(0, len(data), batch):
         idx = list(range(start, min(start + batch, len(data))))
         texts = [chat(tok, data.prompt(i)) for i in idx]
@@ -252,13 +248,12 @@ def decode_greedy(model, tok, data: Boards, batch: int = 25, max_new: int = 16) 
                 pad_token_id=tok.pad_token_id,
                 eos_token_id=eos,
             )
-        replies = tok.batch_decode(gen[:, enc["input_ids"].shape[1] :], skip_special_tokens=True)
-        for i, reply in zip(idx, replies, strict=True):
-            a = read_choice(reply, data.clue_list(i))
-            row = {"board": i, "reply": reply, "action": a}
-            if a is not None:
-                row |= {"clue": data.clue_list(i)[a // NMAX], "count": a % NMAX + 1}
-            out.append(row)
+        new = gen[:, enc["input_ids"].shape[1] :]
+        replies = tok.batch_decode(new, skip_special_tokens=True)
+        for i, reply, ids in zip(idx, replies, new.tolist(), strict=True):
+            cut = not any(t in eos for t in ids)  # no end token within the cap
+            row = {"board": i, "reply": reply, "tokens": len(ids), "truncated": cut}
+            out.append(row | parse(reply, data.clue_list(i), cut))
     return out
 
 
@@ -267,32 +262,41 @@ class Recorder:
 
     __name__ = "c7_reward"
 
-    def __init__(self, data: Boards):
+    def __init__(self, data: Boards, eos: list[int]):
         assert data.values is not None
         self.data = data
+        self.eos = set(eos)
         self.mean = data.values.mean(axis=2)  # (B, 120): mean over the training guessers
         self.rows: list[dict] = []
 
-    def __call__(self, prompts, completions, board, trainer_state=None, **kw) -> list[float]:
+    def __call__(
+        self, prompts, completions, board, completion_ids=None, trainer_state=None, **kw
+    ) -> list[float]:
         step = trainer_state.global_step if trainer_state is not None else -1
+        ids = completion_ids or [None] * len(completions)
         out = []
-        for comp, b in zip(completions, board, strict=True):
+        for comp, b, c in zip(completions, board, ids, strict=True):
             text = comp[-1]["content"] if isinstance(comp, list) else comp
-            r = reward(text, self.data.clue_list(b), self.mean[b])
+            cut = c is not None and not any(t in self.eos for t in c)
+            r = reward(text, self.data.clue_list(b), self.mean[b], cut)
             out.append(r)
-            self.rows.append({"step": step, "board": int(b), "reply": text, "reward": r})
+            row = {"step": step, "board": int(b), "reply": text, "reward": r}
+            self.rows.append(row | ({"truncated": True} if cut else {}))
         return out
 
     def curves(self) -> list[dict]:
         by: dict[int, list[float]] = {}
+        cut: dict[int, list[bool]] = {}
         for row in self.rows:
             by.setdefault(row["step"], []).append(row["reward"])
+            cut.setdefault(row["step"], []).append(row.get("truncated", False))
         return [
             {
                 "step": s,
                 "replies": len(r),
                 "mean_reward": float(np.mean(r)),
                 "invalid": float(np.mean([x == INVALID for x in r])),
+                "truncated": float(np.mean(cut[s])),
             }
             for s, r in sorted(by.items())
         ]
@@ -385,7 +389,7 @@ def main(argv=None) -> None:
     rows = [
         {"prompt": [{"role": "user", "content": train.prompt(i)}], "board": i} for i in range(need)
     ]
-    recorder = Recorder(train)
+    recorder = Recorder(train, end_tokens(model, tok))
     lora = peft.LoraConfig(
         r=args.rank, lora_alpha=2 * args.rank, target_modules="all-linear", task_type="CAUSAL_LM"
     )

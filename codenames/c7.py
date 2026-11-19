@@ -26,11 +26,14 @@ import hashlib
 import json
 import random
 import time
+from collections import Counter
 from pathlib import Path
 from typing import Any
 
 import numpy as np
 
+from codenames.actions import expand, read_action_lines, shortlist
+from codenames.actions import proposer as c6_proposer
 from codenames.evaluate import all_words, guess_scores
 from codenames.game import Board, deal
 from codenames.norms import eat_counts
@@ -49,6 +52,7 @@ MAP_SEEDS = (1, 2, 3, 4, 5)
 SHORTLIST = 30
 TRAIN_SEED, VAL_SEED, TEST_SEED = 7000, 6005, 6004
 EVAL_BOARDS = {"val": (VAL_SEED, 50), "test": (TEST_SEED, 200)}
+C6_ACTIONS = Path(__file__).parent / "results" / "c6-actions.txt"
 
 
 def deal_boards(seed: int, n: int) -> list[Board]:
@@ -61,12 +65,25 @@ def train_boards(steps: int) -> list[Board]:
 
 
 def candidates(board: Board, sp: Space, tau: float, pool=None) -> tuple[list[str], np.ndarray]:
-    """The 30 clues in the shortlist's order, and the features (120, 7) of rl.actions;
-    action a is clue a // 4 with count a % 4 + 1. The pool is words.clue_words()."""
+    """C6's 30 clues (codenames.actions.shortlist) and the features (120, 7) of
+    rl.actions, which computes the same list; action a is clue a // 4 with count
+    a % 4 + 1. The pool is words.clue_words()."""
     acts, phi = actions(sp, tau, board, pool or clue_words(), SHORTLIST)
-    clues = [c for c, n in acts if n == 1]
-    assert [a for a in acts] == [(c, n) for c in clues for n in range(1, NMAX + 1)]
+    clues = shortlist(board, sp, tau, SHORTLIST, pool)
+    assert acts == expand(clues)
     return clues, phi
+
+
+def c6_lists_agree(boards: dict[str, np.ndarray]) -> dict[str, list[int]]:
+    """For the val and test boards: [boards, boards whose clues equal C6's committed list
+    in results/c6-actions.txt]."""
+    lists = read_action_lines(C6_ACTIONS.read_text())
+    out = {}
+    for split, (seed, _) in EVAL_BOARDS.items():
+        if f"{split}_clues" in boards:
+            mine = [[str(c) for c in row] for row in boards[f"{split}_clues"]]
+            out[split] = [len(mine), sum(a == b for a, b in zip(mine, lists[seed], strict=False))]
+    return out
 
 
 MAP_CHECK: dict[str, list[float]] = {}
@@ -128,7 +145,7 @@ def table(steps: int, out: Path, eval_boards: dict | None = None) -> dict:
     t0 = time.perf_counter()
     every = guessers()
     names = list(every)
-    giver = chosen_spaces(load("calibrate-game"))[GIVER]
+    giver = c6_proposer()
     job: dict[str, Any] = {"training_guessers": np.array(TRAINING)}
     local: dict[str, Any] = {"guessers": np.array(names)}
     train = build(train_boards(steps), giver, {g: every[g] for g in TRAINING})
@@ -151,6 +168,7 @@ def table(steps: int, out: Path, eval_boards: dict | None = None) -> dict:
         "table_sha256": sha256(out / "table.npz"),
         "local_sha256": sha256(out / "local.npz"),
         "potion_map_top1_rebuilt_and_c1": MAP_CHECK,
+        "clues_equal_c6_actions_txt": c6_lists_agree(job),
         "seconds": round(time.perf_counter() - t0, 1),
     }
     (out / "table.json").write_text(json.dumps(meta, indent=1) + "\n")
@@ -363,8 +381,12 @@ def score(data: dict, runs: Path, split: str = "test") -> dict:
         }
         for s, r in sorted(fp.items())
     }
-    out["invalid"] = {str(s): sum(a is None for a in acts1[s]) for s in seeds}
-    out["invalid"]["untrained"] = sum(r["action"] is None for r in lm[seeds[0]]["untrained"])
+
+    def why(rows: list[dict]) -> dict:
+        return dict(Counter(r.get("why") or "read" for r in rows))
+
+    out["replies"] = {str(s): why(lm[s]["trained"]) for s in seeds}
+    out["replies"]["untrained"] = why(lm[seeds[0]]["untrained"])
     clues = data[f"{split}_clues"]
     filled = {s: [first[b] if a is None else a for b, a in enumerate(acts1[s])] for s in seeds}
     out["behavior"] = {

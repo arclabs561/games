@@ -66,11 +66,22 @@ CLUES = ["ocean", "river", "money", "bank"]
         ("water 2", None),  # not in the list
         ("ocean", None),  # no count
         ("", None),
-        ("water 2 then river 3", 6),  # the first listed clue decides
+        ("water 2 then river 3", 6),  # the first listed clue with a number after it
+        ("ocean 3\nI choose: bank 1", 12),  # the last such line decides (C6)
     ],
 )
 def test_read_choice(reply, action):
     assert rlvr.read_choice(reply, CLUES) == action
+
+
+def test_a_truncated_reply_has_no_action():
+    assert rlvr.parse("ocean 3", CLUES, truncated=True) == {
+        "clue": None,
+        "count": None,
+        "why": "truncated",
+        "action": None,
+    }
+    assert rlvr.reward("ocean 3", CLUES, np.ones(16), truncated=True) == rlvr.INVALID
 
 
 def test_reward_is_the_listed_value_or_minus_one():
@@ -198,8 +209,11 @@ def test_score_pairs_seeds_and_uses_the_fallback(tmp_path):
     for seed in (1, 2):
         run = tmp_path / f"lm-{seed}"
         run.mkdir()
-        trained = [{"action": None if b == 0 else seed + b} for b in range(5)]
-        untrained = [{"action": None} for _ in range(5)]
+        trained = [
+            {"action": None, "why": "unlisted"} if b == 0 else {"action": seed + b, "why": None}
+            for b in range(5)
+        ]
+        untrained = [{"action": None, "why": "unlisted"} for _ in range(5)]
         (run / "picks.json").write_text(json.dumps({"trained": trained, "untrained": untrained}))
         (run / "config.json").write_text(json.dumps({"seed": seed, "eval": "test"}))
         (run / "timings.json").write_text("{}")
@@ -219,7 +233,11 @@ def test_score_pairs_seeds_and_uses_the_fallback(tmp_path):
         want.append(lm - values[:, 7, held].mean(axis=1))
     assert out["seeds"] == [1, 2]
     assert out["difference"]["held_out"]["mean"] == pytest.approx(np.mean(want), abs=1e-6)
-    assert out["invalid"] == {"1": 1, "2": 1, "untrained": 5}
+    assert out["replies"] == {
+        "1": {"unlisted": 1, "read": 4},
+        "2": {"unlisted": 1, "read": 4},
+        "untrained": {"unlisted": 5},
+    }
     assert out["behavior"]["arm2"]["1"]["mean_count"] == 4  # action 7 is clue 1, count 4
     assert out["behavior"]["untrained"]["first_choice"] == 1
     curves = out["runs"]["1"]["curves_every_20_steps"]
@@ -242,7 +260,7 @@ def test_grpo_loop_trains_the_adapter(toy, tmp_path, monkeypatch):
     )
     # A random model almost never names a listed clue, so every reward would be -1 and
     # every advantage 0. This reward varies with the reply, so the adapter must move.
-    monkeypatch.setattr(rlvr, "reward", lambda reply, clues, values: float(len(reply) % 5))
+    monkeypatch.setattr(rlvr, "reward", lambda reply, clues, values, cut: float(len(reply) % 5))
     out = tmp_path / "out"
     rlvr.main(["--tiny", "--steps", "2", "--eval", "val", "--table", str(path), "--out", str(out)])
     curves = json.loads((out / "curves.json").read_text())
