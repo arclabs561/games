@@ -35,8 +35,12 @@ def toy(monkeypatch):
         "toy", normalize(rng.normal(size=(40, 8))), normalize(rng.normal(size=(40, 8))), vocab
     )
     splits = {s: toy_turns(i, 60, vocab) for i, s in enumerate(("train", "val", "test"))}
-    monkeypatch.setattr(evaluate, "cultural_guesses", splits.__getitem__)
-    monkeypatch.setattr(c2, "cultural_guesses", splits.__getitem__)
+
+    def read(split, scheme="published"):
+        return splits[split]
+
+    monkeypatch.setattr(evaluate, "cultural_guesses", read)
+    monkeypatch.setattr(c2, "cultural_guesses", read)
     return sp, splits
 
 

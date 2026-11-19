@@ -31,9 +31,7 @@ N_BOARDS = 200
 
 def guesses(split: str, scheme: str = "published") -> tuple[Guess, ...]:
     """Human guesses of one split, under the published split or C1's game split."""
-    if scheme == "published":
-        return cultural_guesses(split)
-    return cultural_guesses(split, scheme=scheme)
+    return cultural_guesses(split, scheme)
 
 
 def turn_sims(sp: Space, data: tuple[Guess, ...]) -> list[tuple[np.ndarray, int]]:
