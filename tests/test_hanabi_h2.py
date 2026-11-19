@@ -175,6 +175,8 @@ def test_run_and_report_end_to_end(tmp_path):
     run_games(args_for(runs / "on"), MODELS, FakeClient())
     run_games(args_for(runs / "off", deduction="off"), MODELS, FakeClient(finish="length"))
     run_games(args_for(runs / "p3", players=3, seeds="0-1"), MODELS, FakeClient())
+    # another reply cap, on other deals: never paired with the runs above
+    run_games(args_for(runs / "big", seeds="5", max_tokens=4096), MODELS, FakeClient())
     summary = json.loads((runs / "on" / "summary.json").read_text())
     assert summary["complete_prefix"] == 3 and summary["stopped_at_seed"] is None
     games = [json.loads(x) for x in (runs / "on" / "games.jsonl").read_text().splitlines()]
@@ -188,6 +190,7 @@ def test_run_and_report_end_to_end(tmp_path):
     assert arms["on"]["gap_mean"] == pytest.approx(25 - arms["on"]["score_mean"])
     assert arms["off"]["truncated_share_of_calls"] == 1.0
     assert arms["p3"]["information_strategy"]["deals"] == 2
+    assert len(result["deduction_effect"]) == 1
     effect = result["deduction_effect"][0]
     assert effect["deals"] == 3 and effect["mean"] == pytest.approx(
         arms["off"]["gap_mean"] - arms["on"]["gap_mean"]

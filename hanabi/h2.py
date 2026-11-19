@@ -393,10 +393,13 @@ def report(args) -> int:
         ]
         arms.append(arm)
     comparisons = []
-    by_key = {(a["label"], a["model"], a["players"], a["deduction"]): a for a in arms}
-    for (label, model, p, ded), on in sorted(by_key.items()):
-        off = by_key.get((label, model, p, False))
-        if ded and off and "games" in on and "games" in off:
+    by_key = {
+        (a["label"], a["model"], a["players"], a["max_tokens"], a["deduction"]): a for a in arms
+    }
+    for (label, model, p, cap, ded), on in sorted(by_key.items()):
+        off = by_key.get((label, model, p, cap, False))
+        shared = set(on.get("seeds", [])) & set(off.get("seeds", [])) if off else set()
+        if ded and off and shared:
             gap = {
                 g["seed"]: deals[(p, g["seed"])]["ceiling"] - g["score"]
                 for g in on["games_by_seed"]
@@ -412,6 +415,7 @@ def report(args) -> int:
                     "label": label,
                     "model": model,
                     "players": p,
+                    "max_tokens": cap,
                     "what": "gap with deduction off minus gap with deduction on, by deal",
                     **paired(gap, gap_off),
                 }

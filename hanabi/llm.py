@@ -7,9 +7,9 @@ card, the values still possible after hints and card counting, as the "Sherlock"
 Ramesh et al., "Sparks of Cooperative Reasoning: LLMs as Strategic Hanabi Agents"
 (arXiv:2601.18077), supplies. `parse_action` reads the last move written in that syntax.
 
-`play_text_game` runs a game with any function from prompt to reply. No model API is
-reachable from the machine this was written on, so no model results are reported here; the
-tests use scripted replies. The README gives the experiment plan.
+`play_text_game` runs a game with any function from prompt to reply. The tests use scripted
+replies. `h2.play_game` is the same loop with a record of each move; it plays hosted models,
+and the README reports the results.
 """
 
 from __future__ import annotations
