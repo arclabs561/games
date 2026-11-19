@@ -68,6 +68,35 @@ The Pokémon data covers every generation through the newest games (Generation 9
 - Nine of the 171 typings are still unused: Bug/Dragon, Fire/Fairy, Ground/Fairy, Ice/Poison, Normal/Bug, Normal/Ice, Normal/Rock, Normal/Steel and Rock/Ghost.
 - As of Generation 7 the data gives exactly the 146 typings of the file it replaced (below), so the Generation 7 results above and in the notebook did not change.
 
+## Does the equilibrium predict what people play?
+
+No. This is plan P1 (`experiments/plans/P1.md`, with its amendments), run on Smogon's monthly usage statistics for the Pokémon Showdown ladder. The primary test uses `gen9ou` at rating cutoff 1500, with the twelve months 2025-11 to 2026-10 pooled with equal weight. A typing's usage share is the summed team share of its Pokémon, divided by 6. Its availability is the number of Pokémon and forms with that typing listed in any of the twelve files; 444 forms with 147 typings are listed. The equilibrium is the duel game's over those 147 typings, on the Generation 6 chart. It is unique, on 21 typings, led by Grass/Rock (13.6%) and Water/Ground (11.9%).
+
+The plan's test compares two Spearman correlations with usage over the 147 typings, one for equilibrium weight and one for availability. Δρ is the first minus the second. The interval is a 95% percentile bootstrap over typings, with 10,000 resamples and seed 0.
+
+| Correlation with usage share, over 147 typings | ρ | 95% interval |
+|---|---|---|
+| Duel equilibrium weight | 0.08 | −0.10 to 0.25 |
+| Number of Pokémon available | 0.40 | 0.25 to 0.53 |
+| Highest base-stat total among them (secondary) | 0.59 | 0.46 to 0.69 |
+| **Δρ, equilibrium minus availability (primary)** | **−0.32** | **−0.56 to −0.08** |
+
+- **The primary result.** The interval for Δρ lies below 0. The plan counts the equilibrium as predicting use beyond availability only if the interval lies above 0, so it does not. The number of Pokémon with a typing predicts its use better than its equilibrium weight does, and base stats predict better still.
+- **Why.** 126 of the 147 typings get weight 0, so the equilibrium ranks most typings as tied. The most used typing, Fighting/Ground at 5.4% of team slots, is one of them: it loses 0.22 on average against the equilibrium mix, mostly to Ground/Flying, Electric/Flying and Water/Ground. Of the ten most used typings, three are in the support.
+- **Support mass (secondary).** The 21 typings in the support take 20.3% of usage and account for 11.0% of the available Pokémon.
+- **Stability (secondary).** Δρ is between −0.34 and −0.30 in each of the twelve months, with the pooled year's equilibrium and availability. At the other cutoffs it is −0.34 (cutoff 0, interval −0.58 to −0.10), −0.27 (1695, −0.50 to −0.04) and −0.34 (1825, −0.58 to −0.09).
+- **The attack game (secondary).** The defender's mix over the 147 typings gives Δρ = −0.30 (−0.52 to −0.09).
+- **Generation 1 (secondary, no test).** `gen1ou` uses all 33 Generation 1 typings, and its duel equilibrium is the unique one on 13 typings in the table above. At cutoff 1500, ρ is 0.30 for the equilibrium, 0.34 for availability and 0.51 for base stats; Δρ = −0.04 (−0.52 to 0.46). Generation 1 has no abilities, items or Terastallization, but its equilibrium does no better there.
+
+These comparisons are outside the plan and are exploratory:
+
+- The log-ratio game over the 147 typings gives Δρ = −0.34 (k = 1) and −0.29 (k = 2), both with intervals below 0.
+- Over the 18 single types, each Pokémon's share is split equally between its types. Then the duel equilibrium's ρ with `gen9ou` usage is 0.61 (0.19 to 0.83), against 0.51 (0.01 to 0.84) for availability, and Δρ = 0.10 (−0.33 to 0.61). With 18 types the intervals are too wide to separate the two.
+
+**How the numbers are known.** The shares are sums of the published values, and the equilibria and their uniqueness are exact. Each correlation is exact given those inputs. The intervals come from the bootstrap. `scipy.stats.spearmanr` gives the same Δρ, to 15 decimal places. The bootstrap code agrees with exact enumeration of all 256 resamples on four typings (`tests/test_pokemon_usage.py`). Every number is in `results/p1.json`, and the per-typing table is in `results/usage-typings.json`.
+
+**What the chart leaves out.** Base stats, abilities, moves, items and Terastallization all shape what people use, and the chart models none of them. A null result was the expected outcome. Spearman's ρ also treats all 126 typings with weight 0 as tied, so the equilibrium can only separate its support from the rest.
+
 ## How much of the chart is a ranking
 
 `hodge.py` splits the chart into a ranking part and a cyclic part, following Jiang, Lim, Yao and Ye, ["Statistical ranking and combinatorial Hodge theory"](https://doi.org/10.1007/s10107-010-0419-x), *Mathematical Programming* 127 (2011) 203–244. The flow between types i and j is A(i, j) = log2(E(i, j)/E(j, i)), where E(i, j) is the multiplier when i attacks j; it is the payoff of the log-ratio game. Any such flow is the sum of a gradient s(i) − s(j), the least-squares fit of one score per type, and a remainder with no net flow at any type. On the complete graph the score is the row mean, s(i) = (1/18) Σⱼ A(i, j), and the remainder is a sum of cycles around triangles, with no "harmonic" part left over. The code checks both facts exactly rather than assuming them, and a test compares the scores with numpy's least squares.
@@ -93,6 +122,8 @@ The Pokémon data covers every generation through the newest games (Generation 9
 
 **License.** PokeAPI's repository has one license file, [`LICENSE.md`](https://github.com/PokeAPI/pokeapi/blob/master/LICENSE.md), copied here as `PokeAPI-LICENSE.md`. It is a BSD-style license, and its text speaks of source code and binary forms; it does not say whether it covers the data. PokeAPI's data began as a copy of the [veekun/pokedex](https://github.com/veekun/pokedex) data ([pokeapi.co/about](https://pokeapi.co/about)). The veekun README licenses its code under MIT and says the data "is the intellectual property of Nintendo, Creatures, inc., and GAME FREAK, inc." and is used "at your own legal risk". PokeAPI's contributors added the data for Generation 8 on, partly scraped from other sites. So no license grants the data itself. What is committed here is a table of facts (types, base stats, dates of introduction), with credit to PokeAPI and veekun and PokeAPI's notice.
 
+**Smogon's usage statistics.** `results/usage-typings.json` is derived from Smogon's monthly usage statistics for Pokémon Showdown ([smogon.com/stats](https://www.smogon.com/stats/)), the "chaos" JSON files for `gen9ou` and `gen1ou` from 2025-11 to 2026-10. It covers all four rating cutoffs of each format, 96 files in all. The license of these statistics is unknown: none was found on the stats pages or in the FAQ thread about them on Smogon's forums. So the raw files are not committed. `usage.py` downloads them, records each file's URL, SHA-256, size and number of battles, and keeps only usage shares by typing and by type, with the number of Pokémon behind each and the highest total of base stats among them. The machine that wrote this README cannot reach smogon.com, so the download ran on GitHub Actions, on the branch `compute/pokemon-p1`. Each file lists only Pokémon with at least 0.01% weighted usage; the listed shares sum to between 5.974 and 5.9996 per file, against 6 for a full count. Showdown names are mapped to the identifiers of `pokeapi_forms.csv`. Every name in the files was checked against Showdown's `pokedex.ts` (MIT license, the pinned commit of `sources.py`), with its typing in the format's generation. The same holds for every Showdown species except the Arceus and Silvally formes (`python -m pokemon.usage check`).
+
 **The file it replaces.** Until this change the notebook used `pokemon_gen7.csv`, 1,061 rows from the Kaggle dataset [Pokemon Sun and Moon (Gen 7) Stats](https://www.kaggle.com/datasets/mylesoneill/pokemon-sun-and-moon-gen-7-stats), whose license is unknown: the page lists "Other (specified in description)", and the description names none. It also held Pokédex text. Taken as of Generation 7, the PokeAPI data has 955 forms and exactly the same 146 typings as that file, so every result about typings is unchanged, in the README and in the notebook. The notebook's results for single Pokémon did change, because the two files count forms differently: Blissey's stat-total percentile is now 83.2 (was 81.4), and Toxapex's combined percentile 90.2 (was 92.3). The notebook now names forms by PokeAPI identifier, such as `pumpkaboo-small`. It uses base stats as of Generation 7, and it takes legendary, mythical and Mega flags from the data rather than from a list typed into it.
 
 ```bash
@@ -101,6 +132,8 @@ uv run --group pokemon python -m pokemon.graph_analysis
 uv run --group pokemon python -m pokemon.equilibrium   # the games above, in about a minute
 uv run --group pokemon python -m pokemon.hodge         # the ranking and cyclic parts, in seconds
 uv run --group pokemon python -m pokemon.sources       # rebuilds the data files from PokeAPI
+uv run python -m pokemon.usage build                  # downloads Smogon's files, writes results/usage-typings.json
+uv run --group pokemon python -m pokemon.p1            # plan P1 from that table, in about 30 seconds
 uv run python -m pokemon.emerald_kaizo.iv_analysis   # regenerates emerald_kaizo/iv_analysis.md
 uv run --group pokemon --with jupyter jupyter lab pokemon/pokemon.ipynb
 ```

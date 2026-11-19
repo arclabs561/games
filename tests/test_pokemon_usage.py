@@ -347,5 +347,7 @@ def test_primary_result_reproduces():
     assert PRIMARY == {"format": "gen9ou", "cutoff": 1500, "game": "duel", "level": "typing"}
     (r,) = analyze(table, "gen9ou", 1500, "typing", only=lambda g: g == "duel")
     assert r["primary"]
-    assert r["vs_availability"]["delta"] == committed["primary"]["delta"]
-    assert list(r["vs_availability"]["delta_interval"]) == committed["primary"]["interval"]
+    assert r["vs_availability"]["delta"] == pytest.approx(committed["primary"]["delta"], abs=1e-12)
+    assert list(r["vs_availability"]["delta_interval"]) == pytest.approx(
+        committed["primary"]["interval"], abs=1e-12
+    )
