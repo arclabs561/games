@@ -263,6 +263,12 @@ def test_grpo_loop_trains_the_adapter(toy, tmp_path, monkeypatch):
     monkeypatch.setattr(rlvr, "reward", lambda reply, clues, values, cut: float(len(reply) % 5))
     out = tmp_path / "out"
     rlvr.main(["--tiny", "--steps", "2", "--eval", "val", "--table", str(path), "--out", str(out)])
+    # --stop-after 0 stops after the first step and still writes everything.
+    early = tmp_path / "early"
+    argv = ["--tiny", "--steps", "2", "--eval", "val", "--table", str(path), "--out", str(early)]
+    rlvr.main([*argv, "--stop-after", "0"])
+    assert json.loads((early / "config.json").read_text())["steps_done"] == 1
+    assert len(json.loads((early / "picks.json").read_text())["trained"]) == 3
     curves = json.loads((out / "curves.json").read_text())
     assert [c["step"] for c in curves] == [0, 1] and all(c["replies"] == 128 for c in curves)
     cfg = json.loads((out / "config.json").read_text())

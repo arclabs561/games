@@ -302,6 +302,20 @@ class Recorder:
         ]
 
 
+def stopper(start: float, minutes: float):
+    """A callback that ends training after the step during which the time ran out."""
+    transformers = importlib.import_module("transformers")
+
+    class Stop(transformers.TrainerCallback):
+        def on_step_end(self, args, state, control, **kw):
+            if time.time() - start > 60 * minutes:
+                control.should_training_stop = True
+                print(f"stopping after step {state.global_step}: {minutes} min", flush=True)
+            return control
+
+    return Stop()
+
+
 def grpo_config(args, out: Path, cpu: bool):
     trl = importlib.import_module("trl")
     return trl.GRPOConfig(
@@ -344,6 +358,13 @@ def main(argv=None) -> None:
     parser.add_argument("--rank", type=int, default=32)
     parser.add_argument("--eval", default="test", choices=EVAL_SETS)
     parser.add_argument("--eval-boards", type=int, default=None, help="first n only")
+    parser.add_argument(
+        "--stop-after",
+        type=float,
+        default=None,
+        help="minutes since the module started after which training stops at the end of a "
+        "step, so that the evaluation and the outputs still finish before the job's timeout",
+    )
     parser.add_argument("--out", type=Path, required=True)
     args = parser.parse_args(argv)
     clock = Clock()
@@ -400,6 +421,9 @@ def main(argv=None) -> None:
         train_dataset=datasets.Dataset.from_list(rows),
         processing_class=tok,
         peft_config=lora,
+        callbacks=[stopper(clock.marks["module_start"], args.stop_after)]
+        if args.stop_after is not None
+        else None,
     )
     trainable = sum(p.numel() for p in trainer.model.parameters() if p.requires_grad)
     clock.mark("trainer_ready")
@@ -422,6 +446,7 @@ def main(argv=None) -> None:
         "boards_seen": [seen[0], seen[-1], len(seen)] if seen else [],
         "versions": {m.__name__: m.__version__ for m in (torch, trl, peft, datasets)},
         "fla": not args.tiny and importlib.util.find_spec("fla") is not None,
+        "steps_done": trainer.state.global_step,
     }
     if not cpu:
         config["gpu"] = torch.cuda.get_device_name(0)
