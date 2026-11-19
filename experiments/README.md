@@ -31,7 +31,7 @@ Costs are recorded per run. A number from a run that did not happen is never rep
 | C5 | Does reinforcement learning of a small language model, rewarded by a population of guessers, give clues that held-out guessers understand? | L4, about $9 | [C5](plans/C5.md) | not run: C4's giver test failed |
 | H1 | How many Hanabi deals reach 25 with every card visible? Decide the undecided deals and check with a second solver. | CPU (GitHub Actions) | [H1](plans/H1.md) | done (PR #45): 98.6% of two-player deals winnable with every card in view; two solvers agree on 79,396 deals |
 | H2 | How far below the open-game ceiling do hosted language models play, and, at three players, below the hat strategy? | Inference Providers, about $2 to $5 | [H2](plans/H2.md) | done (PR #44): both models far below the ceiling; deduction help shows no effect; three-player part not run |
-| P1 | Does the type-chart equilibrium predict which types people play? | CPU (GitHub Actions) | [P1](plans/P1.md) | planned |
+| P1 | Does the type-chart equilibrium predict which types people play? | CPU (GitHub Actions) | [P1](plans/P1.md) | done (PR #47): null; the number of Pokémon per typing predicts use better (Δρ = −0.32, interval −0.56 to −0.08) |
 
 Costs are estimates from the plans. Each plan has a hard cap, and the paid ones are approved one at a time.
 
