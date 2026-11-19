@@ -28,11 +28,12 @@ def test_switching_helps_a_little():
 
 
 def test_simulation_agrees_with_exact_mean():
-    for play, step in (
-        (tenzi.play_fixed, tenzi.reroll),
-        (tenzi.play_switching, tenzi.reroll_switching),
+    for seed, play, step in (
+        (11, tenzi.play_fixed, tenzi.reroll),
+        (12, tenzi.play_switching, tenzi.reroll_switching),
     ):
-        games = [play(random.Random(i)) for i in range(4000)]
+        rng = random.Random(seed)  # one generator per check, so the checks are independent
+        games = [play(rng) for _ in range(4000)]
         half = 4 * stdev(games) / len(games) ** 0.5
         assert abs(mean(games) - float(tenzi.expected_turns(step))) < half
 
@@ -47,7 +48,8 @@ def test_committed_csv_is_current(tmp_path, monkeypatch):
 def test_monte_carlo_game_is_the_fixed_face_strategy():
     from tenzi.monte_carlo import tenzi_game
 
-    games = [tenzi_game(rng=random.Random(i)) for i in range(4000)]
+    rng = random.Random(13)
+    games = [tenzi_game(rng=rng) for _ in range(4000)]
     half = 4 * stdev(games) / len(games) ** 0.5
     assert abs(mean(games) - float(tenzi.expected_turns())) < half
 
@@ -75,13 +77,14 @@ def test_race_identities_exactly():
 
 
 def test_race_agrees_with_simulation():
-    for name in ("target first", "switching"):
+    for seed, name in ((14, "target first"), (15, "switching")):
         first, step = tenzi.STRATEGIES[name]
         states = [
             {m: float(p) for m, p in s.items()} for s in tenzi.state_distributions(100, step, first)
         ]
         win, tie, one_left = tenzi.race(3, states)
-        sims = [tenzi.play_race(random.Random(i), 3, name) for i in range(3000)]
+        rng = random.Random(seed)
+        sims = [tenzi.play_race(rng, 3, name) for _ in range(3000)]
         exact = (sum(t * w for t, w in enumerate(win, 1)), tie, one_left)
         samples = (
             [t for t, _, _ in sims],
@@ -225,3 +228,16 @@ def test_readme_quotes_the_new_results():
     assert f"amplitude {float(maximum.wobble_amplitude()):.2e}".replace("e-23", "·10⁻²³") in readme
     assert f"from {maximum.dice_for_wobble()} dice on" in readme
     assert f"up to turn {len(optimal.by_turn()[0])}" in readme
+
+
+def test_simulated_means_in_the_note_and_readme_are_current():
+    # Common random numbers would make the simulations agree with each other by construction.
+    assert len(set(tenzi.SEEDS.values())) == len(tenzi.SEEDS)
+    folder = Path(tenzi.__file__).parent
+    note, readme = (folder / "tenzi.typ").read_text(), (folder / "README.md").read_text()
+    for name, step in (("fixed face", tenzi.reroll), ("switching", tenzi.reroll_switching)):
+        games = tenzi.simulate(name, 100_000)
+        quoted = tenzi.interval(games)
+        assert quoted in note and quoted in readme, quoted
+        center, half = (float(x) for x in quoted.split(" ± "))
+        assert abs(center - float(tenzi.expected_turns(step))) < half

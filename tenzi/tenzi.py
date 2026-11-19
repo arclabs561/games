@@ -219,6 +219,32 @@ def play_race(rng: random.Random, n: int, strategy: str) -> tuple[int, int, int]
     return turn, at_end.count(DICE), at_end.count(DICE - 1)
 
 
+# Each simulation draws all its games from its own generator, so no two simulations share
+# random numbers and each is an independent check of the exact values.
+SEEDS = {
+    "target first": 1,
+    "fixed face": 2,
+    "switching": 3,
+    "race, target first": 4,
+    "race, switching": 5,
+}
+assert len(set(SEEDS.values())) == len(SEEDS)
+
+
+def play_target_first(rng: random.Random) -> int:
+    """Turns to finish, with the face named before the first roll."""
+    return len(play(rng, "target first"))
+
+
+GAMES = {"target first": play_target_first, "fixed face": play_fixed, "switching": play_switching}
+
+
+def simulate(name: str, n: int) -> list[int]:
+    """Turns in n games of one strategy, all drawn from that strategy's own generator."""
+    rng = random.Random(SEEDS[name])
+    return [GAMES[name](rng) for _ in range(n)]
+
+
 def interval(samples: list[int] | list[float]) -> str:
     """Mean with a 95% interval."""
     half = 1.96 * stdev(samples) / len(samples) ** 0.5
@@ -269,13 +295,13 @@ def main() -> None:
     print(f"  target first, closed form: mean {float(mean_t):.6f}, sd {float(var) ** 0.5:.6f}")
 
     n = 100_000
-    target = [len(play(random.Random(i), "target first")) for i in range(n)]
-    fixed = [play_fixed(random.Random(i)) for i in range(n)]
-    switching = [play_switching(random.Random(i)) for i in range(n)]
-    print(f"\nSimulated, {n:,} games each (game i seeded with i):")
-    print(f"  target first: {summary(target)}")
-    print(f"  fixed face:   {summary(fixed)}")
-    print(f"  switching:    {summary(switching)}")
+    target, fixed, switching = (
+        simulate(name, n) for name in ("target first", "fixed face", "switching")
+    )
+    print(f"\nSimulated, {n:,} games each, one generator per strategy:")
+    print(f"  target first (seed {SEEDS['target first']}): {summary(target)}")
+    print(f"  fixed face (seed {SEEDS['fixed face']}):   {summary(fixed)}")
+    print(f"  switching (seed {SEEDS['switching']}):    {summary(switching)}")
 
     print("\nRace of n players rolling together, exact (sums stop at 200 turns):")
     for name in ("target first", "switching"):
@@ -291,11 +317,13 @@ def main() -> None:
 
     races, players = 20_000, 4
     for name in ("target first", "switching"):
-        sims = [play_race(random.Random(i), players, name) for i in range(races)]
+        seed = SEEDS[f"race, {name}"]
+        rng = random.Random(seed)
+        sims = [play_race(rng, players, name) for _ in range(races)]
         turns = [t for t, _, _ in sims]
         ties = [float(k > 1) for _, k, _ in sims]
         nines = [c for _, _, c in sims]
-        print(f"\nSimulated, {races:,} races of {players} players, {name} (race i seeded with i):")
+        print(f"\nSimulated, {races:,} races of {players} players, {name} (seed {seed}):")
         print(f"  winning turn {interval(turns)}, P(tie) {interval(ties)},", end=" ")
         print(f"players with nine dice matched {interval(nines)}")
 
