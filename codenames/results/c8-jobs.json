@@ -1,0 +1,167 @@
+{
+ "cap": 5.5,
+ "runs": [
+  {
+   "run": "pilot",
+   "job_id": "6aff147c4fdc5ab3c559dd12",
+   "commit": "e30ceedba30f9a27c9ffd6ad8458d9d3f66b0827",
+   "flavor": "cpu-basic",
+   "seconds": 49.6,
+   "calls_spent": 0.000820251,
+   "what": "pilot, resampling seed 8999; sent 24 of 64 calls (the meter's reservation stopped the rest)"
+  },
+  {
+   "run": "pilot-2",
+   "job_id": "6aff153aefaf5e14f4b191f2",
+   "commit": "b31a8049ba4d2dc9a8c966a00ffbf74237d1f69c",
+   "flavor": "cpu-basic",
+   "seconds": 135.3,
+   "calls_spent": 0.011206104,
+   "what": "pilot, resampling seed 8999, 256 turns and 16 repeat calls, 64 in flight"
+  },
+  {
+   "run": "label",
+   "job_id": "6aff160aefaf5e14f4b1932c",
+   "commit": "4fbf023fe0aada7ec68e66d204cfae31690444f9",
+   "flavor": "cpu-basic",
+   "seconds": 8770.0,
+   "calls_spent": 0.98648705,
+   "what": "the teacher's 24,300 calls"
+  },
+  {
+   "run": "check-label",
+   "job_id": "6aff38d3efaf5e14f4b1ce7c",
+   "commit": null,
+   "flavor": "cpu-basic",
+   "seconds": null,
+   "calls_spent": 0.0,
+   "what": "read label.json and teacher.jsonl: SHA-256 of train_hits, and what the 606 replies without a board word were"
+  },
+  {
+   "run": "lr1e-4-s1",
+   "job_id": "6aff38dcefaf5e14f4b1ce86",
+   "commit": "4fbf023fe0aada7ec68e66d204cfae31690444f9",
+   "flavor": "a10g-small",
+   "seconds": 283.5,
+   "calls_spent": 0.0,
+   "what": "learning-rate choice, validation turns"
+  },
+  {
+   "run": "lr3e-4-s1",
+   "job_id": "6aff38df4fdc5ab3c55a158e",
+   "commit": "4fbf023fe0aada7ec68e66d204cfae31690444f9",
+   "flavor": "a10g-small",
+   "seconds": 283.5,
+   "calls_spent": 0.0,
+   "what": "learning-rate choice, validation turns"
+  },
+  {
+   "run": "b-s1",
+   "job_id": "6aff3fa94fdc5ab3c55a1ee2",
+   "commit": "4fbf023fe0aada7ec68e66d204cfae31690444f9",
+   "flavor": "a10g-small",
+   "seconds": 360.7,
+   "calls_spent": 0.0,
+   "what": "test run"
+  },
+  {
+   "run": "b-s2",
+   "job_id": "6aff3fad4fdc5ab3c55a1ee7",
+   "commit": "4fbf023fe0aada7ec68e66d204cfae31690444f9",
+   "flavor": "a10g-small",
+   "seconds": 340.8,
+   "calls_spent": 0.0,
+   "what": "test run"
+  },
+  {
+   "run": "b-s3",
+   "job_id": "6aff3fb04fdc5ab3c55a1eee",
+   "commit": "4fbf023fe0aada7ec68e66d204cfae31690444f9",
+   "flavor": "a10g-small",
+   "seconds": 338.7,
+   "calls_spent": 0.0,
+   "what": "test run"
+  },
+  {
+   "run": "c-s1",
+   "job_id": "6aff3fb3efaf5e14f4b1d8b2",
+   "commit": "4fbf023fe0aada7ec68e66d204cfae31690444f9",
+   "flavor": "a10g-small",
+   "seconds": 298.5,
+   "calls_spent": 0.0,
+   "what": "test run"
+  },
+  {
+   "run": "c-s2",
+   "job_id": "6aff3fb6efaf5e14f4b1d8ca",
+   "commit": "4fbf023fe0aada7ec68e66d204cfae31690444f9",
+   "flavor": "a10g-small",
+   "seconds": 297.0,
+   "calls_spent": 0.0,
+   "what": "test run"
+  },
+  {
+   "run": "c-s3",
+   "job_id": "6aff3fb94fdc5ab3c55a1f01",
+   "commit": "4fbf023fe0aada7ec68e66d204cfae31690444f9",
+   "flavor": "a10g-small",
+   "seconds": 281.9,
+   "calls_spent": 0.0,
+   "what": "test run"
+  },
+  {
+   "run": "d-s1",
+   "job_id": "6aff3fbc4fdc5ab3c55a1f06",
+   "commit": "4fbf023fe0aada7ec68e66d204cfae31690444f9",
+   "flavor": "a10g-small",
+   "seconds": 181.6,
+   "calls_spent": 0.0,
+   "what": "test run"
+  },
+  {
+   "run": "d-s2",
+   "job_id": "6aff3fbfefaf5e14f4b1d8e2",
+   "commit": "4fbf023fe0aada7ec68e66d204cfae31690444f9",
+   "flavor": "a10g-small",
+   "seconds": 180.2,
+   "calls_spent": 0.0,
+   "what": "test run"
+  },
+  {
+   "run": "d-s3",
+   "job_id": "6aff3fc2efaf5e14f4b1d8ea",
+   "commit": "4fbf023fe0aada7ec68e66d204cfae31690444f9",
+   "flavor": "a10g-small",
+   "seconds": 202.7,
+   "calls_spent": 0.0,
+   "what": "test run"
+  },
+  {
+   "run": "collect",
+   "job_id": "6aff491d4fdc5ab3c55a2b3a",
+   "commit": "0fbda2014119702afa3bbac7bf1563b38d8acbaa",
+   "flavor": "cpu-basic",
+   "seconds": 2.5,
+   "calls_spent": 0.0,
+   "what": "compact summaries and their SHA-256 (results/c8-runs/sha256.txt)"
+  }
+ ],
+ "teacher_calls": {
+  "spent": 0.998513,
+  "how_known": "meter of each job: reported tokens times the provider's listed price ($0.037 and $0.17 per million prompt and completion tokens); no provider reported a cost"
+ },
+ "gpu": {
+  "module_seconds": 3049.1,
+  "estimate": 1.03,
+  "at_most": 2.75,
+  "how_known": "estimate: the seconds in each manifest plus 60 s per job for the container and upload, at $1.00 an hour for a10g-small; at_most is every job at its 15-minute timeout"
+ },
+ "cpu": {
+  "estimate": 0.03,
+  "how_known": "about 2.6 hours of cpu-basic at about $0.01 an hour, as in C4"
+ },
+ "total": {
+  "estimate": 2.06,
+  "at_most": 3.79
+ }
+}

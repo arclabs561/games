@@ -187,6 +187,8 @@ The two rules answer different questions. The 95% rule says that, of all the pai
 
 The safety has a price. At $p = 0.55$ the Bayes factor rule wrongly favors the worse player only 0.4% of the time, but within 1,000 games it reaches a verdict only 51% of the time, after 745 games on average.
 
+The Bayes factor rule is safe for every cap at once. When the cap is fixed in advance, the 95% rule can be made safe for equal players by asking for more certainty. The chance of a verdict between equal players falls as the threshold rises, and it changes only at thresholds equal to a posterior that occurs. So bisection, with the dynamic program at each step, finds the least strict threshold that keeps the chance at or below 5%. The posterior must reach 0.99704 with $N = 100$ and 0.9987003 with $N = 1000$; a threshold of 0.997037 or 0.9987002, a little lower, lets the chance pass 5%. Equal players are then declared unequal with chance 0.0497 for both caps, exactly. These rules need 64 wins in 100 games, or 548 in 1,000. They spend the whole 5% within the cap, so at $p = 0.55$ they declare the better player better with chance 0.113 and 0.698, against 0.061 and 0.512 for the Bayes factor rule, after 93.8 and 637.9 games on average (@tab-rules).
+
 #figure(
   placement: auto,
   text(10pt, table(
@@ -204,11 +206,13 @@ The safety has a price. At $p = 0.55$ the Bayes factor rule wrongly favors the w
     [posterior 95%], [1,000], [0.728], [355.6], [0.866], [0.123], [138.0],
     [Bayes factor 20], [100], [0.028], [98.0], [0.061], [0.004], [96.2],
     [Bayes factor 20], [1,000], [0.036], [967.7], [0.512], [0.004], [745.0],
+    [posterior 0.99704], [100], [0.050], [96.8], [0.113], [0.005], [93.8],
+    [posterior 0.9987003], [1,000], [0.050], [960.8], [0.698], [0.003], [637.9],
     [lead of 15], [1,000], [0.995], [224.0], [0.953], [0.047], [135.9],
     [lead of 15], [none], [1], [225], [0.953], [0.047], [135.9],
     table.hline(),
   )),
-  caption: [Three stopping rules. For equal players, the chance that someone is declared better and the mean number of games; for $p = 0.55$, the chances that the better or the worse player is declared better, and the mean number of games. Exact, by the dynamic program; the last row, with no cap, by the gambler's ruin.],
+  caption: [Four stopping rules: the posterior rule at 95% and at the thresholds that keep equal players' chance of a verdict at 5%, the Bayes factor rule and Wald's test. For equal players, the chance that someone is declared better and the mean number of games; for $p = 0.55$, the chances that the better or the worse player is declared better, and the mean number of games. Exact, by the dynamic program; the last row, with no cap, by the gambler's ruin.],
 ) <tab-rules>
 
 = Wald's test: play until someone leads by 15 <sec-wald>
@@ -221,6 +225,6 @@ Wald and Wolfowitz @waldwolfowitz proved that no test with error chances at most
 = Questions left open
 
 - *Other priors.* A Beta$(a, a)$ prior with a whole number $a$ adds $2a - 1$ points to the billiard table: the chance becomes that of at most $k + a - 1$ heads in $n + 2a - 1$ flips.
-- *A stricter threshold.* The Bayes factor rule keeps the verdict chance for equal players below 5%. How sure must each look of the posterior rule be to do the same with $N = 100$ or $N = 1000$, and how much power at $p = 0.55$ does each rule give up?
+- *Other boundaries.* A threshold that changes with $n$ could keep the 5% for equal players and declare the better player better more often at $p = 0.55$ than one fixed threshold does. Which boundary does this best for a given cap is not worked out here.
 
 #bibliography("peggle.yml", style: "ieee")
