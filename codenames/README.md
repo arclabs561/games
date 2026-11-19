@@ -14,6 +14,7 @@ Short answers, with how each is known:
 - A giver expects to find 1.8 to 2.1 of its words per clue when the guesser shares its vectors. A guesser built on another model finds 57% to 73% of that, on average over the other seven models. A guesser that follows association counts from people finds 37% to 53%. Exact expected values for each of 200 random boards, one clue each, for eight models.
 - Hosted language models, asked with a fixed prompt, predict human guesses better than untrained embeddings and give worse clues. gpt-oss-120b picks the person's word in 65.0% of the 551 test turns (60.8% to 69.3%), 10.2 points (7.1 to 13.5) above EmbeddingGemma 2 and level with the trained guessers above. As givers, all four models tested give clues worth 0.29 to 0.89 words less per turn to seven embedding guessers they never met than the EmbeddingGemma 2 giver's. Paired intervals from resampling games or boards; one reply per prompt.
 - Choosing from a list of 120 legal actions (30 clues times counts 1 to 4) proposed by the EmbeddingGemma 2 giver does not rescue the language models. The model selected on validation boards, Qwen3.8-27B, is 0.059 words per turn below the giver's own first choice (−0.116 to −0.005), and none of six models is above it. The best action in each list is 0.44 above the first choice, so the list leaves room. Exact expected values on 200 test boards with seven unseen embedding guessers; one reply per prompt.
+- Using gpt-oss-120b as a listener inside the embedding giver does not help either. The model guesses on each of the giver's 10 best clues, and the giver gives the action worth most under those guesses. That action is 0.151 words per turn below the giver's own first choice with the strangers (−0.204 to −0.099), and 0.232 below with the human-fitted guesser. Mixed with a population of six embedding guessers, it adds −0.017 (−0.034 to 0.001) to the population alone. Exact expected values on 300 test boards, in a run planned in advance (plan C10).
 - A giver trained by policy gradient against six other models scores more with a seventh model it never trained with than a giver trained against its own model. The gain is 0.31 words per turn (0.26 to 0.36), averaged over 14 held-out choices and five training seeds. Population training beat self-play in all 70 runs, at a cost of 0.50 (0.46 to 0.53) with the giver's own model. The gain is smallest, 0.09 (0.001 to 0.18), when the Qwen3 giver meets harrier-oss-v1-0.6b. Against the association counts, which stand in for people, the gain is 0.39 (0.31 to 0.46). Exact rewards on 200 test boards, with a stratified bootstrap over boards and seeds, in a run planned in advance (plan C3).
 
 ## The game as modeled
@@ -422,6 +423,78 @@ The language-model guessers also do better with the embedding giver's first choi
 
 **Cost.** Five jobs ran on `cpu-basic` through `experiments/hfrun.py`, each at the commit in its manifest (`results/c6-runs.json`). The meter adds the tokens each provider reported times the price that the router listed. Model calls cost $0.171 in all, $0.00002 to $0.00012 per call; about 50 minutes of `cpu-basic` add about $0.01. The plan expected $0.40 to $0.80, under a cap of $1.50. The plan's prompt evolution (GEPA) was not run, for the reasons in the plan's last amendment.
 
+## A language model as the listener inside the giver
+
+Experiment C10 (`experiments/plans/C10.md`, with its amendments of 2026-11-19) keeps the embedding giver as the proposer and gives gpt-oss-120b the role it did well in C4: guessing. On each board the 30 clues of C6's list are ranked by their best action under EmbeddingGemma 2, and the top K are kept (`listen.py`). gpt-oss-120b hears C4's guesser prompt once for each kept clue, with count 1, and lists the board. Its list becomes a Luce guesser:
+
+- The informative prefix is the start of the list after which the remaining words follow the prompt's order. Its words get ranks 0, 1, 2 and so on, and every other word gets the prefix's length.
+- The weights are exp(−rank / T), with T = 2.01. T was fitted by maximum likelihood on C4's stored replies on C1's 717 validation turns, with no new calls.
+
+The listener values all four counts of a kept clue exactly (`luce.py`) from one reply. The arms are:
+
+- L, the action the listener values most;
+- P, the action that the six strangers other than a held-out one value most, as in C3;
+- LP, w times the listener's value plus 1 − w times P's;
+- F, the first choice of C6;
+- C, C6's chooser (Qwen3.8-27B over all 30 clues);
+- S, gpt-oss-120b asked with C6's prompt to choose among the same K clues.
+
+K = 10 and w = 1/7 were chosen on 100 validation boards (seed 9005) and committed before any test call. The test has 300 fresh boards (seed 9004), scored as in C6 by exact expected turn values. For P and LP, the stranger value is the held-out stranger's value of the pick of its own task, averaged over the seven tasks. Their human-fitted value is that of the task that holds out potion, so the potion maps' base model is never in the population. Intervals come from 10,000 resamples of boards, and differences are paired by board (`results/c10.json`).
+
+| Arm | Strangers: turn value (95% interval) | Minus first choice | Human-fitted guesser: minus first choice | Same action as the first choice | Mean count |
+|---|---|---|---|---|---|
+| F, first choice (EmbeddingGemma 2) | 0.776 (0.727–0.825) | | | | 2.49 |
+| L, listener | 0.625 (0.577–0.672) | −0.151 (−0.204 to −0.099) | −0.232 (−0.341 to −0.121) | 7% | 2.76 |
+| P, population of six | 1.015 (0.979–1.051) | 0.239 (0.198 to 0.282) | 0.140 (0.054 to 0.229) | 11% | 1.93 |
+| LP, listener and population, w = 1/7 | 0.999 (0.963–1.033) | 0.223 (0.181 to 0.265) | 0.138 (0.048 to 0.229) | 11% | 1.97 |
+| C, Qwen3.8-27B choosing among 30 clues | 0.680 (0.625–0.733) | −0.096 (−0.142 to −0.051) | −0.199 (−0.293 to −0.111) | 59% | 2.54 |
+| S, gpt-oss-120b choosing among the 10 | 0.754 (0.703–0.803) | −0.022 (−0.069 to 0.024) | −0.114 (−0.207 to −0.022) | 28% | 2.37 |
+| oracle among the 40 kept actions | 1.143 (1.114–1.173) | 0.367 (0.331 to 0.404) | 0.257 (0.176 to 0.339) | 11% | 1.91 |
+| uniform over the 40 | 0.547 (0.522–0.571) | −0.229 (−0.270 to −0.187) | −0.396 (−0.476 to −0.315) | | |
+
+The last two columns for P and LP describe the picks of the task that holds out potion.
+
+**The four primary tests**, with the Holm correction at a family level of 0.05:
+
+| Hypothesis | Difference (95% interval) | Bootstrap p | Holm | Holds |
+|---|---|---|---|---|
+| H-listen-strangers: L minus F, strangers | −0.151 (−0.204 to −0.099) | < 0.0002 | rejects 0 | no, wrong sign |
+| H-listen-human: L minus F, human-fitted | −0.232 (−0.341 to −0.121) | < 0.0002 | rejects 0 | no, wrong sign |
+| H-add-strangers: LP minus P, strangers | −0.017 (−0.034 to 0.001) | 0.067 | does not reject | no |
+| H-add-human: LP minus P, human-fitted | −0.002 (−0.041 to 0.036) | 0.91 | does not reject | no |
+
+- **The listener does worse than the first choice.** A language model used as a listener inside the giver did not beat the embedding giver's first choice with strangers. Its picks are worth 0.151 words per turn less to them, and 0.232 less to the human-fitted guesser. No resample of boards put either difference at or above 0. L closes −0.41 (−0.60 to −0.25) of the gap between the first choice and the oracle, and trails S, the same model asked to choose among the same clues, by 0.129 (−0.183 to −0.075).
+- **The listener adds nothing measurable to the population.** The listener added nothing that these strangers could measure to a population of six embedding guessers. LP minus P is −0.017 with the strangers and −0.002 with the human-fitted guesser, and both intervals hold 0. The population alone is 0.239 above the first choice with the strangers and 0.140 with the human-fitted guesser, as C3 would predict.
+- **Interpretation (not tested).** The listener prefers clues for which gpt-oss-120b lists several team words first. It asks for more words than the other arms (2.76 against 1.9 to 2.5), and its picks have a median rank of 15 under EmbeddingGemma 2. By its own guesser, its picks are worth 1.08 words per turn, against 0.08 for the first choice. The strangers value them at 0.63.
+
+**Secondary results**, reported without significance claims:
+
+- **Against the language models as choosers.** L minus C is −0.055 (−0.112 to 0.002) with the strangers and −0.034 (−0.156 to 0.089) with the human-fitted guesser. L minus S is −0.129 (−0.183 to −0.075) and −0.118 (−0.218 to −0.015). Here the model does better as a speaker than as a listener, the reverse of the asymmetry that Sieker and Zarrieß (2026) report for pragmatics in general. S's replies had no action on 55 boards, which then get the first choice. On the 245 boards where S named an action, L minus S is −0.122 (−0.183 to −0.063).
+- **The whole giver.** LP minus F is 0.223 (0.181 to 0.265) with the strangers and 0.138 (0.048 to 0.229) with the human-fitted guesser. LP minus C is 0.319 (0.269 to 0.372) and 0.337 (0.232 to 0.446). These gains belong to the population, as the primary tests show.
+- **C6's chooser again.** On these boards Qwen3.8-27B trails the first choice by 0.096 (−0.142 to −0.051), as it did in C6. 177 of its 300 replies had no action: 111 were cut off at 64 tokens, and 66 named no listed clue. On its 123 own choices it trails by 0.234 (−0.341 to −0.130).
+- **The EAT guesser.** All arms are near 0 with it: from −0.070 (L) to 0.026 (S). L minus F is −0.069 (−0.150 to 0.010), and LP minus P is 0.021 (−0.029 to 0.071).
+- **Sensitivity to T.** With T halved, L minus F is −0.161 (−0.218 to −0.105) with the strangers, and with T doubled −0.137 (−0.191 to −0.084). L's pick is the same as at the fitted T on 60% and 47% of the boards. No choice of T in this range brings L near F.
+- **The listener's fit.** At T = 2.01 the log-likelihood of the person's word is −2.387 per turn on C1's validation turns, against −1.781 for EmbeddingGemma 2's Luce guesser and −3.096 for a uniform guess. So one temperature over ranks is a worse model of the person than the embedding model's similarities, although gpt-oss-120b's first word matched the person more often in C4 (0.618 against 0.543 on these turns). The informative prefix of C4's replies has a median of 6 words (mean 10.1).
+- **Validation curves.** On the validation boards, L scored 0.654, 0.604 and 0.572 at K = 10, 15 and 20, against 0.735 for the first choice. LP at K = 10 scored 1.004, 0.950, 0.799 and 0.730 at w = 1/7, 1/4, 1/2 and 3/4, and P scored 1.011. The gap from the first choice to the oracle was 0.40 to 0.42 at every K, so there was room.
+- **Behavior.** The first choice's median rank among the 120 actions is 1 by definition. The median rank is 15 for L, 8 for LP, 7 for P and the oracle, 6 for S and 1 for C, whose fallbacks are the first choice.
+- **Repeat check.** All 20 listener prompts of the first 10 validation boards were sent twice more. The informative prefix changed in at least one repeat for 51 of the 200 prompts, and L's pick at K = 20 changed on 4 of the 10 boards.
+- **Replies.** No validation reply and one test reply named no board word. The plan's stopping rule did not apply. In the test, 850 calls came back empty at first, with a normal stop. The plan allows one retry, and 285 were still empty after it. Their clues give every word the same rank. In validation, 1 of 2,000 came back empty, and it was answered on the retry. On the 170 test boards where every call was answered (exploratory), L minus F is −0.183 (−0.256 to −0.111) and LP minus P is −0.010 (−0.035 to 0.015). So the empty replies do not explain the result.
+
+**Language-model guessers** (secondary). Llama 3.3 70B and DeepSeek-V3.2 each guessed once on every distinct (board, clue, count) that the six arms gave on the 300 test boards, with the pick's count: 1,217 calls per guesser. Each turn is played out from the reply's order. P and LP give the pick of the task that holds out potion, and C and S include their fallbacks.
+
+| Giver | Turn value, mean of two guessers (95% interval) | Words found | Minus the first choice |
+|---|---|---|---|
+| F, first choice | 1.52 (1.38–1.64) | 1.84 | |
+| L, listener | 1.35 (1.20–1.49) | 1.77 | −0.17 (−0.34 to 0.01) |
+| P, population | 1.54 (1.45–1.64) | 1.66 | 0.03 (−0.10 to 0.15) |
+| LP, listener and population | 1.56 (1.47–1.65) | 1.66 | 0.04 (−0.08 to 0.17) |
+| C, Qwen3.8-27B | 1.19 (1.01–1.36) | 1.73 | −0.33 (−0.49 to −0.17) |
+| S, gpt-oss-120b as chooser | 1.46 (1.34–1.58) | 1.79 | −0.06 (−0.19 to 0.07) |
+
+These guessers, of other families than the listener, also do no better with the listener's clues than with the first choice. Unlike the strangers, they do not clearly favor the population's picks either. These are single sampled turns, not exact expectations.
+
+**Cost.** Sixteen jobs ran on `cpu-basic` through `experiments/hfrun.py`, each at the commit in its manifest, and one inline script summed the logged costs of two failed jobs (`results/c10-runs.json`). Three listener jobs failed for want of disk space on the job's machine. Two of them had sent 417 calls, whose replies were not read; those blocks were sent again and only the second run is scored (the plan's amendment). The meter adds the tokens each provider reported times the price that the router listed. Model calls cost $0.364 in all, or at most $0.370 counting the calls that were in flight when the two jobs failed. About 4.5 hours of `cpu-basic` add about $0.05. The plan expected $0.50 to $1.00, under a cap of $1.50.
+
 ## Related work
 
 - Summerville et al. (2019) set up the Codenames AI competition. Kim et al. (2019) compared word2vec, GloVe and WordNet codemasters and guessers in it. They found twin pairs always win and mixed pairs often lose, and the folder reproduces that pattern with current models.
@@ -443,6 +516,7 @@ The language-model guessers also do better with the embedding giver's first choi
 | LoRA fine-tuning (`lora.py`) | Hugging Face Jobs, `a10g-small`, through `experiments/hfrun.py` |
 | Language-model players (`llm.py`, `hosted.py`, `c4.py`) | Hugging Face Jobs, `cpu-basic`, through `experiments/hfrun.py`, calling Inference Providers; scored on this machine (`c4score.py`) |
 | Language models choosing among legal clues (`rerank.py`) | Hugging Face Jobs, `cpu-basic`, calling Inference Providers; action lists and scoring on this machine (`actions.py`, `c6score.py`) |
+| A language model as the listener (`listen.py`) | Hugging Face Jobs, `cpu-basic`, calling Inference Providers; lists, the fit of T and scoring on this machine (`c10score.py`) |
 | Vectors for the 15 clue words of the language models that had none | GitHub-hosted runner, workflow on `compute/codenames-embed`, for the four Hugging Face models; this machine for the other four |
 
 ## Open questions
@@ -454,7 +528,8 @@ The language-model guessers also do better with the embedding giver's first choi
 - Would LoRA beat the potion map with more human data or other settings (a larger learning rate, more epochs, harrier-oss-v1-0.6b)?
 - Would language-model givers do better with a prompt that states the whole clue rule (no word contained in a board word) and the cost of the assassin, or with a retry after an illegal clue?
 - Do language-model clues fare better with people than with embedding guessers?
-- Why does gpt-oss-120b return an empty reply on a fifth of C6's test boards and none of its validation boards?
+- Why does gpt-oss-120b return an empty reply on a fifth of C6's test boards and none of its validation boards? In C10, 850 of 3,000 test calls came back empty at first, against 1 of 2,000 validation calls a few hours earlier.
+- Would a listener told the real count, or modeled with more than one temperature over ranks, do better than C10's? Its log-likelihood of the person's word was worse than EmbeddingGemma 2's although its first word matched the person more often.
 - Would the language models choose better than the embedding giver's first choice with a prompt found by GEPA, or with room to reason before the answer? C6's prompt evolution was not run.
 
 ## Usage
@@ -492,6 +567,18 @@ uv run python -m codenames.rerank choose --models all --seed 6004 --n 200 --cap 
 uv run python -m codenames.rerank score --out codenames/results/c6.json   # 1 min, also writes c6-boards.json
 uv run python -m codenames.rerank picks --models qwen3.8-27b --seed 6004 --out codenames/results/c6-picks-6004.txt
 uv run python -m codenames.rerank crossguess --models gpt-oss-120b --clues codenames/results/c6-picks-6004.txt --seed 6004 --cap 0.15 --out OUT
+# C10: the lists and the fit here, the listener in Hugging Face Jobs, the scores here:
+uv run python -m codenames.actions --seed 9999 9005 9004 --n 5 100 300 --out codenames/results/c10-actions.txt
+uv run python -m codenames.listen lists --seed 9999 9005 9004 --n 5 100 300 --out codenames/results/c10-listen.txt   # 1 min
+uv run python -m codenames.listen prefixes --out OUT        # in a job: C4's replies, read with the tail rule
+uv run python -m codenames.listen fit --replies codenames/results/c10-c4-val-prefixes.txt --out codenames/results/c10-listener.json
+uv run python -m codenames.listen listen --seed 9005 --boards 0-50 --k 20 --repeat 10 --cap 0.15 --out OUT
+uv run python -m codenames.listen select --out codenames/results/c10-val.json   # 20 s
+uv run python -m codenames.listen listen --seed 9004 --boards 0-50 --k 10 --cap 0.10 --out OUT
+uv run python -m codenames.listen speak --seed 9004 --n 300 --k 10 --cap 0.05 --out OUT
+uv run python -m codenames.listen picks --out codenames/results/c10-picks-9004.txt
+uv run python -m codenames.rerank crossguess --models llama-3.3-70b,deepseek-v3.2 --clues codenames/results/c10-picks-9004.txt --seed 9004 --distinct --cap 0.30 --out OUT
+uv run python -m codenames.listen score --out codenames/results/c10.json   # 1 min
 ```
 
 ## Files
@@ -516,6 +603,7 @@ uv run python -m codenames.rerank crossguess --models gpt-oss-120b --clues coden
 | `c3.py` | section 5 across seeds and held-out guessers: the runs of plan C3 and their analysis |
 | `actions.py` | the 120 legal actions an embedding giver proposes on a board (C6 and C7) |
 | `rerank.py`, `c6score.py` | C6: language models choosing among those actions, and the scoring |
+| `listen.py`, `c10score.py` | C10: a language model as the listener inside the giver, and the scoring |
 | `llm.py` | language-model players: prompts and parsing |
 | `hosted.py` | calls to Inference Providers, with retries, a cost meter and a log of every call |
 | `c4.py`, `c4score.py` | experiment C4: the jobs that call the models, and the scoring |

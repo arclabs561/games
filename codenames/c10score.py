@@ -352,7 +352,16 @@ def score(runs: Path, out: Path) -> dict:
     for k, t in primary.items():
         t["holm_rejects"] = bool(reject[k])
         t["holds"] = bool(reject[k] and t["mean"] > 0)
-    pairs = [("L", "C"), ("L", "S"), ("LP", "F"), ("P", "F"), ("LP", "C"), ("C", "F")]
+    pairs = [
+        ("L", "F"),
+        ("LP", "P"),
+        ("L", "C"),
+        ("L", "S"),
+        ("LP", "F"),
+        ("P", "F"),
+        ("LP", "C"),
+        ("C", "F"),
+    ]
     pairs += [("S", "F"), ("oracle", "F"), ("uniform", "F")]
     secondary: dict = {}
     for a, b in pairs:
@@ -373,6 +382,27 @@ def score(runs: Path, out: Path) -> dict:
                 np.mean([r["sens"][label] == r["picks"]["L"] for r in rows])
             )
     secondary["T_sensitivity"] = sens
+    # Sensitivity: the boards where every kept clue's listener call was answered, and
+    # the boards where C's or S's reply named an action.
+    answered = np.array([FAILED not in r["cells"] for r in rows])
+    secondary["boards_all_answered"] = {
+        "boards": int(answered.sum()),
+        "L_minus_F": {m: bootstrap((col[("L", m)] - col[("F", m)])[answered]) for m in measures},
+        "LP_minus_P": {m: bootstrap((col[("LP", m)] - col[("P", m)])[answered]) for m in measures},
+    }
+    for arm in ("C", "S"):
+        if (arm, "strangers") not in col:
+            continue
+        own = np.array([arm not in r["fallback"] for r in rows])
+        secondary[f"{arm}_own_choices"] = {
+            "boards": int(own.sum()),
+            f"{arm}_minus_F": {
+                m: bootstrap((col[(arm, m)] - col[("F", m)])[own]) for m in measures
+            },
+            f"L_minus_{arm}": {
+                m: bootstrap((col[("L", m)] - col[(arm, m)])[own]) for m in measures
+            },
+        }
     summary = {a: {m: bootstrap(col[(a, m)]) for m in measures} for a in [*arms, "uniform"]}
     result: dict = {
         "plan": "experiments/plans/C10.md",
