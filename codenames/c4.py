@@ -22,13 +22,15 @@ import json
 import random
 import re
 import statistics
+import sys
 from collections import Counter
 from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
+from dataclasses import replace
 from pathlib import Path
 
 from codenames.game import Board, deal
-from codenames.hosted import Hosted, Meter, Model, OverBudgetError
+from codenames.hosted import Hosted, Meter, Model, OverBudgetError, listed_prices
 from codenames.llm import giver_prompt, guesser_prompt, parse_clue, parse_ranking
 from codenames.words import board_words, legal
 
@@ -47,6 +49,18 @@ MODELS = {
 PLAN = ("llama-3.3-70b", "qwen3-32b", "gpt-oss-120b", "deepseek-v3.2")
 SUBSTITUTES = ("gemma-3-27b", "mistral-small-3.1")
 GIVER_TOKENS, GUESSER_TOKENS = 64, 256
+# gpt-oss counts its reasoning against max_tokens: with 64 tokens every giver reply in
+# the pilot was cut off before the answer (amendment of 2026-11-19 in the plan).
+TOKENS = {"gpt-oss-120b": (1024, 1024)}
+# Calls in flight per model. deepinfra answered Qwen3-32B with 429 at 8 (the pilot).
+WORKERS = {"qwen3-32b": 2}
+
+
+def tokens(name: str, role: str) -> int:
+    giver, guesser = TOKENS.get(name, (GIVER_TOKENS, GUESSER_TOKENS))
+    return giver if role == "give" else guesser
+
+
 CLUE = re.compile(r"([A-Za-z]+)\W+(\d+)")
 
 
@@ -95,11 +109,11 @@ def give(models, seed: int, n: int, meter: Meter, out: Path, workers: int = 8) -
     bs = boards(seed, n)
     results = {}
     for name in models:
-        hosted = Hosted(MODELS[name], meter, out / f"calls-{name}.jsonl", GIVER_TOKENS)
+        hosted = Hosted(MODELS[name], meter, out / f"calls-{name}.jsonl", tokens(name, "give"))
         jobs = [
             (giver_prompt(b), {"part": "give", "seed": seed, "board": i}) for i, b in enumerate(bs)
         ]
-        records = run_many(hosted.call, jobs, workers)
+        records = run_many(hosted.call, jobs, WORKERS.get(name, workers))
         rows = []
         for i, (b, rec) in enumerate(zip(bs, records, strict=True)):
             if rec is None:
@@ -158,7 +172,7 @@ def pilot(models, seed: int, n: int, meter: Meter, out: Path, repeats: int = 5) 
                 if row.get("clue"):
                     clues.append((i, other, row["clue"], row["count"]))
                     break
-        hosted = Hosted(MODELS[name], meter, out / f"calls-{name}.jsonl", GUESSER_TOKENS)
+        hosted = Hosted(MODELS[name], meter, out / f"calls-{name}.jsonl", tokens(name, "guess"))
         jobs = [
             (
                 guesser_prompt(c, m, bs[i].unrevealed()),
@@ -166,19 +180,19 @@ def pilot(models, seed: int, n: int, meter: Meter, out: Path, repeats: int = 5) 
             )
             for i, g, c, m in clues
         ]
-        recs = run_many(hosted.call, jobs, 8)
+        recs = run_many(hosted.call, jobs, WORKERS.get(name, 8))
         named = [
             (read_ranking(r["reply"], bs[i].unrevealed())["named"], len(bs[i].unrevealed()))
             for r, (i, *_) in zip(recs, clues, strict=True)
             if r is not None
         ]
-        giver = Hosted(MODELS[name], meter, out / f"calls-{name}.jsonl", GIVER_TOKENS)
+        giver = Hosted(MODELS[name], meter, out / f"calls-{name}.jsonl", tokens(name, "give"))
         again = [
             (giver_prompt(bs[i]), {"part": "repeat", "seed": seed, "board": i})
             for i in range(repeats)
             for _ in range(2)
         ]
-        recs = run_many(giver.call, again, 4)
+        recs = run_many(giver.call, again, WORKERS.get(name, 4))
         first = [given[name][i].get("reply") for i in range(repeats) for _ in range(2)]
         changed = sum(
             1 for r, f in zip(recs, first, strict=True) if r is not None and r["reply"] != f
@@ -209,6 +223,20 @@ def pilot(models, seed: int, n: int, meter: Meter, out: Path, repeats: int = 5) 
     return summary
 
 
+def price_models(models, out: Path) -> None:
+    """Attach each pinned provider's listed price to its model, and save the prices."""
+    try:
+        prices = listed_prices()
+    except (OSError, ValueError, KeyError) as e:
+        print("no price list; the meter uses its fallback price:", e, file=sys.stderr)
+        prices = {}
+    for name in models:
+        m = MODELS[name]
+        MODELS[name] = replace(m, price=prices.get(m.repo, {}).get(m.provider))
+    listed = {MODELS[n].repo: prices.get(MODELS[n].repo, {}) for n in models}
+    (out / "prices.json").write_text(json.dumps(listed, indent=1) + "\n")
+
+
 def model_list(arg: str) -> list[str]:
     if arg == "all":
         return list(PLAN)
@@ -233,6 +261,7 @@ def main() -> None:
     args.out.mkdir(parents=True, exist_ok=True)
     meter = Meter(args.cap)
     models = model_list(args.models)
+    price_models(models, args.out)
     if args.what == "pilot":
         pilot(models, args.seed[0], args.n[0], meter, args.out)
     else:
