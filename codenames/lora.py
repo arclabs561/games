@@ -18,6 +18,17 @@ precision, and scores both with codenames.c2 (`--evaluate val` or `test`). It wr
 --out-dir: scores.json, the vectors as <name>__<template>.npz, the adapter, the training
 log, timings.json (seconds since the container started, for each phase) and
 summary.json, a small copy of scores.json for the machine that writes the README.
+
+Experiment C8 (experiments/plans/C8.md) adds the teacher's turns of codenames.distill,
+read from a teacher.jsonl file (`--teacher`; a path in the private dataset
+arclabs561/games-runs is downloaded, and `--teacher-sha256` pins its contents):
+
+    python -m codenames.lora --scheme game --sources cultural+teacher --lr 3e-4 --seed 1 \\
+        --teacher runs/c8/label/teacher.jsonl --teacher-sha256 SHA --evaluate test --out-dir OUT
+
+`cultural+teacher` adds the resampled turns to the human ones, `teacher` uses the
+resampled turns alone, and `relabeled` uses the training turns with the teacher's word in
+place of the person's.
 """
 
 import argparse
@@ -35,30 +46,77 @@ import numpy as np
 from codenames.c2 import full_scores, guesses, turn_digest
 from codenames.embed import TEMPLATES, normalize
 from codenames.evaluate import all_words
-from codenames.norms import eat_counts, held_out
+from codenames.norms import Guess, eat_counts, held_out
 from codenames.players import Space
 from codenames.words import board_words
 
 N_NEG = 7
-SOURCES = ("cultural", "cultural+eat")
+SOURCES = ("cultural", "cultural+eat", "cultural+teacher", "teacher", "relabeled")
+DATASET = "arclabs561/games-runs"
 SCHEMES = ("published", "game")
 CLUE_TEMPLATES = ("bare", "related", "query")
 
 
-def rows(seed: int = 0, sources: str = "cultural+eat", scheme: str = "published"):
-    """Training rows: anchor, positive, negative_1 .. negative_7, from train data only."""
+def rows(
+    seed: int = 0,
+    sources: str = "cultural+eat",
+    scheme: str = "published",
+    teacher: list[dict] | None = None,
+):
+    """Training rows: anchor, positive, negative_1 .. negative_7, from train data only.
+
+    teacher is the list of rows of a teacher.jsonl file (codenames.distill), needed by
+    the three teacher sources; turns without a label are left out."""
     rng = random.Random(seed)
+    train = guesses("train", scheme)
+    if sources == "relabeled":
+        people: tuple[Guess, ...] = ()
+        by_turn = {r["turn"]: r for r in teacher or () if r["kind"] == "relabeled"}
+        for i, g in enumerate(train):
+            r = by_turn.get(i)
+            if r is not None and r["label"]:
+                assert r["clue"] == g.clue and tuple(r["words"]) == g.words, i
+                people += (Guess(g.clue, g.words, r["label"]),)
+    else:
+        people = () if sources == "teacher" else train
+    out = guess_rows(people, rng)
+    if sources == "cultural+eat":
+        out += eat_rows(rng)
+    if sources in ("cultural+teacher", "teacher"):
+        resampled = [r for r in teacher or () if r["kind"] == "resampled" and r["label"]]
+        out += guess_rows([Guess(r["clue"], tuple(r["words"]), r["label"]) for r in resampled], rng)
+    rng.shuffle(out)
+    return out
+
+
+def guess_rows(data, rng: random.Random) -> list[dict[str, str]]:
+    """One row per turn with at least 7 other words: the clue in the query template, the
+    picked word, and 7 other words of the board."""
     q = TEMPLATES["query"]
     out = []
-    for g in guesses("train", scheme):
+    for g in data:
         others = [w for w in g.words if w != g.picked]
         if len(others) >= N_NEG:
             negs = rng.sample(others, N_NEG)
             out.append({"anchor": q.format(g.clue), "positive": g.picked} | neg(negs))
-    if sources == "cultural+eat":
-        out += eat_rows(rng)
-    rng.shuffle(out)
     return out
+
+
+def load_teacher(path: str, sha256: str | None = None) -> tuple[list[dict], str]:
+    """The rows of a teacher.jsonl file and its SHA-256. A path that is not a local file
+    is downloaded from the private dataset (this needs HF_TOKEN)."""
+    local = Path(path)
+    if not local.exists():
+        from huggingface_hub import hf_hub_download
+
+        local = Path(
+            hf_hub_download(DATASET, path, repo_type="dataset", token=os.environ.get("HF_TOKEN"))
+        )
+    data = local.read_bytes()
+    digest = hashlib.sha256(data).hexdigest()
+    if sha256 and digest != sha256:
+        raise SystemExit(f"{path}: sha256 {digest}, expected {sha256}")
+    return [json.loads(line) for line in data.decode().splitlines()], digest
 
 
 def eat_rows(rng: random.Random) -> list[dict[str, str]]:
@@ -169,6 +227,8 @@ def main() -> None:
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--evaluate", default="val", choices=["val", "test", "none"])
     parser.add_argument("--boards", type=int, default=200, help="boards for the giver test")
+    parser.add_argument("--teacher", help="teacher.jsonl: a local file or a dataset path")
+    parser.add_argument("--teacher-sha256", help="expected SHA-256 of the teacher file")
     parser.add_argument("--out-dir", type=Path, default=Path(__file__).parent / "vectors")
     args = parser.parse_args()
     clock = Clock()
@@ -181,7 +241,12 @@ def main() -> None:
     args.out_dir.mkdir(parents=True, exist_ok=True)
     clock.mark("imported")
 
-    data = datasets.Dataset.from_list(rows(args.seed, args.sources, args.scheme))
+    teacher, digest = None, None
+    if args.sources in ("cultural+teacher", "teacher", "relabeled"):
+        if not args.teacher:
+            raise SystemExit(f"--sources {args.sources} needs --teacher")
+        teacher, digest = load_teacher(args.teacher, args.teacher_sha256)
+    data = datasets.Dataset.from_list(rows(args.seed, args.sources, args.scheme, teacher))
     words = all_words()
     clock.mark("data_ready")
     model = st.SentenceTransformer(args.model, device=args.device)
@@ -225,6 +290,8 @@ def main() -> None:
     clock.mark("encoded_after")
 
     config = vars(args) | {"out_dir": str(args.out_dir), "rows": len(data)}
+    if digest is not None:
+        config["teacher_sha256"] = digest
     if cuda:
         config["gpu"] = torch.cuda.get_device_name(0)
     result: dict = {"config": config}
