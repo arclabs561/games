@@ -18,6 +18,7 @@ ran out, which happens only in the sampled full game).
 from __future__ import annotations
 
 import argparse
+import json
 import math
 import time
 from collections import Counter
@@ -119,6 +120,33 @@ def verdict(rules: Rules, deck: list[int], budget: int = 0) -> tuple[str, list[s
         if ok is False:
             return "lost", []
     return "undecided", []
+
+
+def classify(rules: Rules, seed: int, budgets=(20000, 300000)) -> dict:
+    """The verdict on seeded deal `seed`, trying each node budget in turn until one settles
+    it. For a lost deal, also the best score it allows (an upper bound when a search ran
+    out of budget)."""
+    deck = seeded_deck(rules, seed)
+    t0 = time.time()
+    for budget in budgets:
+        v, certs = verdict(rules, deck, budget)
+        if v != "undecided":
+            break
+    out = {"seed": seed, "verdict": v, "certificates": certs, "budget": budget}
+    if v == "lost":
+        out["best"] = best_score(rules, deck, budgets[-1])
+    out["seconds"] = round(time.time() - t0, 2)
+    return out
+
+
+def run_slice(players: int, start: int, n: int, budgets, path: str):
+    """Classify seeds start, ..., start + n - 1 and write one JSON record per line."""
+    rules = Rules(players=players)
+    with open(path, "w") as f:
+        for seed in range(start, start + n):
+            rec = classify(rules, seed, budgets)
+            f.write(json.dumps({"players": players, **rec}, sort_keys=True) + "\n")
+            f.flush()
 
 
 EXACT_VARIANTS = [
@@ -249,7 +277,16 @@ def main():
     parser.add_argument("--start", type=int, default=0)
     parser.add_argument("--seeds", type=int, nargs="*", help="these seeds instead of a range")
     parser.add_argument("--budget", type=int, default=20000, help="search nodes per deal")
+    parser.add_argument(
+        "--jsonl", metavar="PATH", help="with --sample: write one record per deal to PATH"
+    )
+    parser.add_argument(
+        "--budgets", type=int, nargs="+", default=[20000, 300000], help="with --jsonl"
+    )
     args = parser.parse_args()
+    if args.sample and args.jsonl:
+        run_slice(args.sample[0], args.start, args.sample[1], args.budgets, args.jsonl)
+        return
     if args.exact:
         exact(args.check, args.more)
     if args.sample:
