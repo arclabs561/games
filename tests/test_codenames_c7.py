@@ -229,7 +229,7 @@ def test_score_pairs_seeds_and_uses_the_fallback(tmp_path):
         (runs / f"lm-{seed}.json").write_text(json.dumps(c7.compact(run)))
         feature = {"seed": seed, "picks": {"test": [7] * 5}}
         (runs / f"feature-{seed}.json").write_text(json.dumps(feature))
-    out = c7.score(data, runs)
+    out = c7.score(data, runs, c6_picks=None)
     held = [names.index(g) for g in c7.HELD_OUT]
     want = []
     for seed in (1, 2):

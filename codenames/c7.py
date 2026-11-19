@@ -53,6 +53,7 @@ SHORTLIST = 30
 TRAIN_SEED, VAL_SEED, TEST_SEED = 7000, 6005, 6004
 EVAL_BOARDS = {"val": (VAL_SEED, 50), "test": (TEST_SEED, 200)}
 C6_ACTIONS = Path(__file__).parent / "results" / "c6-actions.txt"
+C6_PICKS = Path(__file__).parent / "results" / "c6-picks-6004.txt"
 
 
 def deal_boards(seed: int, n: int) -> list[Board]:
@@ -355,7 +356,7 @@ def read_runs(runs: Path, split: str) -> tuple[dict[int, dict], dict[int, dict]]
     return lm, fp
 
 
-def score(data: dict, runs: Path, split: str = "test") -> dict:
+def score(data: dict, runs: Path, split: str = "test", c6_picks: Path | None = C6_PICKS) -> dict:
     """Arm 1 minus arm 2 under the held-out guessers, the potion maps and EAT, paired by
     board and by seed pair; with the secondary metrics of the plan."""
     names = data["guessers"]
@@ -404,11 +405,20 @@ def score(data: dict, runs: Path, split: str = "test") -> dict:
         ],
         "untrained": untrained,
     }
+    if split == "test" and c6_picks is not None:  # C6's chosen model, fallback included
+        clues = data["test_clues"]
+        for line in c6_picks.read_text().splitlines():
+            name, seed, *picks = line.split()
+            idx = []
+            for b, p in enumerate(picks):
+                c, n = p.split("/")
+                idx.append([str(x) for x in clues[b]].index(c) * NMAX + int(n) - 1)
+            base[f"c6/{name}"] = values[np.arange(n_boards), idx]
     out["baselines"] = {}
     for name, x in base.items():
         bs = summary(x)
         out["baselines"][name] = {k: float(v.mean()) for k, v in bs.items()}
-        if name in ("first_choice", "untrained"):
+        if name in ("first_choice", "untrained") or name.startswith("c6/"):
             out["baselines"][name]["arm1_minus_this"] = {
                 k: interval(s1[k] - bs[k][None, :]) for k in groups
             }
