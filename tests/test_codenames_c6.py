@@ -106,11 +106,21 @@ def test_prompt_lists_the_clues_after_the_giver_prompt():
         ("ocean 0", (None, None, "count out of range")),
         ("  ", (None, None, "empty")),
         ("lake 2 or river 1", ("river", 1, None)),
+        ("CLUE: **ocean** NUMBER: **2**", ("ocean", 2, None)),
+        ("Options:\n1. **river**: one word (1 word)\n\nmoney 3", ("money", 3, None)),
+        ("ocean 2\n\nIt points to whale and fish.", ("ocean", 2, None)),
+        ("baby 3", (None, None, "unlisted")),
     ],
 )
 def test_read_choice(reply, expected):
     r = rerank.read_choice(reply, CLUES)
     assert (r["clue"], r["count"], r["why"]) == expected
+
+
+def test_a_reply_cut_off_at_the_token_cap_has_no_choice():
+    r = rerank.read_choice("Let's evaluate:\n1. **river**: (1 word)", CLUES, "length")
+    assert (r["clue"], r["count"], r["why"]) == (None, None, "truncated")
+    assert rerank.read_choice("river 1", CLUES, "stop")["clue"] == "river"
 
 
 def test_action_index_follows_expand():

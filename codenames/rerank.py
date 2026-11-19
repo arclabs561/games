@@ -49,7 +49,7 @@ PLAN = tuple(MODELS)
 TOKENS = {"gpt-oss-120b": 1024}  # its reasoning counts against max_tokens (C4)
 CHOOSER_TOKENS = 64
 WORKERS = {"qwen3-32b": 2}  # deepinfra answered Qwen3-32B with 429 at 8 (C4)
-WORD_NUMBER = re.compile(r"([A-Za-z]+)\W+(\d+)")
+WORD, NUMBER = re.compile(r"[A-Za-z]+"), re.compile(r"\d+")
 # Gemma 4 writes an empty thought channel before its answer when thinking is off.
 CHANNEL = re.compile(r"<\|channel>.*?<channel\|>", re.S)
 
@@ -66,20 +66,28 @@ def rerank_prompt(board: Board, clues: list[str]) -> str:
     )
 
 
-def read_choice(reply: str, clues: list[str]) -> dict:
-    """The action in a reply: the first listed clue followed by a number. Otherwise the
-    reason there is none: empty, unlisted (no listed clue followed by a number), or a
-    count outside 1 to 4."""
+def read_choice(reply: str, clues: list[str], finish: str | None = None) -> dict:
+    """The action in a reply, read from its last line that names a listed clue with a
+    number after it: that clue, and the first number after it. Otherwise the reason
+    there is none: empty, truncated (the provider stopped the reply at its token cap),
+    unlisted (no line names a listed clue followed by a number), or a count outside 1
+    to 4."""
     text = CHANNEL.sub("", reply)
     if not text.strip():
         return {"clue": None, "count": None, "why": "empty"}
+    if finish == "length":
+        return {"clue": None, "count": None, "why": "truncated"}
     listed = set(clues)
-    for m in WORD_NUMBER.finditer(text):
-        word, n = m[1].lower(), int(m[2])
-        if word in listed:
-            if n in COUNTS:
-                return {"clue": word, "count": n, "why": None}
-            return {"clue": None, "count": None, "why": "count out of range", "said": [word, n]}
+    for line in reversed(text.splitlines()):
+        for m in WORD.finditer(line):
+            word = m[0].lower()
+            number = NUMBER.search(line, m.end())
+            if word in listed and number:
+                n = int(number[0])
+                if n in COUNTS:
+                    return {"clue": word, "count": n, "why": None}
+                why = "count out of range"
+                return {"clue": None, "count": None, "why": why, "said": [word, n]}
     return {"clue": None, "count": None, "why": "unlisted"}
 
 
@@ -106,7 +114,8 @@ def choose_one(name, seed, bs, lists, meter, out, workers) -> list[dict]:
         if rec is None:
             rows.append({"board": i, "stopped": True})
             continue
-        rows.append({"board": i, "reply": rec["reply"], **read_choice(rec["reply"], c)})
+        choice = read_choice(rec["reply"], c, rec.get("finish"))
+        rows.append({"board": i, "reply": rec["reply"], "finish": rec.get("finish"), **choice})
     record = {"model": name, **vars(MODELS[name]), "seed": seed, "rows": rows}
     (out / f"choose-{name}-{seed}.json").write_text(json.dumps(record, indent=1) + "\n")
     print(name, seed, Counter(r.get("why") for r in rows), f"${meter.spent:.4f}", flush=True)
@@ -135,6 +144,7 @@ def repeat(name, seed, bs, lists, rows, meter, out, times: int = 2) -> dict:
     ]
     recs = c4.run_many(hosted.call, jobs, WORKERS.get(name, 4))
     replies = [r and r["reply"] for r in recs]
+    finishes = [r and r.get("finish") for r in recs]
     changed = sum(
         1
         for i in range(len(bs))
@@ -143,12 +153,21 @@ def repeat(name, seed, bs, lists, rows, meter, out, times: int = 2) -> dict:
             for x in replies[i * times : (i + 1) * times]
         )
     )
+
+    def action(i, reply, finish):
+        r = read_choice(reply, lists[i], finish)
+        return r["clue"], r["count"], r["why"]
+
     changed_action = sum(
         1
         for i in range(len(bs))
         if any(
-            x is not None and read_choice(x, lists[i]) != read_choice(rows[i]["reply"], lists[i])
-            for x in replies[i * times : (i + 1) * times]
+            x is not None and action(i, x, f) != action(i, rows[i]["reply"], rows[i].get("finish"))
+            for x, f in zip(
+                replies[i * times : (i + 1) * times],
+                finishes[i * times : (i + 1) * times],
+                strict=True,
+            )
         )
     )
     return {
