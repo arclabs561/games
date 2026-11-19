@@ -301,11 +301,11 @@ def score_guess(text: str) -> dict:
     return out
 
 
-def score_crossguess(text: str) -> dict:
+def score_crossguess(text: str, base: str = "embeddinggemma-2") -> dict:
     """Language-model guessers on other givers' clues: per giver and guesser, the found
     words and the turn value of one sampled ranking per board, with intervals over
-    boards; and per giver, the mean over its guessers, paired with the embedding giver
-    on the boards that both have."""
+    boards; and per giver, the mean over its guessers, paired with the base giver (the
+    embedding giver) on the boards that both have."""
     by_pair: dict = {}
     for line in text.splitlines():
         giver, guesser, _seed, *cells = line.split()
@@ -324,9 +324,9 @@ def score_crossguess(text: str) -> dict:
         v = np.mean([by_pair[k][1] for k in mine], axis=0)
         f = np.mean([by_pair[k][0] for k in mine], axis=0)
         row = {"guessers": [k[1] for k in mine], "found": bootstrap(f), "value": bootstrap(v)}
-        if giver != "embeddinggemma-2":
-            # The embedding giver's clues heard by the same guessers.
-            base = np.mean([by_pair[("embeddinggemma-2", k[1])][1] for k in mine], axis=0)
-            row["minus_embeddinggemma_same_guessers"] = bootstrap(v - base)
+        if giver != base:
+            # The base giver's clues heard by the same guessers.
+            b = np.mean([by_pair[(base, k[1])][1] for k in mine], axis=0)
+            row[f"minus_{base.split('-')[0]}_same_guessers"] = bootstrap(v - b)
         out["givers"][giver] = row
     return out

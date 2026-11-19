@@ -1,0 +1,16 @@
+{
+ "plan": "experiments/plans/C6.md",
+ "cap": 1.5,
+ "how_known": "each job's cost meter (codenames/hosted.py): the tokens each provider reported times the price the router listed when the job started; no provider reported a cost",
+ "runs": [
+  {"run": "pilot", "job_id": "6aff14db4fdc5ab3c559dd95", "commit": "4218796adc3f29a1764d2464184c775d3e1d678e", "cap": 0.05, "spent": 0.001998, "seconds": 20.4, "what": "6 models x 5 boards of seed 6999; found the reading faults of the amendment; not scored"},
+  {"run": "val", "job_id": "6aff15934fdc5ab3c559de90", "commit": "dea457919f7f1b70b295c652e32fd2c48356544a", "cap": 0.2, "spent": 0.038119, "seconds": 387.1, "what": "6 models x 50 boards of seed 6005, and the repeat check (20 prompts sent twice more to each model)"},
+  {"run": "test", "job_id": "6aff17a14fdc5ab3c559e341", "commit": "acc78d3b413c57e60011ebd793c98ecfdef2bc71", "cap": 0.5, "spent": 0.086909, "seconds": 971.4, "what": "6 models x 200 boards of seed 6004, sent once"},
+  {"run": "crossguess-llama-deepseek", "job_id": "6aff1d084fdc5ab3c559ed8f", "commit": "bbc3114f5e95a455841bbb8cc775cbe70d79afd6", "cap": 0.15, "spent": 0.027943, "seconds": 150.8, "what": "Llama 3.3 and DeepSeek-V3.2 guess on the selected model's picks and the first choice, seed 6004"},
+  {"run": "crossguess-gpt-oss-120b", "job_id": "6aff1d0b4fdc5ab3c559ed95", "commit": "bbc3114f5e95a455841bbb8cc775cbe70d79afd6", "cap": 0.15, "spent": 0.016135, "seconds": 1314.4, "what": "gpt-oss-120b guesses on the same clues"}
+ ],
+ "model_calls": 0.171104,
+ "cpu_basic_hours": 0.88,
+ "cpu_basic_cost_estimate": 0.01,
+ "cpu_note": "the modules' run times plus about a minute of setup per job, at about $0.01 an hour, the rate C4 used"
+}
