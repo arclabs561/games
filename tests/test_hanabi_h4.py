@@ -113,3 +113,22 @@ def test_committed_ceilings_match_a_fresh_solve():
     assert table["winnable"] == table["ceiling"].count(10)
     for k in list(range(0, 2000, 97)) + [31, 84]:
         assert h4.ceiling(400_000 + k)["ceiling"] == table["ceiling"][k]
+
+
+def test_committed_summary_agrees_with_its_matrices():
+    summary = json.loads((h4.RESULTS / "h4.json").read_text())
+    for mode in ("greedy", "sampled"):
+        m = np.array(summary[mode]["matrix"])
+        means = {}
+        for arm, idx in summary["arms"].items():
+            sub = m[np.ix_(idx, idx)]
+            means[arm] = sub[h4.cross_mask(len(idx))].mean()
+            stats = summary[mode]["scores"][arm]
+            assert stats["cross"]["value"] == pytest.approx(means[arm], abs=1e-3)
+            assert stats["self"]["value"] == pytest.approx(np.diag(sub).mean(), abs=1e-3)
+            lo, hi = stats["cross"]["interval"]
+            assert lo < stats["cross"]["value"] < hi
+        diff = summary[mode]["scores"]["cross 0.05 minus 0.01"]["value"]
+        assert diff == pytest.approx(means["0.05"] - means["0.01"], abs=1e-3)
+        assert summary[mode]["replayed_in_rules_py"] == 16 * 16 * 2000
+    assert summary["primary"]["cross 0.05 minus 0.01"]["interval"][0] > 0

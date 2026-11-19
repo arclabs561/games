@@ -377,8 +377,9 @@ def train(cfg: Config, seeds: list[int], out: Path, chunk: int = 20, deadline: f
         record["updates_done"] = done
         record["steps_per_seed"] = done * cfg.batch_steps
         steady = record["chunks"][1:] or record["chunks"]
+        # the rounded chunk times are kept; a tiny run's chunk may round to 0 seconds
         record["steps_per_second_all_seeds"] = round(
-            len(seeds) * n * cfg.batch_steps / float(np.median(steady))
+            len(seeds) * n * cfg.batch_steps / max(float(np.median(steady)), 0.01)
         )
         save_params(out, seeds, runner[0].params)
         np.savez_compressed(
