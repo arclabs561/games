@@ -1,0 +1,143 @@
+{
+ "cap": 3.0,
+ "runs": [
+  {
+   "run": "pilot-1",
+   "job_id": "6afe6ba4545f95df1c06f165",
+   "commit": "dd1892018ae1f31badbcd4bc9c2199a58a031c0c",
+   "spent": null,
+   "at_most": 0.0085,
+   "how_known": "upper bound: the meter charged $0.2464 at its fallback price (3 and 15 dollars per million tokens), because no provider reported a cost; the listed prices, read an hour later, are at most 1/11 of that for every model",
+   "what": "pilot, seed 4999, 50 boards; found the gpt-oss token cap and the Qwen3-32B rate limit"
+  },
+  {
+   "run": "pilot-2",
+   "job_id": "6afe6d68e41aae15936d19d0",
+   "commit": "5e53f8c1a792bfa2d58181bac66918da82141a24",
+   "spent": 0.016594,
+   "at_most": null,
+   "how_known": "meter, listed prices",
+   "what": "pilot after the amendment"
+  },
+  {
+   "run": "give",
+   "job_id": "6afe6e98e41aae15936d1a1d",
+   "commit": "388fb943da6b5cef45a7da350b5bfcaae8b4f270",
+   "spent": 0.082685,
+   "at_most": null,
+   "how_known": "meter, listed prices",
+   "what": "giving: seeds 4005 (50 boards), 4004 (200), 0 (200), and the repeat check"
+  },
+  {
+   "run": "guess-val (stopped)",
+   "job_id": "6afe6e96545f95df1c06f285",
+   "commit": "388fb943da6b5cef45a7da350b5bfcaae8b4f270",
+   "spent": null,
+   "at_most": 0.08,
+   "how_known": "upper bound: Llama 3.3 had spent $0.0222 when it finished; Qwen3-32B could have spent at most 717 calls at its dearest call, $0.00008",
+   "what": "stopped by hand because its calls in series would have passed the timeout; nothing from it is used"
+  },
+  {
+   "run": "guess-val-llama-deepseek",
+   "job_id": "6afe73a5e41aae15936d1b45",
+   "commit": "ca989bf9ef9b427a7c8283469f371be99942125a",
+   "spent": 0.052766,
+   "at_most": null,
+   "how_known": "meter, listed prices",
+   "what": "guessing, val turns"
+  },
+  {
+   "run": "guess-val-qwen3-32b",
+   "job_id": "6afe73a7545f95df1c06f430",
+   "commit": "ca989bf9ef9b427a7c8283469f371be99942125a",
+   "spent": 0.014655,
+   "at_most": null,
+   "how_known": "meter, listed prices",
+   "what": "guessing, val turns"
+  },
+  {
+   "run": "guess-val-gpt-oss-120b",
+   "job_id": "6afe73a2545f95df1c06f42b",
+   "commit": "ca989bf9ef9b427a7c8283469f371be99942125a",
+   "spent": 0.027125,
+   "at_most": null,
+   "how_known": "meter, listed prices",
+   "what": "guessing, val turns"
+  },
+  {
+   "run": "guess-test-llama-deepseek",
+   "job_id": "6afe7672e41aae15936d1c02",
+   "commit": "6b256fd2251abd2990c5e289b1f1ffbd307bcc13",
+   "spent": 0.040696,
+   "at_most": null,
+   "how_known": "meter, listed prices",
+   "what": "guessing, test turns"
+  },
+  {
+   "run": "guess-test-qwen3-32b",
+   "job_id": "6afe7674545f95df1c06f551",
+   "commit": "6b256fd2251abd2990c5e289b1f1ffbd307bcc13",
+   "spent": 0.011132,
+   "at_most": null,
+   "how_known": "meter, listed prices",
+   "what": "guessing, test turns"
+  },
+  {
+   "run": "guess-test-gpt-oss-120b",
+   "job_id": "6afe766fe41aae15936d1bfe",
+   "commit": "6b256fd2251abd2990c5e289b1f1ffbd307bcc13",
+   "spent": 0.021399,
+   "at_most": null,
+   "how_known": "meter, listed prices",
+   "what": "guessing, test turns"
+  },
+  {
+   "run": "crossguess-llama-deepseek",
+   "job_id": "6afe7b25e41aae15936d1d8d",
+   "commit": "cbe4838241e5fe5abbf630ecc3a4bd6d4bb57cba",
+   "spent": 0.05486,
+   "at_most": null,
+   "how_known": "meter, listed prices",
+   "what": "language-model guessers on other givers' clues, seed 4004"
+  },
+  {
+   "run": "crossguess-gpt-oss-120b",
+   "job_id": "6afe7b23e41aae15936d1d8b",
+   "commit": "cbe4838241e5fe5abbf630ecc3a4bd6d4bb57cba",
+   "spent": 0.032439,
+   "at_most": null,
+   "how_known": "meter, listed prices",
+   "what": "language-model guessers on other givers' clues, seed 4004"
+  },
+  {
+   "run": "crossguess-qwen3-32b (stopped)",
+   "job_id": "6afe7b29e41aae15936d1d8f",
+   "commit": "cbe4838241e5fe5abbf630ecc3a4bd6d4bb57cba",
+   "spent": null,
+   "at_most": 0.064,
+   "how_known": "upper bound: 800 calls at its dearest call, $0.00008",
+   "what": "stopped by hand and rerun with a longer timeout; nothing from it is used"
+  }
+ ],
+ "inputs_sha256": {
+  "clues.txt (runs/c4/give)": "5b1d8790f9ff8e364dbffd4a95474f2d5e2385a1a420f42bec25fa6d283a67c5",
+  "crossguess.txt (runs/c4/crossguess-gpt-oss-120b)": "cb2cd2b53372275039c3cf52543f7976350766efa57b81de038e9aee565576fe",
+  "crossguess.txt (runs/c4/crossguess-llama-deepseek)": "f7b8b7263ddb32561daff6c251b9385b0d759713a9e63f3b97044c57778514f7",
+  "guesses.txt (runs/c4/guess-test-gpt-oss-120b)": "a05ed1ffcd71d4bb5635d4b342ee7b72cadb016e0a1194381f7ece0b45bfd195",
+  "guesses.txt (runs/c4/guess-test-llama-deepseek)": "f8abf0cb9e51acf4e649d22c37f88233ba540599f3d7b716dd3ead4cf0ab33e4",
+  "guesses.txt (runs/c4/guess-test-qwen3-32b)": "33ec38bb8e1291e5d3344973567275a464613aa514352b9f32e390a0400b85b3",
+  "guesses.txt (runs/c4/guess-val-gpt-oss-120b)": "a831e95e169d67aef7a82cdba42e9b3fcd4b398ffc05e66717376f05262f3fea",
+  "guesses.txt (runs/c4/guess-val-llama-deepseek)": "051aa718e850adf6faf7672db9153527e9c4e7a6c7ea30e0663a8ee6369f4ceb",
+  "guesses.txt (runs/c4/guess-val-qwen3-32b)": "91226e91190a9d886fef712f324051462b23fac3cd2a3c4256807f6c7b43fa82"
+ },
+ "repeat_check": {
+  "deepseek-v3.2": 16,
+  "extra_sends": 2,
+  "gpt-oss-120b": 16,
+  "llama-3.3-70b": 2,
+  "prompts": 20,
+  "qwen3-32b": 8,
+  "source": "runs/c4/give/give.json"
+ },
+ "note": "spent is the meter of each job (reported tokens times the listed price); at_most is an upper bound where the meter could not give the amount. Jobs ran on cpu-basic at $0.01 an hour, about 4 hours in all, which is not included."
+}

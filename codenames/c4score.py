@@ -186,6 +186,7 @@ def main(clues: Path | None, guesses: Path | None, out: Path, cross: Path | None
         result["give"] = score(clues.read_text())
     if cross is not None:
         result["crossguess"] = score_crossguess(cross.read_text())
+        result["crossguess"]["per_board"] = cross.read_text().splitlines()
     out.write_text(json.dumps(rounded(result), indent=1, sort_keys=True) + "\n")
 
 
@@ -219,6 +220,42 @@ def clustered_p(d: np.ndarray, index: np.ndarray, counts: np.ndarray) -> float:
     return min(1.0, 2 * float(wrong))
 
 
+RESULTS = Path(__file__).parent / "results"
+
+
+def hit_string(s: str) -> np.ndarray:
+    return np.array([c == "1" for c in s], dtype=float)
+
+
+def add_trained_baselines(rows: dict, lines: dict, base: np.ndarray) -> None:
+    """Secondary, on the test turns: each language model minus the trained guessers of
+    C1 (the potion map, five seeds) and C2 (Qwen3 with LoRA, three seeds), paired by
+    turn, with each trained guesser's hits averaged over its seeds. Their per-turn hits
+    are read from the results files those experiments wrote, in the same turn order:
+    EmbeddingGemma 2's hits in calibrate-game.json must equal the ones computed here."""
+    from codenames.split import turns
+    from codenames.stats import cluster_draws, clustered
+
+    cal = json.loads((RESULTS / "calibrate-game.json").read_text())
+    assert (hit_string(cal[BASE]["best"]["test"]["hits"]) == base).all()
+    potion = json.loads((RESULTS / "train-potion-game.json").read_text())["runs"]
+    trained = {"potion map (C1)": [hit_string(r["guess"]["hits"]) for r in potion.values()]}
+    lora = sorted((RESULTS / "c2-runs").glob("lora-s*.json"))
+    if lora:
+        trained["Qwen3 LoRA (C2)"] = [
+            hit_string(json.loads(f.read_text())["after"]["hits"]) for f in lora
+        ]
+    data = turns("game:test")
+    index, counts = cluster_draws([t.game for t in data])
+    for name, runs in trained.items():
+        h = np.mean(runs, axis=0)
+        rows[name] = {"top1": clustered(h, index, counts), "seeds": len(runs)}
+        for (model, split), chars in sorted(lines.items()):
+            if split == "test":
+                d = np.array([c in "1b" for c in chars], dtype=float) - h
+                rows[model][f"minus {name}"] = clustered(d, index, counts)
+
+
 def score_guess(text: str) -> dict:
     """Part 1: top-1 agreement with the person on C1's game split, for each model and
     for EmbeddingGemma 2 (bare template, as in C1), with game-bootstrap intervals; the
@@ -230,10 +267,11 @@ def score_guess(text: str) -> dict:
     lines = read_guess_lines(text)
     sp = space(BASE, "bare", "bare", all_words())
     out: dict = {"splits": {}}
+    bases = {}
     for split in sorted({s for _, s in lines}):
         data = turns(f"game:{split}")
         index, counts = cluster_draws([t.game for t in data])
-        base = hits(sim_rows(sp, data))
+        base = bases[split] = hits(sim_rows(sp, data))
         rows: dict = {"turns": len(data), "games": int(counts.shape[1])}
         rows["embeddinggemma-2"] = {"top1": clustered(base, index, counts)}
         for (name, s), chars in sorted(lines.items()):
@@ -255,6 +293,8 @@ def score_guess(text: str) -> dict:
         val = out["splits"]["val"]
         models_ = [k for k in val if isinstance(val[k], dict) and k != "embeddinggemma-2"]
         out["selected"] = max(models_, key=lambda m: val[m]["top1"]["mean"])
+    if "test" in out["splits"]:
+        add_trained_baselines(out["splits"]["test"], lines, bases["test"])
     if "test" in out["splits"] and "selected" in out:
         test = out["splits"]["test"][out["selected"]]["minus_embeddinggemma"]
         out["h_guess"] = {"model": out["selected"], **test}

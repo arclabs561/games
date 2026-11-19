@@ -12,6 +12,7 @@ Short answers, with how each is known:
 - Training a linear map on potion's clue vectors raises its match from 54.4% to 63.2%. The map is trained on the human guesses of the training games only. The gain, 8.8 points (6.3 to 11.4), is as large as on the published split (8.2), so it was not an artifact of test games having turns in training. Same method; the map is averaged over five training seeds.
 - Fine-tuning Qwen3-Embedding-0.6B with LoRA on the same training games raises its match from 43.4% to 62.6%, level with the potion map: LoRA minus the map is −0.7 points (−4.1 to 2.8). Same method, three training seeds, on an A10G GPU.
 - A giver expects to find 1.8 to 2.1 of its words per clue when the guesser shares its vectors. A guesser built on another model finds 57% to 73% of that, on average over the other seven models. A guesser that follows association counts from people finds 37% to 53%. Exact expected values for each of 200 random boards, one clue each, for eight models.
+- Hosted language models, asked with a fixed prompt, predict human guesses better than untrained embeddings and give worse clues. gpt-oss-120b picks the person's word in 65.0% of the 551 test turns (60.8% to 69.3%), 10.2 points (7.1 to 13.5) above EmbeddingGemma 2 and level with the trained guessers above. As givers, all four models tested give clues worth 0.29 to 0.89 words less per turn to seven embedding guessers they never met than the EmbeddingGemma 2 giver's. Paired intervals from resampling games or boards; one reply per prompt.
 - A giver trained by policy gradient against its own model reaches an expected turn value of 1.60 with that model, 0.75 with a held-out model, and −0.05 with the association counts. Trained against six other models instead, it reaches 1.03, 0.92 and 0.35. The gap between self-play and cross-play shrinks from 0.85 to 0.11, at a cost of 0.57 in self-play. A second giver shows the same pattern. Exact rewards on 200 test boards, one training seed per giver.
 
 ## The game as modeled
@@ -282,12 +283,63 @@ and the giver's best count is the n that maximizes it. In this study the costs a
 
 ## Language models
 
-`llm.py` defines `llm_giver(complete, fallback)` and `llm_guesser(complete)`, where `complete` is any function from a prompt to reply text. They have the same signatures as the embedding players, so `game.play` can pair any of them. No language model was reachable from this machine, and no result for one is reported. The experiment to run:
+Experiment C4 (`experiments/plans/C4.md`, with its amendment of 2026-11-19) asks two questions of four open-weight models served by Hugging Face Inference Providers:
 
-- **Givers.** An LLM giver and the embedding givers above, each on the same 200 boards (seed 0) and the same clue rule.
-- **Guessers.** Each embedding guesser; the association guesser; an LLM guesser from a different model family than the giver; and people, on a few dozen boards, as Cultural Codes did.
-- **Measures.** Found words per clue against each guesser, the gap between own and other guessers, and the share of replies that needed the fallback. Report the model, its version, temperature and seed for each call.
-- **Question.** Does an LLM giver lose less to a stranger than an embedding giver does? Two benchmarks report LLMs playing both roles (Stephenson et al. 2024; Hakimov et al. 2025). Neither measures this gap against non-LLM partners on fixed boards.
+- Llama 3.3 70B Instruct, through novita;
+- Qwen3-32B with thinking off, through deepinfra;
+- gpt-oss-120b at low reasoning effort, through deepinfra;
+- DeepSeek-V3.2, through deepinfra.
+
+Every request has temperature 0 and seed 0. The prompts are those of `llm.py`, unchanged. Every prompt and reply is in the private dataset `arclabs561/games-runs` under `runs/c4/`, since provider terms differ on publishing outputs; `results/c4.json` has every number below.
+
+**Guessing.** Each model heard the clue of every human turn in C1's game split with the count 1, and its guess is the first board word of its reply. Top-1 is the share of turns where that is the person's word. The model for the primary test was chosen on the 717 val turns (79 games) before any test turn was sent: gpt-oss-120b, at 0.618 against 0.582, 0.554 and 0.547 for the others and 0.543 for EmbeddingGemma 2 (`results/c4-val.json`). The test has 551 turns in 68 games. Intervals come from 10,000 resamples of games (`stats.py`), and differences are paired by turn.
+
+| Guesser | Top-1 on test (95% interval) | Minus EmbeddingGemma 2 |
+|---|---|---|
+| gpt-oss-120b | 0.650 (0.608–0.693) | 0.102 (0.071–0.135) |
+| Llama 3.3 70B | 0.606 (0.559–0.654) | 0.058 (0.024–0.093) |
+| Qwen3-32B | 0.555 (0.513–0.600) | 0.007 (−0.028–0.045) |
+| DeepSeek-V3.2 | 0.532 (0.484–0.580) | −0.016 (−0.050–0.017) |
+| EmbeddingGemma 2, untrained | 0.548 (0.501–0.595) | |
+| potion with the linear map (C1, mean of 5 seeds) | 0.632 (0.589–0.675) | |
+| Qwen3-Embedding-0.6B with LoRA (C2, mean of 3 seeds) | 0.626 (0.585–0.666) | |
+
+- **H-guess holds.** gpt-oss-120b picks the person's word 10.2 points more often than EmbeddingGemma 2, and no resample of games put the difference at or below 0 (p < 0.0002). Llama 3.3 is also ahead; Qwen3-32B and DeepSeek-V3.2 are within the noise of the embedding model.
+- **Against the trained guessers** (secondary). gpt-oss-120b minus the potion map is 0.017 (−0.020 to 0.056), and minus the LoRA encoder 0.024 (−0.012 to 0.061), paired by turn with their per-turn hits from C1 and C2. An untrained hosted model is level with the guessers trained on 4,820 human turns.
+- **Parsing.** Out of 5,072 replies, 3 named no board word. Their guess is then the first board word, as the plan says.
+- **Contamination.** Cultural Codes has been public since 2023, so the models may have seen its turns. The prompt names no dataset. This could inflate the language models' scores and is not measured.
+
+**Giving.** Each model named one clue for each of 200 fresh boards (seed 4004), with the prompt of `llm.py`. The baseline is the EmbeddingGemma 2 expected-value giver with the whole clue list. Each clue is scored by the exact expected turn value under the seven calibrated embedding guessers other than EmbeddingGemma 2, which are strangers to every giver here, and a board's score is their mean. A reply with no legal clue gets the fallback: the EmbeddingGemma 2 giver's best clue for one word. The model for the primary test was chosen on 50 other boards (seed 4005): DeepSeek-V3.2, at 0.594 against the baseline's 0.602. Intervals come from 10,000 resamples of boards, and differences are paired by board.
+
+| Giver | Turn value (95% interval) | Minus the embedding giver | Words found | No legal clue | Mean count |
+|---|---|---|---|---|---|
+| EmbeddingGemma 2, expected value | 0.706 (0.636–0.774) | | 1.35 | | 2.75 |
+| DeepSeek-V3.2 | 0.402 (0.263–0.515) | −0.304 (−0.460 to −0.166) | 0.93 | 52% | 2.71 |
+| Llama 3.3 70B | 0.421 (0.319–0.518) | −0.285 (−0.403 to −0.169) | 0.95 | 47% | 2.61 |
+| gpt-oss-120b | 0.198 (0.102–0.287) | −0.508 (−0.616 to −0.401) | 1.04 | 2% | 3.73 |
+| Qwen3-32B | −0.185 (−0.333 to −0.049) | −0.891 (−1.058 to −0.734) | 0.72 | 14% | 3.14 |
+
+- **H-give fails.** The chosen model's clues are worth 0.30 words less per turn to the strangers than the embedding giver's, and no resample of boards put the difference at or above 0. With the Holm correction over the two primary hypotheses, both differences are significant, in opposite directions. By the plan's rule C5 is not run.
+- **The fallback carried the selection.** DeepSeek-V3.2 and Llama 3.3 named a board word, or a word containing or contained in one, on about half the boards, so half their scores are the embedding giver's one-word clues. On the boards where their clue was legal, they trail the embedding giver by 0.90 (DeepSeek, 97 boards) and 0.68 (Llama, 106 boards). Valuing a failed reply at 0 instead gives −0.75 and −0.70. gpt-oss-120b, which almost always gave a legal clue, trails by 0.52 on its own clues.
+- **High counts.** Among legal clues, 21 to 50 per model asked for more than 4 words (scored as 4, the most any guesser here picks). The language models also find fewer words per clue (0.72 to 1.04 against 1.35), so the gap is not only the cost of wrong picks.
+- **The strangers are embedding models.** The baseline giver plans with an embedding model's similarities, and every stranger is an embedding model, so it shares their kind of error. This favors it, as the plan's threats section says. The association guesser (EAT counts) is a stranger of another kind; its value for every giver is between −0.28 and −0.06, with intervals that overlap except for Qwen3-32B's (lowest).
+- **Seed-0 boards** (secondary, for comparison with section 2). The embedding giver scores 0.656 and the language models 0.045 to 0.446, the same order. Section 2 limited clues to EAT cues, so its numbers differ.
+
+**Language-model guessers** (secondary). On the 200 test boards, Llama 3.3, DeepSeek-V3.2 and gpt-oss-120b each guessed on the clues of the other language models and of the embedding giver, with the giver's count, one reply per clue. Each turn is played out from the reply's order, with the costs above. A giver's fallback clues are included. Qwen3-32B as a guesser did not finish in time and is left out. The table gives means over the guessers that heard each giver, with intervals over boards.
+
+| Giver | Guessers | Turn value (95% interval) | Words found | Minus the embedding giver, same guessers |
+|---|---|---|---|---|
+| EmbeddingGemma 2 | Llama, DeepSeek, gpt-oss | 1.63 (1.51–1.75) | 1.92 | |
+| gpt-oss-120b | Llama, DeepSeek | 1.04 (0.82–1.25) | 1.61 | −0.61 (−0.85 to −0.37) |
+| Llama 3.3 70B | DeepSeek, gpt-oss | 0.66 (0.46–0.85) | 1.13 | −0.99 (−1.22 to −0.77) |
+| DeepSeek-V3.2 | Llama, gpt-oss | 0.64 (0.43–0.82) | 1.10 | −0.97 (−1.20 to −0.74) |
+| Qwen3-32B | Llama, DeepSeek, gpt-oss | −0.02 (−0.29 to 0.23) | 0.84 | −1.66 (−1.95 to −1.39) |
+
+The language-model guessers also do best with the embedding giver's clues, so the result of the primary test is not only an effect of scoring with embedding guessers. These are single sampled turns, not exact expectations.
+
+**Repeat check.** The first 20 prompts of seed 4005 were sent twice more to each model. The reply changed at least once for 2 of 20 prompts with Llama 3.3, 8 with Qwen3-32B, and 16 each with gpt-oss-120b and DeepSeek-V3.2, at temperature 0 with a fixed seed. Llama 3.3's val top-1 was 0.579 in a run that was stopped and 0.582 in the run reported. A rerun can differ.
+
+**Cost.** Every job ran on `cpu-basic` through `experiments/hfrun.py`, at the commit in its manifest. The meter adds the tokens each provider reported times the price the router lists (no provider reported a cost). Calls cost $0.00002 to $0.00006 each. The 13 jobs spent at most $0.51 on model calls (`results/c4-runs.json`). That includes upper bounds for the first pilot, which ran before the prices were read, and for two jobs stopped by hand. About 4 hours of `cpu-basic` add about $0.04. The plan expected $1 to $3, under a cap of $3.
 
 ## Related work
 
@@ -306,7 +358,8 @@ and the giver's best count is the n that maximizes it. In this study the costs a
 | Vectors for potion, wordllama, granite, bge; every table above; training and policy gradient | this machine, 2 CPUs |
 | Vectors for Qwen3-Embedding-0.6B, harrier-oss-v1-270m, harrier-oss-v1-0.6b, EmbeddingGemma 2 | GitHub-hosted runner (CPU), workflow on `compute/codenames-embed` |
 | LoRA fine-tuning (`lora.py`) | Hugging Face Jobs, `a10g-small`, through `experiments/hfrun.py` |
-| LLM players (`llm.py`) | not run |
+| Language-model players (`llm.py`, `hosted.py`, `c4.py`) | Hugging Face Jobs, `cpu-basic`, through `experiments/hfrun.py`, calling Inference Providers; scored on this machine (`c4score.py`) |
+| Vectors for the 15 clue words of the language models that had none | GitHub-hosted runner, workflow on `compute/codenames-embed`, for the four Hugging Face models; this machine for the other four |
 
 ## Open questions
 
@@ -315,11 +368,12 @@ and the giver's best count is the n that maximizes it. In this study the costs a
 - Does the potion map's gain hold when every pick of a multi-pick turn is used, as White et al. do?
 - Why does a trained guesser model make a worse giver?
 - Would LoRA beat the potion map with more human data or other settings (a larger learning rate, more epochs, harrier-oss-v1-0.6b)?
-- How large is the gap for an LLM giver?
+- Would language-model givers do better with a prompt that states the whole clue rule (no word contained in a board word) and the cost of the assassin, or with a retry after an illegal clue?
+- Do language-model clues fare better with people than with embedding guessers?
 
 ## Usage
 
-The package's packages are the `codenames` dependency group (numpy, onnxruntime, tokenizers, wordfreq). Times are from one run on this machine, while other jobs shared its two CPUs.
+The package's packages are the `codenames` dependency group (huggingface-hub, numpy, onnxruntime, tokenizers, wordfreq). Times are from one run on this machine, while other jobs shared its two CPUs.
 
 ```bash
 uv run python -m codenames.fetch all              # models and data, about 100 MB (20 s)
@@ -338,6 +392,11 @@ uv run python -m codenames.heldout                # split by game and player, ex
 uv run python -m codenames.c2                     # LoRA results from results/c2-runs/ (1 min)
 uv run python -m codenames.rl --giver potion --held-out bge --out codenames/results/rl-potion.json
 uv run --with sentence-transformers python -m codenames.embed --model Qwen/Qwen3-Embedding-0.6B
+# C4, inside a Hugging Face Job (needs HF_TOKEN), then scored here:
+uv run python -m codenames.c4 guess --models all --split val --cap 0.6 --out OUT
+uv run python -m codenames.c4 give --models all --seed 4005 4004 0 --n 50 200 200 --cap 0.4 --out OUT
+uv run python -m codenames.c4 crossguess --models all --seed 4004 --clues codenames/results/c4-clues-4004.txt --cap 0.3 --out OUT
+uv run python -m codenames.c4 score --clues clues.txt --guesses guesses.txt --crossguess crossguess.txt --out codenames/results/c4.json   # 15 min
 ```
 
 ## Files
@@ -359,6 +418,8 @@ uv run --with sentence-transformers python -m codenames.embed --model Qwen/Qwen3
 | `stats.py` | the bootstrap over games, Kendall's τ |
 | `c1.py`, `heldout.py` | human guesses split by game: the plan's run, and the exploratory one |
 | `rl.py` | section 5 |
-| `llm.py` | language-model players |
+| `llm.py` | language-model players: prompts and parsing |
+| `hosted.py` | calls to Inference Providers, with retries, a cost meter and a log of every call |
+| `c4.py`, `c4score.py` | experiment C4: the jobs that call the models, and the scoring |
 | `results/*.json` | every number above, with seeds and settings |
 | `compute/codenames-embed.yml` | a copy of the workflow that computed the Hugging Face vectors |
