@@ -1,0 +1,43 @@
+name: pokemon-p1
+# Plan P1 (experiments/plans/P1.md): download Smogon's chaos files for gen9ou and gen1ou,
+# 2025-11 to 2026-10, record each file's SHA-256, and commit only the derived usage shares
+# by typing and by type. The raw files stay in the runner's temporary folder.
+on:
+  push:
+    branches: ["compute/pokemon-p1"]
+    paths: [".github/workflows/pokemon-p1.yml"]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          python-version: "3.12"
+      - name: Download and build the usage table
+        timeout-minutes: 25
+        shell: bash
+        run: |
+          set -o pipefail
+          mkdir -p pokemon/results
+          uv run --no-project python -m pokemon.usage build \
+            --formats gen9ou gen1ou --months 2025-11..2026-10 \
+            --cutoffs gen9ou:0,1500,1695,1825 gen1ou:0,1500,1630,1760 \
+            --required gen9ou:1500 --cache "$RUNNER_TEMP/smogon" \
+            --out pokemon/results/usage-typings.json 2>&1 | tee pokemon/results/p1-build.log
+      - name: Commit the derived table to this branch
+        if: always()
+        run: |
+          echo "$GITHUB_SHA" > pokemon/results/p1-build.commit
+          git config user.name arclabs561
+          git config user.email arclabs561@users.noreply.github.com
+          git add pokemon/results
+          git commit -q -m "pokemon: P1 usage table"
+          for i in $(seq 1 10); do
+            git pull -q --rebase && git push -q && break
+            sleep $((RANDOM % 20 + 5))
+          done
