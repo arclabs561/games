@@ -30,9 +30,10 @@ Costs are recorded per run. A number from a run that did not happen is never rep
 | C4 | Do hosted language models match human guesses better than embeddings, and how do they fare as givers with guessers they have never met? | Inference Providers, about $1 to $3 | [C4](plans/C4.md) | done (PR #43): language models guess better, give worse clues |
 | C5 | Does reinforcement learning of a small language model, rewarded by a population of guessers, give clues that held-out guessers understand? | L4, about $9 | [C5](plans/C5.md) | not run: C4's giver test failed |
 | C6 | When a hosted language model chooses among legal clues that an embedding giver proposes, do unseen guessers find more words than with the embedding giver's own choice? | Inference Providers, about $0.40 to $0.80; cap $1.50 | [C6](plans/C6.md) | done (PR #50): null; the chosen model's pick trails the embedding giver's first choice by 0.06 (−0.12 to −0.005) with strangers; prompt evolution not run |
-| C7 | Does Qwen3.5-2B, trained by GRPO to choose among the same legal clues, beat the seven-feature policy with held-out guessers? | L4, about $4.10; cap $7 | [C7](plans/C7.md) | proposed, needs approval |
-| C8 | Do about 19,000 turns labeled by gpt-oss-120b raise the LoRA embedding model's match with human guesses? | Inference Providers and A10G, about $2.50 to $3.50; cap $5.50 | [C8](plans/C8.md) | proposed, needs approval |
+| C7 | Does Qwen3.5-2B, trained by GRPO to choose among the same legal clues, beat the seven-feature policy with held-out guessers? | L4, about $4.10; cap $7 | [C7](plans/C7.md) | done (PR #49): null; the trained model always names the first listed clue for one word and trails the feature policy with held-out guessers (−0.11, interval −0.16 to −0.06); $3.74 |
+| C8 | Do about 19,000 turns labeled by gpt-oss-120b raise the LoRA embedding model's match with human guesses? | Inference Providers and A10G, about $2.50 to $3.50; cap $5.50 | [C8](plans/C8.md) | done (PR #53): yes, by 3.3 points (0.9 to 5.9), level with the teacher; about $2.06 spent |
 | C9 | Does Qwen3.5, fine-tuned on human turns and then trained by RL with the person's pick as reward, guess as people do more often than gpt-oss-120b? | L4 or L40S, about $7 to $8.50; cap $12 | [C9](plans/C9.md) | proposed, needs approval |
+| C10 | When a hosted language model guesses on each of an embedding giver's legal clues and the giver picks the clue worth most to it, do unseen guessers find more words than with the embedding giver's first choice? | Inference Providers, about $0.50 to $1; cap $1.50 | [C10](plans/C10.md) | proposed, needs approval |
 | H1 | How many Hanabi deals reach 25 with every card visible? Decide the undecided deals and check with a second solver. | CPU (GitHub Actions) | [H1](plans/H1.md) | done (PR #45): 98.6% of two-player deals winnable with every card in view; two solvers agree on 79,396 deals |
 | H2 | How far below the open-game ceiling do hosted language models play, and, at three players, below the hat strategy? | Inference Providers, about $2 to $5 | [H2](plans/H2.md) | done (PR #44): both models far below the ceiling; deduction help shows no effect; three-player part not run |
 | H3 | In a two-color game, does Qwen3.5-2B trained by self-play score more with partners from other seeds and with a rule-based player? | L40S, about $10.40; cap $13.50 | [H3](plans/H3.md) | proposed, needs approval |
@@ -60,6 +61,14 @@ C6 to C9, H3 and H4 train or use models released in 2026, with post-training met
 | 6 | C9 | $7 to $8.50 | $12 | Passing gpt-oss-120b needs a gain of about 6 points over the best trained guesser, and the plan expects that to fail. Runs after C8. |
 
 All six together are expected to cost about $29 to $32, with caps adding up to $45.90.
+
+**2026-11-19, after C4 and C6: a new order.** The table above is the order as first written. Three changes:
+
+- C10 is added and ranked first among the paid plans. C4 found that gpt-oss-120b guesses as people do more often than the embedding models, and C6 that no hosted model chooses among legal clues better than the embedding giver's first choice. C10 uses the model as a guesser inside the giver, the role in which it did well, for about $0.50 to $1.
+- C9 is deferred. C4 and C6 give no sign that a small trained model will pass gpt-oss-120b, and C9's main test needs a top-1 of about 0.69 to pass it by a resolved margin.
+- H3 is deferred until H4 reports. In H2, the open models scored 0 to 6.4 points of 25 in two-player games with deduction help. Language models start from weak play here, and H4 gives the two-color game a baseline that H3 needs first.
+
+The paid plans now run in this order: C10, C8, C7, H4, then H3 and C9 if the earlier results call for them.
 
 **Candidates from the request, and what became of them.**
 

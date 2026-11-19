@@ -1,0 +1,654 @@
+{
+ "a_minus_teacher": {
+  "ci": [
+   -0.06060742560742562,
+   0.01165546515741067
+  ],
+  "mean": -0.02419842710223836,
+  "n": 551
+ },
+ "arms": {
+  "A": {
+   "assoc_top1_by_seed": [
+    0.7164634146341463,
+    0.7235772357723578,
+    0.7225609756097561
+   ],
+   "chosen": [
+    {
+     "clue": "query",
+     "tau": 0.05,
+     "val_loglik": -1.5198148004735865,
+     "word": "bare"
+    },
+    {
+     "clue": "query",
+     "tau": 0.05,
+     "val_loglik": -1.5142334830709734,
+     "word": "bare"
+    },
+    {
+     "clue": "query",
+     "tau": 0.05,
+     "val_loglik": -1.517622098246746,
+     "word": "bare"
+    }
+   ],
+   "loglik_by_seed": [
+    -1.3802375433319016,
+    -1.3811271085515564,
+    -1.3726038192268752
+   ],
+   "lr": [
+    0.0003
+   ],
+   "name": "A. human only (C2's arm 4)",
+   "rows": [
+    4820
+   ],
+   "runs": [
+    "lora-s1",
+    "lora-s2",
+    "lora-s3"
+   ],
+   "teacher_sha256": [
+    ""
+   ],
+   "top1": {
+    "ci": [
+     0.5853210099024319,
+     0.6660849331006399
+    ],
+    "mean": 0.6255293405928614,
+    "n": 551
+   },
+   "top1_by_seed": [
+    0.6225045372050817,
+    0.631578947368421,
+    0.6225045372050817
+   ]
+  },
+  "B": {
+   "assoc_top1_by_seed": [
+    0.7327235772357723,
+    0.7245934959349594,
+    0.7103658536585366
+   ],
+   "chosen": [
+    {
+     "clue": "query",
+     "tau": 0.05,
+     "val_loglik": -1.4248989977675866,
+     "word": "bare"
+    },
+    {
+     "clue": "query",
+     "tau": 0.05,
+     "val_loglik": -1.430319189190912,
+     "word": "bare"
+    },
+    {
+     "clue": "query",
+     "tau": 0.05,
+     "val_loglik": -1.411055428759837,
+     "word": "bare"
+    }
+   ],
+   "loglik_by_seed": [
+    -1.307450889822449,
+    -1.3073667368983461,
+    -1.2974280476914521
+   ],
+   "lr": [
+    0.0003
+   ],
+   "name": "B. human plus teacher",
+   "rows": [
+    23496
+   ],
+   "runs": [
+    "b-s1",
+    "b-s2",
+    "b-s3"
+   ],
+   "teacher_sha256": [
+    "ba6f3adac7275a520232508c182d58b6eb1dd54f35bd9fb9130b64931c6e89a6"
+   ],
+   "top1": {
+    "ci": [
+     0.6153320816864295,
+     0.7019295879231298
+    ],
+    "mean": 0.6588021778584392,
+    "n": 551
+   },
+   "top1_by_seed": [
+    0.6515426497277677,
+    0.6696914700544465,
+    0.6551724137931034
+   ]
+  },
+  "C": {
+   "assoc_top1_by_seed": [
+    0.7144308943089431,
+    0.7215447154471545,
+    0.7032520325203252
+   ],
+   "chosen": [
+    {
+     "clue": "query",
+     "tau": 0.05,
+     "val_loglik": -1.5140244647595147,
+     "word": "bare"
+    },
+    {
+     "clue": "query",
+     "tau": 0.05,
+     "val_loglik": -1.5004727044071502,
+     "word": "bare"
+    },
+    {
+     "clue": "query",
+     "tau": 0.05,
+     "val_loglik": -1.5059752637160633,
+     "word": "bare"
+    }
+   ],
+   "loglik_by_seed": [
+    -1.4515143074993564,
+    -1.4480102421711227,
+    -1.4541896732290545
+   ],
+   "lr": [
+    0.0003
+   ],
+   "name": "C. teacher only",
+   "rows": [
+    18676
+   ],
+   "runs": [
+    "c-s1",
+    "c-s2",
+    "c-s3"
+   ],
+   "teacher_sha256": [
+    "ba6f3adac7275a520232508c182d58b6eb1dd54f35bd9fb9130b64931c6e89a6"
+   ],
+   "top1": {
+    "ci": [
+     0.5784799816607357,
+     0.664571725012489
+    ],
+    "mean": 0.6218995765275257,
+    "n": 551
+   },
+   "top1_by_seed": [
+    0.6188747731397459,
+    0.6206896551724138,
+    0.6261343012704175
+   ]
+  },
+  "D": {
+   "assoc_top1_by_seed": [
+    0.7154471544715447,
+    0.7083333333333334,
+    0.709349593495935
+   ],
+   "chosen": [
+    {
+     "clue": "query",
+     "tau": 0.05,
+     "val_loglik": -1.5787856202090889,
+     "word": "bare"
+    },
+    {
+     "clue": "query",
+     "tau": 0.05,
+     "val_loglik": -1.5622956379037123,
+     "word": "bare"
+    },
+    {
+     "clue": "query",
+     "tau": 0.05,
+     "val_loglik": -1.5937981433180382,
+     "word": "bare"
+    }
+   ],
+   "loglik_by_seed": [
+    -1.5063314799047127,
+    -1.487023803871934,
+    -1.5083728478884664
+   ],
+   "lr": [
+    0.0003
+   ],
+   "name": "D. relabeled",
+   "rows": [
+    4818
+   ],
+   "runs": [
+    "d-s1",
+    "d-s2",
+    "d-s3"
+   ],
+   "teacher_sha256": [
+    "ba6f3adac7275a520232508c182d58b6eb1dd54f35bd9fb9130b64931c6e89a6"
+   ],
+   "top1": {
+    "ci": [
+     0.5615872001598795,
+     0.6520682330482654
+    ],
+    "mean": 0.6067755595886267,
+    "n": 551
+   },
+   "top1_by_seed": [
+    0.6025408348457351,
+    0.6116152450090744,
+    0.6061705989110708
+   ]
+  },
+  "gpt-oss-120b": {
+   "name": "gpt-oss-120b (C4)",
+   "top1": {
+    "ci": [
+     0.6084033613445378,
+     0.6927275266632809
+    ],
+    "mean": 0.6497277676950998,
+    "n": 551
+   }
+  }
+ },
+ "b_minus_teacher": {
+  "ci": [
+   -0.020725995519209832,
+   0.038529980530878846
+  ],
+  "mean": 0.009074410163339378,
+  "n": 551
+ },
+ "c_minus_a": {
+  "ci": [
+   -0.02772880249146072,
+   0.019875212100480592
+  ],
+  "mean": -0.003629764065335751,
+  "n": 551
+ },
+ "d_minus_a": {
+  "ci": [
+   -0.041745761018062516,
+   0.003355704697986577
+  ],
+  "mean": -0.018753781004234724,
+  "n": 551
+ },
+ "games": 68,
+ "giver": {
+  "boards": 200,
+  "guessers": {
+   "bge": {
+    "A": 1.1172554167398352,
+    "B": 1.1299396228754568,
+    "b_minus_a": {
+     "ci": [
+      -0.028854182012621587,
+      0.05422084216803286
+     ],
+     "mean": 0.012684206135621703,
+     "n": 200
+    }
+   },
+   "eat": {
+    "A": 0.7887738854663019,
+    "B": 0.8059240465484743,
+    "b_minus_a": {
+     "ci": [
+      -0.018212009416620777,
+      0.05298412866666307
+     ],
+     "mean": 0.017150161082172436,
+     "n": 200
+    }
+   },
+   "google/embeddinggemma-2": {
+    "A": 1.1046740906716266,
+    "B": 1.096868526843655,
+    "b_minus_a": {
+     "ci": [
+      -0.05140372685061706,
+      0.03682004639947184
+     ],
+     "mean": -0.00780556382797172,
+     "n": 200
+    }
+   },
+   "granite": {
+    "A": 0.8927453230036901,
+    "B": 0.8920254070248448,
+    "b_minus_a": {
+     "ci": [
+      -0.03741069227972373,
+      0.03598605852421787
+     ],
+     "mean": -0.0007199159788452763,
+     "n": 200
+    }
+   },
+   "microsoft/harrier-oss-v1-0.6b": {
+    "A": 1.3604318832787998,
+    "B": 1.3606816981507384,
+    "b_minus_a": {
+     "ci": [
+      -0.046058361743701856,
+      0.04800356598822819
+     ],
+     "mean": 0.0002498148719383475,
+     "n": 200
+    }
+   },
+   "microsoft/harrier-oss-v1-270m": {
+    "A": 1.1323376762384547,
+    "B": 1.0951227093704905,
+    "b_minus_a": {
+     "ci": [
+      -0.08695289437929109,
+      0.013869163203319835
+     ],
+     "mean": -0.037214966867964085,
+     "n": 200
+    }
+   },
+   "potion": {
+    "A": 1.195855675361522,
+    "B": 1.2081572572545258,
+    "b_minus_a": {
+     "ci": [
+      -0.0292403878217944,
+      0.05450606809793659
+     ],
+     "mean": 0.012301581893004059,
+     "n": 200
+    }
+   },
+   "wordllama": {
+    "A": 0.8690261983937504,
+    "B": 0.8994957312397096,
+    "b_minus_a": {
+     "ci": [
+      -0.013414138484952374,
+      0.07558291334966782
+     ],
+     "mean": 0.03046953284595937,
+     "n": 200
+    }
+   }
+  },
+  "seed": 2002
+ },
+ "learning_rate": {
+  "c2_arm4_seed1_val_loglik": -1.5198148004735865,
+  "choice": 0.0003,
+  "criterion": "mean log-likelihood of the person's word on C1's val turns, arm B, LoRA seed 1, chosen template",
+  "failed": false,
+  "runs": {
+   "0.0001": "lr1e-4-s1",
+   "0.0003": "lr3e-4-s1"
+  },
+  "val_loglik": {
+   "0.0001": -1.4962451592285975,
+   "0.0003": -1.4248989977675866
+  },
+  "val_top1": {
+   "0.0001": 0.5843793584379359,
+   "0.0003": 0.6150627615062761
+  }
+ },
+ "plan": "experiments/plans/C8.md",
+ "primary": {
+  "ci": [
+   0.008786960811519135,
+   0.05858277879475483
+  ],
+  "mean": 0.03327283726557773,
+  "metric": "top-1 of arm B (human plus teacher, mean of 3 seeds) minus arm A (C2's arm 4, mean of 3 seeds), paired by turn",
+  "n": 551
+ },
+ "runs": {
+  "b-s1": {
+   "batch": 64,
+   "boards": 200,
+   "device": "cuda",
+   "epochs": 1,
+   "evaluate": "test",
+   "gpu": "NVIDIA A10G",
+   "lr": 0.0003,
+   "model": "Qwen/Qwen3-Embedding-0.6B",
+   "out_dir": "/tmp/out",
+   "rank": 16,
+   "rows": 23496,
+   "scheme": "game",
+   "seed": 1,
+   "sources": "cultural+teacher",
+   "teacher": "runs/c8/label/teacher.jsonl",
+   "teacher_sha256": "ba6f3adac7275a520232508c182d58b6eb1dd54f35bd9fb9130b64931c6e89a6"
+  },
+  "b-s2": {
+   "batch": 64,
+   "boards": 200,
+   "device": "cuda",
+   "epochs": 1,
+   "evaluate": "test",
+   "gpu": "NVIDIA A10G",
+   "lr": 0.0003,
+   "model": "Qwen/Qwen3-Embedding-0.6B",
+   "out_dir": "/tmp/out",
+   "rank": 16,
+   "rows": 23496,
+   "scheme": "game",
+   "seed": 2,
+   "sources": "cultural+teacher",
+   "teacher": "runs/c8/label/teacher.jsonl",
+   "teacher_sha256": "ba6f3adac7275a520232508c182d58b6eb1dd54f35bd9fb9130b64931c6e89a6"
+  },
+  "b-s3": {
+   "batch": 64,
+   "boards": 200,
+   "device": "cuda",
+   "epochs": 1,
+   "evaluate": "test",
+   "gpu": "NVIDIA A10G",
+   "lr": 0.0003,
+   "model": "Qwen/Qwen3-Embedding-0.6B",
+   "out_dir": "/tmp/out",
+   "rank": 16,
+   "rows": 23496,
+   "scheme": "game",
+   "seed": 3,
+   "sources": "cultural+teacher",
+   "teacher": "runs/c8/label/teacher.jsonl",
+   "teacher_sha256": "ba6f3adac7275a520232508c182d58b6eb1dd54f35bd9fb9130b64931c6e89a6"
+  },
+  "c-s1": {
+   "batch": 64,
+   "boards": 200,
+   "device": "cuda",
+   "epochs": 1,
+   "evaluate": "test",
+   "gpu": "NVIDIA A10G",
+   "lr": 0.0003,
+   "model": "Qwen/Qwen3-Embedding-0.6B",
+   "out_dir": "/tmp/out",
+   "rank": 16,
+   "rows": 18676,
+   "scheme": "game",
+   "seed": 1,
+   "sources": "teacher",
+   "teacher": "runs/c8/label/teacher.jsonl",
+   "teacher_sha256": "ba6f3adac7275a520232508c182d58b6eb1dd54f35bd9fb9130b64931c6e89a6"
+  },
+  "c-s2": {
+   "batch": 64,
+   "boards": 200,
+   "device": "cuda",
+   "epochs": 1,
+   "evaluate": "test",
+   "gpu": "NVIDIA A10G",
+   "lr": 0.0003,
+   "model": "Qwen/Qwen3-Embedding-0.6B",
+   "out_dir": "/tmp/out",
+   "rank": 16,
+   "rows": 18676,
+   "scheme": "game",
+   "seed": 2,
+   "sources": "teacher",
+   "teacher": "runs/c8/label/teacher.jsonl",
+   "teacher_sha256": "ba6f3adac7275a520232508c182d58b6eb1dd54f35bd9fb9130b64931c6e89a6"
+  },
+  "c-s3": {
+   "batch": 64,
+   "boards": 200,
+   "device": "cuda",
+   "epochs": 1,
+   "evaluate": "test",
+   "gpu": "NVIDIA A10G",
+   "lr": 0.0003,
+   "model": "Qwen/Qwen3-Embedding-0.6B",
+   "out_dir": "/tmp/out",
+   "rank": 16,
+   "rows": 18676,
+   "scheme": "game",
+   "seed": 3,
+   "sources": "teacher",
+   "teacher": "runs/c8/label/teacher.jsonl",
+   "teacher_sha256": "ba6f3adac7275a520232508c182d58b6eb1dd54f35bd9fb9130b64931c6e89a6"
+  },
+  "d-s1": {
+   "batch": 64,
+   "boards": 200,
+   "device": "cuda",
+   "epochs": 1,
+   "evaluate": "test",
+   "gpu": "NVIDIA A10G",
+   "lr": 0.0003,
+   "model": "Qwen/Qwen3-Embedding-0.6B",
+   "out_dir": "/tmp/out",
+   "rank": 16,
+   "rows": 4818,
+   "scheme": "game",
+   "seed": 1,
+   "sources": "relabeled",
+   "teacher": "runs/c8/label/teacher.jsonl",
+   "teacher_sha256": "ba6f3adac7275a520232508c182d58b6eb1dd54f35bd9fb9130b64931c6e89a6"
+  },
+  "d-s2": {
+   "batch": 64,
+   "boards": 200,
+   "device": "cuda",
+   "epochs": 1,
+   "evaluate": "test",
+   "gpu": "NVIDIA A10G",
+   "lr": 0.0003,
+   "model": "Qwen/Qwen3-Embedding-0.6B",
+   "out_dir": "/tmp/out",
+   "rank": 16,
+   "rows": 4818,
+   "scheme": "game",
+   "seed": 2,
+   "sources": "relabeled",
+   "teacher": "runs/c8/label/teacher.jsonl",
+   "teacher_sha256": "ba6f3adac7275a520232508c182d58b6eb1dd54f35bd9fb9130b64931c6e89a6"
+  },
+  "d-s3": {
+   "batch": 64,
+   "boards": 200,
+   "device": "cuda",
+   "epochs": 1,
+   "evaluate": "test",
+   "gpu": "NVIDIA A10G",
+   "lr": 0.0003,
+   "model": "Qwen/Qwen3-Embedding-0.6B",
+   "out_dir": "/tmp/out",
+   "rank": 16,
+   "rows": 4818,
+   "scheme": "game",
+   "seed": 3,
+   "sources": "relabeled",
+   "teacher": "runs/c8/label/teacher.jsonl",
+   "teacher_sha256": "ba6f3adac7275a520232508c182d58b6eb1dd54f35bd9fb9130b64931c6e89a6"
+  },
+  "lr1e-4-s1": {
+   "batch": 64,
+   "boards": 200,
+   "device": "cuda",
+   "epochs": 1,
+   "evaluate": "val",
+   "gpu": "NVIDIA A10G",
+   "lr": 0.0001,
+   "model": "Qwen/Qwen3-Embedding-0.6B",
+   "out_dir": "/tmp/out",
+   "rank": 16,
+   "rows": 23496,
+   "scheme": "game",
+   "seed": 1,
+   "sources": "cultural+teacher",
+   "teacher": "runs/c8/label/teacher.jsonl",
+   "teacher_sha256": "ba6f3adac7275a520232508c182d58b6eb1dd54f35bd9fb9130b64931c6e89a6"
+  },
+  "lr3e-4-s1": {
+   "batch": 64,
+   "boards": 200,
+   "device": "cuda",
+   "epochs": 1,
+   "evaluate": "val",
+   "gpu": "NVIDIA A10G",
+   "lr": 0.0003,
+   "model": "Qwen/Qwen3-Embedding-0.6B",
+   "out_dir": "/tmp/out",
+   "rank": 16,
+   "rows": 23496,
+   "scheme": "game",
+   "seed": 1,
+   "sources": "cultural+teacher",
+   "teacher": "runs/c8/label/teacher.jsonl",
+   "teacher_sha256": "ba6f3adac7275a520232508c182d58b6eb1dd54f35bd9fb9130b64931c6e89a6"
+  }
+ },
+ "teacher": {
+  "agreement_with_people_on_train": {
+   "ci": [
+    0.6409832356913076,
+    0.6755374108632444
+   ],
+   "mean": 0.6583644665836447,
+   "n": 4818,
+   "unlabeled": 2
+  },
+  "repeats": {
+   "label_changed": 11,
+   "reply_changed": 67,
+   "sent": 200,
+   "times": 2,
+   "turns": 100
+  },
+  "teacher_sha256": "ba6f3adac7275a520232508c182d58b6eb1dd54f35bd9fb9130b64931c6e89a6",
+  "turns": {
+   "relabeled": {
+    "labeled": 4818,
+    "named_none": 2,
+    "sent": 4820,
+    "stopped": 0,
+    "truncated": 74
+   },
+   "resampled": {
+    "labeled": 18676,
+    "named_none": 604,
+    "sent": 19280,
+    "stopped": 0,
+    "truncated": 315
+   }
+  }
+ },
+ "turns": 551
+}

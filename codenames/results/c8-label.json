@@ -1,0 +1,85 @@
+{
+ "plan": "experiments/plans/C8.md",
+ "teacher": "gpt-oss-120b",
+ "model": {
+  "repo": "openai/gpt-oss-120b",
+  "provider": "deepinfra",
+  "extra": {
+   "reasoning_effort": "low"
+  },
+  "price": [
+   0.037,
+   0.16999999999999998
+  ]
+ },
+ "params": {
+  "max_tokens": 1024,
+  "temperature": 0.0,
+  "seed": 0
+ },
+ "seed": 8000,
+ "k": 4,
+ "p_replace": 0.5,
+ "vocab": 100,
+ "turns": {
+  "resampled": {
+   "sent": 19280,
+   "labeled": 18676,
+   "named_none": 604,
+   "stopped": 0,
+   "truncated": 315
+  },
+  "relabeled": {
+   "sent": 4820,
+   "labeled": 4818,
+   "named_none": 2,
+   "stopped": 0,
+   "truncated": 74
+  }
+ },
+ "repeats": {
+  "turns": 100,
+  "times": 2,
+  "sent": 200,
+  "label_changed": 11,
+  "reply_changed": 67
+ },
+ "spent": 0.9864870500000008,
+ "cap": 2.5,
+ "seconds": 8752.4,
+ "calls": {
+  "calls": 24300,
+  "failed": 0,
+  "retried": 527,
+  "cost": 0.9864870499999999,
+  "cost_per_call": 4.059617489711934e-05,
+  "cost_max": 0.00017977799999999999,
+  "cost_sources": {
+   "listed price": 24300
+  },
+  "truncated": 396,
+  "completion_tokens_mean": 207.77432098765433,
+  "reasoning_tokens_mean": 0,
+  "think_in_text": 0,
+  "seconds_mean": 22.780387242798355,
+  "served_as": {
+   "openai/gpt-oss-120b": 24300
+  },
+  "errors": [
+   "HfHubHTTPError: 429 Too Many Requests (5 shown in label.json; 527 calls retried, none failed)"
+  ]
+ },
+ "teacher_sha256": "ba6f3adac7275a520232508c182d58b6eb1dd54f35bd9fb9130b64931c6e89a6",
+ "source": "runs/c8/label/label.json in the private dataset, job 6aff160aefaf5e14f4b1932c at commit 4fbf023fe0aada7ec68e66d204cfae31690444f9; train_hits checked by its SHA-256 (6ea7cccd...) in job 6aff38d3efaf5e14f4b1ce7c",
+ "named_none_replies": "all 606 were empty replies (596 with finish 'stop', 10 cut off at the token cap)",
+ "agreement_with_people_on_train": {
+  "mean": 0.6583644665836447,
+  "ci": [
+   0.6409832356913076,
+   0.6755374108632444
+  ],
+  "n": 4818,
+  "unlabeled": 2
+ },
+ "agreement_note": "from train_hits in runs/c8/label/label.json (SHA-256 of the string 6ea7cccda915262a4369a56e6adc2823641e5a70493ef06bef57c909c06d79a4: 3,172 hits, 1,646 misses, 2 without a label), resampling the 623 training games 10,000 times with seed 0; the per-turn string is not committed because it shows which teacher labels equal the person's word"
+}
