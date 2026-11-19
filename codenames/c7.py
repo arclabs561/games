@@ -1,0 +1,452 @@
+"""Plan C7: tables for the GRPO job, the feature policy (arm 2), and the analysis.
+
+Every board gets C6's 120 actions: the 30 clues that rl.actions shortlists in the
+EmbeddingGemma 2 space (bare template, tau from results/calibrate-game.json), from all
+of words.clue_words(), times the counts 1 to 4. Every action's exact expected turn
+value is computed under every guesser (rl.rewards). Boards:
+
+    train   step s of training uses the 16 boards dealt from seed 7000 + s
+    val     50 boards from seed 6005 (C6's validation boards; the pilot is scored here)
+    test    200 boards from seed 6004 (C6's test boards)
+
+Commands, all run on a CPU where the vectors are:
+
+    python -m codenames.c7 table --steps 300 --out DIR      # DIR/table.npz for the job,
+                                                            # DIR/local.npz for the rest
+    python -m codenames.c7 feature --data DIR --seed 1 --out OUT      # arm 2, seconds
+    python -m codenames.c7 score --data DIR --runs RUNS --out codenames/results/c7.json
+
+table.npz holds the boards, the clues and the training guessers' values on the training
+boards: everything the job needs. local.npz holds the features of rl.py and the values
+under every guesser on the val and test boards.
+"""
+
+import argparse
+import hashlib
+import json
+import random
+import time
+from pathlib import Path
+from typing import Any
+
+import numpy as np
+
+from codenames.evaluate import all_words, guess_scores
+from codenames.game import Board, deal
+from codenames.norms import eat_counts
+from codenames.players import Space, Weigher, embedding_weigher, norm_weigher, space
+from codenames.rl import NMAX, actions, fit, policy, rewards
+from codenames.rlvr import BOARDS_PER_STEP, INVALID
+from codenames.stats import DRAWS
+from codenames.study import chosen_spaces, load
+from codenames.train import adapted, items, train
+from codenames.words import board_words, clue_words
+
+GIVER = "google/embeddinggemma-2"
+TRAINING = ("wordllama", "granite", "bge", "microsoft/harrier-oss-v1-270m")
+HELD_OUT = ("potion", "Qwen/Qwen3-Embedding-0.6B", "microsoft/harrier-oss-v1-0.6b")
+MAP_SEEDS = (1, 2, 3, 4, 5)
+SHORTLIST = 30
+TRAIN_SEED, VAL_SEED, TEST_SEED = 7000, 6005, 6004
+EVAL_BOARDS = {"val": (VAL_SEED, 50), "test": (TEST_SEED, 200)}
+
+
+def deal_boards(seed: int, n: int) -> list[Board]:
+    rng = random.Random(seed)
+    return [deal(board_words(), rng) for _ in range(n)]
+
+
+def train_boards(steps: int) -> list[Board]:
+    return [b for s in range(steps) for b in deal_boards(TRAIN_SEED + s, BOARDS_PER_STEP)]
+
+
+def candidates(board: Board, sp: Space, tau: float, pool=None) -> tuple[list[str], np.ndarray]:
+    """The 30 clues in the shortlist's order, and the features (120, 7) of rl.actions;
+    action a is clue a // 4 with count a % 4 + 1. The pool is words.clue_words()."""
+    acts, phi = actions(sp, tau, board, pool or clue_words(), SHORTLIST)
+    clues = [c for c, n in acts if n == 1]
+    assert [a for a in acts] == [(c, n) for c in clues for n in range(1, NMAX + 1)]
+    return clues, phi
+
+
+MAP_CHECK: dict[str, list[float]] = {}
+
+
+def potion_maps() -> dict[str, Weigher]:
+    """The potion guesser with the linear map that C1 trained on the human guesses of the
+    train games, one per training seed, each with its fitted tau (results/train-potion-game.json).
+    Each rebuilt map's top-1 on C1's test turns is kept in MAP_CHECK beside C1's."""
+    fitted = load("train-potion-game")
+    sp = space("potion", "bare", "bare", all_words())
+    out = {}
+    for seed in MAP_SEEDS:
+        a, _ = train(sp, items(sp, seed, eat=False, split="train", scheme="game"), 3, seed=seed)
+        run = fitted["runs"][str(seed)]["guess"]
+        tuned = adapted(sp, a, f"potion-map-{seed}")
+        top1 = guess_scores(tuned, "test", run["tau"], "game")["top1"]
+        MAP_CHECK[str(seed)] = [round(top1, 6), round(run["top1"], 6)]
+        out[f"potion-map/{seed}"] = embedding_weigher(tuned, run["tau"])
+    return out
+
+
+def guessers(maps: bool = True) -> dict[str, Weigher]:
+    """Every scoring guesser: the eight calibrated embedding models, EAT, and the five
+    potion maps."""
+    cal = load("calibrate-game")
+    out: dict[str, Weigher] = {
+        m: embedding_weigher(sp, tau) for m, (sp, tau) in chosen_spaces(cal).items()
+    }
+    out["eat"] = norm_weigher(eat_counts(), cal["eat"]["eps"])
+    return out | (potion_maps() if maps else {})
+
+
+def build(boards: list[Board], giver: tuple[Space, float], scorers: dict[str, Weigher], pool=None):
+    """Words, kinds, clues (B, 30), features (B, 120, 7) and values (B, 120, G)."""
+    sp, tau = giver
+    clues, phis, values = [], [], []
+    for b in boards:
+        c, phi = candidates(b, sp, tau, pool)
+        acts = [(x, n) for x in c for n in range(1, NMAX + 1)]
+        clues.append(c)
+        phis.append(phi)
+        values.append(np.stack([rewards(w, b, acts) for w in scorers.values()], axis=1))
+    return {
+        "words": np.array([b.words for b in boards]),
+        "kinds": np.array([b.kinds for b in boards]),
+        "clues": np.array(clues),
+        "phi": np.array(phis, dtype=np.float32),
+        "values": np.array(values, dtype=np.float32),
+    }
+
+
+def sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def table(steps: int, out: Path, eval_boards: dict | None = None) -> dict:
+    out.mkdir(parents=True, exist_ok=True)
+    t0 = time.perf_counter()
+    every = guessers()
+    names = list(every)
+    giver = chosen_spaces(load("calibrate-game"))[GIVER]
+    job: dict[str, Any] = {"training_guessers": np.array(TRAINING)}
+    local: dict[str, Any] = {"guessers": np.array(names)}
+    train = build(train_boards(steps), giver, {g: every[g] for g in TRAINING})
+    for k in ("words", "kinds", "clues", "values"):
+        job[f"train_{k}"] = train[k]
+    local["train_phi"] = train["phi"]
+    for split, (seed, n) in (eval_boards or EVAL_BOARDS).items():
+        part = build(deal_boards(seed, n), giver, every)
+        for k in ("words", "kinds", "clues"):
+            job[f"{split}_{k}"] = part[k]
+        local[f"{split}_phi"], local[f"{split}_values"] = part["phi"], part["values"]
+    np.savez_compressed(out / "table.npz", **job)
+    np.savez_compressed(out / "local.npz", **local)
+    meta = {
+        "steps": steps,
+        "boards": {"train": [TRAIN_SEED, steps, BOARDS_PER_STEP], **(eval_boards or EVAL_BOARDS)},
+        "giver": GIVER,
+        "training": list(TRAINING),
+        "guessers": names,
+        "table_sha256": sha256(out / "table.npz"),
+        "local_sha256": sha256(out / "local.npz"),
+        "potion_map_top1_rebuilt_and_c1": MAP_CHECK,
+        "seconds": round(time.perf_counter() - t0, 1),
+    }
+    (out / "table.json").write_text(json.dumps(meta, indent=1) + "\n")
+    return meta
+
+
+def read_data(folder: Path) -> dict:
+    job, local = np.load(folder / "table.npz"), np.load(folder / "local.npz")
+    out = {k: job[k] for k in job.files} | {k: local[k] for k in local.files}
+    out["guessers"] = [str(g) for g in out["guessers"]]
+    out["training_guessers"] = [str(g) for g in out["training_guessers"]]
+    return out
+
+
+# Arm 2: the seven-feature policy of rl.py on the same boards and candidates.
+def feature_policy(data: dict, seed: int, steps: int = 400, lr: float = 0.05) -> dict:
+    """rl.fit at its defaults against the training guessers, on the training boards of
+    the table, and its greedy pick on every val and test board."""
+    tr = [
+        (phi, {g: data["train_values"][b, :, j] for j, g in enumerate(data["training_guessers"])})
+        for b, phi in enumerate(data["train_phi"])
+    ]
+    t0 = time.perf_counter()
+    params = fit(tr, data["training_guessers"], steps, lr, seed)
+    f = data["train_phi"].shape[2]
+    theta, mu, sd = params[:f], params[f : 2 * f], params[2 * f :]
+    picks = {}
+    for split in EVAL_BOARDS:
+        if f"{split}_phi" in data:
+            picks[split] = [
+                int(np.argmax(policy(theta, (phi - mu) / sd))) for phi in data[f"{split}_phi"]
+            ]
+    return {
+        "seed": seed,
+        "steps": steps,
+        "lr": lr,
+        "theta": theta.round(4).tolist(),
+        "picks": picks,
+        "seconds": round(time.perf_counter() - t0, 1),
+    }
+
+
+# The bootstrap over boards and seed pairs.
+def two_way_draws(n_seeds: int, n_boards: int, draws: int = DRAWS, seed: int = 0):
+    """(draws, n_seeds) and (draws, n_boards) multinomial counts: each replicate draws the
+    seed pairs and, once for all of them, the boards, with replacement."""
+    rng = np.random.default_rng(seed)
+    cs = rng.multinomial(n_seeds, np.full(n_seeds, 1 / n_seeds), size=draws)
+    cb = rng.multinomial(n_boards, np.full(n_boards, 1 / n_boards), size=draws)
+    return cs, cb
+
+
+def two_way(d: np.ndarray, cs: np.ndarray, cb: np.ndarray) -> np.ndarray:
+    """Replicates of the mean of d (seeds, boards) under the draws."""
+    s, b = d.shape
+    return np.einsum("rs,sb,rb->r", cs, d, cb) / (s * b)
+
+
+def two_way_exact(d: np.ndarray) -> dict[float, float]:
+    """The exact distribution of the two-way bootstrap mean, for a few seeds and boards:
+    every multiset of seeds and of boards, with its multinomial probability."""
+    from collections import Counter
+    from itertools import combinations_with_replacement
+    from math import factorial
+
+    def multisets(n: int):
+        for combo in combinations_with_replacement(range(n), n):
+            k = Counter(combo)
+            ways = factorial(n)
+            for c in k.values():
+                ways //= factorial(c)
+            yield np.bincount(combo, minlength=n), ways / n**n
+
+    out: dict[float, float] = {}
+    s, b = d.shape
+    for cs, ps in multisets(s):
+        for cb, pb in multisets(b):
+            key = round(float(cs @ d @ cb) / (s * b), 12)
+            out[key] = out.get(key, 0.0) + ps * pb
+    return out
+
+
+def interval(d: np.ndarray, draws: int = DRAWS, seed: int = 0) -> dict:
+    d = np.asarray(d, dtype=float)
+    cs, cb = two_way_draws(*d.shape, draws, seed)
+    reps = two_way(d, cs, cb)
+    lo, hi = np.percentile(reps, [2.5, 97.5])
+    return {
+        "mean": float(d.mean()),
+        "ci": [float(lo), float(hi)],
+        "per_seed": d.mean(axis=1).round(4).tolist(),
+        "share_at_or_below_0": float((reps <= 0).mean()),
+    }
+
+
+def values_of(picks: list[int | None], values: np.ndarray, fallback: np.ndarray) -> np.ndarray:
+    """(boards, guessers) values of the picked actions; a reply with no listed clue gets
+    the fallback action (C6's rule: the embedding giver's first choice)."""
+    idx = np.array([fallback[b] if a is None else a for b, a in enumerate(picks)])
+    return values[np.arange(len(idx)), idx]
+
+
+def behavior(picks: list[int], clues: np.ndarray, first: np.ndarray) -> dict:
+    """Share of boards where the pick is the first choice, mean count, mean rarity
+    (max(0, 3.5 - Zipf), as in rl.py) and the number of distinct clues."""
+    from codenames.words import zipf
+
+    words = [str(clues[b, a // NMAX]) for b, a in enumerate(picks)]
+    return {
+        "first_choice": float(np.mean(np.array(picks) == first)),
+        "mean_count": float(np.mean([a % NMAX + 1 for a in picks])),
+        "rarity": float(np.mean([max(0.0, 3.5 - zipf(w)) for w in words])),
+        "distinct_clues": len(set(words)),
+    }
+
+
+def windows(curve: list[dict], width: int = 20) -> list[dict]:
+    """Means over steps [0, 20), [20, 40), ... of the reward, the share of -1 replies
+    and TRL's entropy."""
+    out = []
+    for lo in range(0, len(curve), width):
+        part = curve[lo : lo + width]
+        row = {"steps": [part[0]["step"], part[-1]["step"]]}
+        row["mean_reward"] = round(float(np.mean([c["mean_reward"] for c in part])), 4)
+        row["invalid"] = round(float(np.mean([c["invalid"] for c in part])), 4)
+        ent = [c["trl"]["entropy"] for c in part if "entropy" in c.get("trl", {})]
+        if ent:
+            row["entropy"] = round(float(np.mean(ent)), 4)
+        out.append(row)
+    return out
+
+
+def read_runs(runs: Path, split: str) -> tuple[dict[int, Path], dict[int, dict]]:
+    """Language-model runs (folders with picks.json) scored on split, and feature-policy
+    runs (feature.json), by seed."""
+    lm, fp = {}, {}
+    for path in sorted(runs.glob("**/picks.json")):
+        cfg = json.loads((path.parent / "config.json").read_text())
+        if cfg.get("eval") == split and not cfg.get("tiny"):
+            assert cfg["seed"] not in lm, f"two runs of seed {cfg['seed']}"
+            lm[cfg["seed"]] = path.parent
+    for path in sorted(runs.glob("**/feature.json")):
+        run = json.loads(path.read_text())
+        fp[run["seed"]] = run
+    return lm, fp
+
+
+def score(data: dict, runs: Path, split: str = "test") -> dict:
+    """Arm 1 minus arm 2 under the held-out guessers, the potion maps and EAT, paired by
+    board and by seed pair; with the secondary metrics of the plan."""
+    names = data["guessers"]
+    col = {g: i for i, g in enumerate(names)}
+    values = data[f"{split}_values"]  # (B, 120, G)
+    n_boards = values.shape[0]
+    first = values[:, :, col[GIVER]].argmax(axis=1)
+    groups = {
+        "held_out": [col[g] for g in HELD_OUT],
+        "training": [col[g] for g in TRAINING],
+        "potion_map": [col[f"potion-map/{s}"] for s in MAP_SEEDS],
+        "eat": [col["eat"]],
+    }
+
+    def summary(v: np.ndarray) -> dict[str, np.ndarray]:  # (..., B, G) -> (..., B)
+        return {k: v[..., idx].mean(axis=-1) for k, idx in groups.items()}
+
+    lm_dirs, fp = read_runs(runs, split)
+    lm = {s: json.loads((d / "picks.json").read_text()) for s, d in lm_dirs.items()}
+    seeds = sorted(set(lm) & set(fp))
+    out: dict = {"split": split, "boards": int(n_boards), "seeds": seeds, "guessers": names}
+    if not seeds:
+        return out
+    acts1 = {s: [r["action"] for r in lm[s]["trained"]] for s in seeds}
+    arm1 = np.stack([values_of(acts1[s], values, first) for s in seeds])
+    arm2 = np.stack([values[np.arange(n_boards), fp[s]["picks"][split]] for s in seeds])
+    s1, s2 = summary(arm1), summary(arm2)
+    out["difference"] = {k: interval(s1[k] - s2[k]) for k in groups}
+    out["arm1"] = {k: interval(s1[k]) for k in groups}
+    out["arm2"] = {k: interval(s2[k]) for k in groups}
+    out["gap_training_minus_held_out"] = {
+        "arm1": interval(s1["training"] - s1["held_out"]),
+        "arm2": interval(s2["training"] - s2["held_out"]),
+    }
+    # A reply with no listed clue valued at -1 under every guesser, instead of the fallback.
+    minus = arm1.copy()
+    for i, s in enumerate(seeds):
+        minus[i, [b for b, a in enumerate(acts1[s]) if a is None]] = INVALID
+    out["difference_invalid_as_minus_1"] = interval(summary(minus)["held_out"] - s2["held_out"])
+
+    untrained = values_of([r["action"] for r in lm[seeds[0]]["untrained"]], values, first)
+    base = {
+        "first_choice": values[np.arange(n_boards), first],
+        "uniform": values.mean(axis=1),
+        "oracle_held_out": values[
+            np.arange(n_boards), values[:, :, groups["held_out"]].mean(axis=2).argmax(axis=1)
+        ],
+        "untrained": untrained,
+    }
+    out["baselines"] = {}
+    for name, x in base.items():
+        bs = summary(x)
+        out["baselines"][name] = {k: float(v.mean()) for k, v in bs.items()}
+        if name in ("first_choice", "untrained"):
+            out["baselines"][name]["arm1_minus_this"] = {
+                k: interval(s1[k] - bs[k][None, :]) for k in groups
+            }
+    out["arm2_all_seeds"] = {
+        str(s): {
+            k: float(v.mean())
+            for k, v in summary(values[np.arange(n_boards), r["picks"][split]]).items()
+        }
+        for s, r in sorted(fp.items())
+    }
+    out["invalid"] = {str(s): sum(a is None for a in acts1[s]) for s in seeds}
+    out["invalid"]["untrained"] = sum(r["action"] is None for r in lm[seeds[0]]["untrained"])
+    clues = data[f"{split}_clues"]
+    filled = {s: [first[b] if a is None else a for b, a in enumerate(acts1[s])] for s in seeds}
+    out["behavior"] = {
+        "arm1": {str(s): behavior(filled[s], clues, first) for s in seeds},
+        "arm2": {str(s): behavior(r["picks"][split], clues, first) for s, r in sorted(fp.items())},
+        "untrained": behavior(
+            [
+                first[b] if r["action"] is None else r["action"]
+                for b, r in enumerate(lm[seeds[0]]["untrained"])
+            ],
+            clues,
+            first,
+        ),
+    }
+    out["per_board"] = {
+        "arm1": {
+            str(s): {"picks": acts1[s], "values": arm1[i].round(4).tolist()}
+            for i, s in enumerate(seeds)
+        },
+        "arm2": {
+            str(s): {
+                "picks": r["picks"][split],
+                "values": values[np.arange(n_boards), r["picks"][split]].round(4).tolist(),
+            }
+            for s, r in sorted(fp.items())
+        },
+    }
+    out["runs"] = {}
+    for s, d in sorted(lm_dirs.items()):
+        cfg = json.loads((d / "config.json").read_text())
+        timing = json.loads((d / "timings.json").read_text())
+        curve = json.loads((d / "curves.json").read_text())
+        out["runs"][str(s)] = {
+            "curves_every_20_steps": windows(curve),
+            "since_container_start": timing.get("since_container_start"),
+            "config": {
+                k: cfg.get(k)
+                for k in (
+                    "steps",
+                    "lr",
+                    "gpu",
+                    "versions",
+                    "trainable_parameters",
+                    "max_memory_gb",
+                    "fla",
+                )
+            },
+        }
+    return out
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    sub = parser.add_subparsers(dest="cmd", required=True)
+    t = sub.add_parser("table")
+    t.add_argument("--steps", type=int, default=300)
+    t.add_argument("--eval-boards", type=int, default=None, help="first n of val and test")
+    t.add_argument("--out", type=Path, required=True)
+    f = sub.add_parser("feature")
+    f.add_argument("--data", type=Path, required=True)
+    f.add_argument("--seed", type=int, required=True)
+    f.add_argument("--out", type=Path, required=True)
+    s = sub.add_parser("score")
+    s.add_argument("--data", type=Path, required=True)
+    s.add_argument("--runs", type=Path, required=True)
+    s.add_argument("--split", default="test", choices=list(EVAL_BOARDS))
+    s.add_argument("--out", type=Path, required=True)
+    args = parser.parse_args()
+    if args.cmd == "table":
+        n = args.eval_boards
+        sets = {k: (seed, n or m) for k, (seed, m) in EVAL_BOARDS.items()}
+        print(json.dumps(table(args.steps, args.out, sets), indent=1))
+    elif args.cmd == "feature":
+        args.out.mkdir(parents=True, exist_ok=True)
+        result = feature_policy(read_data(args.data), args.seed)
+        (args.out / "feature.json").write_text(json.dumps(result) + "\n")
+        print(json.dumps({k: v for k, v in result.items() if k != "picks"}))
+    else:
+        result = score(read_data(args.data), args.runs, args.split)
+        args.out.write_text(json.dumps(result, indent=1) + "\n")
+        print(json.dumps(result["difference"], indent=1))
+
+
+if __name__ == "__main__":
+    main()
