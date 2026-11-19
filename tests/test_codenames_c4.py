@@ -1,0 +1,134 @@
+"""Tests for codenames/hosted.py and codenames/c4.py, with a stub in place of the router."""
+
+import json
+
+import pytest
+
+from codenames import c4
+from codenames.game import Board
+from codenames.hosted import Hosted, Meter, Model, OverBudgetError, call_cost, visible
+from codenames.luce import ASSASSIN, NEUTRAL, OPPONENT, TEAM
+
+
+class Stub:
+    """Answers like the router: a reply text, and usage with a cost in dollars."""
+
+    def __init__(self, reply="ocean 2", cost=1e-4, fail=0, usage=None):
+        self.reply, self.cost, self.fail, self.usage = reply, cost, fail, usage
+        self.sent = []
+
+    def chat_completion(self, messages, model, extra_body=None, **params):
+        self.sent.append((messages, model, extra_body, params))
+        if self.fail:
+            self.fail -= 1
+            raise ConnectionError("try again")
+        reply = self.reply(messages[0]["content"]) if callable(self.reply) else self.reply
+        usage = self.usage or {"prompt_tokens": 200, "completion_tokens": 3, "cost": self.cost}
+        return {
+            "model": model,
+            "choices": [{"message": {"content": reply}, "finish_reason": "stop"}],
+            "usage": usage,
+        }
+
+
+MODEL = Model("org/model", "provider", {"reasoning_effort": "low"})
+
+
+def test_meter_stops_before_the_cap():
+    meter = Meter(cap=0.01)
+    hosted = Hosted(MODEL, meter, client=Stub(cost=0.003))
+    replies = []
+    with pytest.raises(OverBudgetError):
+        for _ in range(10):
+            replies.append(hosted("prompt"))
+    # Each call reserves max(0.002, twice the dearest call) = 0.006 after the first.
+    assert meter.spent <= 0.01
+    assert len(replies) == meter.calls == 2
+    assert meter.reserved == pytest.approx(0)
+
+
+def test_retries_then_logs_every_field(tmp_path):
+    log = tmp_path / "calls.jsonl"
+    stub = Stub(fail=2)
+    hosted = Hosted(MODEL, Meter(1.0), log, max_tokens=64, client=stub, sleep=lambda s: None)
+    assert hosted("the prompt") == "ocean 2"
+    rec = json.loads(log.read_text())
+    assert rec["attempts"] == 3 and len(rec["errors"]) == 2
+    assert rec["params"] == {
+        "max_tokens": 64,
+        "temperature": 0.0,
+        "seed": 0,
+        "extra_body": {"reasoning_effort": "low"},
+    }
+    assert rec["prompt"] == "the prompt" and rec["cost"] == 1e-4
+    assert stub.sent[-1][2] == {"reasoning_effort": "low"}
+
+
+def test_a_call_that_always_fails_returns_empty_and_costs_nothing(tmp_path):
+    meter = Meter(1.0)
+    hosted = Hosted(MODEL, meter, tmp_path / "c.jsonl", client=Stub(fail=9), sleep=lambda s: None)
+    assert hosted("p") == ""
+    assert meter.spent == 0 and meter.calls == 1
+
+
+def test_cost_without_a_reported_cost_is_overcounted():
+    assert call_cost({"cost": 2e-5}) == (2e-5, "reported")
+    cost, source = call_cost({"prompt_tokens": 1_000_000, "completion_tokens": 0})
+    assert source == "fallback price" and cost == 3.0
+
+
+def test_think_blocks_are_removed():
+    assert visible("<think>sea, wave</think>\nOCEAN 2") == "OCEAN 2"
+    assert visible("<think>never closed") == ""
+
+
+BOARD = Board(
+    ("whale", "ship", "sail", "bank", "pen", "nurse", "bomb"),
+    (TEAM, TEAM, TEAM, OPPONENT, NEUTRAL, NEUTRAL, ASSASSIN),
+)
+
+
+def test_clue_replies_are_read_with_a_reason_when_they_fail():
+    assert c4.read_clue("**OCEAN** 3", BOARD) == {"clue": "ocean", "count": 3, "why": None}
+    assert c4.read_clue("", BOARD)["why"] == "empty"
+    assert c4.read_clue("ocean", BOARD)["why"] == "unparsed"
+    assert c4.read_clue("ship 2", BOARD)["why"] == "board word"
+    assert c4.read_clue("sea 0", BOARD)["why"] == "count below 1"
+
+
+def test_rankings_count_the_board_words_named():
+    r = c4.read_ranking("Ship\nsail\nthe ship", BOARD.words)
+    assert r["named"] == 2 and r["ranking"][:2] == ["ship", "sail"]
+    assert len(r["ranking"]) == len(BOARD.words)
+
+
+def test_pilot_end_to_end(tmp_path, monkeypatch):
+    def reply(prompt):
+        if prompt.startswith("You are the spymaster"):
+            return "maritime 2"
+        return "\n".join(prompt.split("Board words:\n")[1].split()[:2])
+
+    stubs = {}
+
+    def hosted(model, meter, log, max_tokens):
+        stub = stubs.setdefault(model.repo, Stub(reply))
+        return Hosted(model, meter, log, max_tokens, client=stub)
+
+    monkeypatch.setattr(c4, "Hosted", hosted)
+    models = ["gpt-oss-120b", "qwen3-32b"]
+    summary = c4.pilot(models, seed=1, n=4, meter=Meter(1.0), out=tmp_path, repeats=2)
+    for name in models:
+        s = summary["models"][name]
+        assert s["give"]["clues"] == 4 and s["guess"]["turns"] == 4
+        assert s["guess"]["named_mean"] == 2 and s["repeat"] == {"sent": 4, "changed": 0}
+        assert s["calls"]["calls"] == 4 + 4 + 4 and s["calls"]["failed"] == 0
+        assert s["calls"]["cost"] == pytest.approx(12e-4)
+    assert summary["spent"] == pytest.approx(24e-4)
+    given = json.loads((tmp_path / "give-qwen3-32b-1.json").read_text())
+    assert [r["clue"] for r in given["rows"]] == ["maritime"] * 4
+
+
+def test_boards_follow_the_study_deal():
+    a, b = c4.boards(4004, 3), c4.boards(4004, 3)
+    assert [x.words for x in a] == [x.words for x in b]
+    assert a[0].words != c4.boards(4005, 1)[0].words

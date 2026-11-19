@@ -529,6 +529,7 @@ boggle = [
     { name = "wordfreq" },
 ]
 codenames = [
+    { name = "huggingface-hub" },
     { name = "numpy" },
     { name = "onnxruntime" },
     { name = "tokenizers" },
@@ -583,6 +584,7 @@ boggle = [
     { name = "wordfreq", specifier = "==3.1.1" },
 ]
 codenames = [
+    { name = "huggingface-hub", specifier = ">=1.0" },
     { name = "numpy", specifier = ">=2.5" },
     { name = "onnxruntime", specifier = ">=1.32" },
     { name = "tokenizers", specifier = ">=0.23" },
