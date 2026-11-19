@@ -1,0 +1,105 @@
+{
+ "guesses_sha256": {
+  "guess-val-gpt-oss-120b": "a831e95e169d67aef7a82cdba42e9b3fcd4b398ffc05e66717376f05262f3fea",
+  "guess-val-llama-deepseek": "051aa718e850adf6faf7672db9153527e9c4e7a6c7ea30e0663a8ee6369f4ceb",
+  "guess-val-qwen3-32b": "91226e91190a9d886fef712f324051462b23fac3cd2a3c4256807f6c7b43fa82"
+ },
+ "note": "Selection for H-guess, made on the val turns before any test turn was sent to a model.",
+ "selected": "gpt-oss-120b",
+ "splits": {
+  "val": {
+   "deepseek-v3.2": {
+    "minus_embeddinggemma": {
+     "ci": [
+      -0.02751096425652373,
+      0.0355203404274405
+     ],
+     "mean": 0.0041841004184100415,
+     "n": 717,
+     "p": 0.8236
+    },
+    "named_no_board_word": 1,
+    "top1": {
+     "ci": [
+      0.5034666909591791,
+      0.5913676800495088
+     ],
+     "mean": 0.5467224546722455,
+     "n": 717
+    }
+   },
+   "embeddinggemma-2": {
+    "top1": {
+     "ci": [
+      0.5,
+      0.586302470154591
+     ],
+     "mean": 0.5425383542538355,
+     "n": 717
+    }
+   },
+   "games": 79,
+   "gpt-oss-120b": {
+    "minus_embeddinggemma": {
+     "ci": [
+      0.04551920341394026,
+      0.10449634793472963
+     ],
+     "mean": 0.07531380753138076,
+     "n": 717,
+     "p": 0.0
+    },
+    "named_no_board_word": 0,
+    "top1": {
+     "ci": [
+      0.5761399871309073,
+      0.6610175451143054
+     ],
+     "mean": 0.6178521617852162,
+     "n": 717
+    }
+   },
+   "llama-3.3-70b": {
+    "minus_embeddinggemma": {
+     "ci": [
+      0.00420153376035729,
+      0.0721932560903149
+     ],
+     "mean": 0.03905160390516039,
+     "n": 717,
+     "p": 0.0276
+    },
+    "named_no_board_word": 0,
+    "top1": {
+     "ci": [
+      0.5326972160850106,
+      0.6302871218825966
+     ],
+     "mean": 0.5815899581589958,
+     "n": 717
+    }
+   },
+   "qwen3-32b": {
+    "minus_embeddinggemma": {
+     "ci": [
+      -0.022819750719079577,
+      0.044016945807802924
+     ],
+     "mean": 0.011157601115760111,
+     "n": 717,
+     "p": 0.5382
+    },
+    "named_no_board_word": 1,
+    "top1": {
+     "ci": [
+      0.5097463117713814,
+      0.5977342785283649
+     ],
+     "mean": 0.5536959553695955,
+     "n": 717
+    }
+   },
+   "turns": 717
+  }
+ }
+}
