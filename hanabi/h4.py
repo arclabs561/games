@@ -245,7 +245,8 @@ def behavior_rates(c: np.ndarray, games: int) -> dict:
 
 def behavior(counts: np.ndarray, members: dict[str, list[int]], deals: int) -> dict:
     """Per policy, its own actions in self-play (both seats) and in cross-play within its
-    arm (its seat in each pair), and per arm and seat in self-play and in cross-play."""
+    arm (its seat in each pair), and per arm and seat in self-play and in cross-play.
+    Counts per game are per seat: one player's actions in one game."""
     per_policy, per_arm = {}, {}
     for arm, idx in members.items():
         cross_seat = np.zeros((2, len(FEATURES)), dtype=np.int64)
@@ -254,7 +255,7 @@ def behavior(counts: np.ndarray, members: dict[str, list[int]], deals: int) -> d
             others = [j for j in idx if j != i]
             mine_cross = counts[i, others, 0].sum(axis=0) + counts[others, i, 1].sum(axis=0)
             per_policy[str(i)] = {
-                "self": behavior_rates(counts[i, i].sum(axis=0), deals),
+                "self": behavior_rates(counts[i, i].sum(axis=0), 2 * deals),  # per seat
                 "cross": behavior_rates(mine_cross, 2 * len(others) * deals),
             }
             self_seat += counts[i, i]
