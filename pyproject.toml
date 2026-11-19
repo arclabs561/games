@@ -36,6 +36,13 @@ codenames = [
     "tokenizers>=0.23",
     "wordfreq==3.1.1",
 ]
+# LoRA fine-tuning (codenames/lora.py), for a GPU job; see experiments/plans/C2.md.
+codenames-gpu = [
+    { include-group = "codenames" },
+    "peft>=0.17",
+    "sentence-transformers[train]>=5",
+    "torch>=2.9",
+]
 drive_ya_nuts = [
     "numpy>=2.5",
 ]
