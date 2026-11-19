@@ -40,6 +40,7 @@ import time
 import urllib.request
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Any, cast
 
 import numpy as np
 
@@ -347,7 +348,8 @@ def main(argv=None) -> None:
         # The Triton kernels of flash-linear-attention need a GPU. Hiding the package
         # makes transformers use its PyTorch path for Gated DeltaNet, as it does when
         # the package is absent.
-        sys.modules.setdefault("fla", None)  # type: ignore[assignment]
+        if "fla" not in sys.modules:
+            sys.modules["fla"] = cast(Any, None)
     torch = importlib.import_module("torch")
     datasets = importlib.import_module("datasets")
     peft = importlib.import_module("peft")
