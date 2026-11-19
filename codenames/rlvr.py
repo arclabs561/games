@@ -251,8 +251,10 @@ def decode_greedy(model, tok, data: Boards, batch: int = 25, max_new: int = 16) 
         new = gen[:, enc["input_ids"].shape[1] :]
         replies = tok.batch_decode(new, skip_special_tokens=True)
         for i, reply, ids in zip(idx, replies, new.tolist(), strict=True):
-            cut = not any(t in eos for t in ids)  # no end token within the cap
-            row = {"board": i, "reply": reply, "tokens": len(ids), "truncated": cut}
+            ends = [j for j, t in enumerate(ids) if t in eos]
+            cut = not ends  # no end token within the cap
+            row = {"board": i, "reply": reply, "tokens": ends[0] if ends else len(ids)}
+            row["truncated"] = cut
             out.append(row | parse(reply, data.clue_list(i), cut))
     return out
 
@@ -302,15 +304,39 @@ class Recorder:
         ]
 
 
-def stopper(start: float, minutes: float):
-    """A callback that ends training after the step during which the time ran out."""
+def stopper(
+    start: float,
+    minutes: float | None,
+    step: int | None,
+    flat: int | None = None,
+    min_steps: int = 0,
+):
+    """A callback that ends training after the step during which the time ran out, after
+    a given step, or once the last `flat` steps (and at least min_steps in all) had no
+    group with any spread of rewards. Then every advantage is 0, and so is the gradient.
+    The learning-rate schedule still spans --steps."""
     transformers = importlib.import_module("transformers")
 
     class Stop(transformers.TrainerCallback):
+        run = 0
+
+        def halt(self, state, control, why: str):
+            control.should_training_stop = True
+            print(f"stopping after step {state.global_step}: {why}", flush=True)
+
         def on_step_end(self, args, state, control, **kw):
-            if time.time() - start > 60 * minutes:
-                control.should_training_stop = True
-                print(f"stopping after step {state.global_step}: {minutes} min", flush=True)
+            if minutes is not None and time.time() - start > 60 * minutes:
+                self.halt(state, control, f"{minutes} min")
+            if step is not None and state.global_step >= step:
+                self.halt(state, control, f"step {step}")
+            return control
+
+        def on_log(self, args, state, control, logs=None, **kw):
+            if flat is None or not logs or "frac_reward_zero_std" not in logs:
+                return control
+            self.run = self.run + 1 if logs["frac_reward_zero_std"] == 1 else 0
+            if self.run >= flat and state.global_step >= min_steps:
+                self.halt(state, control, f"{flat} steps without reward spread")
             return control
 
     return Stop()
@@ -365,6 +391,19 @@ def main(argv=None) -> None:
         help="minutes since the module started after which training stops at the end of a "
         "step, so that the evaluation and the outputs still finish before the job's timeout",
     )
+    parser.add_argument(
+        "--stop-at-step",
+        type=int,
+        default=None,
+        help="end training after this step; the learning rate still decays over --steps",
+    )
+    parser.add_argument(
+        "--stop-flat",
+        type=int,
+        default=None,
+        help="end training once this many steps in a row had no reward spread in any group",
+    )
+    parser.add_argument("--min-steps", type=int, default=0, help="for --stop-flat")
     parser.add_argument("--out", type=Path, required=True)
     args = parser.parse_args(argv)
     clock = Clock()
@@ -421,9 +460,15 @@ def main(argv=None) -> None:
         train_dataset=datasets.Dataset.from_list(rows),
         processing_class=tok,
         peft_config=lora,
-        callbacks=[stopper(clock.marks["module_start"], args.stop_after)]
-        if args.stop_after is not None
-        else None,
+        callbacks=[
+            stopper(
+                clock.marks["module_start"],
+                args.stop_after,
+                args.stop_at_step,
+                args.stop_flat,
+                args.min_steps,
+            )
+        ],
     )
     trainable = sum(p.numel() for p in trainer.model.parameters() if p.requires_grad)
     clock.mark("trainer_ready")

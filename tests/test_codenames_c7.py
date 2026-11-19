@@ -269,6 +269,18 @@ def test_grpo_loop_trains_the_adapter(toy, tmp_path, monkeypatch):
     rlvr.main([*argv, "--stop-after", "0"])
     assert json.loads((early / "config.json").read_text())["steps_done"] == 1
     assert len(json.loads((early / "picks.json").read_text())["trained"]) == 3
+    at = tmp_path / "at"
+    argv = ["--tiny", "--steps", "2", "--eval", "val", "--table", str(path), "--out", str(at)]
+    rlvr.main([*argv, "--stop-at-step", "1"])
+    log = json.loads((at / "trl_log.json").read_text())
+    assert json.loads((at / "config.json").read_text())["steps_done"] == 1
+    assert log[0]["learning_rate"] == pytest.approx(2e-5)  # the schedule spans 2 steps
+    # A random model's rewards are all -1: no spread, so --stop-flat 1 ends at step 1.
+    flat = tmp_path / "flat"
+    argv = ["--tiny", "--steps", "2", "--eval", "val", "--table", str(path), "--out", str(flat)]
+    monkeypatch.setattr(rlvr, "reward", lambda reply, clues, values, cut: -1.0)
+    rlvr.main([*argv, "--stop-flat", "1", "--min-steps", "1"])
+    assert json.loads((flat / "config.json").read_text())["steps_done"] == 1
     curves = json.loads((out / "curves.json").read_text())
     assert [c["step"] for c in curves] == [0, 1] and all(c["replies"] == 128 for c in curves)
     cfg = json.loads((out / "config.json").read_text())
