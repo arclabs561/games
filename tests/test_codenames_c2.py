@@ -113,3 +113,13 @@ def test_container_start_is_in_the_past():
     start = lora.container_start()
     if start is not None:
         assert 0 < start <= time.time()
+
+
+def test_summary_keeps_hits_in_order():
+    turns = [{"clue": "a", "picked": "x", "hit": 1, "logp": -0.1}]
+    turns.append({"clue": "b", "picked": "y", "hit": 0, "logp": -2.0})
+    result = {"config": {"seed": 1}, "before": {"top1": 0.5, "turns": turns}}
+    s = lora.summary(result)
+    assert s["before"]["hits"] == "10" and "turns" not in s["before"] and "after" not in s
+    assert s["before"]["turns_sha256"] == c2.turn_digest([("a", "x"), ("b", "y")])
+    assert result["before"]["turns"] == turns  # the full result is not changed

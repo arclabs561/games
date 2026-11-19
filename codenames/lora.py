@@ -16,10 +16,12 @@ is InfoNCE over the hard negatives and the other items in the batch. Only LoRA a
 The job encodes the whole vocabulary twice, before and after training, in the same
 precision, and scores both with codenames.c2 (`--evaluate val` or `test`). It writes to
 --out-dir: scores.json, the vectors as <name>__<template>.npz, the adapter, the training
-log and timings.json (seconds since the container started, for each phase).
+log, timings.json (seconds since the container started, for each phase) and
+summary.json, a small copy of scores.json for the machine that writes the README.
 """
 
 import argparse
+import hashlib
 import importlib
 import json
 import os
@@ -30,7 +32,7 @@ from pathlib import Path
 
 import numpy as np
 
-from codenames.c2 import full_scores, guesses
+from codenames.c2 import full_scores, guesses, turn_digest
 from codenames.embed import TEMPLATES, normalize
 from codenames.evaluate import all_words
 from codenames.norms import eat_counts, held_out
@@ -139,6 +141,21 @@ def save_vectors(out_dir: Path, name: str, vecs: dict[str, np.ndarray], words: l
         np.savez_compressed(out_dir / f"{name}__{template}.npz", words=np.array(words), vectors=v)
 
 
+def summary(result: dict) -> dict:
+    """scores.json without the per-turn lists: hits as a string of 0s and 1s, and a
+    digest of the turns' clues and picks, so the order can be checked on another machine."""
+    out = {"config": result["config"]}
+    for key in ("before", "after"):
+        if key not in result:
+            continue
+        r = dict(result[key])
+        turns = r.pop("turns")
+        r["hits"] = "".join(str(t["hit"]) for t in turns)
+        r["turns_sha256"] = turn_digest([(t["clue"], t["picked"]) for t in turns])
+        out[key] = r
+    return out
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--model", default="Qwen/Qwen3-Embedding-0.6B")
@@ -224,6 +241,9 @@ def main() -> None:
             )
         clock.mark("scored")
     (args.out_dir / "scores.json").write_text(json.dumps(result, indent=1) + "\n")
+    text = json.dumps(summary(result), indent=1, sort_keys=True) + "\n"
+    (args.out_dir / "summary.json").write_text(text)
+    print("summary.json sha256", hashlib.sha256(text.encode()).hexdigest(), flush=True)
     (args.out_dir / "train_log.json").write_text(
         json.dumps(trainer.state.log_history, indent=1) + "\n"
     )
