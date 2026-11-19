@@ -11,13 +11,19 @@ model for one clue per board with the prompt of codenames.llm. It writes give-<m
 <seed>.json with every reply and the clue read from it, and calls-<model>.jsonl with
 every request. Scoring the clues needs word vectors and runs where they are:
 
-    python -m codenames.c4 newwords --runs DIR           # clue words without vectors
-    python -m codenames.c4 score --runs DIR --out codenames/results/c4-give.json
+    python -m codenames.c4 newwords --clues clues.txt --out words.txt  # no vectors yet
+    python -m codenames.c4 score --clues clues.txt --out codenames/results/c4-give.json
 
-The human-guess part (`guess`) waits for C1's game split.
+The human-guess part runs in a job too, on the turns of C1's game split
+(codenames.split), val first and test once the model is chosen:
+
+    python -m codenames.c4 guess --models all --split val --cap 1.0 --out OUT
+
+It writes guesses.txt, one character per turn (see guess_lines).
 """
 
 import argparse
+import hashlib
 import json
 import random
 import re
@@ -127,6 +133,127 @@ def give(models, seed: int, n: int, meter: Meter, out: Path, workers: int = 8) -
     return results
 
 
+def guess(models, split: str, meter: Meter, out: Path, workers: int = 8) -> dict:
+    """Part 1: each model hears the clue of every human turn in C1's game split, with
+    count 1, and its guess is the first word of llm.parse_ranking (the first board word
+    when the reply names none)."""
+    from codenames.split import turns
+
+    data = turns(f"game:{split}")
+    results = {}
+    for name in models:
+        hosted = Hosted(MODELS[name], meter, out / f"calls-{name}.jsonl", tokens(name, "guess"))
+        jobs = [
+            (
+                guesser_prompt(t.guess.clue, 1, t.guess.words),
+                {"part": "guess", "split": split, "turn": i, "game": t.game},
+            )
+            for i, t in enumerate(data)
+        ]
+        records = run_many(hosted.call, jobs, WORKERS.get(name, workers))
+        rows = []
+        for i, (t, rec) in enumerate(zip(data, records, strict=True)):
+            if rec is None:
+                rows.append({"turn": i, "game": t.game, "stopped": True})
+                continue
+            r = read_ranking(rec["reply"], t.guess.words)
+            first = r["ranking"][0]
+            rows.append(
+                {
+                    "turn": i,
+                    "game": t.game,
+                    "reply": rec["reply"],
+                    "guess": first,
+                    "named": r["named"],
+                    "hit": int(first == t.guess.picked),
+                }
+            )
+        results[name] = rows
+        record = {"model": name, **vars(MODELS[name]), "split": split, "rows": rows}
+        (out / f"guess-{name}-{split}.json").write_text(json.dumps(record, indent=1) + "\n")
+        done = [r for r in rows if not r.get("stopped")]
+        top1 = sum(int(r["hit"]) for r in done) / len(done) if done else None
+        print(name, split, len(done), "turns, top-1", top1, f"${meter.spent:.4f}", flush=True)
+    return results
+
+
+def guess_lines(guessed: dict[str, dict[str, list[dict]]]) -> str:
+    """One line per model and split, one character per turn: 1 or 0 for a hit or a miss
+    when the reply named a board word, b or a when it named none (the guess is then the
+    first board word), and - when the budget stopped the run."""
+    lines = []
+    for split, by_model in guessed.items():
+        for name, rows in by_model.items():
+            chars = "".join(
+                "-" if r.get("stopped") else ("10" if r["named"] else "ba")[1 - r["hit"]]
+                for r in rows
+            )
+            lines.append(f"{name} {split} {chars}")
+    return "\n".join(lines) + "\n"
+
+
+def repeat(name, bs, rows, seed: int, meter: Meter, out: Path, times: int = 2) -> dict:
+    """Send the giver prompts of these boards `times` more times, and count the prompts
+    whose replies were not all the same as the first."""
+    hosted = Hosted(MODELS[name], meter, out / f"calls-{name}.jsonl", tokens(name, "give"))
+    jobs = [
+        (giver_prompt(b), {"part": "repeat", "seed": seed, "board": i})
+        for i, b in enumerate(bs)
+        for _ in range(times)
+    ]
+    recs = run_many(hosted.call, jobs, WORKERS.get(name, 4))
+    replies = [r and r["reply"] for r in recs]
+    changed = sum(
+        1
+        for i in range(len(bs))
+        if any(
+            x is not None and x != rows[i].get("reply")
+            for x in replies[i * times : (i + 1) * times]
+        )
+    )
+    return {
+        "prompts": len(bs),
+        "times": times,
+        "sent": sum(1 for r in recs if r),
+        "changed": changed,
+    }
+
+
+def clue_lines(given: dict[int, dict[str, list[dict]]]) -> str:
+    """One line per model and seed: the clue and count read from each board's reply, or
+    '-' and the reason there is none. This is all that scoring needs."""
+    lines = []
+    for seed, by_model in given.items():
+        for name, rows in by_model.items():
+            cells = [
+                f"{r['clue']}/{r['count']}"
+                if r.get("clue")
+                else "-/" + ("stopped" if r.get("stopped") else r["why"].replace(" ", "-"))
+                for r in rows
+            ]
+            lines.append(" ".join([name, str(seed), *cells]))
+    return "\n".join(lines) + "\n"
+
+
+def read_clue_lines(
+    text: str,
+) -> dict[tuple[str, int], list[tuple[str | None, int | None, str | None]]]:
+    """The inverse of clue_lines: {(model, seed): [(clue, count, why) per board]}."""
+    out = {}
+    for line in text.splitlines():
+        name, seed, *cells = line.split()
+        rows: list[tuple[str | None, int | None, str | None]] = []
+        for cell in cells:
+            word, rest = cell.split("/")
+            rows.append((None, None, rest) if word == "-" else (word, int(rest), None))
+        out[(name, int(seed))] = rows
+    return out
+
+
+def sha256(text: str) -> str:
+    return hashlib.sha256(text.encode()).hexdigest()
+
+
 def call_stats(log: Path) -> dict:
     """Cost, tokens, failures and truncations over every call in one model's log."""
     recs = [json.loads(line) for line in log.read_text().splitlines()]
@@ -186,17 +313,7 @@ def pilot(models, seed: int, n: int, meter: Meter, out: Path, repeats: int = 5) 
             for r, (i, *_) in zip(recs, clues, strict=True)
             if r is not None
         ]
-        giver = Hosted(MODELS[name], meter, out / f"calls-{name}.jsonl", tokens(name, "give"))
-        again = [
-            (giver_prompt(bs[i]), {"part": "repeat", "seed": seed, "board": i})
-            for i in range(repeats)
-            for _ in range(2)
-        ]
-        recs = run_many(giver.call, again, WORKERS.get(name, 4))
-        first = [given[name][i].get("reply") for i in range(repeats) for _ in range(2)]
-        changed = sum(
-            1 for r, f in zip(recs, first, strict=True) if r is not None and r["reply"] != f
-        )
+        rep = repeat(name, bs[:repeats], given[name], seed, meter, out)
         rows = given[name]
         summary["models"][name] = {
             **vars(MODELS[name]),
@@ -215,7 +332,7 @@ def pilot(models, seed: int, n: int, meter: Meter, out: Path, repeats: int = 5) 
                 "named_all": sum(1 for x, total in named if x == total),
                 "named_mean": statistics.mean(x for x, _ in named) if named else None,
             },
-            "repeat": {"sent": sum(1 for r in recs if r is not None), "changed": changed},
+            "repeat": rep,
             "calls": call_stats(out / f"calls-{name}.jsonl"),
         }
     summary["spent"] = meter.spent
@@ -249,28 +366,65 @@ def model_list(arg: str) -> list[str]:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("what", choices=["pilot", "give"])
+    parser.add_argument("what", choices=["pilot", "give", "guess", "newwords", "score"])
+    parser.add_argument("--repeat", type=int, default=20, help="boards sent three times")
+    parser.add_argument("--split", nargs="+", default=["val"], choices=["val", "test"])
     parser.add_argument(
         "--models", default="all", help="'all' or names from MODELS, comma-separated"
     )
     parser.add_argument("--seed", type=int, nargs="+", default=[4999])
     parser.add_argument("--n", type=int, nargs="+", default=[50])
-    parser.add_argument("--cap", type=float, required=True, help="dollars this job may spend")
+    parser.add_argument("--cap", type=float, default=0.0, help="dollars this job may spend")
     parser.add_argument("--out", type=Path, required=True)
+    parser.add_argument("--clues", type=Path, help="clues.txt from a give job")
     args = parser.parse_args()
+    if args.what in ("newwords", "score"):
+        from codenames import c4score
+
+        if args.what == "newwords":
+            args.out.write_text("\n".join(c4score.new_words(args.clues.read_text())) + "\n")
+        else:
+            c4score.main(args.clues, args.out)
+        return
     args.out.mkdir(parents=True, exist_ok=True)
     meter = Meter(args.cap)
     models = model_list(args.models)
     price_models(models, args.out)
     if args.what == "pilot":
         pilot(models, args.seed[0], args.n[0], meter, args.out)
-    else:
-        for seed, n in zip(args.seed, args.n, strict=True):
-            give(models, seed, n, meter, args.out)
+    elif args.what == "guess":
+        guessed = {split: guess(models, split, meter, args.out) for split in args.split}
+        text = guess_lines(guessed)
+        (args.out / "guesses.txt").write_text(text)
         stats = {m: call_stats(args.out / f"calls-{m}.jsonl") for m in models}
-        (args.out / "give.json").write_text(
-            json.dumps({"spent": meter.spent, "cap": args.cap, "calls": stats}, indent=1) + "\n"
-        )
+        record = {
+            "spent": meter.spent,
+            "cap": args.cap,
+            "guesses_sha256": sha256(text),
+            "calls": stats,
+        }
+        (args.out / "guess.json").write_text(json.dumps(record, indent=1) + "\n")
+        print("guesses.txt sha256", record["guesses_sha256"])
+    else:
+        given = {
+            seed: give(models, seed, n, meter, args.out)
+            for seed, n in zip(args.seed, args.n, strict=True)
+        }
+        first = args.seed[0]
+        rows = boards(first, args.n[0])[: args.repeat]
+        reps = {m: repeat(m, rows, given[first][m], first, meter, args.out) for m in models}
+        text = clue_lines(given)
+        (args.out / "clues.txt").write_text(text)
+        stats = {m: call_stats(args.out / f"calls-{m}.jsonl") for m in models}
+        record = {
+            "spent": meter.spent,
+            "cap": args.cap,
+            "clues_sha256": sha256(text),
+            "repeat": reps,
+            "calls": stats,
+        }
+        (args.out / "give.json").write_text(json.dumps(record, indent=1) + "\n")
+        print("clues.txt sha256", record["clues_sha256"])
     print(f"spent ${meter.spent:.4f} of ${args.cap:.2f} in {meter.calls} calls", flush=True)
 
 

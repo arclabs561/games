@@ -128,7 +128,12 @@ def test_pilot_end_to_end(tmp_path, monkeypatch):
     for name in models:
         s = summary["models"][name]
         assert s["give"]["clues"] == 4 and s["guess"]["turns"] == 4
-        assert s["guess"]["named_mean"] == 2 and s["repeat"] == {"sent": 4, "changed": 0}
+        assert s["guess"]["named_mean"] == 2 and s["repeat"] == {
+            "prompts": 2,
+            "times": 2,
+            "sent": 4,
+            "changed": 0,
+        }
         assert s["calls"]["calls"] == 4 + 4 + 4 and s["calls"]["failed"] == 0
         assert s["calls"]["cost"] == pytest.approx(12e-4)
     assert summary["spent"] == pytest.approx(24e-4)
@@ -158,3 +163,67 @@ def test_prices_are_read_from_the_router_listing():
     assert prices == {"org/model": {"a": (0.1, 0.5)}}
     usage = {"prompt_tokens": 2_000_000, "completion_tokens": 1_000_000}
     assert call_cost(usage, prices["org/model"]["a"]) == (pytest.approx(0.7), "listed price")
+
+
+def test_clue_lines_round_trip():
+    given = {
+        7: {
+            "m": [
+                {"clue": "ocean", "count": 2},
+                {"clue": None, "why": "board word"},
+                {"stopped": True},
+            ]
+        }
+    }
+    text = c4.clue_lines(given)
+    assert text == "m 7 ocean/2 -/board-word -/stopped\n"
+    assert c4.read_clue_lines(text) == {
+        ("m", 7): [("ocean", 2, None), (None, None, "board-word"), (None, None, "stopped")]
+    }
+
+
+def test_guess_lines_mark_hits_misses_and_unparsed_replies():
+    rows = [
+        {"named": 3, "hit": 1},
+        {"named": 2, "hit": 0},
+        {"named": 0, "hit": 1},
+        {"named": 0, "hit": 0},
+        {"stopped": True},
+    ]
+    assert c4.guess_lines({"val": {"m": rows}}) == "m val 10ba-\n"
+
+
+def test_guess_reads_the_first_board_word(tmp_path, monkeypatch):
+    from codenames import split
+    from codenames.norms import Guess
+
+    turns = [
+        split.Turn("test", 0, "g1", "a", "b", Guess("sea", BOARD.words, "whale")),
+        split.Turn("test", 1, "g1", "a", "b", Guess("money", BOARD.words, "bank")),
+    ]
+    monkeypatch.setattr(split, "turns", lambda name: turns)
+
+    def hosted(model, meter, log, max_tokens):
+        return Hosted(model, meter, log, max_tokens, client=Stub("Whale\nship"))
+
+    monkeypatch.setattr(c4, "Hosted", hosted)
+    got = c4.guess(["llama-3.3-70b"], "val", Meter(1.0), tmp_path)["llama-3.3-70b"]
+    assert [r["hit"] for r in got] == [1, 0] and [r["named"] for r in got] == [2, 2]
+    assert (
+        "for 1 word(s)"
+        in json.loads((tmp_path / "calls-llama-3.3-70b.jsonl").read_text().splitlines()[0])[
+            "prompt"
+        ]
+    )
+
+
+def test_bootstrap_and_holm():
+    from codenames.c4score import bootstrap, holm
+
+    b = bootstrap([1.0] * 10)
+    assert b["mean"] == 1 and b["ci"] == [1.0, 1.0] and b["p"] == 0
+    b = bootstrap([1.0, -1.0] * 50)
+    assert b["mean"] == 0 and b["p"] == 1
+    assert holm({"a": 0.01, "b": 0.04}) == {"a": True, "b": True}
+    assert holm({"a": 0.03, "b": 0.04}) == {"a": False, "b": False}
+    assert holm({"a": 0.001, "b": 0.2}) == {"a": True, "b": False}
