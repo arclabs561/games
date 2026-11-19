@@ -13,6 +13,7 @@ Short answers, with how each is known:
 - Fine-tuning Qwen3-Embedding-0.6B with LoRA on the same training games raises its match from 43.4% to 62.6%, level with the potion map: LoRA minus the map is −0.7 points (−4.1 to 2.8). Same method, three training seeds, on an A10G GPU.
 - A giver expects to find 1.8 to 2.1 of its words per clue when the guesser shares its vectors. A guesser built on another model finds 57% to 73% of that, on average over the other seven models. A guesser that follows association counts from people finds 37% to 53%. Exact expected values for each of 200 random boards, one clue each, for eight models.
 - Hosted language models, asked with a fixed prompt, predict human guesses better than untrained embeddings and give worse clues. gpt-oss-120b picks the person's word in 65.0% of the 551 test turns (60.8% to 69.3%), 10.2 points (7.1 to 13.5) above EmbeddingGemma 2 and level with the trained guessers above. As givers, all four models tested give clues worth 0.29 to 0.89 words less per turn to seven embedding guessers they never met than the EmbeddingGemma 2 giver's. Paired intervals from resampling games or boards; one reply per prompt.
+- Adding about 19,000 turns labeled by gpt-oss-120b to those 4,820 human turns raises the LoRA encoder's match from 62.6% to 65.9%. The gain is 3.3 points (0.9 to 5.9), and the student ends level with its teacher (65.0%). Neither the teacher's labels alone nor its labels in place of the people's beat the human turns. Same method, three training seeds per arm.
 - Choosing from a list of 120 legal actions (30 clues times counts 1 to 4) proposed by the EmbeddingGemma 2 giver does not rescue the language models. The model selected on validation boards, Qwen3.8-27B, is 0.059 words per turn below the giver's own first choice (−0.116 to −0.005), and none of six models is above it. The best action in each list is 0.44 above the first choice, so the list leaves room. Exact expected values on 200 test boards with seven unseen embedding guessers; one reply per prompt.
 - A giver trained by policy gradient against six other models scores more with a seventh model it never trained with than a giver trained against its own model. The gain is 0.31 words per turn (0.26 to 0.36), averaged over 14 held-out choices and five training seeds. Population training beat self-play in all 70 runs, at a cost of 0.50 (0.46 to 0.53) with the giver's own model. The gain is smallest, 0.09 (0.001 to 0.18), when the Qwen3 giver meets harrier-oss-v1-0.6b. Against the association counts, which stand in for people, the gain is 0.39 (0.31 to 0.46). Exact rewards on 200 test boards, with a stratified bootstrap over boards and seeds, in a run planned in advance (plan C3).
 
@@ -305,6 +306,35 @@ Every interval includes 0. A guesser model that matches people 19 points more of
 
 **Exploratory** (the pilot, seed 0, learning rate 1e-4, published split). Scored on the published val turns: 0.476 untrained and 0.649 tuned. It was run to time the job; its numbers are not part of the result.
 
+## Distilling a language model's guesses
+
+This section follows `experiments/plans/C8.md` and its amendment, written before the runs. It uses the turns, metric and resampling of the two sections above.
+
+**What was done.** gpt-oss-120b, with C4's prompt and settings, heard the person's clue on 19,280 new boards and on the 4,820 training turns themselves. A new board is a training turn's board with each word replaced, with probability one half, by another word from the training boards (`distill.py`, seed 8000, four boards per turn). The replacement may not break the clue rule for the person's clue. The teacher's label is the first board word of its reply. 606 replies were empty and gave no label, 604 of them on new boards, which leaves 18,676 and 4,818 labeled turns. The student is C2's: Qwen3-Embedding-0.6B with the same LoRA settings, loss and scoring (`lora.py`). The labels come from Cultural Codes boards and from a provider's outputs, so they are in the private dataset and not in this repository.
+
+**Learning rate.** Chosen once for arms B to D, with arm B at training seed 1, by log-likelihood on the val turns: −1.50 for 1e-4 and −1.42 for 3e-4. Both are above C2's −1.52, so the plan's rule for a failed arm did not apply.
+
+**Confirmatory results** (`results/c8.json`, from the summaries in `results/c8-runs/`).
+
+| Arm | Training rows | Same word as the person (95% interval) | Per seed | Log-likelihood | EAT held-out cues |
+|---|---|---|---|---|---|
+| A. human only (C2's arm 4) | 4,820 | 0.626 (0.585–0.666) | 0.623, 0.632, 0.623 | −1.38 | 0.716 to 0.724 |
+| B. human plus teacher | 23,496 | 0.659 (0.615–0.702) | 0.652, 0.670, 0.655 | −1.30 | 0.710 to 0.733 |
+| C. teacher only | 18,676 | 0.622 (0.578–0.665) | 0.619, 0.621, 0.626 | −1.45 | 0.703 to 0.722 |
+| D. relabeled: the training turns with the teacher's word | 4,818 | 0.607 (0.562–0.652) | 0.603, 0.612, 0.606 | −1.50 | 0.708 to 0.715 |
+| gpt-oss-120b, the teacher (C4) | | 0.650 (0.608–0.693) | one reply per turn | | |
+
+- **Primary metric.** Arm B minus arm A is 0.033 (0.009 to 0.059), paired by turn, each arm averaged over its three seeds. The interval lies above 0, so by the plan's rule the teacher's turns raise the student. The plan expected to resolve a gain of 4 points or more; this one is smaller and still resolved.
+- **Against the teacher.** Arm B minus gpt-oss-120b is 0.009 (−0.021 to 0.039). The student is level with its teacher and not measurably past it.
+- **Which part helps.** Arm C minus arm A is −0.004 (−0.028 to 0.020), and arm D minus arm A −0.019 (−0.042 to 0.003). The teacher's labels on four times as many turns do as well as the people's, and on the same turns somewhat worse, within the noise. Neither source beats the human turns alone; together they do. By the plan's reading, the student had room for more data, and the teacher's labels carry part of what people do.
+- **A confound the plan did not remove.** Arm B trains on about five times as many rows as arm A, so it also takes five times as many gradient steps. Arm C takes four times as many and does not beat arm A, so the number of steps alone does not account for the gain. A human-only arm trained for five epochs was not run.
+- **The teacher.** It names the person's word on 0.658 (0.641 to 0.676) of the 4,818 training turns it labeled, with the interval from resampling 623 training games; on the test turns it scored 0.650. Of 100 new-board turns sent twice more at temperature 0 with a fixed seed, the label changed at least once on 11 and the reply text on 67.
+- **As a giver** (secondary). On C2's 200 boards, arm B as a giver differs from arm A by −0.037 to 0.030 in the expected team words found per clue. The range covers the seven other embedding guessers and the EAT guesser, with each arm averaged over three seeds. Every interval includes 0.
+- **Not run.** The plan's exploratory use of arm B to score C6's clues: C6 had not run when this plan was amended.
+- **Threats.** Cultural Codes has been public since 2023, so the teacher may have seen its turns. On a new board the person's clue may point at nothing, and the teacher still names a word. One student and one loss were tried.
+
+**Compute and cost** (`results/c8-jobs.json`). The teacher's 24,300 calls ran in one `cpu-basic` job of 2.4 hours. deepinfra served about 2.3 calls a second; 527 calls were retried after a rate limit, and none failed. The meter charged $0.99, the tokens times the listed price, plus $0.01 for two pilots on other boards (seed 8999). The eleven GPU jobs on `a10g-small` ran 3.0 to 6.0 minutes of module time each, 51 minutes in all, about $1.03 with setup (at most $2.75 at their timeouts). In all about $2.06 against a cap of $5.50; the plan expected $2.50 to $3.50. The summaries in `results/c8-runs/` were copied from the private dataset by a job (`python -m codenames.c8 collect`) and checked against the SHA-256 digests it wrote (`sha256.txt`).
+
 ## The mathematics
 
 **Exact turn odds.** For a Luce guesser with weights w over the unrevealed words, write p(S) for the chance that the first |S| picks are the team words in the set S, in some order. Then p of the empty set is 1, and
@@ -422,6 +452,34 @@ The language-model guessers also do better with the embedding giver's first choi
 
 **Cost.** Five jobs ran on `cpu-basic` through `experiments/hfrun.py`, each at the commit in its manifest (`results/c6-runs.json`). The meter adds the tokens each provider reported times the price that the router listed. Model calls cost $0.171 in all, $0.00002 to $0.00012 per call; about 50 minutes of `cpu-basic` add about $0.01. The plan expected $0.40 to $0.80, under a cap of $1.50. The plan's prompt evolution (GEPA) was not run, for the reasons in the plan's last amendment.
 
+## A language model trained to choose among legal clues
+
+Experiment C7 (`experiments/plans/C7.md`, with its two amendments of 2026-11-19) trains Qwen3.5-2B with LoRA by group-relative policy optimization (GRPO, as implemented in TRL 1.18.1). The model chooses one of C6's 120 legal actions on a board: 30 clues proposed by EmbeddingGemma 2, times the counts 1 to 4. The prompt and the reading of the reply are C6's. The reward is exact: the expected turn value of the chosen action, averaged over four training guessers, and −1 for a reply that names no listed clue. The training guessers are wordllama, granite, bge and harrier-oss-v1-270m. The comparison is the seven-feature policy of section 5 (`rl.fit` at its defaults), trained against the same four guessers on the same 4,800 training boards and candidates. Both are scored on C6's 200 test boards (seed 6004) by three guessers that neither trained with: potion, Qwen3-Embedding-0.6B and harrier-oss-v1-0.6b.
+
+**What training did.** In the pilot and in all three runs, the mean reward rose from −0.98 at the first step to about 0.75 by step 20. The share of replies that named no listed clue fell from 98% to under 1%. From about step 30 the 8 replies to a board were nearly always the same, and TRL's entropy fell from about 0.6 in the first 20 steps to below 0.05. A group of identical replies has advantage 0, so most steps had a gradient of exactly 0. The runs stopped after steps 100, 109 and 128, by the rule of the second amendment. All three trained models give the same reply on all 200 test boards: `CLUE NUMBER 1, <the first clue of the list>, 1`. They learned to copy the first listed clue with count 1. That needs nothing from the board but the order of the list. The list puts first the clue closest to some team word under EmbeddingGemma 2, which makes it a safe clue for one word. Untrained, the model named a listed clue with a number on 4 of the 200 test boards. On 184 it named none, and 12 replies ran past the 16-token cap.
+
+| Giver, on the 200 test boards | Held-out guessers (3) | Training guessers (4) | Potion map (human-fitted) | EAT counts | Same action as the first choice | Mean count | Distinct clues |
+|---|---|---|---|---|---|---|---|
+| Qwen3.5-2B, GRPO (3 seeds, the same picks) | 0.837 | 0.714 | 0.814 | 0.137 | 4% | 1.00 | 83 |
+| Feature policy (seeds 1 to 3) | 0.945 | 0.857 | 0.996 | 0.081 | 4.5% to 5% | 1.07 | 101 to 104 |
+| EmbeddingGemma 2's first choice | 0.849 | 0.586 | 0.926 | −0.127 | | | |
+| Qwen3.8-27B, C6's chosen model | 0.768 | 0.544 | 0.862 | −0.047 | | | |
+| Qwen3.5-2B untrained (first choice when it names none) | 0.850 | 0.594 | 0.919 | −0.127 | | | |
+| Uniform over the 120 actions | 0.409 | 0.244 | 0.492 | −0.148 | | | |
+| Best action for the held-out guessers | 1.350 | 0.802 | 1.533 | −0.103 | | | |
+
+Values are exact expected turn values (`luce.py`, the README's costs), averaged over boards. Intervals resample boards and seed pairs together, 10,000 times with seed 0 (`c7.interval`). A test checks that bootstrap against an exact enumeration (`results/c7.json`).
+
+- **Primary metric.** Language model minus feature policy, with the held-out guessers: −0.107 (−0.162 to −0.057). The three seed pairs give −0.106, −0.108 and −0.109. The interval lies below 0, so the trained language model did not beat the feature policy; it did worse. With the human-fitted potion map the difference is −0.183 (−0.285 to −0.096). With EAT it is 0.056 (−0.013 to 0.128).
+- **Seeds.** The three language-model runs chose the same action on every test board, so the interval reflects boards and the feature policy's seeds only. The feature policy's seeds 4 and 5 score 0.972 each.
+- **Against the baselines** (held-out guessers, secondary). The trained model minus the first choice is −0.012 (−0.104 to 0.081); minus C6's Qwen3.8-27B, 0.069 (−0.025 to 0.164). With its own training guessers it gains 0.127 (0.033 to 0.217) on the first choice.
+- **No other-play gap.** Both arms score higher with the held-out guessers than with the training ones (by 0.124 and 0.088). These held-out guessers agree more with EmbeddingGemma 2, which proposed the list, than the training ones do.
+- **Why it stopped learning.** With 8 replies per board and the first listed clue as a safe answer worth about 0.75, the policy settled on that answer within about 20 steps. From then on no group had any spread of rewards, which is where GRPO's learning signal comes from. The clip-higher bound of DAPO is meant to keep exploration going, but with one gradient step per batch it is never reached (first amendment). Three changes might avoid this collapse, and none was tested: an entropy bonus, more replies per board, or several gradient steps per batch.
+
+**Compute.** Each job ran on an `l40sx1` (L40S, $1.80 an hour) through `experiments/hfrun.py` at the commit in its manifest. A first pilot job on an `l4x1` took 38 seconds a step and was stopped after 4 steps; on the L40S a step took 13.3 seconds. In each job, cloning and installing the `codenames-gpu` group took 28 seconds, imports 12, loading the model 14 to 17 and the untrained decoding of 200 boards 42 (with the kernels' compilation). That is 96 to 103 seconds before training. Training took 1,510 to 1,910 seconds, and the trained decoding 10. Setup is thus about 6% of a job, and a Docker image with the packages installed would save at most the 40 seconds of install and imports. The five GPU jobs cost $3.73 in all and the reading jobs about $0.01 (`results/c7-jobs.json`), under the cap of $7. Waiting for an L40S took 7 to 30 minutes per job and is not counted. Adapters, every sampled reply and the full logs are in the private dataset `arclabs561/games-runs` under `runs/c7/`; `results/c7-runs/` holds the picks and curves copied from them, with the SHA-256 of each source file.
+
+**Exploratory** (the pilot, seed 0, 100 steps, scored on C6's 50 validation boards). Same behavior: the first listed clue with count 1 on every board, 0.847 with the held-out guessers against 0.973 for the feature policy's seed 0.
+
 ## Related work
 
 - Summerville et al. (2019) set up the Codenames AI competition. Kim et al. (2019) compared word2vec, GloVe and WordNet codemasters and guessers in it. They found twin pairs always win and mixed pairs often lose, and the folder reproduces that pattern with current models.
@@ -441,6 +499,9 @@ The language-model guessers also do better with the embedding giver's first choi
 | Plan C3's 70 policy-gradient runs (`c3.py`) | GitHub-hosted runners (CPU), workflow on `compute/codenames-c3`; analyzed on this machine |
 | Vectors for Qwen3-Embedding-0.6B, harrier-oss-v1-270m, harrier-oss-v1-0.6b, EmbeddingGemma 2 | GitHub-hosted runner (CPU), workflow on `compute/codenames-embed` |
 | LoRA fine-tuning (`lora.py`) | Hugging Face Jobs, `a10g-small`, through `experiments/hfrun.py` |
+| The teacher's labels for C8 (`distill.py`) | Hugging Face Jobs, `cpu-basic`, through `experiments/hfrun.py`, calling Inference Providers; analyzed on this machine (`c8.py`) |
+| C7: tables, the feature policy and the scoring (`c7.py`) | this machine |
+| C7: GRPO of Qwen3.5-2B (`rlvr.py`) | Hugging Face Jobs, `l40sx1`, through `experiments/hfrun.py` |
 | Language-model players (`llm.py`, `hosted.py`, `c4.py`) | Hugging Face Jobs, `cpu-basic`, through `experiments/hfrun.py`, calling Inference Providers; scored on this machine (`c4score.py`) |
 | Language models choosing among legal clues (`rerank.py`) | Hugging Face Jobs, `cpu-basic`, calling Inference Providers; action lists and scoring on this machine (`actions.py`, `c6score.py`) |
 | Vectors for the 15 clue words of the language models that had none | GitHub-hosted runner, workflow on `compute/codenames-embed`, for the four Hugging Face models; this machine for the other four |
@@ -451,9 +512,10 @@ The language-model guessers also do better with the embedding giver's first choi
 - Would the order of models change with SWOW, which is larger and recent?
 - Does the potion map's gain hold when every pick of a multi-pick turn is used, as White et al. do?
 - Why does a trained guesser model make a worse giver?
-- Would LoRA beat the potion map with more human data or other settings (a larger learning rate, more epochs, harrier-oss-v1-0.6b)?
+- Would LoRA beat the potion map with other settings (a larger learning rate, more epochs, harrier-oss-v1-0.6b)? Would five epochs on the human turns alone give part of the teacher's gain? Does the gain grow with more teacher turns?
 - Would language-model givers do better with a prompt that states the whole clue rule (no word contained in a board word) and the cost of the assassin, or with a retry after an illegal clue?
 - Do language-model clues fare better with people than with embedding guessers?
+- Would GRPO with an entropy bonus, more replies per board, or several gradient steps per batch keep exploring past the first listed clue (C7)?
 - Why does gpt-oss-120b return an empty reply on a fifth of C6's test boards and none of its validation boards?
 - Would the language models choose better than the embedding giver's first choice with a prompt found by GEPA, or with room to reason before the answer? C6's prompt evolution was not run.
 
@@ -476,15 +538,24 @@ uv run python -m codenames.split --check          # rebuild games and players, c
 uv run python -m codenames.c1                     # split by game, the plan's run (2 min)
 uv run python -m codenames.heldout                # split by game and player, exploratory (5 min)
 uv run python -m codenames.c2                     # LoRA results from results/c2-runs/ (1 min)
+uv run python -m codenames.c8 --giver             # C8 results from results/c8-runs/ (1 min; --giver needs the vectors)
 uv run python -m codenames.rl --giver potion --held-out bge --out codenames/results/rl-potion.json
 uv run python -m codenames.c3 --slice 0 --out OUT     # plan C3: one of its 70 runs (1 to 2 min)
 uv run python -m codenames.c3 --runs runs/C3/44547011858-1 --out codenames/results/c3.json   # from compute/codenames-c3
+uv run python -m codenames.c7 table --steps 300 --out DIR          # C7 tables (7 min)
+uv run python -m codenames.c7 feature --data DIR --seed 1 --out OUT  # C7 arm 2 (1 s)
+# C7 arm 1, inside a Hugging Face Job on an L40S (group codenames-gpu); --tiny runs it on a CPU:
+uv run --group codenames-gpu python -m codenames.rlvr --seed 1 --steps 300 --batch 64 --eval test --stop-flat 20 --min-steps 100 --stop-after 60 --table URL --table-sha256 SHA --out OUT
+uv run python -m codenames.c7 score --data DIR --runs codenames/results/c7-runs --out codenames/results/c7.json   # 1 min
 uv run --with sentence-transformers python -m codenames.embed --model Qwen/Qwen3-Embedding-0.6B
 # C4, inside a Hugging Face Job (needs HF_TOKEN), then scored here:
 uv run python -m codenames.c4 guess --models all --split val --cap 0.6 --out OUT
 uv run python -m codenames.c4 give --models all --seed 4005 4004 0 --n 50 200 200 --cap 0.4 --out OUT
 uv run python -m codenames.c4 crossguess --models all --seed 4004 --clues codenames/results/c4-clues-4004.txt --cap 0.3 --out OUT
 uv run python -m codenames.c4 score --clues clues.txt --guesses guesses.txt --crossguess crossguess.txt --out codenames/results/c4.json   # 15 min
+# C8, inside Hugging Face Jobs (needs HF_TOKEN):
+uv run python -m codenames.distill label --cap 2.5 --workers 64 --stop-after 210 --out OUT   # 2.4 h
+uv run --group codenames-gpu python -m codenames.lora --scheme game --sources cultural+teacher --lr 3e-4 --seed 1 --teacher runs/c8/label/teacher.jsonl --evaluate test --out-dir OUT
 # C6: the action lists here, the choices in a Hugging Face Job, the scores here:
 uv run python -m codenames.actions --seed 6999 6005 6004 --n 5 50 200 --out codenames/results/c6-actions.txt   # 15 s
 uv run python -m codenames.rerank choose --models all --seed 6005 --n 50 --repeat 20 --cap 0.2 --out OUT
@@ -516,8 +587,10 @@ uv run python -m codenames.rerank crossguess --models gpt-oss-120b --clues coden
 | `c3.py` | section 5 across seeds and held-out guessers: the runs of plan C3 and their analysis |
 | `actions.py` | the 120 legal actions an embedding giver proposes on a board (C6 and C7) |
 | `rerank.py`, `c6score.py` | C6: language models choosing among those actions, and the scoring |
+| `rlvr.py`, `c7.py` | C7: the GRPO job, its tables, the feature policy on the same candidates, and the analysis |
 | `llm.py` | language-model players: prompts and parsing |
 | `hosted.py` | calls to Inference Providers, with retries, a cost meter and a log of every call |
 | `c4.py`, `c4score.py` | experiment C4: the jobs that call the models, and the scoring |
+| `distill.py`, `c8.py` | experiment C8: the teacher's labels on resampled boards, and the analysis |
 | `results/*.json` | every number above, with seeds and settings |
 | `compute/codenames-embed.yml` | a copy of the workflow that computed the Hugging Face vectors |

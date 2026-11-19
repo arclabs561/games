@@ -40,9 +40,11 @@ codenames = [
 # LoRA fine-tuning (codenames/lora.py), for a GPU job; see experiments/plans/C2.md.
 codenames-gpu = [
     { include-group = "codenames" },
+    "flash-linear-attention==0.6.0",
     "peft>=0.17",
     "sentence-transformers[train]>=5",
     "torch>=2.9",
+    "trl==1.18.1",
 ]
 drive_ya_nuts = [
     "numpy>=2.5",
@@ -86,7 +88,7 @@ build-backend = "uv_build"
 
 [tool.uv.build-backend]
 module-root = ""
-module-name = ["boggle", "codenames", "drive_ya_nuts", "egyptian_ratscrew", "ev_nova", "hanabi", "mastermind", "peggle", "pokemon", "tenzi", "yahtzee"]
+module-name = ["boggle", "codenames", "drive_ya_nuts", "egyptian_ratscrew", "ev_nova", "hanabi", "mastermind", "peggle", "pokemon", "spot_it", "tenzi", "yahtzee"]
 
 [tool.ruff]
 line-length = 100
