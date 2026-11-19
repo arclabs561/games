@@ -303,6 +303,7 @@ def winnable(
     pass_first: bool = True,
     schedule=SCHEDULE,
     target: int = 0,
+    stats: dict | None = None,
 ):
     """Fast search. Returns (True, line), (False, None), or (None, None) when the node budget
     (0 for none) runs out. A line is a list of open-game moves (player, kind, card).
@@ -311,7 +312,8 @@ def winnable(
     in the heuristic order below, and a pass with limit k may take, summed along a line, at
     most k steps away from the first child. The limits grow through `schedule`, which ends
     with no limit, so a deal is declared lost only after a complete search. With a target
-    below the maximum it asks whether that score can be reached instead."""
+    below the maximum it asks whether that score can be reached instead. If `stats` is a
+    dict, its "nodes" entry is increased by the number of states expanded."""
     d = Deal(rules, deck, target)
     nr, np, h, maxh = d.nr, d.np, d.h, rules.max_hints
     failed: dict = {}  # state -> largest limit it failed under (INF: failed outright)
@@ -445,6 +447,9 @@ def winnable(
                 return False, None
     except BudgetError:
         return None, None
+    finally:
+        if stats is not None:
+            stats["nodes"] = stats.get("nodes", 0) + min(nodes, budget or nodes)
     return None, None
 
 

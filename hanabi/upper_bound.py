@@ -24,6 +24,7 @@ import time
 from collections import Counter
 from math import factorial
 
+from hanabi import dfs_solver
 from hanabi.rules import Rules, card_name, full_deck, seeded_deck
 from hanabi.solver import INF, SCHEDULE, brute_winnable, replay, root_certificates, winnable
 
@@ -107,13 +108,18 @@ def total_orders(rules: Rules) -> int:
 ATTEMPTS = ((SCHEDULE, True), ((INF,), True), (SCHEDULE, False))
 
 
-def verdict(rules: Rules, deck: list[int], budget: int = 0) -> tuple[str, list[str]]:
-    """('won' | 'lost' | 'undecided', certificates that hold at the start)."""
+def verdict(
+    rules: Rules, deck: list[int], budget: int = 0, stats: dict | None = None
+) -> tuple[str, list[str]]:
+    """('won' | 'lost' | 'undecided', certificates that hold at the start). If `stats` is a
+    dict, its "nodes" entry counts the states expanded."""
     certs = root_certificates(rules, deck)
     if certs:
         return "lost", certs
     for schedule, pass_first in ATTEMPTS:
-        ok, line = winnable(rules, deck, budget, pass_first=pass_first, schedule=schedule)
+        ok, line = winnable(
+            rules, deck, budget, pass_first=pass_first, schedule=schedule, stats=stats
+        )
         if ok:
             assert replay(rules, deck, line) == rules.max_score, "winning line does not replay"
             return "won", []
@@ -122,31 +128,67 @@ def verdict(rules: Rules, deck: list[int], budget: int = 0) -> tuple[str, list[s
     return "undecided", []
 
 
-def classify(rules: Rules, seed: int, budgets=(20000, 300000)) -> dict:
-    """The verdict on seeded deal `seed`, trying each node budget in turn until one settles
-    it. For a lost deal, also the best score it allows (an upper bound when a search ran
-    out of budget)."""
+A_BUDGETS = (20000, 300000)  # plan H1; 5,000,000 runs as separate jobs
+B_BUDGETS = (100000, 1000000)
+FREE_BUDGET = 1000000
+
+
+def classify(
+    rules: Rules,
+    seed: int,
+    budgets=A_BUDGETS,
+    solver: str = "a",
+    b_budgets=B_BUDGETS,
+    free_budget: int = FREE_BUDGET,
+) -> dict:
+    """The record of plan H1 for seeded deal `seed`.
+
+    Solver A (`hanabi.solver`) tries each node budget in turn until one settles the deal;
+    for a lost deal the record also has the best score it allows (an upper bound when a
+    search ran out of budget). With solver "both", Solver B (`hanabi.dfs_solver`, with the
+    time test only) does the same with its budgets, and every deal that solver A does not
+    find won gets the free-order test of `hanabi.dfs_solver` ("free_order": "lost",
+    "won", or "unknown" when `free_budget` states were not enough)."""
     deck = seeded_deck(rules, seed)
+    out: dict = {"seed": seed, "players": rules.players}
     t0 = time.time()
+    stats: dict = {"nodes": 0}
     for budget in budgets:
-        v, certs = verdict(rules, deck, budget)
+        v, certs = verdict(rules, deck, budget, stats)
         if v != "undecided":
             break
-    out = {"seed": seed, "verdict": v, "certificates": certs, "budget": budget}
+    out.update(verdict=v, certificates=certs, budget=budget, nodes=stats["nodes"])
+    out["seconds"] = round(time.time() - t0, 2)
     if v == "lost":
         out["best"] = best_score(rules, deck, budgets[-1])
-    out["seconds"] = round(time.time() - t0, 2)
+    if solver == "both":
+        t0 = time.time()
+        vb, nb = "undecided", 0
+        for b in b_budgets:
+            st: dict = {"nodes": 0}
+            ok, actions = dfs_solver.solve(rules, deck, b, stats=st)
+            nb += st["nodes"]
+            if ok is not None:
+                if ok:
+                    assert dfs_solver.replay_actions(rules, deck, actions) == rules.max_score
+                vb = "won" if ok else "lost"
+                break
+        out.update(verdict_b=vb, nodes_b=nb, seconds_b=round(time.time() - t0, 2))
+        if v != "won":
+            t0 = time.time()
+            ok = dfs_solver.free_order_test(rules, deck, free_budget)
+            out["free_order"] = {True: "won", False: "lost", None: "unknown"}[ok]
+            out["seconds_free"] = round(time.time() - t0, 2)
     return out
 
 
-def run_slice(players: int, start: int, n: int, budgets, path: str):
-    """Classify seeds start, ..., start + n - 1 and write one JSON record per line."""
+def run_block(players: int, seeds, path: str, **kw):
+    """Classify the seeds and write the records as a JSON list."""
     rules = Rules(players=players)
+    recs = [classify(rules, seed, **kw) for seed in seeds]
     with open(path, "w") as f:
-        for seed in range(start, start + n):
-            rec = classify(rules, seed, budgets)
-            f.write(json.dumps({"players": players, **rec}, sort_keys=True) + "\n")
-            f.flush()
+        json.dump(recs, f, sort_keys=True, separators=(",", ":"))
+        f.write("\n")
 
 
 EXACT_VARIANTS = [
@@ -277,15 +319,21 @@ def main():
     parser.add_argument("--start", type=int, default=0)
     parser.add_argument("--seeds", type=int, nargs="*", help="these seeds instead of a range")
     parser.add_argument("--budget", type=int, default=20000, help="search nodes per deal")
+    parser.add_argument("--json", metavar="OUT", help="with --sample: write the H1 records")
     parser.add_argument(
-        "--jsonl", metavar="PATH", help="with --sample: write one record per deal to PATH"
+        "--budgets", type=int, nargs="+", default=list(A_BUDGETS), help="with --json"
     )
-    parser.add_argument(
-        "--budgets", type=int, nargs="+", default=[20000, 300000], help="with --jsonl"
-    )
+    parser.add_argument("--solver", choices=["a", "both"], default="a", help="with --json")
     args = parser.parse_args()
-    if args.sample and args.jsonl:
-        run_slice(args.sample[0], args.start, args.sample[1], args.budgets, args.jsonl)
+    if args.sample and args.json:
+        seeds = args.seeds or range(args.start, args.start + args.sample[1])
+        run_block(
+            args.sample[0],
+            seeds,
+            args.json,
+            budgets=tuple(args.budgets),
+            solver=args.solver,
+        )
         return
     if args.exact:
         exact(args.check, args.more)
