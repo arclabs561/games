@@ -680,6 +680,7 @@ codenames = [
     { name = "wordfreq" },
 ]
 codenames-gpu = [
+    { name = "huggingface-hub" },
     { name = "numpy" },
     { name = "onnxruntime" },
     { name = "peft" },
@@ -744,6 +745,7 @@ codenames = [
     { name = "wordfreq", specifier = "==3.1.1" },
 ]
 codenames-gpu = [
+    { name = "huggingface-hub", specifier = ">=1.0" },
     { name = "numpy", specifier = ">=2.5" },
     { name = "onnxruntime", specifier = ">=1.32" },
     { name = "peft", specifier = ">=0.17" },
