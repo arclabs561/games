@@ -79,22 +79,59 @@ The free-order game catches all of these. In every row of the table it proves ev
 
 ### The full game, sampled
 
-`upper_bound.py --sample` classifies seeded deals 0 to 1,999 for each number of players, with a budget of 20,000 search nodes per attempt. The deals left undecided were run again with 300,000 nodes (`--seeds`). A deal that still no attempt settles is "undecided". The winnable share then lies between the won share and the won-plus-undecided share; the interval widens that range by sampling error (Wilson, 95%).
+Plan H1 ([`experiments/plans/H1.md`](../experiments/plans/H1.md)) fixed this measurement before it was run: seeded deals 0 to 19,999 for each number of players, the official rules, and two solvers.
 
-| Players | Won | Lost | Undecided | Winnable share | 95% interval |
-|---:|---:|---:|---:|---|---|
-| 2 | 1,960 | 38 | 2 | 0.9800 to 0.9810 | 0.973 to 0.986 |
-| 3 | 1,995 | 4 | 1 | 0.9975 to 0.9980 | 0.994 to 0.999 |
-| 4 | 1,999 | 0 | 1 | 0.9995 to 1 | 0.997 to 1 |
-| 5 | 1,993 | 0 | 7 | 0.9965 to 1 | 0.993 to 1 |
+- **Solver A** is `solver.winnable`, as above, with 20,000 search nodes per attempt, then 300,000 for deals left undecided, then 5,000,000.
+- **Solver B** is `dfs_solver.solve` with the time bound only, with 100,000 nodes, then 1,000,000.
 
-The larger budget settled 3 of 4 undecided three-player deals, 9 of 10 four-player deals and 11 of 18 five-player deals, all as wins, and neither two-player deal. The undecided seeds are 202 and 1725 (two players), 1144 (three), 1493 (four), and 474, 545, 612, 744, 987, 1219 and 1493 (five).
+A deal neither solver settles is "undecided". The winnable share then lies between the won share and the won-plus-undecided share, and the interval widens that range by sampling error (Wilson, 95%). The run used GitHub Actions at commit 2c2cc50 (reruns at 927ef71 and 43eb021); `results/h1.json` has a row for every deal.
 
-Every lost deal in this sample has a certificate. For two players, 25 of the 38 fail the time bound (for example, the 1s of some color come too late), 4 fail storage, and 9 fail only the pooled game. The 4 lost three-player deals fail the time bound. Every lost deal also fails the pooled game, so in this sample turn order and tokens never decide a deal on their own. They do on small decks, as shown above.
+| Players | Won | Lost | Undecided | Winnable share | 95% interval | Decided by both solvers |
+|---:|---:|---:|---:|---|---|---:|
+| 2 | 19,724 | 266 | 10 | 0.9862 to 0.9867 | 0.9845 to 0.9882 | 19,603 |
+| 3 | 19,976 | 17 | 7 | 0.9988 to 0.9992 | 0.9982 to 0.9995 | 19,928 |
+| 4 | 19,993 | 3 | 4 | 0.99965 to 0.99985 | 0.9993 to 0.9999 | 19,942 |
+| 5 | 19,986 | 1 | 13 | 0.99930 to 0.99995 | 0.9988 to 1 | 19,923 |
 
-The best score on a lost two-player deal is 24 for 30 deals, 23 for 7 and 22 for 1. So no strategy averages more than 24.977 ± 0.008 points with two players, counting undecided deals as 25. For three players the same bound is 24.998 ± 0.002. No four- or five-player deal in the sample was shown lost.
+The two solvers agree on every one of the 79,396 deals that both decide. Solver B decides fewer deals: its one bound cannot prove the deals that fail only storage or the pooled game, so it leaves most of those undecided, and some hard wins too. Seeds 0 to 1,999 give exactly what this README reported before from those seeds with Solver A alone: for two players 1,960 won, 38 lost and 2 undecided, and the same bound on the mean score, 24.9765 ± 0.008. Each seed gives the same order of cards for every number of players, so the four rows are not independent of one another; seed 18105, for instance, is lost with four players and with five.
+
+Lost deals now exist with four and with five players, though rarely: 3 of 20,000 and 1 of 20,000. All fail the time bound. In the five-player deal (seed 18105) the first red 1 and the first yellow 1 are the 16th and 17th cards drawn, which leaves 13 draws and 5 final turns for the 10 red and yellow plays and the rest.
+
+**Outside the plan.** The last-card and free-order certificates were added after the plan, and so was a third search, Solver B with all its tests as cuts, run on the deals the plan's steps left undecided. With them, every two-player deal is settled.
+
+| Players | Lost | Undecided | Winnable share | 95% interval | Mean score at most |
+|---:|---:|---:|---|---|---|
+| 2 | 276 | 0 | 0.9862 | 0.9845 to 0.9877 | 24.9838 ± 0.0021 |
+| 3 | 17 | 7 | 0.9988 to 0.9992 | 0.9982 to 0.9995 | 24.9990 ± 0.0005 |
+| 4 | 3 | 4 | 0.99965 to 0.99985 | 0.9993 to 0.9999 | 24.9998 ± 0.0002 |
+| 5 | 1 | 12 | 0.99935 to 0.99995 | 0.9989 to 1 | 24.9999 ± 0.0001 |
+
+The eleven deals that the 2,000-deal run left undecided are now settled. Two-player seeds 202 and 1725 are lost: Solver A proves it with 5,000,000 nodes, and both fail the last-card and free-order tests. Of the other nine, six are won: five-player seeds 474, 545, 744 and 1219 by Solver A with 5,000,000 nodes, 612 by Solver B, and 987 by Solver B with all its cuts. Three stay undecided: seed 1144 with three players and seed 1493 with four and with five.
+
+The deals still undecided are seeds 1144, 4071, 6398, 11087, 17647, 18356 and 19522 (three players), 1493, 11087, 12041 and 12385 (four), and 1493, 7748, 11087, 11220, 12385, 13315, 14194, 14915, 16269, 17008, 18356 and 19522 (five). No certificate proves any of them lost. The free-order game is won for 13 of them, and its search ran out of budget on the other 10.
+
+**Certificates.** Each lost deal, counted under every certificate that proves it (so a row can add up to more than its total):
+
+| Players | Lost | Time | Storage | Pooled game | Last card | Free-order game | None |
+|---:|---:|---:|---:|---:|---:|---:|---:|
+| 2 | 276 | 167 | 15 | 258 | 259 | 276 | 0 |
+| 3 | 17 | 17 | 0 | 17 | 17 | 17 | 0 |
+| 4 | 3 | 3 | 0 | 3 | 3 | 3 | 0 |
+| 5 | 1 | 1 | 0 | 1 | 1 | 1 | 0 |
+
+The free-order game proves every lost deal. The older certificates miss 18 two-player deals, the ones lost to turn order. These 18 have a common shape. Each needs a play on both turns of the final round: the free-order game with the final round pooled, so that any player may make its two plays from any hand, wins all 18, and with one pooled final play it loses all 18. And in 17 of them the last card of the deck is a 4, which the last-card test shows can never be played, so the other 4 of that color must wait in a hand. The last-card test alone proves 16 of the 18.
+
+The best score on a lost two-player deal is 24 for 225, 23 for 35, 22 for 5 and 20 for 1; deals lost only by a certificate outside the plan are counted at 24, an upper bound. So no strategy averages more than 24.9842 ± 0.0020 points with two players, counting the plan's undecided deals as 25, or 24.9838 ± 0.0021 with every deal settled. For three, four and five players the same bound is 24.9990 ± 0.0005, 24.9998 ± 0.0002 and 24.9999 ± 0.0001.
 
 Cheating bots that see their own cards but not the deck give lower bounds on the same shares. Quuxplusone's [CheatBot](https://github.com/Quuxplusone/Hanabi) wins 93.92%, 98.37%, 97.94% and 96.47% of games for two to five players. The shares above sit at or above those, as they must.
+
+**Departures from the plan.**
+
+- The plan's Solver B was a CP-SAT model, with the depth-first search as the fallback if CP-SAT could not decide full deals in about a minute each. `solver_cp.py` is that model. On all 540 deals of three small decks its verdicts match brute force, but on five full two-player deals it reached no verdict within 60 seconds each, so Solver B is the fallback. OR-Tools is declared at the top of the file, as inline metadata, rather than in a `hanabi` dependency group, because adding it to the shared lock file would downgrade protobuf for another folder.
+- The plan asked for the fallback to be written without reading `solver.py`. It was written after `solver.py` had been read, so its move order follows the same idea (plays first, then discards of useless cards, then passes). It shares no code with `solver.py`.
+- The plan named a time limit for Solver B but no value; the node budgets above were chosen before the run.
+- The plan's last step, Solver A with 5,000,000 nodes, ran in two batches. The first also ran the extra attempts and was cancelled when those proved too slow on some deals; its finished records were kept, and the 38 deals it had not finished ran again with Solver A alone. With the 40 jobs of the main run, this used 61 runner jobs, one more than the plan's cap; one of the 61 failed at once on a script error.
+- Before the plan was read, an exploratory run classified seeds 0 to 21,999 with Solver A alone, with budgets up to 3,000,000 nodes. It is kept, labeled exploratory, in `results/h1-exploratory.json`. It uses the same seeds as the plan, which the shared method discourages; because both solvers are deterministic, the confirmatory run can only repeat its verdicts, and on every deal both runs settle they agree. The two new certificates were found by looking at the exploratory run's lost deals, so their counts above are exploratory in that sense too.
 
 ### Where published agents stand
 
@@ -102,13 +139,13 @@ The bound is optimistic. Real players do not see the deck order, so the best rea
 
 | Agent, two players | Mean | Perfect | Gap to 25 | Share of the gap that no agent can close |
 |---|---:|---:|---:|---:|
-| SAD with auxiliary task (Hu and Foerster, 2020) | 24.08 | 56.1% | 0.92 | 2.6% |
-| OBL level 4 (Hu et al., 2021) | 24.10 | | 0.90 | 2.6% |
-| IPPO, entropy 0.05 (Forkel et al., 2025) | 24.48 | | 0.52 | 4.5% |
-| SAD with SPARTA search (Lerer et al., 2020) | 24.61 | 75.5% | 0.39 | 6.0% |
-| o3, minimal prompt (Ramesh et al., 2026) | 15.9 | | 9.1 | 0.3% |
+| SAD with auxiliary task (Hu and Foerster, 2020) | 24.08 | 56.1% | 0.92 | 1.7% |
+| OBL level 4 (Hu et al., 2021) | 24.10 | | 0.90 | 1.8% |
+| IPPO, entropy 0.05 (Forkel et al., 2025) | 24.48 | | 0.52 | 3.0% |
+| SAD with SPARTA search (Lerer et al., 2020) | 24.61 | 75.5% | 0.39 | 4.1% |
+| o3, minimal prompt (Ramesh et al., 2026) | 15.9 | | 9.1 | 0.2% |
 
-The last column is (25 − 24.9765) divided by the gap, with 24.9765 the two-player bound above; it carries that bound's uncertainty of about a third of its size. Language models trail by a wide margin. In "Sparks of Cooperative Reasoning" (arXiv:2601.18077), the best of 17 models averages about 15 to 18 points over 10 seeded games per setting, and in LLM-Hanabi (arXiv:2510.04980) the best five-player score is DeepSeek-R1's 30.00 on a 100-point scale. The leaderboard of the AH2AC2 challenge (arXiv:2506.21490) reports 21.04 for OBL level 4 and 9.91 for DeepSeek-R1 with H-group conventions when paired with human proxies in two-player games. With five players the information strategy's gap is 0.32 points and hanabi.rs's is 0.08; the sample shows no lost deal, so in principle nearly all of it can be closed.
+The last column is (25 − 24.9842) divided by the gap, with 24.9842 the two-player bound of plan H1 above; it carries that bound's uncertainty of about an eighth of its size. The 2,000-deal bound used before, 24.9765, gave shares about half again as large. Language models trail by a wide margin. In "Sparks of Cooperative Reasoning" (arXiv:2601.18077), the best of 17 models averages about 15 to 18 points over 10 seeded games per setting, and in LLM-Hanabi (arXiv:2510.04980) the best five-player score is DeepSeek-R1's 30.00 on a 100-point scale. The leaderboard of the AH2AC2 challenge (arXiv:2506.21490) reports 21.04 for OBL level 4 and 9.91 for DeepSeek-R1 with H-group conventions when paired with human proxies in two-player games. With five players the information strategy's gap is 0.32 points and hanabi.rs's is 0.08; only one five-player deal in 20,000 is lost, so in principle nearly all of it can be closed.
 
 ## Language-model players
 
@@ -139,7 +176,7 @@ The two solvers share the rules engine, so a bug there would fool both. The rule
 
 ## Open questions
 
-- Settle the deals still undecided (listed above). They are three-, four- and five-player deals that no certificate here proves lost, and most of them are won in the free-order game, so they may well be won; a search that uses the free-order game's winning line as a guide might find a real one.
+- Settle the 23 deals still undecided (listed above). No certificate here proves any of them lost, and 13 are won in the free-order game, so many may be won; a search guided by the free-order game's winning line might find a real one.
 - The free-order game drops tokens. No full deal here is lost to tokens alone, but some small decks are: with three players, hands of one card and one token, 24 of the 180 orderings of a four-card deck are lost though the free-order game wins them.
 - The best real (not open-information) score for each deal is unknown; Endgame-Analyzer on [git.abstractnonsen.se](https://git.abstractnonsen.se/Hanabi/Endgame-Analyzer) solves the case where players know their own cards but not the deck, for endgames.
 
