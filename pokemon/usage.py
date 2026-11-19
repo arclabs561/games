@@ -393,15 +393,37 @@ def summarize(
     return typing_rows, type_rows
 
 
+def to_id(name: str) -> str:
+    """Showdown's ID of a name: lower-case letters and digits only ('NidoranF' and 'Nidoran-F'
+    are both 'nidoranf'; 'Farfetch'd' and 'Farfetch’d' are both 'farfetchd')."""
+    return re.sub(r"[^a-z0-9]", "", name.lower())
+
+
+def by_id(sd: dict[str, Typing]) -> dict[str, str]:
+    """Showdown's display name for each ID; the IDs must be distinct."""
+    out = {to_id(n): n for n in sd}
+    assert len(out) == len(sd), "two Showdown names share an ID"
+    return out
+
+
+def resolver(sd: dict[str, Typing], base_of: dict[str, str]) -> Callable[[str], str | None]:
+    """Name in a chaos file -> identifier: through Showdown's display name for its ID, so that
+    an older spelling ('NidoranF') maps as the current one ('Nidoran-F') does."""
+    names = by_id(sd)
+    return lambda name: identifier(names.get(to_id(name), name), base_of)
+
+
 def check_names(
     names: Iterable[str], generation: int, sd: dict[str, Typing], base_of: dict[str, str]
 ) -> list[str]:
-    """Problems with a set of Showdown names: not Showdown species, no identifier, or a typing
-    that differs from Showdown's in that generation."""
+    """Problems with a set of chaos-file names: not Showdown species (matched by ID), no
+    identifier, or a typing that differs from Showdown's in that generation."""
     problems = []
-    for name in sorted(set(names)):
-        if name not in sd:
-            problems.append(f"{name}: not a species in Showdown's pokedex.ts")
+    display = by_id(sd)
+    for raw in sorted(set(names)):
+        name = display.get(to_id(raw))
+        if name is None:
+            problems.append(f"{raw}: not a species in Showdown's pokedex.ts")
             continue
         ident = identifier(name, base_of)
         if ident is None:
@@ -507,16 +529,17 @@ def build(
                 )
                 problems += [f"{fmt}: {p}" for p in check_names(chaos["data"], g, sd, base_of)]
                 names = out["names"].setdefault(fmt, {})
+                resolve = resolver(sd, base_of)
                 for name in chaos["data"]:
-                    names[name] = identifier(name, base_of)
+                    names[name] = resolve(name)
                 loaded[fmt, cutoff].append((month, chaos))
                 print(f"{url}: {len(data):,} bytes, {len(chaos['data'])} names")
     if problems:
         raise ValueError("\n".join(sorted(set(problems))))
     for (fmt, cutoff), files in loaded.items():
         g = generation_of(fmt)
-        _, base_of = showdown_typings(sd_files, g)
-        typing_rows, type_rows = summarize(files, g, lambda n, b=base_of: identifier(n, b))
+        sd, base_of = showdown_typings(sd_files, g)
+        typing_rows, type_rows = summarize(files, g, resolver(sd, base_of))
         keys = {"format": fmt, "generation": g, "cutoff": cutoff}
         out["typings"] += [{**keys, **r} for r in typing_rows]
         out["types"] += [{**keys, **r} for r in type_rows]

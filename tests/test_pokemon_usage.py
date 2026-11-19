@@ -35,9 +35,11 @@ from pokemon.usage import (
     identifier,
     months_between,
     parse_pokedex,
+    resolver,
     showdown_typings,
     slug,
     summarize,
+    to_id,
     total,
     type_shares,
     typing_shares,
@@ -163,6 +165,16 @@ def test_check_names():
     assert check_names(["Missingno"], 9, sd, {}) == [
         "Missingno: not a species in Showdown's pokedex.ts"
     ]
+
+
+def test_older_spellings_match_by_showdown_id():
+    """The gen1ou files spell some names as Showdown once did: 'NidoranF', 'Farfetch'd'."""
+    assert to_id("NidoranF") == to_id("Nidoran-F") == "nidoranf"
+    assert to_id("Farfetch'd") == to_id("Farfetch’d")
+    sd = {"Nidoran-F": ("poison",), "Farfetch’d": ("normal", "flying")}
+    resolve = resolver(sd, {})
+    assert resolve("NidoranF") == "nidoran-f" and resolve("Farfetch'd") == "farfetchd"
+    assert check_names(["NidoranF", "Farfetch'd"], 1, sd, {}) == []
 
 
 # Shares.
