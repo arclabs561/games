@@ -12,7 +12,7 @@ model for one clue per board with the prompt of codenames.llm. It writes give-<m
 every request. Scoring the clues needs word vectors and runs where they are:
 
     python -m codenames.c4 newwords --clues clues.txt --out words.txt  # no vectors yet
-    python -m codenames.c4 score --clues clues.txt --out codenames/results/c4-give.json
+    python -m codenames.c4 score --clues clues.txt --guesses guesses.txt --out c4.json
 
 The human-guess part runs in a job too, on the turns of C1's game split
 (codenames.split), val first and test once the model is chosen:
@@ -367,6 +367,7 @@ def model_list(arg: str) -> list[str]:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("what", choices=["pilot", "give", "guess", "newwords", "score"])
+    parser.add_argument("--workers", type=int, default=8, help="calls in flight per model")
     parser.add_argument("--repeat", type=int, default=20, help="boards sent three times")
     parser.add_argument("--split", nargs="+", default=["val"], choices=["val", "test"])
     parser.add_argument(
@@ -377,6 +378,7 @@ def main() -> None:
     parser.add_argument("--cap", type=float, default=0.0, help="dollars this job may spend")
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--clues", type=Path, help="clues.txt from a give job")
+    parser.add_argument("--guesses", type=Path, help="guesses.txt from a guess job")
     args = parser.parse_args()
     if args.what in ("newwords", "score"):
         from codenames import c4score
@@ -384,7 +386,7 @@ def main() -> None:
         if args.what == "newwords":
             args.out.write_text("\n".join(c4score.new_words(args.clues.read_text())) + "\n")
         else:
-            c4score.main(args.clues, args.out)
+            c4score.main(args.clues, args.guesses, args.out)
         return
     args.out.mkdir(parents=True, exist_ok=True)
     meter = Meter(args.cap)
@@ -393,7 +395,7 @@ def main() -> None:
     if args.what == "pilot":
         pilot(models, args.seed[0], args.n[0], meter, args.out)
     elif args.what == "guess":
-        guessed = {split: guess(models, split, meter, args.out) for split in args.split}
+        guessed = {s: guess(models, s, meter, args.out, args.workers) for s in args.split}
         text = guess_lines(guessed)
         (args.out / "guesses.txt").write_text(text)
         stats = {m: call_stats(args.out / f"calls-{m}.jsonl") for m in models}

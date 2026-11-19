@@ -164,7 +164,8 @@ def summarize(per: dict, strangers: list[str]) -> dict:
             g["minus_baseline"] = bootstrap(v - base_v)
             g["fallbacks"] = {w: used.count(w) for w in sorted(set(used))}
             g["fallback_rate"] = len(used) / len(rows)
-            g["new_word_rate"] = float(np.mean([r["new_word"] for r in rows if not r["fallback"]]))
+            legal_rows = [r["new_word"] for r in rows if not r["fallback"]]
+            g["new_word_rate"] = float(np.mean(legal_rows)) if legal_rows else None
             # Two sensitivity checks on the fallback: a failed reply worth 0, and only the
             # boards where the reply was legal.
             g["minus_baseline_fallback_zero"] = bootstrap(np.where(ok, v, 0.0) - base_v)
@@ -174,6 +175,73 @@ def summarize(per: dict, strangers: list[str]) -> dict:
     return {"givers": givers}
 
 
-def main(clues: Path, out: Path) -> None:
-    result = score(clues.read_text())
+def main(clues: Path | None, guesses: Path | None, out: Path) -> None:
+    """Write every number of C4 to out: the giving part from clues.txt and the guessing
+    part from guesses.txt, each as the job wrote it."""
+    result: dict = {"plan": "experiments/plans/C4.md"}
+    if guesses is not None:
+        result["guess"] = score_guess(guesses.read_text())
+    if clues is not None:
+        result["give"] = score(clues.read_text())
     out.write_text(json.dumps(result, indent=1, sort_keys=True) + "\n")
+
+
+def read_guess_lines(text: str) -> dict[tuple[str, str], str]:
+    """{(model, split): one character per turn} from guesses.txt (codenames.c4)."""
+    out = {}
+    for line in text.splitlines():
+        name, split, chars = line.split()
+        out[(name, split)] = chars
+    return out
+
+
+def clustered_p(d: np.ndarray, index: np.ndarray, counts: np.ndarray) -> float:
+    """Bootstrap p-value of a paired difference: twice the share of game resamples on
+    the other side of 0 from the mean."""
+    from codenames.stats import replicates
+
+    reps = replicates(d, index, counts)
+    wrong = (reps <= 0).mean() if d.mean() > 0 else (reps >= 0).mean()
+    return min(1.0, 2 * float(wrong))
+
+
+def score_guess(text: str) -> dict:
+    """Part 1: top-1 agreement with the person on C1's game split, for each model and
+    for EmbeddingGemma 2 (bare template, as in C1), with game-bootstrap intervals; the
+    model chosen on val; and H-guess on test, paired by turn."""
+    from codenames.heldout import hits, sim_rows
+    from codenames.split import turns
+    from codenames.stats import cluster_draws, clustered
+
+    lines = read_guess_lines(text)
+    sp = space(BASE, "bare", "bare", all_words())
+    out: dict = {"splits": {}}
+    for split in sorted({s for _, s in lines}):
+        data = turns(f"game:{split}")
+        index, counts = cluster_draws([t.game for t in data])
+        base = hits(sim_rows(sp, data))
+        rows: dict = {"turns": len(data), "games": int(counts.shape[1])}
+        rows["embeddinggemma-2"] = {"top1": clustered(base, index, counts)}
+        for (name, s), chars in sorted(lines.items()):
+            if s != split:
+                continue
+            assert len(chars) == len(data) and "-" not in chars, (name, split)
+            h = np.array([c in "1b" for c in chars], dtype=float)
+            d = h - base
+            rows[name] = {
+                "top1": clustered(h, index, counts),
+                "minus_embeddinggemma": {
+                    **clustered(d, index, counts),
+                    "p": clustered_p(d, index, counts),
+                },
+                "named_no_board_word": sum(c in "ab" for c in chars),
+            }
+        out["splits"][split] = rows
+    if "val" in out["splits"]:
+        val = out["splits"]["val"]
+        models_ = [k for k in val if isinstance(val[k], dict) and k != "embeddinggemma-2"]
+        out["selected"] = max(models_, key=lambda m: val[m]["top1"]["mean"])
+    if "test" in out["splits"] and "selected" in out:
+        test = out["splits"]["test"][out["selected"]]["minus_embeddinggemma"]
+        out["h_guess"] = {"model": out["selected"], **test}
+    return out
