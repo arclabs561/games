@@ -182,12 +182,12 @@ def classify(
     return out
 
 
-def rerun(rules: Rules, seed: int, budget: int = 5_000_000) -> dict:
+def rerun(rules: Rules, seed: int, budget: int = 5_000_000, extra: bool = True) -> dict:
     """The plan's last step for a deal both solvers left undecided: Solver A with
     `budget` nodes. Two attempts outside the plan follow, kept apart under "extra":
     Solver B with all its cuts, and the free-order test with a larger budget."""
     out = classify(rules, seed, budgets=(budget,))
-    if out["verdict"] == "undecided":
+    if extra and out["verdict"] == "undecided":
         deck = seeded_deck(rules, seed)
         t0 = time.time()
         ok, actions = dfs_solver.solve(rules, deck, 2_000_000, cuts="all", free_nodes=20000)
@@ -204,15 +204,19 @@ def rerun(rules: Rules, seed: int, budget: int = 5_000_000) -> dict:
 
 
 def run_block(players: int, seeds, path: str, **kw):
-    """Classify the seeds and write the records as a JSON list."""
+    """Classify the seeds and write the records as a JSON list, rewritten after each deal
+    so that a run stopped early keeps what it finished."""
     rules = Rules(players=players)
-    if kw.pop("rerun", False):
-        recs = [rerun(rules, seed, kw["budgets"][-1]) for seed in seeds]
-    else:
-        recs = [classify(rules, seed, **kw) for seed in seeds]
-    with open(path, "w") as f:
-        json.dump(recs, f, sort_keys=True, separators=(",", ":"))
-        f.write("\n")
+    again, extra = kw.pop("rerun", False), kw.pop("extra", True)
+    recs = []
+    for seed in seeds:
+        if again:
+            recs.append(rerun(rules, seed, kw["budgets"][-1], extra))
+        else:
+            recs.append(classify(rules, seed, **kw))
+        with open(path, "w") as f:
+            json.dump(recs, f, sort_keys=True, separators=(",", ":"))
+            f.write("\n")
 
 
 EXACT_VARIANTS = [
@@ -362,6 +366,7 @@ def main():
     parser.add_argument(
         "--rerun", action="store_true", help="with --json: the last budget, then extra attempts"
     )
+    parser.add_argument("--no-extra", action="store_true", help="with --rerun: Solver A only")
     args = parser.parse_args()
     if args.sample and args.json:
         seeds = args.seeds or range(args.start, args.start + args.sample[1])
@@ -372,6 +377,7 @@ def main():
             budgets=tuple(args.budgets),
             solver=args.solver,
             rerun=args.rerun,
+            extra=not args.no_extra,
         )
         return
     if args.exact:
