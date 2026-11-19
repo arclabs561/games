@@ -175,7 +175,7 @@ def summarize(per: dict, strangers: list[str]) -> dict:
     return {"givers": givers}
 
 
-def main(clues: Path | None, guesses: Path | None, out: Path) -> None:
+def main(clues: Path | None, guesses: Path | None, out: Path, cross: Path | None = None) -> None:
     """Write every number of C4 to out: the giving part from clues.txt and the guessing
     part from guesses.txt, each as the job wrote it."""
     result: dict = {"plan": "experiments/plans/C4.md"}
@@ -184,6 +184,8 @@ def main(clues: Path | None, guesses: Path | None, out: Path) -> None:
         result["guess"]["per_turn"] = guesses.read_text().splitlines()
     if clues is not None:
         result["give"] = score(clues.read_text())
+    if cross is not None:
+        result["crossguess"] = score_crossguess(cross.read_text())
     out.write_text(json.dumps(rounded(result), indent=1, sort_keys=True) + "\n")
 
 
@@ -256,4 +258,35 @@ def score_guess(text: str) -> dict:
     if "test" in out["splits"] and "selected" in out:
         test = out["splits"]["test"][out["selected"]]["minus_embeddinggemma"]
         out["h_guess"] = {"model": out["selected"], **test}
+    return out
+
+
+def score_crossguess(text: str) -> dict:
+    """Language-model guessers on other givers' clues: per giver and guesser, the found
+    words and the turn value of one sampled ranking per board, with intervals over
+    boards; and per giver, the mean over its guessers, paired with the embedding giver
+    on the boards that both have."""
+    by_pair: dict = {}
+    for line in text.splitlines():
+        giver, guesser, _seed, *cells = line.split()
+        assert "-" not in cells, (giver, guesser)
+        found, value = zip(*(c.split("/") for c in cells), strict=True)
+        by_pair[(giver, guesser)] = (
+            np.array(found, dtype=float),
+            np.array(value, dtype=float),
+        )
+    out: dict = {"pairs": {}, "givers": {}}
+    for (giver, guesser), (f, v) in sorted(by_pair.items()):
+        out["pairs"][f"{giver} -> {guesser}"] = {"found": bootstrap(f), "value": bootstrap(v)}
+    givers = sorted({g for g, _ in by_pair})
+    for giver in givers:
+        mine = [k for k in by_pair if k[0] == giver]
+        v = np.mean([by_pair[k][1] for k in mine], axis=0)
+        f = np.mean([by_pair[k][0] for k in mine], axis=0)
+        row = {"guessers": [k[1] for k in mine], "found": bootstrap(f), "value": bootstrap(v)}
+        if giver != "embeddinggemma-2":
+            # The embedding giver's clues heard by the same guessers.
+            base = np.mean([by_pair[("embeddinggemma-2", k[1])][1] for k in mine], axis=0)
+            row["minus_embeddinggemma_same_guessers"] = bootstrap(v - base)
+        out["givers"][giver] = row
     return out

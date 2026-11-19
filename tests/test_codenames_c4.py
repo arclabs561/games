@@ -235,3 +235,13 @@ def test_a_turn_stops_at_the_first_wrong_word():
     # The assassin costs the team words still to find: 3 before the turn.
     assert c4.play_turn(BOARD, ["whale", "bomb"], 2) == (1, -2.0)
     assert c4.play_turn(BOARD, ["whale", "ship", "sail", "bank", "pen"], 9) == (3, 2.0)
+
+
+def test_crossguess_scores_pair_with_the_embedding_giver():
+    from codenames.c4score import score_crossguess
+
+    text = "embeddinggemma-2 x 1 2/2 1/1\nm x 1 1/1 0/-3\nembeddinggemma-2 m 1 1/1 1/1\n"
+    out = score_crossguess(text)
+    assert out["pairs"]["m -> x"]["value"]["mean"] == -1
+    assert out["givers"]["embeddinggemma-2"]["value"]["mean"] == pytest.approx(1.25)
+    assert out["givers"]["m"]["minus_embeddinggemma_same_guessers"]["mean"] == -2.5

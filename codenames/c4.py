@@ -434,6 +434,7 @@ def main() -> None:
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--clues", type=Path, help="clues.txt from a give job")
     parser.add_argument("--guesses", type=Path, help="guesses.txt from a guess job")
+    parser.add_argument("--crossguess", type=Path, help="crossguess.txt lines, all guessers")
     args = parser.parse_args()
     if args.what in ("newwords", "score"):
         from codenames import c4score
@@ -441,7 +442,7 @@ def main() -> None:
         if args.what == "newwords":
             args.out.write_text("\n".join(c4score.new_words(args.clues.read_text())) + "\n")
         else:
-            c4score.main(args.clues, args.guesses, args.out)
+            c4score.main(args.clues, args.guesses, args.out, args.crossguess)
         return
     args.out.mkdir(parents=True, exist_ok=True)
     meter = Meter(args.cap)
