@@ -1,0 +1,127 @@
+name: codenames-c3
+# A copy of the workflow that ran plan C3 (experiments/plans/C3.md) on the branch
+# compute/codenames-c3. It is inert here; to use it, put it under .github/workflows/ on a
+# branch named compute/<something> and change the branch name below.
+#
+# It is .github/workflows/experiment.yml with its inputs fixed and started by a push:
+# module codenames.c3, slices 0 to 69 (14 tasks times 5 seeds), one job each, 20 minutes
+# at most. A first job gathers the vectors once: the Hugging Face models' from the branch
+# compute/codenames-embed, and the four local models' computed here. Outputs are
+# committed to this branch under runs/C3/<run id>/.
+on:
+  push:
+    branches: ["compute/codenames-c3"]
+    paths: [".github/workflows/codenames-c3.yml"]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: codenames-c3
+  cancel-in-progress: false
+env:
+  EXPERIMENT: C3
+  GROUP: codenames
+jobs:
+  vectors:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          python-version: "3.12"
+      - run: uv sync --locked --group "$GROUP"
+      - name: Gather the vectors
+        run: |
+          git fetch -q --depth 1 origin compute/codenames-embed
+          git checkout FETCH_HEAD -- codenames/vectors
+          git rm -rq --cached codenames/vectors
+          uv run --group "$GROUP" python -m codenames.fetch all
+          for m in "potion bare" "wordllama bare" "granite word" "bge word"; do
+            set -- $m
+            uv run --group "$GROUP" python -m codenames.embed --model "$1" --template "$2"
+          done
+          ls -l codenames/vectors codenames/.cache codenames/.cache/vectors
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: data
+          path: |
+            codenames/vectors
+            codenames/.cache
+          include-hidden-files: true
+          retention-days: 3
+
+  run:
+    needs: vectors
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+      matrix:
+        seed: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          python-version: "3.12"
+      - run: uv sync --locked --group "$GROUP"
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: data
+          path: codenames
+      - name: Run the slice
+        env:
+          ARGS: codenames.c3 --slice SEED --out OUT
+          SEED: ${{ matrix.seed }}
+        run: |
+          out="$RUNNER_TEMP/out/seed-$SEED"
+          mkdir -p "$out"
+          read -r -a raw <<< "$ARGS"
+          argv=()
+          for a in "${raw[@]}"; do
+            case "$a" in SEED) argv+=("$SEED") ;; OUT) argv+=("$out") ;; *) argv+=("$a") ;; esac
+          done
+          start=$(date +%s)
+          set +e
+          uv run --group "$GROUP" python -m "${argv[@]}"
+          code=$?
+          set -e
+          seconds=$(( $(date +%s) - start ))
+          python3 experiments/manifest.py "$out" --experiment "$EXPERIMENT" --run "seed-$SEED" \
+            --commit "$GITHUB_SHA" --platform actions --returncode "$code" --seconds "$seconds" -- "${raw[@]}"
+          exit "$code"
+      - name: Keep the outputs
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: seed-${{ matrix.seed }}
+          path: ${{ runner.temp }}/out/seed-${{ matrix.seed }}
+          retention-days: 30
+
+  store:
+    needs: run
+    if: always()
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          pattern: seed-*
+          path: ${{ runner.temp }}/runs
+      - name: Commit the outputs to this branch
+        run: |
+          git config user.name arclabs561
+          git config user.email arclabs561@users.noreply.github.com
+          dest="runs/$EXPERIMENT/$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          mkdir -p "$dest"
+          cp -r "$RUNNER_TEMP"/runs/* "$dest"/
+          git add "$dest"
+          git commit -q -m "$EXPERIMENT outputs from run $GITHUB_RUN_ID (attempt $GITHUB_RUN_ATTEMPT) at ${GITHUB_SHA::7}"
+          for i in 1 2 3 4 5; do git pull -q --rebase && git push -q && break; sleep 10; done
