@@ -50,6 +50,9 @@ drive_ya_nuts = [
 ev_nova = [
     "numpy>=2.5",
 ]
+hanabi = [
+    "huggingface-hub>=2.4",
+]
 egyptian_ratscrew = [
     "matplotlib>=3.11",
     "numpy>=2.5",

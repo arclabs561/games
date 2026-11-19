@@ -708,6 +708,9 @@ egyptian-ratscrew = [
 ev-nova = [
     { name = "numpy" },
 ]
+hanabi = [
+    { name = "huggingface-hub" },
+]
 mastermind = [
     { name = "matplotlib" },
     { name = "numpy" },
@@ -769,6 +772,7 @@ egyptian-ratscrew = [
     { name = "seaborn", specifier = ">=0.13.2" },
 ]
 ev-nova = [{ name = "numpy", specifier = ">=2.5" }]
+hanabi = [{ name = "huggingface-hub", specifier = ">=2.4" }]
 mastermind = [
     { name = "matplotlib", specifier = ">=3.11" },
     { name = "numpy", specifier = ">=2.5" },

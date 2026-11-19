@@ -1,0 +1,33 @@
+{
+ "experiment": "H2",
+ "label": "pilot",
+ "model": "openai/gpt-oss-120b",
+ "provider": "novita",
+ "players": 2,
+ "deduction": true,
+ "seeds": [
+  1002,
+  1003
+ ],
+ "max_tokens": 4096,
+ "reasoning_effort": "medium",
+ "temperature": 0,
+ "seed": 0,
+ "price_per_million": {
+  "input": 0.05,
+  "output": 0.25
+ },
+ "price_source": "router.huggingface.co/v1/models, fetched at the start of the run",
+ "cap": 0.25,
+ "spent": 0.11455145,
+ "calls": 149,
+ "games_complete": 2,
+ "complete_prefix": 2,
+ "stopped_at_seed": null,
+ "statuses": {
+  "complete": 2
+ },
+ "started": "2026-11-19T03:30:01Z",
+ "seconds": 1092.7,
+ "huggingface_hub": "2.4.0"
+}

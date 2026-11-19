@@ -149,18 +149,34 @@ The last column is (25 − 24.9842) divided by the gap, with 24.9842 the two-pla
 
 ## Language-model players
 
-No language-model API is reachable from the machine this was written on, so this folder reports no language-model results. `llm.py` provides what an experiment needs:
+Experiment H2 ([plan](../experiments/plans/H2.md), with two dated amendments) seats the same hosted model in both chairs of a two-player game, on seeded deals 0 to 29, and compares each score with the best score that the deal allows in the open game. The solver wins all 30 deals, so every deal's ceiling is 25 and the gap is 25 minus the score.
 
-- `observation(state, player, events)` writes what one player may know: piles, tokens, lives, the discards, the other hands, the hints on each of the player's own cards, the last ten actions, and the legal moves. With `deduction=True` it also lists, for each own card, the values that remain possible after hints and card counting, like the "Sherlock" setting of Ramesh et al.
-- `parse_action(reply, state)` reads the last move written as `PLAY 2`, `DISCARD 1`, `HINT 3 RED` or `HINT 3 4`, and returns `None` if it is missing or illegal.
-- `play_text_game(rules, deck, complete)` plays a game with any function from prompt to reply, and counts the replies that could not be used.
+`llm.py` writes, as text, everything that one player may know: the board, the other hand, the hints on each own card, the recent actions and the legal moves. With `deduction=True` it also lists the values each own card can still be, after hints and card counting, like the "Sherlock" setting of Ramesh et al. The model's reply must end with a move such as `PLAY 2` or `HINT 1 RED`. A reply with no legal move gets a fallback: the first legal discard, or, when all eight tokens are on the table, the first legal move, a blind play of card 1.
 
-Plan for an experiment, to be run where a model is available:
+The models are gpt-oss-120b (reasoning effort medium, through Novita) and DeepSeek-V3.2 (its default mode without reasoning, through DeepInfra), on Hugging Face Inference Providers at temperature 0 and seed 0, with replies capped at 4,096 tokens. Each game was played once.
 
-1. Use seeded deals 0 to 99 for each number of players, the same for every model, and report each model's mean, its perfect-game share and the number of unusable replies.
-2. Run each model with and without `deduction`, to compare with the Watson and Sherlock settings of Ramesh et al.
-3. Pair one model with partners that play the information strategy, to separate a model's own play from its ability to read its partners.
-4. For each game, report the solver's verdict on the deal, so that lost deals are not counted against the model.
+| Two players | Deals | Gap to the ceiling | Mean score | Perfect games | Lost all lives | Fallbacks per game | Cost |
+|---|---:|---|---:|---:|---:|---:|---:|
+| gpt-oss-120b, deduction on | 30 | 18.63 (16.70 to 20.57) | 6.37 | 0 | 12 | 15.0 | $1.38 |
+| gpt-oss-120b, deduction off | 24 | 18.46 (16.58 to 20.46) | 6.54 | 0 | 8 | 12.9 | $1.04 |
+| DeepSeek-V3.2, deduction on | 30 | 25 | 0 | 0 | 30 | 0 | $0.53 |
+| DeepSeek-V3.2, deduction off | 30 | 25 | 0 | 0 | 30 | 0.03 | $0.48 |
+
+Intervals are 95% percentile bootstrap intervals over deals (10,000 resamples, seed 0). With no perfect game in 30, the Wilson interval for the perfect share runs from 0 to 11%. DeepSeek-V3.2 lost its three lives in every game, so its gap is 25 on every deal; the share of such games is 30 of 30, with a Wilson interval of 89% to 100%.
+
+- **The primary result.** With deduction on, gpt-oss-120b plays 18.6 points below the ceiling (16.7 to 20.6). DeepSeek-V3.2 plays 25 points below it. The plan does not rank the two models.
+- **Deduction made no difference that these games can see.** Paired on deals 0 to 23, gpt-oss-120b's gap with deduction off minus its gap with deduction on is −0.79 points (−3.71 to 2.25). A gain from deduction larger than 2.25 points lies outside the interval. For DeepSeek-V3.2 the difference is 0 on every deal.
+- **Where gpt-oss-120b lost points.** All 450 fallbacks with deduction on came from replies that reached the 4,096-token cap before writing a move: 24% of turns. A reply averaged 2,773 tokens. The 18 games that kept a life averaged 10.6 points, and no game scored more than 13.
+- **Where DeepSeek-V3.2 lost points.** It wrote a legal move in 1,545 of its 1,546 replies, so its losses are misplays. In the one game read through (seed 0, deduction on), a life was lost on a card about which the hints said only that it was not yellow; the reply called it a 1 that was safe to play.
+- **Comparison, without new runs.** The ceiling is 25 on these deals, so the gaps compare with the "Gap to 25" column above: 0.39 to 0.92 for the reinforcement-learning agents and 9.1 for o3 with a minimal prompt. Those come from other deals, and for o3 another prompt. The information strategy at three players trails its ceiling by about 2.7 points (22.254 against 24.998).
+- **Not run.** The three-player games with a model, a secondary part of the plan, were not played: the budget ran out. The run of gpt-oss-120b with deduction off covers 24 deals instead of 30, for the same reason. Both cuts were written into the plan before the last run's results were read.
+- **The pilot** (seeds 1000 to 1003, exploratory) used the plan's original cap of 512 tokens. Most replies ran out of tokens before writing a move, the fallback's blind plays used up the lives, and all eight games scored 0 within 15 turns. The plan's amendment gives the counts.
+
+The spending is metered, not billed: the providers' usage objects report tokens but no cost, so each call is priced at the provider's listed price times its reported tokens. The ten runs, pilot included, total $3.60 by that meter. Two probe jobs made about $0.002 of calls, and the CPU jobs that ran the games cost about $0.05 at $0.01 an hour. The cap was $4.
+
+Limits: the prompt was fixed in advance and not tuned; every seat holds the same model, so this is self-play, not play with strangers; temperature 0 does not make these providers deterministic (one probe prompt sent twice to DeepSeek-V3.2 on DeepInfra at temperature 0 and seed 0, once directly and once through the router's automatic choice, got two different replies); and the 4,096-token cap still cuts off a quarter of gpt-oss-120b's turns. The cap and the prompt are part of what is measured.
+
+Per-game scores, token counts and costs are in `results/h2-runs/`, one folder per run, and `results/h2.json` holds every number above. Every prompt and reply is kept in a private dataset, with the commit that each run used.
 
 ## Checks
 
@@ -182,7 +198,7 @@ The two solvers share the rules engine, so a bug there would fool both. The rule
 
 ## Usage
 
-Everything except `solver_cp.py` uses only the standard library; `solver_cp.py` needs OR-Tools (`uv run --with ortools ...`). Times are from one run on a shared two-core machine.
+Everything except `solver_cp.py` and `hosted.py` uses only the standard library; `solver_cp.py` needs OR-Tools (`uv run --with ortools ...`), and `hosted.py` needs the `hanabi` dependency group (`huggingface_hub`). Times are from one run on a shared two-core machine.
 
 ```bash
 uv run python -m hanabi.information -n 2000               # five players, about 1 min
@@ -198,7 +214,13 @@ uv run python -m hanabi.upper_bound --exact --second    # Solver B on the small 
 uv run python -m hanabi.upper_bound --sample 2 2000 --start 4000 --solver both --json p2-4000.json
 uv run python -m hanabi.upper_bound --sample 3 0 --seeds 1144 --rerun --budgets 5000000 --json p3-rerun.json
 uv run python -m hanabi.h1 --runs <folder of blocks> --out hanabi/results/h1.json --all-rows
+uv run python -m hanabi.upper_bound --sample 5 20000 --budget 300000   # a bigger run, hours
+uv run --group hanabi python -m hanabi.h2 play --model openai/gpt-oss-120b --provider novita \
+    --reasoning-effort medium --seeds 0-29 --deduction on --max-tokens 4096 --cap 2 --out OUT
+uv run python -m hanabi.h2 report --runs hanabi/results/h2-runs --out hanabi/results/h2.json
 ```
+
+`h2 play` needs `HF_TOKEN` and network access to Hugging Face; the runs above were launched with `experiments/hfrun.py` on Hugging Face Jobs. `h2 report` runs here in a few seconds.
 
 ## Files
 
@@ -215,6 +237,9 @@ uv run python -m hanabi.h1 --runs <folder of blocks> --out hanabi/results/h1.jso
 | `results/h1.json` | Plan H1: the summary and one row per deal (players, seed, verdicts, certificates, best score) |
 | `results/h1-exploratory.json` | The exploratory run before the plan: summary, and the deals not found won |
 | `llm.py` | Text observations and move parsing for language-model players |
+| `hosted.py` | Hosted models through Inference Providers, with retries and a cost meter |
+| `h2.py` | Experiment H2: plays the games and writes the report |
+| `results/` | `h2.json` and the per-game summaries of each H2 run |
 
 ## Sources
 
