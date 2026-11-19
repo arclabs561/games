@@ -1,0 +1,66 @@
+{
+ "steps": 300,
+ "boards": {
+  "train": [
+   7000,
+   300,
+   16
+  ],
+  "val": [
+   6005,
+   50
+  ],
+  "test": [
+   6004,
+   200
+  ]
+ },
+ "giver": "google/embeddinggemma-2",
+ "training": [
+  "wordllama",
+  "granite",
+  "bge",
+  "microsoft/harrier-oss-v1-270m"
+ ],
+ "guessers": [
+  "potion",
+  "wordllama",
+  "granite",
+  "bge",
+  "Qwen/Qwen3-Embedding-0.6B",
+  "microsoft/harrier-oss-v1-270m",
+  "microsoft/harrier-oss-v1-0.6b",
+  "google/embeddinggemma-2",
+  "eat",
+  "potion-map/1",
+  "potion-map/2",
+  "potion-map/3",
+  "potion-map/4",
+  "potion-map/5"
+ ],
+ "table_sha256": "a80dc76aab903ecffc5dde18a54f9798efff9218ede9fc9403270fe3cdb94863",
+ "local_sha256": "04ebcabcb86a25014ea6231abefd4212ac8e300aacecddab45838dc933e6744a",
+ "potion_map_top1_rebuilt_and_c1": {
+  "1": [
+   0.631579,
+   0.631579
+  ],
+  "2": [
+   0.633394,
+   0.633394
+  ],
+  "3": [
+   0.640653,
+   0.640653
+  ],
+  "4": [
+   0.633394,
+   0.633394
+  ],
+  "5": [
+   0.622505,
+   0.622505
+  ]
+ },
+ "seconds": 438.2
+}

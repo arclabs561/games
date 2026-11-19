@@ -1,0 +1,3 @@
+# compute/codenames-c7
+
+The table that the C7 job reads (`experiments/plans/C7.md`): `table.npz`, written by `python -m codenames.c7 table --steps 300 --out DIR` on a CPU with the vectors of the eight embedding models. It holds 4,800 training boards (16 per step, from seeds 7000 to 7299), C6's 50 validation boards (seed 6005) and 200 test boards (seed 6004). For each board it holds the words, their kinds and C6's 30 candidate clues. For the training boards it also holds the exact expected turn value of each of the 120 actions under the four training guessers. `table.json` records the SHA-256 of the file and the seconds the build took.
