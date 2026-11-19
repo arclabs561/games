@@ -2,6 +2,7 @@ name: pokemon-p1
 # Plan P1 (experiments/plans/P1.md): download Smogon's chaos files for gen9ou and gen1ou,
 # 2025-11 to 2026-10, record each file's SHA-256, and commit only the derived usage shares
 # by typing and by type. The raw files stay in the runner's temporary folder.
+# Second run: chaos-file names are matched to Showdown by ID (experiments/plans/P1.md).
 on:
   push:
     branches: ["compute/pokemon-p1"]
