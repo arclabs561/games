@@ -464,7 +464,7 @@ def score(data: dict, runs: Path, split: str = "test", c6_picks: Path | None = C
     }
     out["runs"] = {
         str(seed): {
-            "curves_every_20_steps": windows(run["curve"]),
+            "curves_every_20_steps": run.get("curves_every_20_steps") or windows(run["curve"]),
             "since_container_start": run["since_container_start"],
             "config": run["config"],
             "picks_sha256": run["picks_sha256"],
@@ -502,7 +502,13 @@ def main() -> None:
         print(json.dumps({k: v for k, v in result.items() if k != "picks"}))
     else:
         result = score(read_data(args.data), args.runs, args.split)
-        args.out.write_text(json.dumps(result, indent=1) + "\n")
+        boards = result.pop("per_board", None)
+        text = json.dumps(result, indent=1)  # the per-board lists last, one line each
+        if boards is not None:
+            rows = ",\n".join(f' "{k}": {json.dumps(v)}' for k, v in boards.items())
+            text = text[:-2] + ',\n "per_board": {\n' + rows + "\n }\n}"
+        json.loads(text)
+        args.out.write_text(text + "\n")
         print(json.dumps(result["difference"], indent=1))
 
 

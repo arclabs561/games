@@ -1,0 +1,14 @@
+{
+ "note": "Hugging Face Jobs of plan C7. Seconds are from the container's start to the end of the module (timings.json), plus 60 s allowed for the upload and teardown; the cost is that time at the listed hourly price. Time spent waiting for hardware is not counted. The first job was stopped by hand; its time is from its creation to its cancellation, an upper bound.",
+ "prices_per_hour": {"l4x1": 0.80, "l40sx1": 1.80, "cpu-basic": 0.01},
+ "jobs": [
+  {"name": "c7-pilot-seed0", "id": "6aff2bdb4fdc5ab3c55a05ae", "flavor": "l4x1", "status": "canceled after 4 steps", "seconds": 440, "cost": 0.10},
+  {"name": "c7-pilot-seed0-l40s", "id": "6aff2deeefaf5e14f4b1c017", "flavor": "l40sx1", "status": "completed, 100 steps", "seconds": 1664, "cost": 0.83},
+  {"name": "c7-seed1", "id": "6aff37884fdc5ab3c55a141d", "flavor": "l40sx1", "status": "completed, stopped after step 100", "seconds": 1695, "cost": 0.85},
+  {"name": "c7-seed2", "id": "6aff378cefaf5e14f4b1ccee", "flavor": "l40sx1", "status": "completed, stopped after step 109", "seconds": 1829, "cost": 0.91},
+  {"name": "c7-seed3", "id": "6aff3790efaf5e14f4b1ccfa", "flavor": "l40sx1", "status": "completed, stopped after step 128", "seconds": 2079, "cost": 1.04},
+  {"name": "c7-read-*, c7-check-picks, c7-windows", "flavor": "cpu-basic", "status": "6 jobs that read the outputs", "seconds": 600, "cost": 0.01}
+ ],
+ "total_cost": 3.74,
+ "cap": 7.0
+}
