@@ -112,7 +112,8 @@ def run_games(args, models: list[dict] | None = None, client=None) -> int:
     meter = Meter(price, args.cap, max_call)
     if client is None:
         client = huggingface_hub.InferenceClient(provider=args.provider, token=token, timeout=300)
-    deadline = time.time() + args.stop_after * 60
+    deadline = time.time() + args.stop_after * 60  # no new game after this
+    hard_stop = time.time() + args.hard_stop * 60  # games in progress stop here
     lock = threading.Lock()
     rows: list[dict] = []
     started = time.time()
@@ -143,11 +144,21 @@ def run_games(args, models: list[dict] | None = None, client=None) -> int:
                 wait=args.retry_wait,
             )
             name = f"seed-{seed}" + (f"-replay{attempt}" if attempt else "")
+
+            def timed(prompt: str, player=player, calls=calls) -> str:
+                if time.time() > hard_stop:
+                    raise TimeoutError("time limit")
+                if calls and len(calls) % 20 == 0:
+                    print(f"seed {seed}: turn {len(calls)}, total ${meter.spent:.4f}", flush=True)
+                return player(prompt)
+
             try:
-                _, record = play_game(rules, seeded_deck(rules, seed), player, deduction)
+                _, record = play_game(rules, seeded_deck(rules, seed), timed, deduction)
                 status, reason = "complete", None
             except CapError as e:
                 record, status, reason = {}, "stopped", f"cap: {e}"
+            except TimeoutError:
+                record, status, reason = {}, "stopped", "time limit"
             except ProviderError as e:
                 record, status, reason = {}, "provider error", str(e)[:500]
             with open(out / "calls" / f"{name}.jsonl", "w") as f:
@@ -451,6 +462,7 @@ def main(argv=None) -> int:
     p.add_argument("--cap", type=float, required=True, help="dollars this run may spend")
     p.add_argument("--workers", type=int, default=8, help="games played at once")
     p.add_argument("--stop-after", type=float, default=300, help="minutes; no new games after")
+    p.add_argument("--hard-stop", type=float, default=330, help="minutes; games in progress stop")
     p.add_argument("--label", default="confirmatory")
     p.add_argument("--retry-wait", type=float, default=5, help="seconds before the first retry")
     p.add_argument("--out", required=True)

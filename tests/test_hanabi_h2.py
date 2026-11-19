@@ -162,6 +162,7 @@ def args_for(out, **kw):
         cap=10.0,
         workers=2,
         stop_after=60,
+        hard_stop=60,
         label="test",
         retry_wait=0,
         out=str(out),
@@ -200,6 +201,12 @@ def test_a_run_stops_at_its_cap_and_keeps_a_prefix(tmp_path):
     assert summary["spent"] <= 0.15
     assert 0 < summary["complete_prefix"] < 4 and summary["stopped_at_seed"] is not None
     assert "stopped" in summary["statuses"]
+
+
+def test_a_run_stops_at_its_time_limit(tmp_path):
+    run_games(args_for(tmp_path, seeds="0-1", hard_stop=0, workers=1), MODELS, FakeClient())
+    summary = json.loads((tmp_path / "summary.json").read_text())
+    assert summary["statuses"] == {"stopped": 2} and summary["complete_prefix"] == 0
 
 
 def test_provider_failure_replays_the_game_once(tmp_path):
