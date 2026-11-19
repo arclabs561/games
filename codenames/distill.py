@@ -173,7 +173,6 @@ def label(args) -> None:
     out = args.out
     out.mkdir(parents=True, exist_ok=True)
     people = tuple(t.guess for t in split_turns("game:train"))
-    games = [t.game for t in split_turns("game:train")]
     vocab = board_vocab(people)
     todo = resample_boards(people, vocab, K, args.seed) + relabeled(people)
     if args.limit:
@@ -233,7 +232,6 @@ def label(args) -> None:
             for kind in ("resampled", "relabeled")
         },
         "train_hits": hits,
-        "train_games": games,
         "repeats": reps,
         "spent": meter.spent,
         "cap": args.cap,
