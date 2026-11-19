@@ -246,13 +246,16 @@ MORE_VARIANTS = [  # about six minutes; every deal is winnable
 ]
 
 
-def exact(check: int = 0, more: bool = False):
+def exact(check: int = 0, more: bool = False, second: bool = False):
     """Count every deal of each small variant. With check > 0, also run the brute-force
-    engine on every check-th deal and require agreement."""
+    engine on every check-th deal and require agreement. With `second`, run Solver B
+    (`hanabi.dfs_solver`) on every deal, require agreement, and count the deals the
+    last-card and free-order tests prove lost."""
     for name, rules in EXACT_VARIANTS + (MORE_VARIANTS if more else []):
         t0 = time.time()
         tally: Counter[str] = Counter()
         by_cert: Counter[str] = Counter()
+        by_new: Counter[str] = Counter()
         examples: list[str] = []
         total = 0
         for i, (deck, w) in enumerate(deals(rules)):
@@ -266,6 +269,11 @@ def exact(check: int = 0, more: bool = False):
                     examples.append(" ".join(card_name(c, rules) for c in deck))
             if check and i % check == 0:
                 assert brute_winnable(rules, deck) == (v == "won"), deck
+            if second:
+                assert dfs_solver.solve(rules, deck)[0] == (v == "won"), deck
+                if v == "lost":
+                    by_new["last card"] += w * dfs_solver.last_card_test(rules, deck)
+                    by_new["free-order"] += w * (dfs_solver.free_order_test(rules, deck) is False)
         assert total == total_orders(rules), "weights do not add up"
         share = tally["won"] / total
         print(
@@ -275,6 +283,8 @@ def exact(check: int = 0, more: bool = False):
             print("  lost, by first proof:", dict(sorted(by_cert.items())))
         for e in examples:
             print("  lost only by search:", e)
+        if second:
+            print(f"  Solver B agrees on every deal; lost deals proved by {dict(by_new)}")
 
 
 def best_score(rules: Rules, deck: list[int], budget: int) -> int:
@@ -339,6 +349,7 @@ def main():
     parser.add_argument("--exact", action="store_true")
     parser.add_argument("--more", action="store_true", help="also the slower exact variants")
     parser.add_argument("--check", type=int, default=0, help="brute-force every k-th deal")
+    parser.add_argument("--second", action="store_true", help="with --exact: run Solver B too")
     parser.add_argument("--sample", type=int, nargs=2, metavar=("PLAYERS", "DEALS"))
     parser.add_argument("--start", type=int, default=0)
     parser.add_argument("--seeds", type=int, nargs="*", help="these seeds instead of a range")
@@ -364,7 +375,7 @@ def main():
         )
         return
     if args.exact:
-        exact(args.check, args.more)
+        exact(args.check, args.more, args.second)
     if args.sample:
         sample(args.sample[0], args.sample[1], args.budget, args.start, args.seeds)
 

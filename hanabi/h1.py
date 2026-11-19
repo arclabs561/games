@@ -70,6 +70,26 @@ def first_proof(r: dict) -> str:
     return "search"
 
 
+def each_certificate(lost: list[dict]) -> dict:
+    """How many of the lost deals each certificate proves, alone or with others."""
+    out = Counter()
+    for r in lost:
+        for c in r["certificates"]:
+            out[c] += 1
+        out["last card"] += bool(r.get("last_card"))
+        out["free-order"] += "lost" in (r.get("free_order"), r.get("extra", {}).get("free_order"))
+        out["none"] += (
+            not r["certificates"]
+            and not r.get("last_card")
+            and "lost"
+            not in (
+                r.get("free_order"),
+                r.get("extra", {}).get("free_order"),
+            )
+        )
+    return {"deals": len(lost), **dict(sorted(out.items()))}
+
+
 def share(won: int, undecided: int, n: int) -> dict:
     lo, _ = wilson(won, n)
     _, hi = wilson(won + undecided, n)
@@ -126,6 +146,17 @@ def summarize(recs: dict, seeds: range) -> dict:
                 sorted(Counter(r.get("free_order", "not run") for r in lost).items())
             ),
             "lost_without_older_certificate": [r["seed"] for r in lost if not r["certificates"]],
+            "last_card_on_lost": dict(Counter(str(r.get("last_card")) for r in lost)),
+            "each_certificate_on_lost_outside_the_plan": each_certificate(
+                [r for r in rows if extended(r) == "lost"]
+            ),
+            "new_tests_on_undecided": dict(
+                Counter(
+                    f"last card {r.get('last_card')}, free-order {r.get('free_order')}"
+                    for r in rows
+                    if settled_one(r) == "undecided"
+                )
+            ),
             "best_scores_of_lost": {str(k): v for k, v in sorted(best.items())},
             "mean_best_score_at_most": mean_bound(scores),
             "outside_the_plan": {

@@ -48,6 +48,11 @@ With every card in view, a hint carries no information; it only passes the turn 
 
 Each bound that holds at the start of a deal is a certificate that the deal is lost. A won deal comes with its winning line, which the rules engine replays to 25. On full deals `winnable` uses limited discrepancy search (Harvey and Ginsberg, 1995). It first stays close to the move ordering above, then allows more and more departures from it, until the search is complete.
 
+`dfs_solver.py` is a second solver, written apart from `solver.py` and sharing no code with it except the rules engine. It is a plain depth-first search over `rules.step` with a table of states found lost, and by default its only bound is the time bound, written again as a schedule: count the plays as unit jobs on one machine, each released when its card is drawn, and schedule greedily. Greedy is optimal here. At the last slot where greedy has nothing to play, every unfinished color waits for a card not yet drawn, so no schedule has played more by then, and greedy plays in every later slot. The same file has two certificates that keep track of who holds what:
+
+- **Last card.** The player who draws the last card has one turn left, and it is the last turn of the game. A won game ends with a 5, so a last card of lower rank is never played in a won game, and the deal can be won only if it can be won with that card thrown away. The test makes the last card dead and applies the time bound and the pooled game (written again) to the changed deal.
+- **Free-order game.** Give the team unlimited tokens and lives. Then a pass is always allowed, so the players may act in any order until the last card is drawn, and a misplay is a discard. Each drawn card stays in the hand of the player who drew it, and after the last draw the remaining turns go in the real order, each player playing at most one card from their own hand. Every winning line of the real game, with its passes left out, wins this game. Unlike the pooled game, it keeps the hands apart and keeps the order of the final round. It is decided by search, with the time bound and the pooled game as cuts, so on large deals it can run out of budget.
+
 ### Small decks, every deal
 
 `upper_bound.py --exact` enumerates every deal of a reduced deck. A deal is counted once per ordering of the shuffled deck, so the counts below are out of the number of distinct orderings.
@@ -66,9 +71,11 @@ Each bound that holds at the start of a deal is a certificate that the deal is l
 
 The one-player rows use van den Bergh's model: one player, no hints, a discard always allowed. They match his Appendix A, row (3,2,2,2,1), to all four digits, and his count of 5,934 for a hand of one card. The other rows use the standard tokens and lives. These counts are exact. On every deal of four smaller decks, brute force gives the same answer as the fast engine. Brute force also rechecks every 200th deal of the rows above.
 
-The certificates do not explain every lost deal. With one color, two players and hands of two, 2,910 lost orderings fail the pooled or time bound, and 552 are lost only by turn order and tokens: search finds them lost, but no certificate does. One of them starts R1 R1 for the first player and R4 R5 for the second, with R1 R3 R3 R2 R2 R4 in the deck. With hands of three cards, 1,284 orderings are of this kind. A larger hand does not always help: hands of three leave a deck of four cards, and the team runs out of turns.
+The certificates of `solver.py` do not explain every lost deal. With one color, two players and hands of two, 2,910 lost orderings fail the pooled or time bound, and 552 are lost only by turn order and tokens: search finds them lost, but none of those certificates does. One of them starts R1 R1 for the first player and R4 R5 for the second, with R1 R3 R3 R2 R2 R4 in the deck. With hands of three cards, 1,284 orderings are of this kind. A larger hand does not always help: hands of three leave a deck of four cards, and the team runs out of turns.
 
-With two colors and hands of four, all 480 lost orderings are of this kind. In one, the first player holds R1 R1 R1 R2, the second R3 Y2 Y2 Y3, and the deck is R2 Y1 Y1 Y1. All six cards must be played with only four draws and two final turns, so every turn that draws must be a play. The second player must play R3, Y2 and Y3, and Y2 has to wait for a Y1 drawn late; the search confirms that the three plays do not fit into the turns that remain. The pooled game lets anyone play any held card in the final round, so it misses this. A bound on the final round that keeps track of who holds what would catch it.
+With two colors and hands of four, all 480 lost orderings are of this kind. In one, the first player holds R1 R1 R1 R2, the second R3 Y2 Y2 Y3, and the deck is R2 Y1 Y1 Y1. All six cards must be played with only four draws and two final turns, so every turn that draws must be a play. The second player must play R3, Y2 and Y3, and Y2 has to wait for a Y1 drawn late; the search confirms that the three plays do not fit into the turns that remain. The pooled game lets anyone play any held card in the final round, so it misses this.
+
+The free-order game catches all of these. In every row of the table it proves every lost ordering lost, including the 552, 1,284 and 480 that the older certificates miss. Of those, the last-card test proves 240 of the 552 and none of the 1,284 or the 480; on the two-color deck the last card is often a 3, the top rank, and then the test says nothing. On every deal of these decks Solver B gives the same answer as `winnable` and reproduces every count in the table (`upper_bound.py --exact --second`); neither new certificate ever holds for a won deal.
 
 ### The full game, sampled
 
@@ -124,18 +131,21 @@ Plan for an experiment, to be run where a model is available:
 - The information strategy matches HanSim game by game on 10,000 decks; a test checks the first 100. A test also checks the partition of the paper's Figure 6.
 - On every deal of four small decks, the two solver engines give the same answer, for the maximum score and for every lower target. Every won deal's line is replayed by the rules engine.
 - Each certificate is checked against brute force on those decks: no deal with a certificate is won.
+- Solver B (`dfs_solver.py`) agrees with brute force on every deal of the four smaller decks, with and without its bounds, and with `winnable` on every deal of the decks in the table. The two new certificates never hold for a won deal there. A test checks greedy scheduling against an exhaustive search of the schedule on 200 random deals.
+- On the full game, Solver A and Solver B give the same verdict on every one of the 79,396 deals both decide (plan H1, below). Every win of either solver is replayed by the rules engine.
+- The constraint model of `solver_cp.py` agrees with brute force on every deal of three small decks (540 deals); a test checks some of them when OR-Tools is installed.
 
-The bounds and the search are written once each. A second, independent solver for the full game has not been written, and the four- and five-player shares rest on that one search.
+The two solvers share the rules engine, so a bug there would fool both. The rules engine has its own tests, and the information strategy matches HanSim game by game, which checks the rules from outside.
 
 ## Open questions
 
-- Settle the undecided deals, perhaps with a stronger bound that keeps turn order.
-- Find a short certificate for the deals lost only to turn order and tokens.
+- Settle the deals still undecided (listed above). They are three-, four- and five-player deals that no certificate here proves lost, and most of them are won in the free-order game, so they may well be won; a search that uses the free-order game's winning line as a guide might find a real one.
+- The free-order game drops tokens. No full deal here is lost to tokens alone, but some small decks are: with three players, hands of one card and one token, 24 of the 180 orderings of a four-card deck are lost though the free-order game wins them.
 - The best real (not open-information) score for each deal is unknown; Endgame-Analyzer on [git.abstractnonsen.se](https://git.abstractnonsen.se/Hanabi/Endgame-Analyzer) solves the case where players know their own cards but not the deck, for endgames.
 
 ## Usage
 
-Everything uses only the standard library. Times are from one run on a shared two-core machine.
+Everything except `solver_cp.py` uses only the standard library; `solver_cp.py` needs OR-Tools (`uv run --with ortools ...`). Times are from one run on a shared two-core machine.
 
 ```bash
 uv run python -m hanabi.information -n 2000               # five players, about 1 min
@@ -146,7 +156,11 @@ uv run python -m hanabi.hansim_check -n 10000            # needs git and g++
 uv run python -m hanabi.upper_bound --exact --check 200   # small decks (about 5 min)
 uv run python -m hanabi.upper_bound --sample 2 2000       # about 1 min; 4 or 5 players take 2
 uv run python -m hanabi.upper_bound --sample 5 0 --budget 300000 --seeds 474 545   # about 1 min each
-uv run python -m hanabi.upper_bound --sample 5 20000 --budget 300000   # a bigger run, hours
+uv run python -m hanabi.upper_bound --exact --second    # Solver B on the small decks too
+# plan H1, one block of 2,000 seeds (the run used 40 blocks on GitHub Actions)
+uv run python -m hanabi.upper_bound --sample 2 2000 --start 4000 --solver both --json p2-4000.json
+uv run python -m hanabi.upper_bound --sample 3 0 --seeds 1144 --rerun --budgets 5000000 --json p3-rerun.json
+uv run python -m hanabi.h1 --runs <folder of blocks> --out hanabi/results/h1.json --all-rows
 ```
 
 ## Files
@@ -157,7 +171,12 @@ uv run python -m hanabi.upper_bound --sample 5 20000 --budget 300000   # a bigge
 | `information.py` | The information strategy of Cox et al., following HanSim |
 | `hansim_check.py` | Builds HanSim from GitHub and compares scores game by game |
 | `solver.py` | Open-game solvers (brute force and fast), the bounds, replay of winning lines |
-| `upper_bound.py` | Exact counts on small decks, sampled verdicts on the full game |
+| `upper_bound.py` | Exact counts on small decks, sampled verdicts on the full game, the H1 records |
+| `dfs_solver.py` | Solver B: a second open-game solver, and the last-card and free-order certificates |
+| `solver_cp.py` | The open game as a time-indexed constraint model for CP-SAT (small decks only) |
+| `h1.py` | Merges the H1 records, checks that the solvers agree, and writes the summary |
+| `results/h1.json` | Plan H1: the summary and one row per deal (players, seed, verdicts, certificates, best score) |
+| `results/h1-exploratory.json` | The exploratory run before the plan: summary, and the deals not found won |
 | `llm.py` | Text observations and move parsing for language-model players |
 
 ## Sources

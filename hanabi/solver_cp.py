@@ -1,3 +1,7 @@
+# /// script
+# requires-python = ">=3.12"
+# dependencies = ["ortools>=9.15"]
+# ///
 """Solver B of plan H1: the open game as a time-indexed constraint model, solved by CP-SAT.
 
 It shares no code with `hanabi.solver`; it uses `hanabi.rules` for the deck and to replay
@@ -32,7 +36,8 @@ T = 2(N + P) - 12.
 
 from __future__ import annotations
 
-from hanabi.rules import Action, Rules, hint, new_game, step
+# The inline metadata above makes ty check this file as a script, outside the package.
+from hanabi.rules import Action, Rules, hint, new_game, step  # ty: ignore[import-not-found]
 
 
 def max_turns(rules: Rules) -> int:
@@ -44,7 +49,7 @@ def max_turns(rules: Rules) -> int:
 
 def build(rules: Rules, deck: list[int]):
     """The model and its variables, as a dict."""
-    from ortools.sat.python import cp_model  # ty: ignore[import-not-found]
+    from ortools.sat.python import cp_model
 
     m = cp_model.CpModel()
     players, nh, nr, nc = rules.players, rules.hand, rules.ranks, rules.colors
@@ -163,7 +168,7 @@ def winnable_cp(rules: Rules, deck: list[int], time_limit: float = 60.0):
     """('won', line) | ('lost', None) | ('undecided', None). A line is a list of
     (player, kind, deck position) with kind 'play', 'discard', 'misplay' or 'pass'.
     One worker and a fixed random seed make the search repeatable."""
-    from ortools.sat.python import cp_model  # ty: ignore[import-not-found]
+    from ortools.sat.python import cp_model
 
     m, v = build(rules, deck)
     solver = cp_model.CpSolver()
