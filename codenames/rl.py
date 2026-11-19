@@ -27,6 +27,9 @@ and guessers are still sampled.
   of training, and the EAT association counts, which stand in for people.
 
     uv run python -m codenames.rl --giver potion --held-out bge     # a few minutes here
+    uv run python -m codenames.rl --giver potion --held-out bge --seed 1 --test-seed 3003 --per-board
+
+The last form is one run of plan C3 (codenames.c3 runs all 70).
 """
 
 import argparse
@@ -181,6 +184,70 @@ def build(giver: str, guessers: dict[str, Weigher], boards, k: int):
     return data, base
 
 
+def run(
+    giver: str = "potion",
+    held_out: str = "bge",
+    train_boards: int = 300,
+    test_boards: int = 200,
+    shortlist: int = 30,
+    steps: int = 400,
+    lr: float = 0.05,
+    seed: int = 0,
+    test_seed: int | None = None,
+    per_board: bool = False,
+) -> dict:
+    """Train the four policies and score them on the test boards.
+
+    Training boards are dealt from seed; test boards from test_seed, which defaults to
+    seed + 10_000 (the README's runs). With per_board the result also holds each
+    policy's value on every test board, for every guesser, so that two policies can be
+    compared board by board."""
+    t0 = time.perf_counter()
+    config = {k: v for k, v in locals().items() if k != "t0"}
+    config["test_seed"] = seed + 10_000 if test_seed is None else test_seed
+    cal = load("calibrate")
+    spaces = chosen_spaces(cal)
+    guessers: dict[str, Weigher] = {
+        m: embedding_weigher(sp, tau) for m, (sp, tau) in spaces.items()
+    }
+    guessers["eat"] = norm_weigher(eat_counts(), cal["eat"]["eps"])
+    rng = random.Random(seed)
+    train = [deal(board_words(), rng) for _ in range(train_boards)]
+    rng = random.Random(config["test_seed"])
+    test = [deal(board_words(), rng) for _ in range(test_boards)]
+    train_data, _ = build(giver, guessers, train, shortlist)
+    test_data, _ = build(giver, guessers, test, shortlist)
+    population = [g for g in guessers if g not in (giver, held_out, "eat")]
+    f = len(FEATURES)
+    start = np.concatenate([np.eye(f)[0], np.zeros(f), np.ones(f)])  # theta = "found"
+    policies = {
+        "start": start,
+        "self": fit(train_data, [giver], steps, lr, seed),
+        "population": fit(train_data, population, steps, lr, seed),
+        "population/rlvr": fit(train_data, [f"{g}/rlvr" for g in population], steps, lr, seed),
+    }
+    test: dict[str, dict[str, list[float]]] = {}
+    boards: dict[str, dict[str, list[float]]] = {}
+    for name, params in policies.items():
+        test[name] = {}
+        for g in [*guessers, *(f"{g}/rlvr" for g in guessers)]:
+            s = score(params, test_data, g)
+            test[name][g] = [float(np.mean(s)), float(np.std(s, ddof=1) / np.sqrt(len(s)))]
+        if per_board:
+            boards[name] = {g: [round(x, 6) for x in score(params, test_data, g)] for g in guessers}
+    result = {
+        "config": config,
+        "population": population,
+        "features": FEATURES,
+        "theta": {k: v[:f].round(4).tolist() for k, v in policies.items()},
+        "test": test,
+    }
+    if per_board:
+        result["per_board"] = boards
+    result["seconds"] = round(time.perf_counter() - t0, 1)
+    return result
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--giver", default="potion")
@@ -191,48 +258,17 @@ def main() -> None:
     parser.add_argument("--steps", type=int, default=400)
     parser.add_argument("--lr", type=float, default=0.05)
     parser.add_argument("--seed", type=int, default=0)
+    parser.add_argument(
+        "--test-seed", type=int, default=None, help="seed of the test boards (seed + 10000)"
+    )
+    parser.add_argument(
+        "--per-board", action="store_true", help="also write each test board's value"
+    )
     parser.add_argument("--out", default=None)
     args = parser.parse_args()
-    t0 = time.perf_counter()
-    cal = load("calibrate")
-    spaces = chosen_spaces(cal)
-    guessers: dict[str, Weigher] = {
-        m: embedding_weigher(sp, tau) for m, (sp, tau) in spaces.items()
-    }
-    guessers["eat"] = norm_weigher(eat_counts(), cal["eat"]["eps"])
-    rng = random.Random(args.seed)
-    train_boards = [deal(board_words(), rng) for _ in range(args.train_boards)]
-    rng = random.Random(args.seed + 10_000)
-    test_boards = [deal(board_words(), rng) for _ in range(args.test_boards)]
-    train_data, _ = build(args.giver, guessers, train_boards, args.shortlist)
-    test_data, _ = build(args.giver, guessers, test_boards, args.shortlist)
-    population = [g for g in guessers if g not in (args.giver, args.held_out, "eat")]
-    f = len(FEATURES)
-    start = np.concatenate([np.eye(f)[0], np.zeros(f), np.ones(f)])  # theta = "found"
-    policies = {
-        "start": start,
-        "self": fit(train_data, [args.giver], args.steps, args.lr, args.seed),
-        "population": fit(train_data, population, args.steps, args.lr, args.seed),
-        "population/rlvr": fit(
-            train_data, [f"{g}/rlvr" for g in population], args.steps, args.lr, args.seed
-        ),
-    }
-    result = {
-        "config": vars(args),
-        "population": population,
-        "features": FEATURES,
-        "theta": {k: v[:f].round(4).tolist() for k, v in policies.items()},
-        "test": {},
-    }
-    for name, params in policies.items():
-        result["test"][name] = {}
-        for g in [*guessers, *(f"{g}/rlvr" for g in guessers)]:
-            s = score(params, test_data, g)
-            result["test"][name][g] = [
-                float(np.mean(s)),
-                float(np.std(s, ddof=1) / np.sqrt(len(s))),
-            ]
-    result["seconds"] = round(time.perf_counter() - t0, 1)
+    kw = {k: v for k, v in vars(args).items() if k != "out"}
+    result = run(**kw)
+    result["config"]["out"] = args.out
     text = json.dumps(result, indent=1)
     print(text)
     if args.out:
