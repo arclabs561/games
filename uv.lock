@@ -729,6 +729,9 @@ tenzi = [
     { name = "numpy" },
     { name = "scipy" },
 ]
+yahtzee = [
+    { name = "numpy" },
+]
 
 [package.metadata]
 
@@ -791,6 +794,7 @@ tenzi = [
     { name = "numpy", specifier = ">=2.5" },
     { name = "scipy", specifier = ">=1.18" },
 ]
+yahtzee = [{ name = "numpy", specifier = ">=2.5" }]
 
 [[package]]
 name = "h11"

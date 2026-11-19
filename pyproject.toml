@@ -76,6 +76,9 @@ tenzi = [
     "numpy>=2.5",
     "scipy>=1.18",
 ]
+yahtzee = [
+    "numpy>=2.5",
+]
 
 [build-system]
 requires = ["uv_build>=0.13.9,<0.14"]
@@ -83,7 +86,7 @@ build-backend = "uv_build"
 
 [tool.uv.build-backend]
 module-root = ""
-module-name = ["boggle", "codenames", "drive_ya_nuts", "egyptian_ratscrew", "ev_nova", "hanabi", "mastermind", "peggle", "pokemon", "tenzi"]
+module-name = ["boggle", "codenames", "drive_ya_nuts", "egyptian_ratscrew", "ev_nova", "hanabi", "mastermind", "peggle", "pokemon", "tenzi", "yahtzee"]
 
 [tool.ruff]
 line-length = 100
