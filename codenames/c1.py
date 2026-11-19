@@ -21,6 +21,7 @@ writes results/calibrate-game.json, results/train-<model>-game.json and results/
 
     uv run python -m codenames.c1 --dry-run   # everything scored on val instead of test
     uv run python -m codenames.c1             # the confirmatory run (once)
+    uv run python -m codenames.c1 --posthoc   # paired differences from its scored hits
 """
 
 import argparse
@@ -188,11 +189,44 @@ def run(score: str) -> dict:
     return out
 
 
+def posthoc() -> dict:
+    """Paired differences between every two guessers on the test turns, from the hits
+    already in calibrate-game.json and train-*-game.json. Not in the plan; nothing is
+    scored again."""
+    import itertools
+
+    test = turns("game:test")
+    index, counts = cluster_draws([t.game for t in test])
+    cal = load("calibrate-game")
+    hits = {short(m): as_hits(cal[m]["best"]["test"]["hits"]) for m in models()}
+    for model, _ in MAPS:
+        res = load(f"train-{model.replace('/', '--')}-game")
+        each = [as_hits(r["guess"]["hits"]) for r in res["runs"].values()]
+        hits[f"{short(model)} + map"] = np.mean(each, axis=0)
+    names = sorted(hits, key=lambda m: -hits[m].mean())
+    return {
+        "label": "post hoc, not in the plan: paired differences from the scored hits",
+        "paired": {
+            f"{a} - {b}": clustered(hits[a] - hits[b], index, counts)
+            for a, b in itertools.combinations(names, 2)
+        },
+    }
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--dry-run", action="store_true", help="score val, not test")
     parser.add_argument("--out", default=None)
+    parser.add_argument(
+        "--posthoc", action="store_true", help="add paired differences to c1.json, no scoring"
+    )
     args = parser.parse_args()
+    if args.posthoc:
+        path = RESULTS / "c1.json"
+        out = json.loads(path.read_text())
+        out["posthoc"] = posthoc()
+        path.write_text(json.dumps(out, indent=1, sort_keys=True) + "\n")
+        return
     score = "val" if args.dry_run else "test"
     out = run(score)
     path = (

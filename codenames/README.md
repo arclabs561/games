@@ -8,7 +8,8 @@ In Codenames, a spymaster (the giver) names one clue word and a number, and team
 
 Short answers, with how each is known:
 
-- EmbeddingGemma 2 picks the same word as a person in 60.7% of 305 held-out human turns (95% interval 55.1% to 66.0%). The small static table potion-base-8M picks it in 58.0% (52.4% to 63.4%), and the other six models in 45.2% to 53.4%. Instruction prefixes help the instruction-trained models a little and ruin the others. Computed exactly on the Cultural Codes test split.
+- EmbeddingGemma 2 and the small static table potion-base-8M pick the same word as a person most often: 54.8% and 54.4% of 551 turns from 68 test games, with the Cultural Codes turns split by game (95% intervals 50.1% to 59.5% and 49.8% to 59.3%; their difference, 0.4 points, has the interval −3.8 to 4.6). The other six models pick it in 39.4% to 49.0%. Instruction prefixes help the instruction-trained models a little and ruin the others. Computed exactly on the test turns, with intervals from resampling games.
+- Training a linear map on potion's clue vectors raises its match from 54.4% to 63.2%. The map is trained on the human guesses of the training games only. The gain, 8.8 points (6.3 to 11.4), is as large as on the published split (8.2), so it was not an artifact of test games having turns in training. Same method; the map is averaged over five training seeds.
 - A giver expects to find 1.8 to 2.1 of its words per clue when the guesser shares its vectors. A guesser built on another model finds 57% to 73% of that, on average over the other seven models. A guesser that follows association counts from people finds 37% to 53%. Exact expected values for each of 200 random boards, one clue each, for eight models.
 - A giver trained by policy gradient against its own model reaches an expected turn value of 1.60 with that model, 0.75 with a held-out model, and −0.05 with the association counts. Trained against six other models instead, it reaches 1.03, 0.92 and 0.35. The gap between self-play and cross-play shrinks from 0.85 to 0.11, at a cost of 0.57 in self-play. A second giver shows the same pattern. Exact rewards on 200 test boards, one training seed per giver.
 
@@ -50,7 +51,7 @@ GloVe and fastText could not be downloaded here, so the static baselines are pot
 | Small World of Words, SWOW-EN18 | 3 million responses to 12,000 cues | CC BY-NC-ND 3.0 | no; manual download, loader only |
 | USF free association norms | 72,000 cue-response pairs | copyright of the authors, no license stated | no; manual download |
 
-Only the first two are used in the numbers below. The Cultural Codes splits are used as published. They appear to be split by turn, not by game, so test boards also occur in training. That makes the trained models' test scores optimistic. A fixed fifth of EAT cues, chosen by hash (`norms.held_out`), is never used for training.
+Only the first two are used in the numbers below. The Cultural Codes files carry no game or player ids. The section "Human guesses split by game" below rebuilds both and finds that the published split puts the two sides of most games in different files. Sections 1 to 4 use the files as published; that section repeats sections 1 and 4 on a split by game. A fixed fifth of EAT cues, chosen by hash (`norms.held_out`), is never used for training.
 
 ## How a guesser is modeled
 
@@ -131,6 +132,8 @@ Every model wins all 50 games with its own guesser, as Kim et al. found. This is
 
 ## 4. Training on human data
 
+The numbers in this section use the published split. The section "Human guesses split by game" repeats the main ones on a split by game.
+
 `train.py` learns a linear map A on the clue side of a frozen model, scoring a clue c against a word w as (A e_c) · e_w. This is the setup of White et al. (2024), who train a linear layer on GloVe from Codenames Duet games. The loss is InfoNCE: a softmax at temperature 0.05 over the word the person chose and 24 negatives. For Cultural Codes items the negatives are the other words on that board; for EAT items they are random board words that are not responses to the cue. Adam, 3 epochs, seed 0.
 
 | Model, trained on | Human guesses (95% interval) | EAT held-out cues (95% interval) |
@@ -168,6 +171,52 @@ A better model of human guesses did not make a better giver. Used as givers, wit
 Values are expected turn values on the test boards, ± one standard error. Self-play learns to trust its own similarities. Its gap between own and held-out model is 0.85 for potion and 1.15 for Qwen3. Population play learns a cautious policy that weights the margin feature most and prefers lower counts. Its gap is 0.11 and 0.30. It does better than self-play with both held-out guessers, and only the population policies have a positive value against the association guesser. This mirrors other-play (Hu et al. 2020): a policy trained with one partner exploits that partner's quirks. Here the quirks are the giver's own similarity scale and errors, not invented conventions, since the policy can only reweight seven features.
 
 The last row uses the clue reward of Deshpande et al. (2026, their eq. 4): the fraction of team words the guesser names minus the fraction of other words it names, with the judge naming its n most likely words. That reward ignores the assassin and lets a turn continue past a wrong pick, so a policy trained on it gives more words per clue and scores worse on the game's own terms. This is one seed per giver; a run takes 3 to 5 minutes here, and other choices are flags.
+
+## Human guesses split by game
+
+This section follows a plan written before its runs, `experiments/plans/C1.md`, and `experiments/METHOD.md`. Results marked exploratory came from runs made before the plan.
+
+**How the published files split.** Each row of the guessing task lists the 25-word board as it stood, the clue, the pick and both players' profiles. In Duet both players give clues on the same board, so a game is a starting board of 25 words together with the unordered pair of player profiles. Every later turn of the game lies on a subset of that board (`split.py`). This assigns each of the 7,703 rows to exactly one of 794 games, the number the paper gives. One board was played by two pairs. The files list each side of a game (one player giving clues) as one run of rows. All but one of the 1,587 sides sit in a single file, but the two sides of a game often do not: 165 games have rows in more than one file. 320 of the 373 test rows and 423 of the 455 validation rows come from games that also have training rows. A test turn's board, and its two players in swapped roles, are then in training.
+
+The profiles also identify players. 52 of the 54 test players, by profile string, play in training games, and so do all 71 validation players. White et al. (2024) write of these data that "the players are different between the train and validation/test data". The published files do not have that property; their split may have come from elsewhere. A player's survey answers (demographics, moral foundations, Big Five) stay fixed while the age they type changes from game to game, so the survey part identifies a player more reliably than the whole profile string. The rows hold 154 distinct sets of survey answers, close to the paper's 153 players, and 90 profiles without answers. By survey answers, 51 of the 53 test players play in training games.
+
+1,488 rows (19%) record several picks for one clue. `norms.cultural_guesses` keeps only turns with one pick on the board, as before: 6,088 turns in 770 games. White et al. train on all picks.
+
+**The split.** A game goes to train, val or test by `zlib.crc32` of its key modulo 10 (0 to 7 train, 8 val, 9 test), with no seed. That gives 4,820 train, 717 val and 551 test turns in 623, 79 and 68 games. The plan expected 700 to 800 test turns; it counted rows before the filter. `splits.json` lists the game ids (hashes) of each split, and `python -m codenames.split --check` rebuilds the split from the download and compares. Every interval below resamples the test games 10,000 times (seed 0) and takes the 2.5th and 97.5th percentiles (`stats.py`). Differences are paired by turn. The tests check the resampling against an exact enumeration of every resample of three and four games.
+
+**Confirmatory results** (`results/c1.json`, `calibrate-game.json`, `train-*-game.json`; one run, at the commit recorded in `c1.json`). Temperatures were fitted on the new train turns and templates chosen on the new val turns.
+
+| Model | Template | Split by game: same word (95% interval) | Log-likelihood | Published split (from section 1) |
+|---|---|---|---|---|
+| EmbeddingGemma 2 | bare / bare | 0.548 (0.501–0.595) | −1.73 | 0.607 |
+| potion-base-8M | bare / bare | 0.544 (0.498–0.593) | −1.72 | 0.580 |
+| bge-small-en-v1.5 | word / word | 0.490 (0.439–0.542) | −1.87 | 0.534 |
+| harrier-oss-v1-0.6b | query / bare | 0.465 (0.418–0.512) | −2.01 | 0.498 |
+| wordllama | bare / bare | 0.465 (0.420–0.512) | −2.06 | 0.531 |
+| harrier-oss-v1-270m | bare / bare | 0.439 (0.392–0.488) | −2.09 | 0.452 |
+| Qwen3-Embedding-0.6B | query / bare | 0.434 (0.391–0.475) | −2.14 | 0.495 |
+| granite-small-r2 | word / word | 0.394 (0.352–0.437) | −2.20 | 0.456 |
+| EAT counts | ε 0.1 | 0.309 (0.273–0.345) | | 0.305 |
+| potion + map | bare / bare | 0.632 (0.589–0.675) | | 0.662 (one seed) |
+| Qwen3 0.6B + map | query / bare | 0.477 (0.435–0.520) | | 0.567 (one seed) |
+
+- **Primary metric.** The map raises potion's match by 0.088 (0.063 to 0.114), paired by turn; on the published split it was 0.082. The interval excludes 0, which is the plan's criterion for the gain to hold. The five seeds give 0.623 to 0.641.
+- **Qwen3.** The map raises it by 0.044 (0.008 to 0.077), against 0.072 on the published split. Its seeds vary more: 0.445 to 0.528.
+- **Seeing other turns of the same game does not help.** Each test game's turns were split in half by a hash of the turn. Training on the training games gives 0.653 on one half; swapping as many random training turns for the other half of the test games gives 0.647. The difference is −0.006 (−0.019 to 0.005), over 283 turns in 62 games.
+- **The order of the untrained models barely moves.** Kendall's τ between the new order and the published one is 0.84 (0.57 to 0.93). Every model scores 1 to 7 points lower on the new test turns than on the published ones. The exploratory scores on all 6,088 turns lie between the two for every model, which suggests that the new test games are harder than average and the published test turns easier.
+- **Ties at the top.** Post hoc, not in the plan, from the same scored turns: EmbeddingGemma 2 minus potion is 0.004 (−0.038 to 0.046). Both lead bge by 5 to 6 points (intervals 0.016 to 0.094), and the potion map leads EmbeddingGemma 2 by 0.084 (0.045 to 0.123).
+- **Templates and temperatures.** Re-chosen on the new train and val turns, they are the same as on the published split for every model.
+- **Player overlap.** All 68 test games have a player who also plays in training games, by profile string and by survey answers. The plan's metric on games without such a player therefore has no turns. The exploratory split by player below answers that question instead.
+
+**Exploratory results** (`results/heldout.json`, `heldout.py`, run before the plan on splits of their own; `split.py` describes them). Same metric and resampling.
+
+- *Leakage on the published split.* The potion map trained without the 258 training turns from games that have a test turn scores 0.649 on the published test, against 0.662 with them. The difference is 0.013 (−0.014 to 0.042). For Qwen3 the same removal costs 0.069 (0.020 to 0.119), which suggests that the 1024 × 1024 map fits individual games more closely than potion's 256 × 256 map.
+- *Held-out players.* Guessers were held out until test and val each held a tenth of the turns, and every turn with a held-out player was kept out of training, as White et al. describe (705 test turns from 21 guessers; 3,738 training turns). The potion map then gains 0.058 (0.037 to 0.080; 0.024 to 0.080 when guessers are resampled instead of games). On a split by game with its training games subsampled to about as many turns (3,743), the gain is 0.080 (0.054 to 0.105). Part of the gain may depend on having seen the guesser, but each arm has one seed, and the two intervals overlap. The Qwen3 map gains nothing: 0.001 (−0.031 to 0.034). EmbeddingGemma 2 and potion score 0.548 and 0.567.
+- *All turns.* No step of the untrained models' top-1 uses the human turns, so all 6,088 turns serve as test turns for them. With bare templates EmbeddingGemma 2 scores 0.562 (0.546 to 0.577) and potion 0.547 (0.533 to 0.562), a difference of 0.014 (0.002 to 0.027). The instruction template helps harrier-oss-v1-0.6b by 0.059 (0.048 to 0.070), harrier-oss-v1-270m by 0.029 and Qwen3 by 0.012 (0.001 to 0.024), and costs the other five models 22 to 44 points. This run scored every turn, including the plan's later test turns, for the untrained models only.
+
+**What survives.** The map's gain on potion survives, at the same size. EmbeddingGemma 2 and potion lead the untrained models on every split, but whether EmbeddingGemma 2 is ahead is not settled. On the 551 test turns the two are tied; over all turns it is ahead by 1.4 points; on held-out players potion is ahead by 2.0 (−1.4 to 5.4). The Qwen3 map's gain shrinks and, on held-out players, vanishes. The earlier statement that test boards in training make the trained scores optimistic is not borne out for potion.
+
+**Reproducibility.** The ONNX models granite and bge are int8 with dynamic quantization, so a word's vector depends on the other words in its batch of 256. Vectors computed here from an empty cache reproduce every best-template number in section 1. Five other cells of its prompting table come out 0.3 to 2.3 points different (granite with the query template: 0.128, against 0.151).
 
 ## The mathematics
 
@@ -217,7 +266,8 @@ and the giver's best count is the n that maximizes it. In this study the costs a
 ## Open questions
 
 - Does the single-peak property of R(n) hold for every weighting?
-- Would the order of models change with SWOW, which is larger and recent, or with Cultural Codes split by game?
+- Would the order of models change with SWOW, which is larger and recent?
+- Does the potion map's gain hold when every pick of a multi-pick turn is used, as White et al. do?
 - Why does a trained guesser model make a worse giver?
 - Does a LoRA-tuned Qwen3 or harrier keep its human-guess gains without the EAT collapse?
 - How large is the gap for an LLM giver?
@@ -237,6 +287,9 @@ uv run python -m codenames.study peaks            # the single-peak check (3 min
 uv run python -m codenames.study report           # prints the tables
 uv run python -m codenames.senses                 # senses (2 min)
 uv run python -m codenames.train --model potion   # section 4 (2 min)
+uv run python -m codenames.split --check          # rebuild games and players, compare with splits.json
+uv run python -m codenames.c1                     # split by game, the plan's run (2 min)
+uv run python -m codenames.heldout                # split by game and player, exploratory (5 min)
 uv run python -m codenames.rl --giver potion --held-out bge --out codenames/results/rl-potion.json
 uv run --with sentence-transformers python -m codenames.embed --model Qwen/Qwen3-Embedding-0.6B
 ```
@@ -255,6 +308,9 @@ uv run --with sentence-transformers python -m codenames.embed --model Qwen/Qwen3
 | `evaluate.py`, `senses.py` | section 1 |
 | `study.py` | sections 1 to 3 and the tables |
 | `train.py`, `lora.py` | section 4 |
+| `split.py`, `splits.json` | games and players rebuilt from Cultural Codes, and the splits by game and by player |
+| `stats.py` | the bootstrap over games, Kendall's τ |
+| `c1.py`, `heldout.py` | human guesses split by game: the plan's run, and the exploratory one |
 | `rl.py` | section 5 |
 | `llm.py` | language-model players |
 | `results/*.json` | every number above, with seeds and settings |
