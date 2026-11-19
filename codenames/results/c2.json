@@ -1,0 +1,366 @@
+{
+ "arms": {
+  "Qwen3 map": {
+   "top1": {
+    "ci": [
+     0.43512885984753286,
+     0.5204012570356472
+    ],
+    "mean": 0.47731397459165154,
+    "n": 551
+   },
+   "top1_by_seed": [
+    0.5281306715063521,
+    0.47005444646098005,
+    0.44464609800362975,
+    0.4646098003629764,
+    0.4791288566243194
+   ]
+  },
+  "Qwen3 untrained": {
+   "assoc_top1_by_seed": [
+    0.6189024390243902
+   ],
+   "chosen": [
+    {
+     "clue": "query",
+     "tau": 0.03,
+     "val_loglik": -2.1080818033041147,
+     "word": "bare"
+    }
+   ],
+   "loglik_by_seed": [
+    -2.148734534847111
+   ],
+   "top1": {
+    "ci": [
+     0.3899467815065735,
+     0.4768689852059913
+    ],
+    "mean": 0.4337568058076225,
+    "n": 551
+   },
+   "top1_by_seed": [
+    0.4337568058076225,
+    0.4337568058076225,
+    0.4337568058076225
+   ]
+  },
+  "lora": {
+   "assoc_top1_by_seed": [
+    0.7164634146341463,
+    0.7235772357723578,
+    0.7225609756097561
+   ],
+   "chosen": [
+    {
+     "clue": "query",
+     "tau": 0.05,
+     "val_loglik": -1.5198148004735865,
+     "word": "bare"
+    },
+    {
+     "clue": "query",
+     "tau": 0.05,
+     "val_loglik": -1.5142334830709734,
+     "word": "bare"
+    },
+    {
+     "clue": "query",
+     "tau": 0.05,
+     "val_loglik": -1.517622098246746,
+     "word": "bare"
+    }
+   ],
+   "loglik_by_seed": [
+    -1.3802375433319016,
+    -1.3811271085515564,
+    -1.3726038192268752
+   ],
+   "top1": {
+    "ci": [
+     0.5853210099024319,
+     0.6660849331006399
+    ],
+    "mean": 0.6255293405928614,
+    "n": 551
+   },
+   "top1_by_seed": [
+    0.6225045372050817,
+    0.631578947368421,
+    0.6225045372050817
+   ]
+  },
+  "lora+eat": {
+   "assoc_top1_by_seed": [
+    0.9359756097560976
+   ],
+   "chosen": [
+    {
+     "clue": "query",
+     "tau": 0.05,
+     "val_loglik": -1.589430552330031,
+     "word": "bare"
+    }
+   ],
+   "loglik_by_seed": [
+    -1.4125492403484676
+   ],
+   "top1": {
+    "ci": [
+     0.5830560381766314,
+     0.6751860365911461
+    ],
+    "mean": 0.6297640653357531,
+    "n": 551
+   },
+   "top1_by_seed": [
+    0.6297640653357531
+   ]
+  },
+  "potion map": {
+   "top1": {
+    "ci": [
+     0.5891286696395392,
+     0.6753699027687997
+    ],
+    "mean": 0.6323049001814882,
+    "n": 551
+   },
+   "top1_by_seed": [
+    0.631578947368421,
+    0.6333938294010889,
+    0.6406533575317604,
+    0.6333938294010889,
+    0.6225045372050817
+   ]
+  }
+ },
+ "games": 68,
+ "giver": {
+  "boards": 200,
+  "guessers": {
+   "bge": {
+    "lora": 1.1172554167398352,
+    "lora_minus_untrained": {
+     "ci": [
+      -0.015006933215075416,
+      0.1004340307758023
+     ],
+     "mean": 0.042627558220892106,
+     "n": 200
+    },
+    "untrained": 1.074627858518943
+   },
+   "eat": {
+    "lora": 0.7887738854663019,
+    "lora_minus_untrained": {
+     "ci": [
+      -0.02546750827858331,
+      0.07035391064730204
+     ],
+     "mean": 0.022651520281530182,
+     "n": 200
+    },
+    "untrained": 0.7661223651847716
+   },
+   "google/embeddinggemma-2": {
+    "lora": 1.1046740906716266,
+    "lora_minus_untrained": {
+     "ci": [
+      -0.03678741949001391,
+      0.07108479560797083
+     ],
+     "mean": 0.017313730756735205,
+     "n": 200
+    },
+    "untrained": 1.0873603599148915
+   },
+   "granite": {
+    "lora": 0.8927453230036901,
+    "lora_minus_untrained": {
+     "ci": [
+      -0.06555525435566666,
+      0.04198665527913134
+     ],
+     "mean": -0.011989673784533288,
+     "n": 200
+    },
+    "untrained": 0.9047349967882233
+   },
+   "microsoft/harrier-oss-v1-0.6b": {
+    "lora": 1.3604318832787998,
+    "lora_minus_untrained": {
+     "ci": [
+      -0.060640235214733634,
+      0.07234478428888207
+     ],
+     "mean": 0.0056840009757839274,
+     "n": 200
+    },
+    "untrained": 1.3547478823030161
+   },
+   "microsoft/harrier-oss-v1-270m": {
+    "lora": 1.1323376762384547,
+    "lora_minus_untrained": {
+     "ci": [
+      -0.10918796423378689,
+      0.03850273159786774
+     ],
+     "mean": -0.03463323633968972,
+     "n": 200
+    },
+    "untrained": 1.1669709125781444
+   },
+   "potion": {
+    "lora": 1.195855675361522,
+    "lora_minus_untrained": {
+     "ci": [
+      -0.03945099293672793,
+      0.10064264887951715
+     ],
+     "mean": 0.03059645713262706,
+     "n": 200
+    },
+    "untrained": 1.1652592182288948
+   },
+   "wordllama": {
+    "lora": 0.8690261983937504,
+    "lora_minus_untrained": {
+     "ci": [
+      -0.04369211642406516,
+      0.06848257731740937
+     ],
+     "mean": 0.011597525844890407,
+     "n": 200
+    },
+    "untrained": 0.8574286725488598
+   }
+  },
+  "seed": 2002
+ },
+ "learning_rate": {
+  "choice": 0.0003,
+  "commit": "6efd44969f7a758a9a96d1b238fa66849c6182d4",
+  "criterion": "mean log-likelihood of the person's word on C1's val turns, LoRA seed 1, chosen template",
+  "runs": [
+   "lr3e-5-s1",
+   "lr1e-4-s1",
+   "lr3e-4-s1"
+  ],
+  "untrained_val_loglik": -2.1080818033041147,
+  "val_loglik": {
+   "0.0001": -1.6161036938046085,
+   "0.0003": -1.5198148004735865,
+   "3e-05": -1.7807150238385896
+  },
+  "val_top1": {
+   "0.0001": 0.5676429567642957,
+   "0.0003": 0.5801952580195258,
+   "3e-05": 0.5439330543933054,
+   "untrained": 0.43375174337517436
+  },
+  "val_turns": 717
+ },
+ "lora_eat_minus_lora": {
+  "ci": [
+   -0.017934446505875078,
+   0.024928048449787577
+  ],
+  "mean": 0.004234724742891717,
+  "n": 551
+ },
+ "lora_minus_qwen3_map": {
+  "ci": [
+   0.12124340642899888,
+   0.17571941498848787
+  ],
+  "mean": 0.1482153660012099,
+  "n": 551
+ },
+ "lora_minus_untrained": {
+  "ci": [
+   0.151831427599602,
+   0.23172121497527667
+  ],
+  "mean": 0.19177253478523895,
+  "n": 551
+ },
+ "plan": "experiments/plans/C2.md",
+ "primary": {
+  "ci": [
+   -0.04053148568223862,
+   0.027966091820088478
+  ],
+  "mean": -0.006775559588626745,
+  "metric": "top-1 of LoRA (arm 4, mean of 3 seeds) minus the potion map (arm 1, mean of 5 seeds), paired by turn",
+  "n": 551
+ },
+ "runs": {
+  "lora-eat-s1": {
+   "batch": 64,
+   "boards": 200,
+   "device": "cuda",
+   "epochs": 1,
+   "evaluate": "test",
+   "gpu": "NVIDIA A10G",
+   "lr": 0.0003,
+   "model": "Qwen/Qwen3-Embedding-0.6B",
+   "out_dir": "/tmp/out",
+   "rank": 16,
+   "rows": 28333,
+   "scheme": "game",
+   "seed": 1,
+   "sources": "cultural+eat"
+  },
+  "lora-s1": {
+   "batch": 64,
+   "boards": 200,
+   "device": "cuda",
+   "epochs": 1,
+   "evaluate": "test",
+   "gpu": "NVIDIA A10G",
+   "lr": 0.0003,
+   "model": "Qwen/Qwen3-Embedding-0.6B",
+   "out_dir": "/tmp/out",
+   "rank": 16,
+   "rows": 4820,
+   "scheme": "game",
+   "seed": 1,
+   "sources": "cultural"
+  },
+  "lora-s2": {
+   "batch": 64,
+   "boards": 200,
+   "device": "cuda",
+   "epochs": 1,
+   "evaluate": "test",
+   "gpu": "NVIDIA A10G",
+   "lr": 0.0003,
+   "model": "Qwen/Qwen3-Embedding-0.6B",
+   "out_dir": "/tmp/out",
+   "rank": 16,
+   "rows": 4820,
+   "scheme": "game",
+   "seed": 2,
+   "sources": "cultural"
+  },
+  "lora-s3": {
+   "batch": 64,
+   "boards": 200,
+   "device": "cuda",
+   "epochs": 1,
+   "evaluate": "test",
+   "gpu": "NVIDIA A10G",
+   "lr": 0.0003,
+   "model": "Qwen/Qwen3-Embedding-0.6B",
+   "out_dir": "/tmp/out",
+   "rank": 16,
+   "rows": 4820,
+   "scheme": "game",
+   "seed": 3,
+   "sources": "cultural"
+  }
+ },
+ "turns": 551
+}

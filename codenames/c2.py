@@ -262,13 +262,14 @@ def main() -> None:
     import json
     from pathlib import Path
 
-    parser = argparse.ArgumentParser(description="C2's tables from the jobs' summary.json files")
-    parser.add_argument("--runs", type=Path, required=True, help="folder of <run>/summary.json")
-    parser.add_argument("--lr", type=Path, required=True, help="the learning-rate choice (JSON)")
-    parser.add_argument("--out", type=Path, default=Path(__file__).parent / "results" / "c2.json")
+    parser = argparse.ArgumentParser(description="C2's tables from the jobs' summaries")
+    results = Path(__file__).parent / "results"
+    parser.add_argument("--runs", type=Path, default=results / "c2-runs", help="<run>.json files")
+    parser.add_argument("--lr", type=Path, default=results / "c2-lr.json")
+    parser.add_argument("--out", type=Path, default=results / "c2.json")
     args = parser.parse_args()
     names = [r for runs in TEST_RUNS.values() for r in runs]
-    summaries = {r: json.loads((args.runs / r / "summary.json").read_text()) for r in names}
+    summaries = {r: json.loads((args.runs / f"{r}.json").read_text()) for r in names}
     out = analyze(summaries, json.loads(args.lr.read_text()))
     args.out.write_text(json.dumps(out, indent=1, sort_keys=True) + "\n")
     p = out["primary"]

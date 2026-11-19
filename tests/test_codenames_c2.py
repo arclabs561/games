@@ -123,3 +123,24 @@ def test_summary_keeps_hits_in_order():
     assert s["before"]["hits"] == "10" and "turns" not in s["before"] and "after" not in s
     assert s["before"]["turns_sha256"] == c2.turn_digest([("a", "x"), ("b", "y")])
     assert result["before"]["turns"] == turns  # the full result is not changed
+
+
+def test_committed_c2_results_match_the_run_summaries():
+    # results/c2.json is computed from results/c2-runs/ and C1's map results; recompute
+    # its point estimates from those files.
+    import json
+    from pathlib import Path
+
+    res = Path(c2.__file__).parent / "results"
+    out = json.loads((res / "c2.json").read_text())
+    runs = {
+        r: json.loads((res / "c2-runs" / f"{r}.json").read_text()) for r in c2.TEST_RUNS["lora"]
+    }
+    lora_hits = np.mean([c2.as_hits(s["after"]["hits"]) for s in runs.values()], axis=0)
+    maps = json.loads((res / "train-potion-game.json").read_text())["runs"].values()
+    potion = np.mean([c2.as_hits(r["guess"]["hits"]) for r in maps], axis=0)
+    assert out["arms"]["lora"]["top1"]["mean"] == pytest.approx(lora_hits.mean())
+    assert out["primary"]["mean"] == pytest.approx((lora_hits - potion).mean())
+    assert len(lora_hits) == out["turns"] == 551
+    lo, hi = out["primary"]["ci"]
+    assert lo < out["primary"]["mean"] < hi

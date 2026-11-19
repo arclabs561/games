@@ -10,6 +10,7 @@ Short answers, with how each is known:
 
 - EmbeddingGemma 2 and the small static table potion-base-8M pick the same word as a person most often: 54.8% and 54.4% of 551 turns from 68 test games, with the Cultural Codes turns split by game (95% intervals 50.1% to 59.5% and 49.8% to 59.3%; their difference, 0.4 points, has the interval −3.8 to 4.6). The other six models pick it in 39.4% to 49.0%. Instruction prefixes help the instruction-trained models a little and ruin the others. Computed exactly on the test turns, with intervals from resampling games.
 - Training a linear map on potion's clue vectors raises its match from 54.4% to 63.2%. The map is trained on the human guesses of the training games only. The gain, 8.8 points (6.3 to 11.4), is as large as on the published split (8.2), so it was not an artifact of test games having turns in training. Same method; the map is averaged over five training seeds.
+- Fine-tuning Qwen3-Embedding-0.6B with LoRA on the same training games raises its match from 43.4% to 62.6%, level with the potion map: LoRA minus the map is −0.7 points (−4.1 to 2.8). Same method, three training seeds, on an A10G GPU.
 - A giver expects to find 1.8 to 2.1 of its words per clue when the guesser shares its vectors. A guesser built on another model finds 57% to 73% of that, on average over the other seven models. A guesser that follows association counts from people finds 37% to 53%. Exact expected values for each of 200 random boards, one clue each, for eight models.
 - A giver trained by policy gradient against its own model reaches an expected turn value of 1.60 with that model, 0.75 with a held-out model, and −0.05 with the association counts. Trained against six other models instead, it reaches 1.03, 0.92 and 0.35. The gap between self-play and cross-play shrinks from 0.85 to 0.11, at a cost of 0.57 in self-play. A second giver shows the same pattern. Exact rewards on 200 test boards, one training seed per giver.
 
@@ -151,7 +152,7 @@ The EAT column is the share of 984 held-out cues whose most frequent response is
 
 A better model of human guesses did not make a better giver. Used as givers, with clues limited to held-out EAT cues on 100 boards, the trained maps found fewer words per clue with every guesser, including the association guesser: 0.82 before and 0.77 after for potion, 0.72 and 0.65 for Qwen3 (`results/train-*.json`). Why is open; one guess is that the map makes the giver's own guesser more confident without making its clues clearer.
 
-`lora.py` fine-tunes Qwen3-Embedding-0.6B or harrier-oss-v1-0.6b with LoRA on the same items. It needs a GPU or a Mac with Apple silicon. It was not run, so no result is reported for it.
+`lora.py` fine-tunes Qwen3-Embedding-0.6B with LoRA on human guesses. It runs on a GPU, and its results are in the section "LoRA fine-tuning on the split by game".
 
 ## 5. A giver trained against a population
 
@@ -218,6 +219,49 @@ The profiles also identify players. 52 of the 54 test players, by profile string
 
 **Reproducibility.** The ONNX models granite and bge are int8 with dynamic quantization, so a word's vector depends on the other words in its batch of 256. Vectors computed here from an empty cache reproduce every best-template number in section 1. Five other cells of its prompting table come out 0.3 to 2.3 points different (granite with the query template: 0.128, against 0.151).
 
+## LoRA fine-tuning on the split by game
+
+This section follows `experiments/plans/C2.md` and its amendment, written before the runs on this split. It uses C1's split by game: 4,820 train, 717 val and 551 test turns.
+
+**What was trained.** `lora.py` adds LoRA adapters (rank 16, α 32, dropout 0.05) to the query, key, value and output projections of Qwen3-Embedding-0.6B. It trains them for one epoch at batch 64 with sentence-transformers' MultipleNegativesRankingLoss. Each item is the clue in the "query" template, the word that the person picked, and 7 other words from the same board. The batch's other items serve as further negatives. Each job encodes every word before and after training, in the same precision, and scores both on human guesses (`c2.py`). τ is fitted on train and the clue template chosen on val, as in section 1.
+
+**Learning rate.** Chosen once, with training seed 1, by log-likelihood on the val turns: −1.78, −1.62 and −1.52 for 3e-5, 1e-4 and 3e-4, against −2.11 untrained (`results/c2-lr.json`). 3e-4 was used for every test run. It is the largest value in the plan's grid, and larger rates were not tried.
+
+**Confirmatory results** (`results/c2.json`, from the summaries in `results/c2-runs/`). Same turns, metric and resampling as the previous section.
+
+| Arm | Same word as the person (95% interval) | Per seed | Log-likelihood | EAT held-out cues |
+|---|---|---|---|---|
+| 1. potion + map (from C1) | 0.632 (0.589–0.675) | 0.623 to 0.641 (5 seeds) | | |
+| 2. Qwen3 0.6B, untrained | 0.434 (0.390–0.477) | | −2.15 | 0.619 |
+| 3. Qwen3 0.6B + map (from C1) | 0.477 (0.435–0.520) | 0.445 to 0.528 (5 seeds) | | |
+| 4. Qwen3 0.6B + LoRA | 0.626 (0.585–0.666) | 0.623, 0.632, 0.623 | −1.38 | 0.716 to 0.724 |
+| 5. Qwen3 0.6B + LoRA, with EAT | 0.630 (0.583–0.675) | 1 seed | −1.41 | 0.936 |
+
+The untrained vectors made in the job give the same pick as the runner's vectors used in the previous section on 549 of the 551 turns. Every job chose the query template.
+
+- **Primary metric.** LoRA minus the potion map is −0.007 (−0.041 to 0.028), paired by turn. The interval includes 0, so by the plan's rule LoRA did not beat the linear map at this data size. LoRA brings Qwen3 level with the potion map, not past it.
+- **LoRA against the map on the same encoder.** 0.148 (0.121 to 0.176). Against the untrained encoder, 0.192 (0.152 to 0.232). Changing the encoder gains about four times what rotating its output gains.
+- **Adding EAT.** 0.004 (−0.018 to 0.025) on human guesses, one seed. The linear map for Qwen3 lost 6.5 points when EAT was added on the published split (section 4); LoRA does not lose. On the EAT held-out cues it rises from about 0.72 to 0.94. That task's distractors are all board words, while 795 of its 984 answers are not. The EAT training rows also use board words as negatives, so part of the rise may come from learning to rank the words of the board low. That was not tested.
+- **Seeds.** The three LoRA seeds span 0.9 points, and the five map seeds for Qwen3 span 8.3.
+- **As a giver** (secondary). On 200 fresh boards (seed 2002), with clues limited to held-out EAT cues, the tuned and the untrained Qwen3 each chose one clue per board. The tuned giver's clues were averaged over its three seeds. The table gives the expected team words found per clue, with the difference paired by board (95% interval from 10,000 resamples of boards).
+
+| Guesser | Untrained giver | LoRA giver | Difference |
+|---|---|---|---|
+| potion | 1.165 | 1.196 | 0.031 (−0.039 to 0.101) |
+| wordllama | 0.857 | 0.869 | 0.012 (−0.044 to 0.068) |
+| granite | 0.905 | 0.893 | −0.012 (−0.066 to 0.042) |
+| bge | 1.075 | 1.117 | 0.043 (−0.015 to 0.100) |
+| harrier-oss-v1-270m | 1.167 | 1.132 | −0.035 (−0.109 to 0.039) |
+| harrier-oss-v1-0.6b | 1.355 | 1.360 | 0.006 (−0.061 to 0.072) |
+| EmbeddingGemma 2 | 1.087 | 1.105 | 0.017 (−0.037 to 0.071) |
+| EAT counts | 0.766 | 0.789 | 0.023 (−0.025 to 0.070) |
+
+Every interval includes 0. A guesser model that matches people 19 points more often did not give measurably better or worse clues to any of these guessers. The linear maps of section 4 gave worse clues, on the published split and 100 boards.
+
+**Compute.** Each job ran on a Hugging Face `a10g-small` through `experiments/hfrun.py`, at the commit in its manifest. A job with Cultural Codes rows only took 2.7 to 3.8 minutes from creation to finish; with EAT, 6.9. About 60 to 85 seconds of each went to setup before the model was loaded: cloning, installing the `codenames-gpu` group (torch and the CUDA libraries) and the imports. Training took 42 seconds (236 with EAT). The eight GPU jobs, the pilot included, ran 29.4 minutes in all, about $0.49 at $1.00 an hour. Vectors, adapters and per-turn scores are in the private dataset `arclabs561/games-runs` under `runs/c2/`. The adapters were trained on Cultural Codes, whose license is not stated, so they are not published.
+
+**Exploratory** (the pilot, seed 0, learning rate 1e-4, published split). Scored on the published val turns: 0.476 untrained and 0.649 tuned. It was run to time the job; its numbers are not part of the result.
+
 ## The mathematics
 
 **Exact turn odds.** For a Luce guesser with weights w over the unrevealed words, write p(S) for the chance that the first |S| picks are the team words in the set S, in some order. Then p of the empty set is 1, and
@@ -261,7 +305,8 @@ and the giver's best count is the n that maximizes it. In this study the costs a
 |---|---|
 | Vectors for potion, wordllama, granite, bge; every table above; training and policy gradient | this machine, 2 CPUs |
 | Vectors for Qwen3-Embedding-0.6B, harrier-oss-v1-270m, harrier-oss-v1-0.6b, EmbeddingGemma 2 | GitHub-hosted runner (CPU), workflow on `compute/codenames-embed` |
-| LoRA fine-tuning (`lora.py`), LLM players (`llm.py`) | not run |
+| LoRA fine-tuning (`lora.py`) | Hugging Face Jobs, `a10g-small`, through `experiments/hfrun.py` |
+| LLM players (`llm.py`) | not run |
 
 ## Open questions
 
@@ -269,7 +314,7 @@ and the giver's best count is the n that maximizes it. In this study the costs a
 - Would the order of models change with SWOW, which is larger and recent?
 - Does the potion map's gain hold when every pick of a multi-pick turn is used, as White et al. do?
 - Why does a trained guesser model make a worse giver?
-- Does a LoRA-tuned Qwen3 or harrier keep its human-guess gains without the EAT collapse?
+- Would LoRA beat the potion map with more human data or other settings (a larger learning rate, more epochs, harrier-oss-v1-0.6b)?
 - How large is the gap for an LLM giver?
 
 ## Usage
@@ -290,6 +335,7 @@ uv run python -m codenames.train --model potion   # section 4 (2 min)
 uv run python -m codenames.split --check          # rebuild games and players, compare with splits.json
 uv run python -m codenames.c1                     # split by game, the plan's run (2 min)
 uv run python -m codenames.heldout                # split by game and player, exploratory (5 min)
+uv run python -m codenames.c2                     # LoRA results from results/c2-runs/ (1 min)
 uv run python -m codenames.rl --giver potion --held-out bge --out codenames/results/rl-potion.json
 uv run --with sentence-transformers python -m codenames.embed --model Qwen/Qwen3-Embedding-0.6B
 ```
@@ -307,7 +353,8 @@ uv run --with sentence-transformers python -m codenames.embed --model Qwen/Qwen3
 | `norms.py` | EAT, SWOW, Cultural Codes |
 | `evaluate.py`, `senses.py` | section 1 |
 | `study.py` | sections 1 to 3 and the tables |
-| `train.py`, `lora.py` | section 4 |
+| `train.py` | section 4 |
+| `lora.py`, `c2.py` | LoRA fine-tuning: the GPU job, its scoring, and the analysis |
 | `split.py`, `splits.json` | games and players rebuilt from Cultural Codes, and the splits by game and by player |
 | `stats.py` | the bootstrap over games, Kendall's τ |
 | `c1.py`, `heldout.py` | human guesses split by game: the plan's run, and the exploratory one |

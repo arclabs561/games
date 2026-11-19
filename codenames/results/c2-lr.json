@@ -1,0 +1,10 @@
+{
+ "choice": 0.0003,
+ "criterion": "mean log-likelihood of the person's word on C1's val turns, LoRA seed 1, chosen template",
+ "untrained_val_loglik": -2.1080818033041147,
+ "val_loglik": {"3e-05": -1.7807150238385896, "0.0001": -1.6161036938046085, "0.0003": -1.5198148004735865},
+ "val_top1": {"untrained": 0.43375174337517436, "3e-05": 0.5439330543933054, "0.0001": 0.5676429567642957, "0.0003": 0.5801952580195258},
+ "val_turns": 717,
+ "runs": ["lr3e-5-s1", "lr1e-4-s1", "lr3e-4-s1"],
+ "commit": "6efd44969f7a758a9a96d1b238fa66849c6182d4"
+}
