@@ -206,14 +206,19 @@ def test_score_pairs_seeds_and_uses_the_fallback(tmp_path):
     clues = np.array([[f"{w}{name(i)}" for i in range(30)] for w in "abcde"])
     data = {"guessers": names, "test_values": values, "test_clues": clues}
     first = values[:, :, names.index(c7.GIVER)].argmax(axis=1)
+    raw = tmp_path / "raw"
+    runs = tmp_path / "runs"
+    runs.mkdir()
     for seed in (1, 2):
-        run = tmp_path / f"lm-{seed}"
-        run.mkdir()
+        run = raw / f"lm-{seed}"
+        run.mkdir(parents=True)
         trained = [
-            {"action": None, "why": "unlisted"} if b == 0 else {"action": seed + b, "why": None}
+            {"action": None, "why": "unlisted", "tokens": 3, "reply": "no"}
+            if b == 0
+            else {"action": seed + b, "why": None, "tokens": 5, "reply": "x"}
             for b in range(5)
         ]
-        untrained = [{"action": None, "why": "unlisted"} for _ in range(5)]
+        untrained = [{"action": None, "why": "unlisted", "tokens": 2, "reply": "?"}] * 5
         (run / "picks.json").write_text(json.dumps({"trained": trained, "untrained": untrained}))
         (run / "config.json").write_text(json.dumps({"seed": seed, "eval": "test"}))
         (run / "timings.json").write_text("{}")
@@ -221,10 +226,10 @@ def test_score_pairs_seeds_and_uses_the_fallback(tmp_path):
             {"step": i, "mean_reward": i, "invalid": 0.5, "trl": {"entropy": 1}} for i in range(25)
         ]
         (run / "curves.json").write_text(json.dumps(curve))
-        fp = tmp_path / f"fp-{seed}"
-        fp.mkdir()
-        (fp / "feature.json").write_text(json.dumps({"seed": seed, "picks": {"test": [7] * 5}}))
-    out = c7.score(data, tmp_path)
+        (runs / f"lm-{seed}.json").write_text(json.dumps(c7.compact(run)))
+        feature = {"seed": seed, "picks": {"test": [7] * 5}}
+        (runs / f"feature-{seed}.json").write_text(json.dumps(feature))
+    out = c7.score(data, runs)
     held = [names.index(g) for g in c7.HELD_OUT]
     want = []
     for seed in (1, 2):
@@ -291,3 +296,5 @@ def test_grpo_loop_trains_the_adapter(toy, tmp_path, monkeypatch):
     lora_b = [v for k, v in weights.items() if "lora_B" in k]
     assert lora_b and any(np.abs(v).max() > 0 for v in lora_b)  # B starts at zero
     assert not any("visual" in k for k in weights)
+    summary = c7.compact(out)
+    assert len(summary["trained"]) == 3 and [c[0] for c in summary["curve"]] == [0, 1]

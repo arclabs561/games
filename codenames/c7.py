@@ -285,34 +285,73 @@ def behavior(picks: list[int], clues: np.ndarray, first: np.ndarray) -> dict:
     }
 
 
-def windows(curve: list[dict], width: int = 20) -> list[dict]:
-    """Means over steps [0, 20), [20, 40), ... of the reward, the share of -1 replies
-    and TRL's entropy."""
+def windows(curve: list[list[float]], width: int = 20) -> list[dict]:
+    """Means over steps [0, 20), [20, 40), ... of the reward, the share of -1 replies,
+    the share of truncated replies and TRL's entropy; curve rows are
+    [step, mean reward, share -1, share truncated, entropy]."""
     out = []
     for lo in range(0, len(curve), width):
-        part = curve[lo : lo + width]
-        row = {"steps": [part[0]["step"], part[-1]["step"]]}
-        row["mean_reward"] = round(float(np.mean([c["mean_reward"] for c in part])), 4)
-        row["invalid"] = round(float(np.mean([c["invalid"] for c in part])), 4)
-        ent = [c["trl"]["entropy"] for c in part if "entropy" in c.get("trl", {})]
-        if ent:
-            row["entropy"] = round(float(np.mean(ent)), 4)
+        part = np.array(curve[lo : lo + width], dtype=float)
+        row: dict = {"steps": [int(part[0, 0]), int(part[-1, 0])]}
+        for j, k in enumerate(("mean_reward", "invalid", "truncated", "entropy"), 1):
+            row[k] = round(float(part[:, j].mean()), 4)
         out.append(row)
     return out
 
 
-def read_runs(runs: Path, split: str) -> tuple[dict[int, Path], dict[int, dict]]:
-    """Language-model runs (folders with picks.json) scored on split, and feature-policy
-    runs (feature.json), by seed."""
+def compact(run: Path) -> dict:
+    """The summary of one job's output folder that is copied into results/c7-runs/:
+    each board's action, the reason when there is none, the reply's length in tokens
+    and the reply itself when it has no action; the curves; timings and settings."""
+
+    def read(name: str):
+        raw = (run / name).read_bytes()
+        return json.loads(raw), hashlib.sha256(raw).hexdigest()
+
+    picks, hp = read("picks.json")
+    cfg, _ = read("config.json")
+    tim, _ = read("timings.json")
+    cur, hc = read("curves.json")
+    out: dict = {"run": run.name, "picks_sha256": hp, "curves_sha256": hc}
+    for k in ("untrained", "trained"):
+        out[k] = [
+            [r["action"], r["why"], r["tokens"], r["reply"] if r["action"] is None else ""]
+            for r in picks[k]
+        ]
+    keys = ("seed", "steps", "eval", "batch", "steps_done", "gpu", "max_memory_gb", "fla")
+    keys += ("trainable_parameters", "boards_seen", "versions", "stop_flat", "min_steps")
+    out["config"] = {k: cfg.get(k) for k in (*keys, "stop_after")}
+    out["since_container_start"] = tim.get("since_container_start")
+    if (run / "manifest.json").exists():
+        man, _ = read("manifest.json")
+        out["manifest"] = {k: man.get(k) for k in ("commit", "job_id", "seconds", "returncode")}
+    out["curve"] = [
+        [
+            c["step"],
+            round(c["mean_reward"], 4),
+            round(c["invalid"], 4),
+            round(c.get("truncated", 0), 4),
+            round(c.get("trl", {}).get("entropy", -1), 6),
+        ]
+        for c in cur
+    ]
+    return out
+
+
+def read_runs(runs: Path, split: str) -> tuple[dict[int, dict], dict[int, dict]]:
+    """Language-model runs (summaries written by compact) scored on split, and
+    feature-policy runs, by seed, from the JSON files in runs."""
     lm, fp = {}, {}
-    for path in sorted(runs.glob("**/picks.json")):
-        cfg = json.loads((path.parent / "config.json").read_text())
-        if cfg.get("eval") == split and not cfg.get("tiny"):
-            assert cfg["seed"] not in lm, f"two runs of seed {cfg['seed']}"
-            lm[cfg["seed"]] = path.parent
-    for path in sorted(runs.glob("**/feature.json")):
+    for path in sorted(runs.glob("*.json")):
         run = json.loads(path.read_text())
-        fp[run["seed"]] = run
+        if "picks" in run:
+            fp[run["seed"]] = run
+        elif run["config"]["eval"] == split:
+            seed = run["config"]["seed"]
+            assert seed not in lm, f"two runs of seed {seed}"
+            for k in ("untrained", "trained"):
+                run[k] = [{"action": a, "why": w, "tokens": t, "reply": r} for a, w, t, r in run[k]]
+            lm[seed] = run
     return lm, fp
 
 
@@ -334,8 +373,7 @@ def score(data: dict, runs: Path, split: str = "test") -> dict:
     def summary(v: np.ndarray) -> dict[str, np.ndarray]:  # (..., B, G) -> (..., B)
         return {k: v[..., idx].mean(axis=-1) for k, idx in groups.items()}
 
-    lm_dirs, fp = read_runs(runs, split)
-    lm = {s: json.loads((d / "picks.json").read_text()) for s, d in lm_dirs.items()}
+    lm, fp = read_runs(runs, split)
     seeds = sorted(set(lm) & set(fp))
     out: dict = {"split": split, "boards": int(n_boards), "seeds": seeds, "guessers": names}
     if not seeds:
@@ -414,27 +452,15 @@ def score(data: dict, runs: Path, split: str = "test") -> dict:
             for s, r in sorted(fp.items())
         },
     }
-    out["runs"] = {}
-    for s, d in sorted(lm_dirs.items()):
-        cfg = json.loads((d / "config.json").read_text())
-        timing = json.loads((d / "timings.json").read_text())
-        curve = json.loads((d / "curves.json").read_text())
-        out["runs"][str(s)] = {
-            "curves_every_20_steps": windows(curve),
-            "since_container_start": timing.get("since_container_start"),
-            "config": {
-                k: cfg.get(k)
-                for k in (
-                    "steps",
-                    "lr",
-                    "gpu",
-                    "versions",
-                    "trainable_parameters",
-                    "max_memory_gb",
-                    "fla",
-                )
-            },
+    out["runs"] = {
+        str(seed): {
+            "curves_every_20_steps": windows(run["curve"]),
+            "since_container_start": run["since_container_start"],
+            "config": run["config"],
+            "picks_sha256": run["picks_sha256"],
         }
+        for seed, run in sorted(lm.items())
+    }
     return out
 
 
@@ -462,7 +488,7 @@ def main() -> None:
     elif args.cmd == "feature":
         args.out.mkdir(parents=True, exist_ok=True)
         result = feature_policy(read_data(args.data), args.seed)
-        (args.out / "feature.json").write_text(json.dumps(result) + "\n")
+        (args.out / f"feature-{args.seed}.json").write_text(json.dumps(result) + "\n")
         print(json.dumps({k: v for k, v in result.items() if k != "picks"}))
     else:
         result = score(read_data(args.data), args.runs, args.split)
