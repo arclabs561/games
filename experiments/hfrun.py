@@ -6,7 +6,7 @@
 
 Hugging Face Jobs runs this script (`hf jobs uv run`, or the Jobs tool). It clones the
 repository at COMMIT, installs the dependency group GROUP, runs the module with its
-arguments, and uploads the run's output folder with a manifest to the private dataset
+arguments, writes its manifest with `manifest.py`, and uploads the output folder to the private dataset
 arclabs561/games-runs, under runs/<EXPERIMENT>/<RUN>/.
 
     environment: COMMIT (full SHA), GROUP, EXPERIMENT, RUN, HF_TOKEN (secret)
@@ -15,9 +15,7 @@ arclabs561/games-runs, under runs/<EXPERIMENT>/<RUN>/.
 The literal argument OUT is replaced by the output folder.
 """
 
-import json
 import os
-import platform
 import shutil
 import subprocess
 import sys
@@ -28,19 +26,6 @@ from huggingface_hub import HfApi
 
 REPO = "https://github.com/arclabs561/games"
 DATASET = "arclabs561/games-runs"
-
-
-def gpu_name():
-    try:
-        out = subprocess.run(
-            ["nvidia-smi", "--query-gpu=name", "--format=csv,noheader"],
-            capture_output=True,
-            text=True,
-            check=True,
-        )
-        return out.stdout.strip() or None
-    except (OSError, subprocess.CalledProcessError):
-        return None
 
 
 def main(argv):
@@ -55,19 +40,30 @@ def main(argv):
     args = [str(out) if a == "OUT" else a for a in argv]
     start = time.time()
     done = subprocess.run([uv, "run", "--group", group, "python", "-m", *args], cwd=work)
-    manifest = {
-        "experiment": experiment,
-        "run": run,
-        "commit": commit,
-        "command": ["python", "-m", *argv],
-        "returncode": done.returncode,
-        "seconds": round(time.time() - start, 1),
-        "flavor": os.environ.get("JOB_FLAVOR"),
-        "job_id": os.environ.get("JOB_ID"),
-        "gpu": gpu_name(),
-        "python": platform.python_version(),
-    }
-    (out / "manifest.json").write_text(json.dumps(manifest, indent=1) + "\n")
+    seconds = time.time() - start
+    subprocess.run(
+        [
+            sys.executable,
+            "experiments/manifest.py",
+            str(out),
+            "--experiment",
+            experiment,
+            "--run",
+            run,
+            "--commit",
+            commit,
+            "--platform",
+            "hf-jobs",
+            "--returncode",
+            str(done.returncode),
+            "--seconds",
+            str(seconds),
+            "--",
+            *argv,
+        ],
+        cwd=work,
+        check=True,
+    )
     HfApi(token=os.environ["HF_TOKEN"]).upload_folder(
         folder_path=str(out),
         path_in_repo=f"runs/{experiment}/{run}",
@@ -75,7 +71,6 @@ def main(argv):
         repo_type="dataset",
         commit_message=f"{experiment}/{run} at {commit[:7]}",
     )
-    print(json.dumps(manifest, indent=1))
     return done.returncode
 
 

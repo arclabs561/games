@@ -1,0 +1,122 @@
+# Run one experiment's module on free GitHub-hosted runners, one job per seed or slice.
+# The same module runs on Hugging Face Jobs through experiments/hfrun.py; both write
+# the same manifest with experiments/manifest.py. Started by hand (workflow_dispatch).
+name: experiment
+permissions:
+  contents: read
+
+on:
+  workflow_dispatch:
+    inputs:
+      experiment:
+        description: "Plan id, e.g. C3 (results go under runs/<experiment>/)"
+        required: true
+      group:
+        description: "Dependency group, usually the game's folder name"
+        required: true
+      args:
+        description: "Module and arguments; SEED and OUT are replaced per job, e.g. codenames.rl --seed SEED --out OUT"
+        required: true
+      seeds:
+        description: "JSON list of seeds or slice numbers, one job each"
+        required: true
+        default: "[1]"
+      timeout:
+        description: "Minutes per job"
+        required: true
+        default: "60"
+      store:
+        description: "Where results go: branch (compute/<experiment>-<run id>) or hf (private dataset; needs the HF_TOKEN secret)"
+        required: true
+        default: branch
+        type: choice
+        options: [branch, hf]
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: ${{ fromJSON(inputs.timeout) }}
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+      matrix:
+        seed: ${{ fromJSON(inputs.seeds) }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+      - name: Install the dependency group
+        run: uv sync --locked --group "$GROUP"
+        env:
+          GROUP: ${{ inputs.group }}
+      - name: Run the module
+        env:
+          GROUP: ${{ inputs.group }}
+          ARGS: ${{ inputs.args }}
+          SEED: ${{ matrix.seed }}
+          EXPERIMENT: ${{ inputs.experiment }}
+        run: |
+          out="$RUNNER_TEMP/out/seed-$SEED"
+          mkdir -p "$out"
+          read -r -a raw <<< "$ARGS"
+          argv=()
+          for a in "${raw[@]}"; do
+            case "$a" in SEED) argv+=("$SEED") ;; OUT) argv+=("$out") ;; *) argv+=("$a") ;; esac
+          done
+          start=$(date +%s)
+          set +e
+          uv run --group "$GROUP" python -m "${argv[@]}"
+          code=$?
+          set -e
+          seconds=$(( $(date +%s) - start ))
+          python3 experiments/manifest.py "$out" --experiment "$EXPERIMENT" --run "seed-$SEED" \
+            --commit "$GITHUB_SHA" --platform actions --returncode "$code" --seconds "$seconds" -- "${raw[@]}"
+          exit "$code"
+      - name: Keep the outputs
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: seed-${{ matrix.seed }}
+          path: ${{ runner.temp }}/out/seed-${{ matrix.seed }}
+          retention-days: 30
+
+  store:
+    needs: run
+    if: always()
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          path: ${{ runner.temp }}/runs
+      - name: Commit the outputs to a compute branch
+        if: inputs.store == 'branch'
+        env:
+          EXPERIMENT: ${{ inputs.experiment }}
+        run: |
+          branch="compute/${EXPERIMENT}-${GITHUB_RUN_ID}"
+          git config user.name arclabs561
+          git config user.email arclabs561@users.noreply.github.com
+          git checkout -q --orphan "$branch"
+          git rm -rq --cached .
+          dest="runs/$EXPERIMENT/$GITHUB_RUN_ID"
+          mkdir -p "$dest"
+          cp -r "$RUNNER_TEMP"/runs/* "$dest"/
+          git add "$dest"
+          git commit -q -m "$EXPERIMENT outputs from run $GITHUB_RUN_ID at ${GITHUB_SHA::7}"
+          git push -q origin "$branch"
+          echo "Outputs on branch $branch"
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        if: inputs.store == 'hf'
+      - name: Upload the outputs to the private dataset
+        if: inputs.store == 'hf'
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          EXPERIMENT: ${{ inputs.experiment }}
+        run: |
+          uvx --from 'huggingface_hub>=1.0' hf upload arclabs561/games-runs \
+            "$RUNNER_TEMP/runs" "runs/$EXPERIMENT/actions-$GITHUB_RUN_ID" --repo-type dataset \
+            --commit-message "$EXPERIMENT outputs from run $GITHUB_RUN_ID at ${GITHUB_SHA::7}"

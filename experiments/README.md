@@ -12,8 +12,10 @@ Most results in this repository are exact and run in seconds on a laptop. The ex
 
 ## How runs are launched
 
-- **Hugging Face Jobs**, for GPUs and for hosted language models (Inference Providers). `hfrun.py` clones this repository at a pinned commit, installs one dependency group, runs a module, and uploads the output folder with its manifest. Every job has a hard timeout.
-- **GitHub Actions**, for CPU work that splits into many independent pieces. Runners are free for this public repository, and a matrix of jobs runs them side by side.
+Each experiment is one module, run as `uv run --group <game> python -m <game>.<module> --seed N --out DIR`. The module writes its results into `DIR` and does not know where it runs. Two launchers wrap it in the same four steps: check out a pinned commit, install the dependency group from `uv.lock`, run the module, and store `DIR` with a `manifest.json` written by `manifest.py`.
+
+- **Hugging Face Jobs** (`hfrun.py`), for GPUs and for hosted language models (Inference Providers). Every job has a hard timeout, and outputs go to the private dataset.
+- **GitHub Actions** (`.github/workflows/experiment.yml`), for CPU work that splits into seeds or slices. It is started by hand with the module, its arguments, a JSON list of seeds and a timeout; each seed is its own job, up to 20 at once. Outputs go to a branch named `compute/<experiment>-<run id>`, or to the private dataset when the repository has an `HF_TOKEN` secret. Runners are free for this public repository.
 - **A local machine**, for anything that fits.
 
 Costs are recorded per run. A number from a run that did not happen is never reported.
