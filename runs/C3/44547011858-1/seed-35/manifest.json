@@ -1,0 +1,21 @@
+{
+ "experiment": "C3",
+ "run": "seed-35",
+ "commit": "0dfb4c7b3499974c12a625378885be7309f801ad",
+ "platform": "actions",
+ "command": [
+  "python",
+  "-m",
+  "codenames.c3",
+  "--slice",
+  "SEED",
+  "--out",
+  "OUT"
+ ],
+ "returncode": 0,
+ "seconds": 130.0,
+ "job_id": "44547011858",
+ "hardware": "GitHub Actions 1000097883",
+ "gpu": null,
+ "python": "3.14.4"
+}
