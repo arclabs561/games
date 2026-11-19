@@ -167,6 +167,12 @@ def summarize(rows: list[dict], chosen: dict) -> dict:
             a["rarity"] = float(np.mean([rarity(c) for c, _ in acts]))
             a["distinct_clues"] = len({c for c, _ in acts})
         if arm in chosen:
+            # Sensitivity: only the boards where the reply named an action.
+            own = np.array([arm not in r["fallback"] for r in rows])
+            if own.sum() > 1:
+                for k, name in enumerate(MEASURES):
+                    d = (column(rows, arm, k) - first[k])[own]
+                    a[f"{name}_minus_first_own_choices"] = bootstrap(d)
             ranks = [r["rank"][arm] for r in rows]
             a["rank_mean"] = float(np.mean(ranks))
             a["rank_median"] = float(np.median(ranks))
@@ -176,6 +182,11 @@ def summarize(rows: list[dict], chosen: dict) -> dict:
             reasons = [r["fallback"].get(arm) for r in rows if r["fallback"].get(arm)]
             a["fallbacks"] = {w: reasons.count(w) for w in sorted(set(reasons))}
         out["arms"][arm] = a
+    if rows and "by_guesser" in rows[0]:
+        out["by_guesser"] = {
+            arm: np.mean([r["by_guesser"][arm] for r in rows], axis=0).tolist()
+            for arm in rows[0]["by_guesser"]
+        }
     gap = {k: column(rows, f"oracle_{'sh'[k]}", k) - first[k] for k in (0, 1)}
     out["oracle_gap"] = {MEASURES[k]: bootstrap(gap[k]) for k in (0, 1)}
     return out
@@ -251,4 +262,9 @@ def main(runs: Path | None, out: Path) -> None:
     if cross.exists():
         result["crossguess"] = score_crossguess(cross.read_text(), base=BASE)
         result["crossguess"]["per_board"] = cross.read_text().splitlines()
+    # The per-board rows go to a second, compact file beside out.
+    per_board = {s: r.pop("boards") for s, r in result["seeds"].items()}
+    board_file = out.with_name(out.stem + "-boards.json")
+    board_file.write_text(json.dumps(rounded(per_board, 4), sort_keys=True) + "\n")
+    result["boards_file"] = board_file.name
     out.write_text(json.dumps(rounded(result, 4), indent=1, sort_keys=True) + "\n")

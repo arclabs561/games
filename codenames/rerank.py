@@ -7,6 +7,7 @@ codenames.actions, which needs word vectors; they are computed here and committe
 (experiments/hfrun.py) and read that file:
 
     python -m codenames.rerank choose --models all --seed 6005 --n 50 --repeat 20 --cap 0.2 --out OUT
+    python -m codenames.rerank picks --models qwen3.8-27b --seed 6004 --out c6-picks-6004.txt  # here
     python -m codenames.rerank crossguess --clues codenames/results/c6-picks-6004.txt --seed 6004 --cap 0.3 --out OUT
 
 `choose` writes choose-<model>-<seed>.json (every reply and the action read from it),
@@ -46,6 +47,7 @@ MODELS = {
     "gemma-4-31b": Model("google/gemma-4-31B-it", "deepinfra", NOTHINK),
 }
 PLAN = tuple(MODELS)
+GUESSERS = ["llama-3.3-70b", "deepseek-v3.2", "gpt-oss-120b"]  # C4's language-model guessers
 TOKENS = {"gpt-oss-120b": 1024}  # its reasoning counts against max_tokens (C4)
 CHOOSER_TOKENS = 64
 WORKERS = {"qwen3-32b": 2}  # deepinfra answered Qwen3-32B with 429 at 8 (C4)
@@ -240,7 +242,7 @@ def call_stats(log: Path) -> dict:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("what", choices=["choose", "crossguess", "score"])
+    parser.add_argument("what", choices=["choose", "crossguess", "picks", "score"])
     parser.add_argument("--models", default="all", help="'all' or names, comma-separated")
     parser.add_argument("--seed", type=int, nargs="+", default=[6005])
     parser.add_argument("--n", type=int, nargs="+", default=[50])
@@ -257,10 +259,18 @@ def main() -> None:
 
         c6score.main(args.runs, args.out)
         return
+    if args.what == "picks":  # here, with vectors: the clues the guessers of crossguess hear
+        from codenames.c6score import RESULTS, picks_for_crossguess
+
+        chosen = read_choice_lines((args.runs or RESULTS).joinpath("c6-choices.txt").read_text())
+        seed, (model,) = args.seed[0], model_list(args.models)
+        lists = read_action_lines(args.actions.read_text())[seed]
+        args.out.write_text(picks_for_crossguess(seed, lists, chosen[(model, seed)], model))
+        return
     args.out.mkdir(parents=True, exist_ok=True)
     meter = Meter(args.cap)
     if args.what == "crossguess":
-        guessers = ["llama-3.3-70b", "deepseek-v3.2", "gpt-oss-120b"]
+        guessers = GUESSERS if args.models == "all" else model_list(args.models)
         c4.price_models(guessers, args.out)
         text = c4.crossguess(guessers, args.clues.read_text(), args.seed[0], meter, args.out)
         (args.out / "crossguess.txt").write_text(text)
