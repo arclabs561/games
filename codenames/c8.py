@@ -7,7 +7,12 @@ copied to results/c8-runs/<run>.json and label.json to results/c8-label.json. Ar
 C2's arm 4 (results/c2-runs/lora-s1 to s3), which is not trained again. This module
 pairs the arms by test turn on the machine that writes the README:
 
+    python -m codenames.c8 collect --out OUT                 # in a job: compact summaries
     python -m codenames.c8 --out codenames/results/c8.json [--giver]
+
+The machine that writes the README cannot reach the Hub, so `collect` runs in a job and
+writes each run's compact summary (`compact`) with its SHA-256; the copies in
+results/c8-runs/ are checked against those digests.
 
 --giver also scores arm B against arm A as a giver (it needs the word vectors of the seven
 other embedding models, as codenames.c2 does).
@@ -53,6 +58,50 @@ def choose_lr(val_loglik: dict[str, float], c2_val: float) -> tuple[float, bool]
     and whether it falls below C2's arm 4 at seed 1, the plan's rule for a failed arm."""
     lr = max(sorted(val_loglik, key=float), key=lambda k: val_loglik[k])
     return float(lr), val_loglik[lr] < c2_val
+
+
+RUNS = (*LR_RUNS.values(), *(r for runs in ARMS.values() for r in runs))
+DATASET = "arclabs561/games-runs"
+
+
+def compact(summary: dict) -> dict:
+    """What the analysis needs from a job's summary.json: its config and the trained
+    model's scores (the untrained model's are C2's)."""
+    after = summary["after"]
+    keep = ("assoc", "chosen", "giver", "hits", "loglik", "n", "split", "top1", "turns_sha256")
+    return {"config": summary["config"], "after": {k: after[k] for k in keep if k in after}}
+
+
+def compact_text(summary: dict) -> str:
+    return json.dumps(compact(summary), sort_keys=True, separators=(",", ":")) + "\n"
+
+
+def collect(out: Path) -> None:
+    """Inside a job: download each run's summary.json from the private dataset and write
+    its compact form, with the SHA-256 of both, so they can be copied and checked."""
+    import hashlib
+    import os
+
+    from huggingface_hub import hf_hub_download
+
+    out.mkdir(parents=True, exist_ok=True)
+    lines = []
+    for run in RUNS:
+        path = Path(
+            hf_hub_download(
+                DATASET,
+                f"runs/c8/{run}/summary.json",
+                repo_type="dataset",
+                token=os.environ.get("HF_TOKEN"),
+            )
+        )
+        raw = path.read_bytes()
+        text = compact_text(json.loads(raw))
+        (out / f"{run}.json").write_text(text)
+        full, small = hashlib.sha256(raw).hexdigest(), hashlib.sha256(text.encode()).hexdigest()
+        lines.append(f"{run} summary {full} compact {small}")
+    (out / "sha256.txt").write_text("\n".join(lines) + "\n")
+    print("\n".join(lines))
 
 
 def read_runs(folder: Path) -> dict[str, dict]:
@@ -189,11 +238,15 @@ def giver(runs: dict[str, dict], c2_runs: dict[str, dict]) -> dict:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("what", nargs="?", default="analyze", choices=["analyze", "collect"])
     parser.add_argument("--runs", type=Path, default=RESULTS / "c8-runs", help="<run>.json")
     parser.add_argument("--label", type=Path, default=RESULTS / "c8-label.json")
     parser.add_argument("--out", type=Path, default=RESULTS / "c8.json")
     parser.add_argument("--giver", action="store_true", help="also the giver comparison")
     args = parser.parse_args()
+    if args.what == "collect":
+        collect(args.out)
+        return
     runs = read_runs(args.runs)
     c2_runs = read_runs(RESULTS / "c2-runs")
     label = json.loads(args.label.read_text())

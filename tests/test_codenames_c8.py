@@ -216,3 +216,17 @@ def test_label_job_writes_its_files(monkeypatch, tmp_path):
     # the job reads its own output back as lora does
     teacher, digest = lora.load_teacher(str(tmp_path / "teacher.jsonl"), summary["teacher_sha256"])
     assert teacher == rows
+
+
+def test_compact_summary_keeps_what_the_analysis_reads():
+    full = {
+        "config": {"seed": 1, "sources": "teacher"},
+        "before": {"hits": "00", "top1": 0.0},
+        "after": {"hits": "10", "top1": 0.5, "loglik": -1.0, "settings": [], "split": "test"},
+    }
+    text = c8.compact_text(full)
+    assert text.endswith("\n") and "\n" not in text[:-1]
+    small = json.loads(text)
+    assert small == {"config": full["config"], "after": {k: full["after"][k] for k in
+                     ("hits", "top1", "loglik", "split")}}  # fmt: skip
+    assert c8.compact_text(small) == text  # compacting a compact summary changes nothing
