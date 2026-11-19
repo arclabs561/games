@@ -22,6 +22,8 @@ import math
 from collections import Counter
 from pathlib import Path
 
+from hanabi import dfs_solver
+from hanabi.rules import Rules, seeded_deck
 from hanabi.upper_bound import wilson
 
 
@@ -29,29 +31,41 @@ def load(folder: str) -> dict[tuple[int, int], dict]:
     """Every record under the folder, keyed by (players, seed). Files named `*rerun*`
     update Solver A's verdict of deals already present."""
     recs: dict[tuple[int, int], dict] = {}
-    files = sorted(Path(folder).rglob("*.json"))
+    files = sorted(Path(folder).rglob("*.json")) + sorted(Path(folder).rglob("*.jsonl"))
     for f in [f for f in files if "rerun" not in f.name] + [f for f in files if "rerun" in f.name]:
-        for r in json.loads(f.read_text()):
+        text = f.read_text()
+        for r in (
+            [json.loads(x) for x in text.splitlines()] if f.suffix == ".jsonl" else json.loads(text)
+        ):
             key = (r["players"], r["seed"])
             if "rerun" in f.name:
                 old = recs[key]
                 assert old["verdict"] == "undecided", key
-                for k in ("verdict", "certificates", "budget", "nodes", "seconds", "best"):
+                for k in ("verdict", "certificates", "budget", "nodes", "seconds", "best", "extra"):
                     if k in r:
                         old[k] = r[k]
-                old["nodes"] = r["nodes"]
             else:
                 assert key not in recs, key
                 recs[key] = r
     return recs
 
 
+def add_last_card(recs: dict) -> None:
+    """Run the last-card test of `hanabi.dfs_solver` on every deal not found won."""
+    for (p, seed), r in recs.items():
+        if r["verdict"] != "won" and "last_card" not in r:
+            rules = Rules(players=p)
+            r["last_card"] = dfs_solver.last_card_test(rules, seeded_deck(rules, seed))
+
+
 def first_proof(r: dict) -> str:
-    """The certificate that first proves a lost deal, in the README's order."""
+    """The certificate that first proves a lost deal: the README's, then the new ones."""
     for c in ("time", "storage", "pooled"):
         if c in r["certificates"]:
             return c
-    if r.get("free_order") == "lost":
+    if r.get("last_card"):
+        return "last card"
+    if "lost" in (r.get("free_order"), r.get("extra", {}).get("free_order")):
         return "free-order"
     return "search"
 
@@ -81,20 +95,17 @@ def summarize(recs: dict, seeds: range) -> dict:
         if not n:
             continue
         va = Counter(r["verdict"] for r in rows)
-        both = [r for r in rows if r["verdict"] != "undecided" and r["verdict_b"] != "undecided"]
+        both = [
+            r
+            for r in rows
+            if r["verdict"] != "undecided" and r.get("verdict_b", "undecided") != "undecided"
+        ]
         disagree = [r["seed"] for r in both if r["verdict"] != r["verdict_b"]]
         assert not disagree, f"solvers disagree on {p} players, seeds {disagree}"
         # settled by either solver
-        settled = Counter(
-            r["verdict"] if r["verdict"] != "undecided" else r["verdict_b"] for r in rows
-        )
-        # and with the free-order test, which is not part of the plan
-        with_free = Counter(
-            "lost"
-            if settled_one(r) == "undecided" and r.get("free_order") == "lost"
-            else settled_one(r)
-            for r in rows
-        )
+        settled = Counter(settled_one(r) for r in rows)
+        # and with the attempts outside the plan
+        ext = Counter(extended(r) for r in rows)
         lost = [r for r in rows if settled_one(r) == "lost"]
         # a deal lost by Solver B alone has no best score from Solver A; 24 bounds it
         best = Counter(r.get("best", 24) for r in lost)
@@ -102,7 +113,7 @@ def summarize(recs: dict, seeds: range) -> dict:
         out[p] = {
             "deals": n,
             "solver_a": dict(va),
-            "solver_b": dict(Counter(r["verdict_b"] for r in rows)),
+            "solver_b": dict(Counter(r.get("verdict_b", "not run") for r in rows)),
             "both_decide": len(both),
             "agree": len(both) - len(disagree),
             "won": settled["won"],
@@ -117,20 +128,40 @@ def summarize(recs: dict, seeds: range) -> dict:
             "lost_without_older_certificate": [r["seed"] for r in lost if not r["certificates"]],
             "best_scores_of_lost": {str(k): v for k, v in sorted(best.items())},
             "mean_best_score_at_most": mean_bound(scores),
-            "with_free_order": {
-                "lost": with_free["lost"],
-                "undecided": with_free["undecided"],
-                "share": share(with_free["won"], with_free["undecided"], n),
+            "outside_the_plan": {
+                "won": ext["won"],
+                "lost": ext["lost"],
+                "undecided": ext["undecided"],
+                "undecided_seeds": [r["seed"] for r in rows if extended(r) == "undecided"],
+                "share": share(ext["won"], ext["undecided"], n),
+                "mean_best_score_at_most": mean_bound(
+                    [r.get("best", 24) if extended(r) == "lost" else 25 for r in rows]
+                ),
             },
             "largest_a_budget": dict(Counter(str(r["budget"]) for r in rows)),
             "seconds_a": round(sum(r["seconds"] for r in rows), 1),
-            "seconds_b": round(sum(r["seconds_b"] for r in rows), 1),
+            "seconds_b": round(sum(r.get("seconds_b", 0) for r in rows), 1),
         }
     return out
 
 
 def settled_one(r: dict) -> str:
-    return r["verdict"] if r["verdict"] != "undecided" else r["verdict_b"]
+    """The verdict of the plan: Solver A's, or Solver B's where A has none."""
+    return r["verdict"] if r["verdict"] != "undecided" else r.get("verdict_b", "undecided")
+
+
+def extended(r: dict) -> str:
+    """The verdict with the attempts outside the plan: Solver B with all its cuts, and the
+    free-order test, which proves a loss but never a win."""
+    v = settled_one(r)
+    extra = r.get("extra", {})
+    if v == "undecided":
+        v = extra.get("b_all_cuts", "undecided")
+    if v == "undecided" and (
+        r.get("last_card") or "lost" in (r.get("free_order"), extra.get("free_order"))
+    ):
+        v = "lost"
+    return v
 
 
 def main():
@@ -139,33 +170,28 @@ def main():
     parser.add_argument("--out", required=True)
     parser.add_argument("--deals", type=int, default=20000)
     parser.add_argument("--label", default="confirmatory, plan H1")
+    parser.add_argument(
+        "--all-rows", action="store_true", help="a row for every deal, not only those not won"
+    )
     args = parser.parse_args()
     recs = load(args.runs)
+    add_last_card(recs)
     summary = {
         "label": args.label,
         "seeds 0 to 1,999": summarize(recs, range(2000)),
         f"seeds 2,000 to {args.deals - 1:,}": summarize(recs, range(2000, args.deals)),
         "all seeds": summarize(recs, range(args.deals)),
     }
-    rows = [
-        {
-            k: r[k]
-            for k in (
-                "players",
-                "seed",
-                "verdict",
-                "verdict_b",
-                "certificates",
-                "best",
-                "free_order",
-            )
-            if k in r
-        }
-        for _, r in sorted(recs.items())
-    ]
+    cols = ["players", "seed", "verdict", "verdict_b", "certificates", "best"]
+    cols += ["free_order", "last_card", "extra"]
+    keep = [r for _, r in sorted(recs.items()) if args.all_rows or r["verdict"] != "won"]
+    rows = [[r.get(k) for k in cols] for r in keep]
     with open(args.out, "w") as f:
-        json.dump({"summary": summary, "deals": rows}, f, sort_keys=True, separators=(",", ":"))
-        f.write("\n")
+        # the summary indented, then one line per deal
+        head = json.dumps({"summary": summary, "columns": cols}, indent=1, sort_keys=True)
+        f.write(head[:-2] + ',\n "deals": [\n')
+        f.write(",\n".join(json.dumps(row, separators=(",", ":")) for row in rows))
+        f.write("\n ]\n}\n")
     print(json.dumps(summary["all seeds"], indent=1))
 
 

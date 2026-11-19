@@ -1,0 +1,1401 @@
+{
+ "columns": [
+  "players",
+  "seed",
+  "verdict",
+  "verdict_b",
+  "certificates",
+  "best",
+  "free_order",
+  "last_card",
+  "extra"
+ ],
+ "summary": {
+  "all seeds": {
+   "2": {
+    "agree": 0,
+    "best_scores_of_lost": {
+     "20": 1,
+     "22": 7,
+     "23": 40,
+     "24": 251
+    },
+    "both_decide": 0,
+    "deals": 22000,
+    "first_proof": {
+     "last card": 6,
+     "pooled": 93,
+     "storage": 12,
+     "time": 188
+    },
+    "free_order_on_lost": {
+     "lost": 299
+    },
+    "largest_a_budget": {
+     "20000": 21979,
+     "300000": 2,
+     "3000000": 19
+    },
+    "lost": 299,
+    "lost_without_older_certificate": [
+     1725,
+     12193,
+     12365,
+     16333,
+     18650,
+     19935
+    ],
+    "mean_best_score_at_most": {
+     "half_width": 0.002,
+     "mean": 24.9838
+    },
+    "outside_the_plan": {
+     "lost": 310,
+     "mean_best_score_at_most": {
+      "half_width": 0.002,
+      "mean": 24.9833
+     },
+     "share": {
+      "high": 0.985909,
+      "interval": [
+       0.9842,
+       0.9874
+      ],
+      "low": 0.985818
+     },
+     "undecided": 2,
+     "undecided_seeds": [
+      17647,
+      18356
+     ],
+     "won": 21688
+    },
+    "seconds_a": 6030.2,
+    "seconds_b": 0,
+    "share": {
+     "high": 0.986409,
+     "interval": [
+      0.9842,
+      0.9879
+     ],
+     "low": 0.985818
+    },
+    "solver_a": {
+     "lost": 299,
+     "undecided": 13,
+     "won": 21688
+    },
+    "solver_b": {
+     "not run": 22000
+    },
+    "undecided": 13,
+    "undecided_seeds": [
+     202,
+     4348,
+     8238,
+     9646,
+     10245,
+     11795,
+     11893,
+     14479,
+     16633,
+     17578,
+     17647,
+     18356,
+     20136
+    ],
+    "won": 21688
+   },
+   "3": {
+    "agree": 0,
+    "best_scores_of_lost": {
+     "22": 1,
+     "23": 3,
+     "24": 17
+    },
+    "both_decide": 0,
+    "deals": 22000,
+    "first_proof": {
+     "time": 21
+    },
+    "free_order_on_lost": {
+     "lost": 21
+    },
+    "largest_a_budget": {
+     "20000": 21958,
+     "300000": 28,
+     "3000000": 14
+    },
+    "lost": 21,
+    "lost_without_older_certificate": [],
+    "mean_best_score_at_most": {
+     "half_width": 0.0005,
+     "mean": 24.9988
+    },
+    "outside_the_plan": {
+     "lost": 21,
+     "mean_best_score_at_most": {
+      "half_width": 0.0005,
+      "mean": 24.9988
+     },
+     "share": {
+      "high": 0.999045,
+      "interval": [
+       0.9981,
+       0.9994
+      ],
+      "low": 0.998682
+     },
+     "undecided": 8,
+     "undecided_seeds": [
+      1144,
+      4071,
+      6398,
+      11087,
+      17647,
+      18356,
+      19522,
+      21291
+     ],
+     "won": 21971
+    },
+    "seconds_a": 4227.1,
+    "seconds_b": 0,
+    "share": {
+     "high": 0.999045,
+     "interval": [
+      0.9981,
+      0.9994
+     ],
+     "low": 0.998682
+    },
+    "solver_a": {
+     "lost": 21,
+     "undecided": 8,
+     "won": 21971
+    },
+    "solver_b": {
+     "not run": 22000
+    },
+    "undecided": 8,
+    "undecided_seeds": [
+     1144,
+     4071,
+     6398,
+     11087,
+     17647,
+     18356,
+     19522,
+     21291
+    ],
+    "won": 21971
+   },
+   "4": {
+    "agree": 0,
+    "best_scores_of_lost": {
+     "23": 1,
+     "24": 3
+    },
+    "both_decide": 0,
+    "deals": 22000,
+    "first_proof": {
+     "time": 4
+    },
+    "free_order_on_lost": {
+     "lost": 4
+    },
+    "largest_a_budget": {
+     "20000": 21943,
+     "300000": 38,
+     "3000000": 19
+    },
+    "lost": 4,
+    "lost_without_older_certificate": [],
+    "mean_best_score_at_most": {
+     "half_width": 0.0002,
+     "mean": 24.9998
+    },
+    "outside_the_plan": {
+     "lost": 4,
+     "mean_best_score_at_most": {
+      "half_width": 0.0002,
+      "mean": 24.9998
+     },
+     "share": {
+      "high": 0.999818,
+      "interval": [
+       0.999,
+       0.9999
+      ],
+      "low": 0.999455
+     },
+     "undecided": 8,
+     "undecided_seeds": [
+      1493,
+      7632,
+      11087,
+      12041,
+      12385,
+      20402,
+      20472,
+      21291
+     ],
+     "won": 21988
+    },
+    "seconds_a": 5337.3,
+    "seconds_b": 0,
+    "share": {
+     "high": 0.999818,
+     "interval": [
+      0.999,
+      0.9999
+     ],
+     "low": 0.999455
+    },
+    "solver_a": {
+     "lost": 4,
+     "undecided": 8,
+     "won": 21988
+    },
+    "solver_b": {
+     "not run": 22000
+    },
+    "undecided": 8,
+    "undecided_seeds": [
+     1493,
+     7632,
+     11087,
+     12041,
+     12385,
+     20402,
+     20472,
+     21291
+    ],
+    "won": 21988
+   },
+   "5": {
+    "agree": 0,
+    "best_scores_of_lost": {
+     "24": 1
+    },
+    "both_decide": 0,
+    "deals": 22000,
+    "first_proof": {
+     "time": 1
+    },
+    "free_order_on_lost": {
+     "lost": 1
+    },
+    "largest_a_budget": {
+     "20000": 21882,
+     "300000": 75,
+     "3000000": 43
+    },
+    "lost": 1,
+    "lost_without_older_certificate": [],
+    "mean_best_score_at_most": {
+     "half_width": 0.0001,
+     "mean": 25.0
+    },
+    "outside_the_plan": {
+     "lost": 1,
+     "mean_best_score_at_most": {
+      "half_width": 0.0001,
+      "mean": 25.0
+     },
+     "share": {
+      "high": 0.999955,
+      "interval": [
+       0.9984,
+       1.0
+      ],
+      "low": 0.998909
+     },
+     "undecided": 23,
+     "undecided_seeds": [
+      545,
+      987,
+      1493,
+      4830,
+      7748,
+      9896,
+      11087,
+      11220,
+      11339,
+      12173,
+      12385,
+      13315,
+      13688,
+      14194,
+      14915,
+      15750,
+      16269,
+      17008,
+      18356,
+      19522,
+      20472,
+      21291,
+      21751
+     ],
+     "won": 21976
+    },
+    "seconds_a": 13653.6,
+    "seconds_b": 0,
+    "share": {
+     "high": 0.999955,
+     "interval": [
+      0.9984,
+      1.0
+     ],
+     "low": 0.998909
+    },
+    "solver_a": {
+     "lost": 1,
+     "undecided": 23,
+     "won": 21976
+    },
+    "solver_b": {
+     "not run": 22000
+    },
+    "undecided": 23,
+    "undecided_seeds": [
+     545,
+     987,
+     1493,
+     4830,
+     7748,
+     9896,
+     11087,
+     11220,
+     11339,
+     12173,
+     12385,
+     13315,
+     13688,
+     14194,
+     14915,
+     15750,
+     16269,
+     17008,
+     18356,
+     19522,
+     20472,
+     21291,
+     21751
+    ],
+    "won": 21976
+   }
+  },
+  "label": "exploratory: run before plan H1 was read; Solver A only, budgets 20,000, 300,000 and 3,000,000 nodes; free-order test with 300,000 states",
+  "seeds 0 to 1,999": {
+   "2": {
+    "agree": 0,
+    "best_scores_of_lost": {
+     "22": 1,
+     "23": 7,
+     "24": 31
+    },
+    "both_decide": 0,
+    "deals": 2000,
+    "first_proof": {
+     "last card": 1,
+     "pooled": 9,
+     "storage": 4,
+     "time": 25
+    },
+    "free_order_on_lost": {
+     "lost": 39
+    },
+    "largest_a_budget": {
+     "20000": 1998,
+     "3000000": 2
+    },
+    "lost": 39,
+    "lost_without_older_certificate": [
+     1725
+    ],
+    "mean_best_score_at_most": {
+     "half_width": 0.008,
+     "mean": 24.976
+    },
+    "outside_the_plan": {
+     "lost": 40,
+     "mean_best_score_at_most": {
+      "half_width": 0.0081,
+      "mean": 24.9755
+     },
+     "share": {
+      "high": 0.98,
+      "interval": [
+       0.9729,
+       0.9853
+      ],
+      "low": 0.98
+     },
+     "undecided": 0,
+     "undecided_seeds": [],
+     "won": 1960
+    },
+    "seconds_a": 360.9,
+    "seconds_b": 0,
+    "share": {
+     "high": 0.9805,
+     "interval": [
+      0.9729,
+      0.9857
+     ],
+     "low": 0.98
+    },
+    "solver_a": {
+     "lost": 39,
+     "undecided": 1,
+     "won": 1960
+    },
+    "solver_b": {
+     "not run": 2000
+    },
+    "undecided": 1,
+    "undecided_seeds": [
+     202
+    ],
+    "won": 1960
+   },
+   "3": {
+    "agree": 0,
+    "best_scores_of_lost": {
+     "24": 4
+    },
+    "both_decide": 0,
+    "deals": 2000,
+    "first_proof": {
+     "time": 4
+    },
+    "free_order_on_lost": {
+     "lost": 4
+    },
+    "largest_a_budget": {
+     "20000": 1996,
+     "300000": 3,
+     "3000000": 1
+    },
+    "lost": 4,
+    "lost_without_older_certificate": [],
+    "mean_best_score_at_most": {
+     "half_width": 0.002,
+     "mean": 24.998
+    },
+    "outside_the_plan": {
+     "lost": 4,
+     "mean_best_score_at_most": {
+      "half_width": 0.002,
+      "mean": 24.998
+     },
+     "share": {
+      "high": 0.998,
+      "interval": [
+       0.9942,
+       0.9992
+      ],
+      "low": 0.9975
+     },
+     "undecided": 1,
+     "undecided_seeds": [
+      1144
+     ],
+     "won": 1995
+    },
+    "seconds_a": 367.9,
+    "seconds_b": 0,
+    "share": {
+     "high": 0.998,
+     "interval": [
+      0.9942,
+      0.9992
+     ],
+     "low": 0.9975
+    },
+    "solver_a": {
+     "lost": 4,
+     "undecided": 1,
+     "won": 1995
+    },
+    "solver_b": {
+     "not run": 2000
+    },
+    "undecided": 1,
+    "undecided_seeds": [
+     1144
+    ],
+    "won": 1995
+   },
+   "4": {
+    "agree": 0,
+    "best_scores_of_lost": {},
+    "both_decide": 0,
+    "deals": 2000,
+    "first_proof": {},
+    "free_order_on_lost": {},
+    "largest_a_budget": {
+     "20000": 1990,
+     "300000": 9,
+     "3000000": 1
+    },
+    "lost": 0,
+    "lost_without_older_certificate": [],
+    "mean_best_score_at_most": {
+     "half_width": 0.0,
+     "mean": 25.0
+    },
+    "outside_the_plan": {
+     "lost": 0,
+     "mean_best_score_at_most": {
+      "half_width": 0.0,
+      "mean": 25.0
+     },
+     "share": {
+      "high": 1.0,
+      "interval": [
+       0.9972,
+       1.0
+      ],
+      "low": 0.9995
+     },
+     "undecided": 1,
+     "undecided_seeds": [
+      1493
+     ],
+     "won": 1999
+    },
+    "seconds_a": 401.3,
+    "seconds_b": 0,
+    "share": {
+     "high": 1.0,
+     "interval": [
+      0.9972,
+      1.0
+     ],
+     "low": 0.9995
+    },
+    "solver_a": {
+     "undecided": 1,
+     "won": 1999
+    },
+    "solver_b": {
+     "not run": 2000
+    },
+    "undecided": 1,
+    "undecided_seeds": [
+     1493
+    ],
+    "won": 1999
+   },
+   "5": {
+    "agree": 0,
+    "best_scores_of_lost": {},
+    "both_decide": 0,
+    "deals": 2000,
+    "first_proof": {},
+    "free_order_on_lost": {},
+    "largest_a_budget": {
+     "20000": 1982,
+     "300000": 11,
+     "3000000": 7
+    },
+    "lost": 0,
+    "lost_without_older_certificate": [],
+    "mean_best_score_at_most": {
+     "half_width": 0.0,
+     "mean": 25.0
+    },
+    "outside_the_plan": {
+     "lost": 0,
+     "mean_best_score_at_most": {
+      "half_width": 0.0,
+      "mean": 25.0
+     },
+     "share": {
+      "high": 1.0,
+      "interval": [
+       0.9956,
+       1.0
+      ],
+      "low": 0.9985
+     },
+     "undecided": 3,
+     "undecided_seeds": [
+      545,
+      987,
+      1493
+     ],
+     "won": 1997
+    },
+    "seconds_a": 2061.8,
+    "seconds_b": 0,
+    "share": {
+     "high": 1.0,
+     "interval": [
+      0.9956,
+      1.0
+     ],
+     "low": 0.9985
+    },
+    "solver_a": {
+     "undecided": 3,
+     "won": 1997
+    },
+    "solver_b": {
+     "not run": 2000
+    },
+    "undecided": 3,
+    "undecided_seeds": [
+     545,
+     987,
+     1493
+    ],
+    "won": 1997
+   }
+  },
+  "seeds 2,000 to 21,999": {
+   "2": {
+    "agree": 0,
+    "best_scores_of_lost": {
+     "20": 1,
+     "22": 6,
+     "23": 33,
+     "24": 220
+    },
+    "both_decide": 0,
+    "deals": 20000,
+    "first_proof": {
+     "last card": 5,
+     "pooled": 84,
+     "storage": 8,
+     "time": 163
+    },
+    "free_order_on_lost": {
+     "lost": 260
+    },
+    "largest_a_budget": {
+     "20000": 19981,
+     "300000": 2,
+     "3000000": 17
+    },
+    "lost": 260,
+    "lost_without_older_certificate": [
+     12193,
+     12365,
+     16333,
+     18650,
+     19935
+    ],
+    "mean_best_score_at_most": {
+     "half_width": 0.002,
+     "mean": 24.9845
+    },
+    "outside_the_plan": {
+     "lost": 270,
+     "mean_best_score_at_most": {
+      "half_width": 0.002,
+      "mean": 24.984
+     },
+     "share": {
+      "high": 0.9865,
+      "interval": [
+       0.9847,
+       0.988
+      ],
+      "low": 0.9864
+     },
+     "undecided": 2,
+     "undecided_seeds": [
+      17647,
+      18356
+     ],
+     "won": 19728
+    },
+    "seconds_a": 5669.4,
+    "seconds_b": 0,
+    "share": {
+     "high": 0.987,
+     "interval": [
+      0.9847,
+      0.9885
+     ],
+     "low": 0.9864
+    },
+    "solver_a": {
+     "lost": 260,
+     "undecided": 12,
+     "won": 19728
+    },
+    "solver_b": {
+     "not run": 20000
+    },
+    "undecided": 12,
+    "undecided_seeds": [
+     4348,
+     8238,
+     9646,
+     10245,
+     11795,
+     11893,
+     14479,
+     16633,
+     17578,
+     17647,
+     18356,
+     20136
+    ],
+    "won": 19728
+   },
+   "3": {
+    "agree": 0,
+    "best_scores_of_lost": {
+     "22": 1,
+     "23": 3,
+     "24": 13
+    },
+    "both_decide": 0,
+    "deals": 20000,
+    "first_proof": {
+     "time": 17
+    },
+    "free_order_on_lost": {
+     "lost": 17
+    },
+    "largest_a_budget": {
+     "20000": 19962,
+     "300000": 25,
+     "3000000": 13
+    },
+    "lost": 17,
+    "lost_without_older_certificate": [],
+    "mean_best_score_at_most": {
+     "half_width": 0.0006,
+     "mean": 24.9989
+    },
+    "outside_the_plan": {
+     "lost": 17,
+     "mean_best_score_at_most": {
+      "half_width": 0.0006,
+      "mean": 24.9989
+     },
+     "share": {
+      "high": 0.99915,
+      "interval": [
+       0.9982,
+       0.9995
+      ],
+      "low": 0.9988
+     },
+     "undecided": 7,
+     "undecided_seeds": [
+      4071,
+      6398,
+      11087,
+      17647,
+      18356,
+      19522,
+      21291
+     ],
+     "won": 19976
+    },
+    "seconds_a": 3859.2,
+    "seconds_b": 0,
+    "share": {
+     "high": 0.99915,
+     "interval": [
+      0.9982,
+      0.9995
+     ],
+     "low": 0.9988
+    },
+    "solver_a": {
+     "lost": 17,
+     "undecided": 7,
+     "won": 19976
+    },
+    "solver_b": {
+     "not run": 20000
+    },
+    "undecided": 7,
+    "undecided_seeds": [
+     4071,
+     6398,
+     11087,
+     17647,
+     18356,
+     19522,
+     21291
+    ],
+    "won": 19976
+   },
+   "4": {
+    "agree": 0,
+    "best_scores_of_lost": {
+     "23": 1,
+     "24": 3
+    },
+    "both_decide": 0,
+    "deals": 20000,
+    "first_proof": {
+     "time": 4
+    },
+    "free_order_on_lost": {
+     "lost": 4
+    },
+    "largest_a_budget": {
+     "20000": 19953,
+     "300000": 29,
+     "3000000": 18
+    },
+    "lost": 4,
+    "lost_without_older_certificate": [],
+    "mean_best_score_at_most": {
+     "half_width": 0.0003,
+     "mean": 24.9997
+    },
+    "outside_the_plan": {
+     "lost": 4,
+     "mean_best_score_at_most": {
+      "half_width": 0.0003,
+      "mean": 24.9997
+     },
+     "share": {
+      "high": 0.9998,
+      "interval": [
+       0.999,
+       0.9999
+      ],
+      "low": 0.99945
+     },
+     "undecided": 7,
+     "undecided_seeds": [
+      7632,
+      11087,
+      12041,
+      12385,
+      20402,
+      20472,
+      21291
+     ],
+     "won": 19989
+    },
+    "seconds_a": 4936.1,
+    "seconds_b": 0,
+    "share": {
+     "high": 0.9998,
+     "interval": [
+      0.999,
+      0.9999
+     ],
+     "low": 0.99945
+    },
+    "solver_a": {
+     "lost": 4,
+     "undecided": 7,
+     "won": 19989
+    },
+    "solver_b": {
+     "not run": 20000
+    },
+    "undecided": 7,
+    "undecided_seeds": [
+     7632,
+     11087,
+     12041,
+     12385,
+     20402,
+     20472,
+     21291
+    ],
+    "won": 19989
+   },
+   "5": {
+    "agree": 0,
+    "best_scores_of_lost": {
+     "24": 1
+    },
+    "both_decide": 0,
+    "deals": 20000,
+    "first_proof": {
+     "time": 1
+    },
+    "free_order_on_lost": {
+     "lost": 1
+    },
+    "largest_a_budget": {
+     "20000": 19900,
+     "300000": 64,
+     "3000000": 36
+    },
+    "lost": 1,
+    "lost_without_older_certificate": [],
+    "mean_best_score_at_most": {
+     "half_width": 0.0001,
+     "mean": 24.9999
+    },
+    "outside_the_plan": {
+     "lost": 1,
+     "mean_best_score_at_most": {
+      "half_width": 0.0001,
+      "mean": 24.9999
+     },
+     "share": {
+      "high": 0.99995,
+      "interval": [
+       0.9984,
+       1.0
+      ],
+      "low": 0.99895
+     },
+     "undecided": 20,
+     "undecided_seeds": [
+      4830,
+      7748,
+      9896,
+      11087,
+      11220,
+      11339,
+      12173,
+      12385,
+      13315,
+      13688,
+      14194,
+      14915,
+      15750,
+      16269,
+      17008,
+      18356,
+      19522,
+      20472,
+      21291,
+      21751
+     ],
+     "won": 19979
+    },
+    "seconds_a": 11591.8,
+    "seconds_b": 0,
+    "share": {
+     "high": 0.99995,
+     "interval": [
+      0.9984,
+      1.0
+     ],
+     "low": 0.99895
+    },
+    "solver_a": {
+     "lost": 1,
+     "undecided": 20,
+     "won": 19979
+    },
+    "solver_b": {
+     "not run": 20000
+    },
+    "undecided": 20,
+    "undecided_seeds": [
+     4830,
+     7748,
+     9896,
+     11087,
+     11220,
+     11339,
+     12173,
+     12385,
+     13315,
+     13688,
+     14194,
+     14915,
+     15750,
+     16269,
+     17008,
+     18356,
+     19522,
+     20472,
+     21291,
+     21751
+    ],
+    "won": 19979
+   }
+  }
+ },
+ "deals": [
+[2,161,"lost",null,["pooled"],24,"lost",true,null],
+[2,168,"lost",null,["pooled"],24,"lost",true,null],
+[2,202,"undecided",null,[],null,"lost",true,null],
+[2,330,"lost",null,["time","pooled"],24,"lost",false,null],
+[2,431,"lost",null,["pooled"],24,"lost",true,null],
+[2,443,"lost",null,["pooled"],24,"lost",true,null],
+[2,474,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,481,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,535,"lost",null,["time","pooled"],24,"lost",false,null],
+[2,545,"lost",null,["time","pooled"],23,"lost",true,null],
+[2,552,"lost",null,["pooled"],24,"lost",true,null],
+[2,612,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,629,"lost",null,["storage","pooled"],23,"lost",true,null],
+[2,686,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,744,"lost",null,["time","pooled"],24,"lost",false,null],
+[2,762,"lost",null,["pooled"],24,"lost",true,null],
+[2,856,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,894,"lost",null,["storage","pooled"],23,"lost",true,null],
+[2,941,"lost",null,["pooled"],24,"lost",true,null],
+[2,987,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,1131,"lost",null,["time","pooled"],23,"lost",true,null],
+[2,1143,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,1144,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,1219,"lost",null,["time","pooled"],23,"lost",true,null],
+[2,1245,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,1255,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,1346,"lost",null,["time","pooled"],24,"lost",false,null],
+[2,1360,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,1407,"lost",null,["time","pooled"],23,"lost",true,null],
+[2,1463,"lost",null,["storage","pooled"],23,"lost",true,null],
+[2,1493,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,1570,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,1578,"lost",null,["pooled"],24,"lost",true,null],
+[2,1606,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,1639,"lost",null,["pooled"],24,"lost",true,null],
+[2,1641,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,1653,"lost",null,["storage","pooled"],22,"lost",true,null],
+[2,1725,"lost",null,[],24,"lost",true,null],
+[2,1746,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,1881,"lost",null,["time","pooled"],24,"lost",false,null],
+[2,2011,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,2128,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,2204,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,2311,"lost",null,["pooled"],24,"lost",false,null],
+[2,2375,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,2420,"lost",null,["pooled"],24,"lost",true,null],
+[2,2438,"lost",null,["time","pooled"],24,"lost",false,null],
+[2,2439,"lost",null,["pooled"],24,"lost",true,null],
+[2,2473,"lost",null,["pooled"],24,"lost",true,null],
+[2,2681,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,2771,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,2918,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,2927,"lost",null,["pooled"],24,"lost",true,null],
+[2,3154,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,3236,"lost",null,["pooled"],24,"lost",true,null],
+[2,3348,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,3479,"lost",null,["pooled"],24,"lost",true,null],
+[2,3610,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,3746,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,3791,"lost",null,["pooled"],24,"lost",true,null],
+[2,3993,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,4004,"lost",null,["pooled"],22,"lost",true,null],
+[2,4111,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,4202,"lost",null,["time","pooled"],23,"lost",true,null],
+[2,4348,"undecided",null,[],null,"lost",true,null],
+[2,4625,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,4830,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,4836,"lost",null,["pooled"],24,"lost",true,null],
+[2,4953,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,5070,"lost",null,["pooled"],24,"lost",true,null],
+[2,5108,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,5178,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,5258,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,5348,"lost",null,["time","pooled"],23,"lost",true,null],
+[2,5381,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,5486,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,5492,"lost",null,["pooled"],24,"lost",true,null],
+[2,5590,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,5612,"lost",null,["storage","pooled"],22,"lost",true,null],
+[2,5708,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,5781,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,5808,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,5897,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,5965,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,6069,"lost",null,["pooled"],24,"lost",true,null],
+[2,6075,"lost",null,["pooled"],24,"lost",true,null],
+[2,6152,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,6194,"lost",null,["pooled"],24,"lost",true,null],
+[2,6199,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,6218,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,6238,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,6325,"lost",null,["pooled"],24,"lost",true,null],
+[2,6386,"lost",null,["time","pooled"],23,"lost",true,null],
+[2,6398,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,6518,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,6595,"lost",null,["time","pooled"],23,"lost",true,null],
+[2,6647,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,6677,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,6720,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,6781,"lost",null,["storage","pooled"],23,"lost",false,null],
+[2,6935,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,7028,"lost",null,["pooled"],24,"lost",true,null],
+[2,7086,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,7131,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,7434,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,7470,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,7609,"lost",null,["pooled"],24,"lost",true,null],
+[2,7632,"lost",null,["time","pooled"],23,"lost",true,null],
+[2,7705,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,7748,"lost",null,["time","pooled"],23,"lost",true,null],
+[2,7888,"lost",null,["time","pooled"],23,"lost",true,null],
+[2,7891,"lost",null,["pooled"],24,"lost",true,null],
+[2,7987,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,8125,"lost",null,["pooled"],23,"lost",true,null],
+[2,8186,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,8238,"undecided",null,[],null,"lost",true,null],
+[2,8385,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,8391,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,8450,"lost",null,["time","storage","pooled"],22,"lost",true,null],
+[2,8483,"lost",null,["pooled"],24,"lost",true,null],
+[2,8513,"lost",null,["storage","pooled"],23,"lost",true,null],
+[2,8545,"lost",null,["pooled"],24,"lost",true,null],
+[2,8572,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,8897,"lost",null,["pooled"],24,"lost",true,null],
+[2,9294,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,9397,"lost",null,["time","pooled"],24,"lost",false,null],
+[2,9412,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,9583,"lost",null,["pooled"],24,"lost",true,null],
+[2,9646,"undecided",null,[],null,"lost",true,null],
+[2,9650,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,9674,"lost",null,["pooled"],24,"lost",false,null],
+[2,9780,"lost",null,["storage","pooled"],23,"lost",true,null],
+[2,9851,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,9896,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,9978,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,10070,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,10074,"lost",null,["pooled"],24,"lost",true,null],
+[2,10127,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,10172,"lost",null,["pooled"],24,"lost",true,null],
+[2,10245,"undecided",null,[],null,"lost",true,null],
+[2,10262,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,10449,"lost",null,["storage","pooled"],23,"lost",true,null],
+[2,10484,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,10543,"lost",null,["pooled"],24,"lost",true,null],
+[2,10690,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,10839,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,11028,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,11087,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,11186,"lost",null,["time","storage","pooled"],23,"lost",true,null],
+[2,11220,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,11224,"lost",null,["pooled"],24,"lost",true,null],
+[2,11339,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,11352,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,11371,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,11374,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,11482,"lost",null,["pooled"],24,"lost",true,null],
+[2,11552,"lost",null,["pooled"],24,"lost",true,null],
+[2,11633,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,11795,"undecided",null,[],null,"unknown",true,null],
+[2,11828,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,11893,"undecided",null,[],null,"unknown",true,null],
+[2,12041,"lost",null,["time","pooled"],23,"lost",true,null],
+[2,12113,"lost",null,["pooled"],24,"lost",true,null],
+[2,12173,"lost",null,["time","pooled"],23,"lost",true,null],
+[2,12193,"lost",null,[],24,"lost",true,null],
+[2,12259,"lost",null,["pooled"],23,"lost",true,null],
+[2,12365,"lost",null,[],24,"lost",true,null],
+[2,12385,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,12427,"lost",null,["pooled"],23,"lost",true,null],
+[2,12541,"lost",null,["pooled"],24,"lost",true,null],
+[2,12564,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,12571,"lost",null,["pooled"],24,"lost",true,null],
+[2,12584,"lost",null,["pooled"],23,"lost",true,null],
+[2,12751,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,12786,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,13039,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,13142,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,13338,"lost",null,["pooled"],24,"lost",true,null],
+[2,13395,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,13433,"lost",null,["storage","pooled"],23,"lost",true,null],
+[2,13451,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,13534,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,13593,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,13631,"lost",null,["storage","pooled"],23,"lost",true,null],
+[2,13678,"lost",null,["pooled"],24,"lost",true,null],
+[2,13698,"lost",null,["pooled"],24,"lost",true,null],
+[2,13734,"lost",null,["pooled"],23,"lost",true,null],
+[2,13771,"lost",null,["pooled"],23,"lost",true,null],
+[2,13837,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,14194,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,14329,"lost",null,["pooled"],24,"lost",true,null],
+[2,14479,"undecided",null,[],null,"lost",true,null],
+[2,14599,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,14704,"lost",null,["pooled"],24,"lost",true,null],
+[2,14720,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,14763,"lost",null,["pooled"],24,"lost",true,null],
+[2,14807,"lost",null,["pooled"],24,"lost",true,null],
+[2,14915,"lost",null,["time","pooled"],23,"lost",true,null],
+[2,14917,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,14963,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,14972,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,14989,"lost",null,["pooled"],24,"lost",true,null],
+[2,15013,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,15085,"lost",null,["pooled"],23,"lost",true,null],
+[2,15142,"lost",null,["time","pooled"],24,"lost",false,null],
+[2,15173,"lost",null,["pooled"],24,"lost",true,null],
+[2,15268,"lost",null,["pooled"],24,"lost",true,null],
+[2,15319,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,15339,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,15360,"lost",null,["pooled"],24,"lost",true,null],
+[2,15423,"lost",null,["pooled"],24,"lost",true,null],
+[2,15438,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,15476,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,15494,"lost",null,["pooled"],24,"lost",true,null],
+[2,15627,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,15750,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,15758,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,15830,"lost",null,["pooled"],24,"lost",true,null],
+[2,15961,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,16006,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,16050,"lost",null,["pooled"],24,"lost",true,null],
+[2,16079,"lost",null,["pooled"],24,"lost",true,null],
+[2,16227,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,16264,"lost",null,["pooled"],24,"lost",true,null],
+[2,16269,"lost",null,["time","pooled"],22,"lost",true,null],
+[2,16301,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,16333,"lost",null,[],24,"lost",true,null],
+[2,16363,"lost",null,["pooled"],24,"lost",true,null],
+[2,16425,"lost",null,["time","pooled"],24,"lost",false,null],
+[2,16566,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,16568,"lost",null,["time","pooled"],24,"lost",false,null],
+[2,16633,"undecided",null,[],null,"lost",true,null],
+[2,16737,"lost",null,["storage","pooled"],23,"lost",false,null],
+[2,16750,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,16796,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,16814,"lost",null,["pooled"],24,"lost",true,null],
+[2,16828,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,16857,"lost",null,["pooled"],24,"lost",true,null],
+[2,16917,"lost",null,["pooled"],23,"lost",true,null],
+[2,17126,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,17183,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,17212,"lost",null,["pooled"],24,"lost",true,null],
+[2,17516,"lost",null,["pooled"],24,"lost",true,null],
+[2,17578,"undecided",null,[],null,"lost",true,null],
+[2,17618,"lost",null,["pooled"],23,"lost",true,null],
+[2,17625,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,17647,"undecided",null,[],null,"unknown",false,null],
+[2,17693,"lost",null,["pooled"],24,"lost",true,null],
+[2,17818,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,17871,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,17986,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,18105,"lost",null,["time","storage","pooled"],20,"lost",true,null],
+[2,18128,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,18146,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,18250,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,18263,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,18356,"undecided",null,[],null,"unknown",false,null],
+[2,18367,"lost",null,["time","pooled"],23,"lost",true,null],
+[2,18556,"lost",null,["time","pooled"],24,"lost",false,null],
+[2,18650,"lost",null,[],24,"lost",true,null],
+[2,18952,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,19250,"lost",null,["pooled"],24,"lost",true,null],
+[2,19338,"lost",null,["pooled"],24,"lost",true,null],
+[2,19341,"lost",null,["pooled"],24,"lost",true,null],
+[2,19367,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,19473,"lost",null,["pooled"],24,"lost",true,null],
+[2,19522,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,19596,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,19695,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,19710,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,19712,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,19754,"lost",null,["pooled"],24,"lost",true,null],
+[2,19819,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,19935,"lost",null,[],24,"lost",true,null],
+[2,19952,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,19961,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,20132,"lost",null,["pooled"],24,"lost",true,null],
+[2,20136,"undecided",null,[],null,"lost",true,null],
+[2,20162,"lost",null,["pooled"],24,"lost",true,null],
+[2,20184,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,20333,"lost",null,["time","pooled"],24,"lost",false,null],
+[2,20368,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,20402,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,20421,"lost",null,["pooled"],24,"lost",true,null],
+[2,20443,"lost",null,["pooled"],24,"lost",true,null],
+[2,20444,"lost",null,["time","pooled"],24,"lost",false,null],
+[2,20472,"lost",null,["time","storage","pooled"],23,"lost",true,null],
+[2,20495,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,20518,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,20546,"lost",null,["pooled"],24,"lost",true,null],
+[2,20648,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,20768,"lost",null,["pooled"],24,"lost",true,null],
+[2,20777,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,20800,"lost",null,["pooled"],24,"lost",true,null],
+[2,20831,"lost",null,["pooled"],23,"lost",true,null],
+[2,20867,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,20903,"lost",null,["pooled"],24,"lost",true,null],
+[2,21119,"lost",null,["time","pooled"],23,"lost",true,null],
+[2,21220,"lost",null,["time","storage","pooled"],22,"lost",true,null],
+[2,21290,"lost",null,["pooled"],24,"lost",true,null],
+[2,21291,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,21472,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,21519,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,21647,"lost",null,["time","pooled"],23,"lost",true,null],
+[2,21662,"lost",null,["pooled"],23,"lost",true,null],
+[2,21751,"lost",null,["time","pooled"],22,"lost",true,null],
+[2,21762,"lost",null,["pooled"],24,"lost",true,null],
+[2,21824,"lost",null,["time","pooled"],24,"lost",false,null],
+[2,21870,"lost",null,["pooled"],24,"lost",true,null],
+[2,21881,"lost",null,["time","pooled"],24,"lost",true,null],
+[2,21882,"lost",null,["pooled"],24,"lost",true,null],
+[2,21932,"lost",null,["time","pooled"],24,"lost",true,null],
+[3,545,"lost",null,["time","pooled"],24,"lost",true,null],
+[3,1131,"lost",null,["time","pooled"],24,"lost",true,null],
+[3,1144,"undecided",null,[],null,"unknown",false,null],
+[3,1219,"lost",null,["time","pooled"],24,"lost",true,null],
+[3,1407,"lost",null,["time","pooled"],24,"lost",true,null],
+[3,4071,"undecided",null,[],null,"unknown",false,null],
+[3,4202,"lost",null,["time","pooled"],24,"lost",true,null],
+[3,5348,"lost",null,["time","pooled"],24,"lost",true,null],
+[3,6386,"lost",null,["time","pooled"],24,"lost",true,null],
+[3,6398,"undecided",null,[],null,"unknown",false,null],
+[3,6595,"lost",null,["time","pooled"],24,"lost",true,null],
+[3,7632,"lost",null,["time","pooled"],24,"lost",true,null],
+[3,7888,"lost",null,["time","pooled"],24,"lost",true,null],
+[3,8450,"lost",null,["time","pooled"],23,"lost",true,null],
+[3,11087,"undecided",null,[],null,"won",false,null],
+[3,12041,"lost",null,["time","pooled"],24,"lost",true,null],
+[3,12173,"lost",null,["time","pooled"],24,"lost",true,null],
+[3,14915,"lost",null,["time","pooled"],24,"lost",true,null],
+[3,16269,"lost",null,["time","pooled"],23,"lost",true,null],
+[3,17647,"undecided",null,[],null,"unknown",false,null],
+[3,18105,"lost",null,["time","pooled"],22,"lost",true,null],
+[3,18356,"undecided",null,[],null,"unknown",false,null],
+[3,18367,"lost",null,["time","pooled"],24,"lost",true,null],
+[3,19522,"undecided",null,[],null,"unknown",false,null],
+[3,20472,"lost",null,["time","pooled"],24,"lost",true,null],
+[3,21119,"lost",null,["time","pooled"],24,"lost",true,null],
+[3,21291,"undecided",null,[],null,"unknown",false,null],
+[3,21647,"lost",null,["time","pooled"],24,"lost",true,null],
+[3,21751,"lost",null,["time","pooled"],23,"lost",true,null],
+[4,1493,"undecided",null,[],null,"unknown",false,null],
+[4,7632,"undecided",null,[],null,"won",false,null],
+[4,8450,"lost",null,["time","pooled"],24,"lost",true,null],
+[4,11087,"undecided",null,[],null,"won",false,null],
+[4,12041,"undecided",null,[],null,"won",false,null],
+[4,12385,"undecided",null,[],null,"won",false,null],
+[4,16269,"lost",null,["time","pooled"],24,"lost",true,null],
+[4,18105,"lost",null,["time","pooled"],23,"lost",true,null],
+[4,20402,"undecided",null,[],null,"won",false,null],
+[4,20472,"undecided",null,[],null,"won",false,null],
+[4,21291,"undecided",null,[],null,"unknown",false,null],
+[4,21751,"lost",null,["time","pooled"],24,"lost",true,null],
+[5,545,"undecided",null,[],null,"won",false,null],
+[5,987,"undecided",null,[],null,"won",false,null],
+[5,1493,"undecided",null,[],null,"unknown",false,null],
+[5,4830,"undecided",null,[],null,"won",false,null],
+[5,7748,"undecided",null,[],null,"unknown",false,null],
+[5,9896,"undecided",null,[],null,"won",false,null],
+[5,11087,"undecided",null,[],null,"won",false,null],
+[5,11220,"undecided",null,[],null,"won",false,null],
+[5,11339,"undecided",null,[],null,"won",false,null],
+[5,12173,"undecided",null,[],null,"won",false,null],
+[5,12385,"undecided",null,[],null,"won",false,null],
+[5,13315,"undecided",null,[],null,"won",false,null],
+[5,13688,"undecided",null,[],null,"won",false,null],
+[5,14194,"undecided",null,[],null,"won",false,null],
+[5,14915,"undecided",null,[],null,"won",false,null],
+[5,15750,"undecided",null,[],null,"won",false,null],
+[5,16269,"undecided",null,[],null,"unknown",false,null],
+[5,17008,"undecided",null,[],null,"unknown",false,null],
+[5,18105,"lost",null,["time","pooled"],24,"lost",true,null],
+[5,18356,"undecided",null,[],null,"won",false,null],
+[5,19522,"undecided",null,[],null,"won",false,null],
+[5,20472,"undecided",null,[],null,"unknown",false,null],
+[5,21291,"undecided",null,[],null,"unknown",false,null],
+[5,21751,"undecided",null,[],null,"unknown",false,null]
+ ]
+}

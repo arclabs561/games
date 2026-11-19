@@ -287,6 +287,23 @@ def free_order_test(rules: Rules, deck: list[int], budget: int = 0):
     return free_order_winnable(g, pile, hands, pos, 0, -1, {}, Budget(budget) if budget else None)
 
 
+def last_card_test(rules: Rules, deck: list[int]) -> bool:
+    """The last-card test: is the deal lost even when its last card is made dead?
+
+    The player who draws the last card has one turn left, and it is the last turn of the
+    game. So the last card can only be the last card played, which in a won game is a 5.
+    If it is not a 5, no winning line plays it, and the deal is won only if it is won with
+    that card dead. The test then applies the schedule and one-hand tests to the changed
+    deal."""
+    if deck[-1] % rules.ranks == rules.ranks - 1:
+        return False
+    g = Game(rules, list(deck[:-1]) + [GONE])
+    pile, hands, pos = g.start()
+    if missing_card(g, pile, hands, pos) or schedule_plays(g, pile, hands, pos, g.P) < g.goal:
+        return True
+    return not one_hand_winnable(g, pile, tuple(c for h in hands for c in h), pos, {})
+
+
 def certificates(rules: Rules, deck: list[int], budget: int = 0) -> list[str]:
     """The tests of this module that show at the start that the deal is lost. The
     free-order game is searched with at most `budget` states (0 for no limit)."""
@@ -297,6 +314,10 @@ def certificates(rules: Rules, deck: list[int], budget: int = 0) -> list[str]:
         out.append("missing")
     if schedule_plays(g, pile, hands, pos, g.P) < g.goal:
         out.append("schedule")
+    if not one_hand_winnable(g, pile, tuple(c for h in hands for c in h), pos, {}):
+        out.append("one-hand")
+    if last_card_test(rules, deck):
+        out.append("last card")
     if (
         free_order_winnable(g, pile, hands, pos, 0, -1, {}, Budget(budget) if budget else None)
         is False
@@ -306,6 +327,9 @@ def certificates(rules: Rules, deck: list[int], budget: int = 0) -> list[str]:
 
 
 # --- the search ----------------------------------------------------------------------------
+
+
+MEMO_CAP = 2_000_000  # free-order states kept between tests, to bound memory
 
 
 class OutOfNodesError(Exception):
@@ -395,6 +419,8 @@ def solve(
             return False
         if cuts == "all":
             budget = Budget(free_nodes) if free_nodes else None
+            if len(free_memo) > MEMO_CAP:
+                free_memo.clear()
             if (
                 missing_card(g, pile, hands, s.pos)
                 or free_order_winnable(

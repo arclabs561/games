@@ -182,10 +182,34 @@ def classify(
     return out
 
 
+def rerun(rules: Rules, seed: int, budget: int = 5_000_000) -> dict:
+    """The plan's last step for a deal both solvers left undecided: Solver A with
+    `budget` nodes. Two attempts outside the plan follow, kept apart under "extra":
+    Solver B with all its cuts, and the free-order test with a larger budget."""
+    out = classify(rules, seed, budgets=(budget,))
+    if out["verdict"] == "undecided":
+        deck = seeded_deck(rules, seed)
+        t0 = time.time()
+        ok, actions = dfs_solver.solve(rules, deck, 2_000_000, cuts="all", free_nodes=20000)
+        if ok:
+            assert dfs_solver.replay_actions(rules, deck, actions) == rules.max_score
+        extra = {"b_all_cuts": {True: "won", False: "lost", None: "undecided"}[ok]}
+        extra["seconds_b_all_cuts"] = round(time.time() - t0, 2)
+        t0 = time.time()
+        ok = dfs_solver.free_order_test(rules, deck, 2_000_000)
+        extra["free_order"] = {True: "won", False: "lost", None: "unknown"}[ok]
+        extra["seconds_free"] = round(time.time() - t0, 2)
+        out["extra"] = extra
+    return out
+
+
 def run_block(players: int, seeds, path: str, **kw):
     """Classify the seeds and write the records as a JSON list."""
     rules = Rules(players=players)
-    recs = [classify(rules, seed, **kw) for seed in seeds]
+    if kw.pop("rerun", False):
+        recs = [rerun(rules, seed, kw["budgets"][-1]) for seed in seeds]
+    else:
+        recs = [classify(rules, seed, **kw) for seed in seeds]
     with open(path, "w") as f:
         json.dump(recs, f, sort_keys=True, separators=(",", ":"))
         f.write("\n")
@@ -324,6 +348,9 @@ def main():
         "--budgets", type=int, nargs="+", default=list(A_BUDGETS), help="with --json"
     )
     parser.add_argument("--solver", choices=["a", "both"], default="a", help="with --json")
+    parser.add_argument(
+        "--rerun", action="store_true", help="with --json: the last budget, then extra attempts"
+    )
     args = parser.parse_args()
     if args.sample and args.json:
         seeds = args.seeds or range(args.start, args.start + args.sample[1])
@@ -333,6 +360,7 @@ def main():
             args.json,
             budgets=tuple(args.budgets),
             solver=args.solver,
+            rerun=args.rerun,
         )
         return
     if args.exact:
