@@ -13,6 +13,7 @@ n equal parts of the range.
 
     uv run python -m freecell.survey --solver b --start 1 --stop 1001 --out runs/
     uv run python -m freecell.survey --solver a --slice 3 --slices 40 --out OUT --workers 4
+    uv run python -m freecell.survey --solver b --levels 4 --start 1 --stop 1000001 --out OUT
 """
 
 import argparse
@@ -45,10 +46,10 @@ def _lost(deal: int, cells: int, states: int, most_home: int, frozen) -> dict:
     return record(deal, cells, "lost", states, most_home=most_home, frozen=names)
 
 
-def survey_a(deal: int, cap: int | None = None) -> list[dict]:
+def survey_a(deal: int, cap: int | None = None, levels=LEVELS) -> list[dict]:
     """Solver A on one deal, level by level."""
     out = []
-    for cells in LEVELS:
+    for cells in levels:
         res = decide(Rules(cells=cells), ms_deal(deal), cap=cap)
         if res.verdict == "won":
             out.append(_won(deal, cells, res.states, res.line))
@@ -61,15 +62,15 @@ def survey_a(deal: int, cap: int | None = None) -> list[dict]:
     return out
 
 
-def _survey_a(args: tuple[int, int | None]) -> list[dict]:
+def _survey_a(args) -> list[dict]:
     return survey_a(*args)
 
 
-def survey_b(deals: list[int], cap: int = 0) -> list[dict]:
+def survey_b(deals: list[int], cap: int = 0, levels=LEVELS) -> list[dict]:
     """Solver B on many deals, one level at a time for all of them."""
     out = []
     todo = list(deals)
-    for cells in LEVELS:
+    for cells in levels:
         answers = native.decide([native.ms_problem(d, cells) for d in todo], cap=cap)
         nxt = []
         for deal, ans in zip(todo, answers, strict=True):
@@ -93,6 +94,7 @@ def main() -> None:
     ap.add_argument("--slices", type=int, default=1)
     ap.add_argument("--workers", type=int, default=1, help="processes for Solver A")
     ap.add_argument("--cap", type=int, default=0, help="most positions in the last search")
+    ap.add_argument("--levels", default="01234", help="free cells to try, in order")
     ap.add_argument("--out", type=Path, default=Path("."))
     args = ap.parse_args()
     deals = list(range(args.start, args.stop))
@@ -100,18 +102,21 @@ def main() -> None:
         size = -(-len(deals) // args.slices)
         deals = deals[args.slice * size : (args.slice + 1) * size]
     args.out.mkdir(parents=True, exist_ok=True)
-    path = args.out / f"survey-{args.solver}-{deals[0]}-{deals[-1] + 1}.jsonl"
+    tag = "" if args.levels == "01234" else f"-cells{args.levels}"
+    path = args.out / f"survey-{args.solver}{tag}-{deals[0]}-{deals[-1] + 1}.jsonl"
     t0 = time.time()
     cap = args.cap or None
+    levels = tuple(int(x) for x in args.levels)
     with path.open("w") as f:
         if args.solver == "b":
             for i in range(0, len(deals), 500):
-                for rec in survey_b(deals[i : i + 500], cap=args.cap):
+                for rec in survey_b(deals[i : i + 500], cap=args.cap, levels=levels):
                     f.write(json.dumps(rec) + "\n")
                 f.flush()
         else:
             with Pool(args.workers) as pool:
-                for recs in pool.imap(_survey_a, [(d, cap) for d in deals], chunksize=4):
+                jobs = [(d, cap, levels) for d in deals]
+                for recs in pool.imap(_survey_a, jobs, chunksize=4):
                     for rec in recs:
                         f.write(json.dumps(rec) + "\n")
                     f.flush()
