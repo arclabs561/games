@@ -96,20 +96,24 @@ def fake_runs(folder, drop=()):
         sub = folder / f"seed-{n}"
         sub.mkdir(parents=True, exist_ok=True)
         (sub / f"{c3.run_name(g, m, s)}.json").write_text(json.dumps(run))
-        (sub / "manifest.json").write_text("{}")
+        manifest = {"commit": "abc", "platform": "actions", "returncode": 0, "seconds": 90}
+        (sub / "manifest.json").write_text(json.dumps({"run": f"seed-{n}", **manifest}))
 
 
 def test_analysis_on_synthetic_runs(tmp_path):
     fake_runs(tmp_path)
     r = c3.analyze(tmp_path)
     assert r["missing_runs"] == []
-    assert all(r["checks"].values())
+    assert r["checks"]["start_independent_of_seed_and_task"]
+    assert r["checks"]["self_theta_independent_of_task"]
+    assert r["checks"]["start_max_difference"] == 0.0
     p = r["primary"]["mean_over_tasks"]
     assert p["mean"] == pytest.approx(0.25, abs=1e-4)
     assert p["ci"][0] == pytest.approx(0.25, abs=1e-3)
     assert r["primary"]["share_of_runs_above_0"]["mean"] == 1.0
     assert len(r["theta"]["runs"]) == 70
     assert len(r["per_board"]["held_out"]["self"]) == 14
+    assert r["source"]["commits"] == ["abc"] and r["source"]["failed"] == []
 
 
 def test_analysis_with_a_missing_run(tmp_path):

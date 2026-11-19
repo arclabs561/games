@@ -157,16 +157,24 @@ def load_runs(folder: Path) -> dict[tuple[str, str, int], dict]:
 def checks(runs: dict) -> dict:
     """Properties the design implies. The start policy is not trained, so its values do
     not depend on the seed or the held-out model. The self-play policy does not depend
-    on the held-out model, since its population is the giver alone."""
-    start_same, self_same = True, True
+    on the held-out model, since its population is the giver alone. Runs on different
+    machines add floating-point differences of about 1e-5 to the values, so the start
+    check allows 1e-4 (a different clue choice would differ by far more)."""
+    start_diff, self_same = 0.0, True
     for g in GIVERS:
         group = [r for (gg, _, _), r in runs.items() if gg == g]
         ref = group[0]["per_board"]["start"]
-        start_same &= all(r["per_board"]["start"] == ref for r in group)
+        for r in group:
+            for x, v in r["per_board"]["start"].items():
+                start_diff = max(start_diff, float(np.abs(np.subtract(v, ref[x])).max()))
         for s in SEEDS:
             th = [r["theta"]["self"] for (gg, _, ss), r in runs.items() if gg == g and ss == s]
             self_same &= all(t == th[0] for t in th)
-    return {"start_independent_of_seed_and_task": start_same, "self_independent_of_task": self_same}
+    return {
+        "start_max_difference": start_diff,
+        "start_independent_of_seed_and_task": start_diff <= 1e-4,
+        "self_theta_independent_of_task": self_same,
+    }
 
 
 def analyze(folder: Path) -> dict:
@@ -192,8 +200,16 @@ def analyze(folder: Path) -> dict:
     def gap(p):
         return diff(own[p], held[p])
 
+    manifests = [json.loads(p.read_text()) for p in sorted(folder.rglob("manifest.json"))]
     result = {
         "plan": "experiments/plans/C3.md",
+        "source": {
+            "folder": folder.as_posix(),
+            "commits": sorted({m["commit"] for m in manifests}),
+            "platforms": sorted({m["platform"] for m in manifests}),
+            "failed": sorted(m["run"] for m in manifests if m["returncode"] != 0),
+            "seconds": sum(m["seconds"] for m in manifests),
+        },
         "tasks": [
             {"giver": g, "held_out": m, "seeds": s}
             for (g, m), s in zip(tasks(), present, strict=True)
