@@ -585,6 +585,7 @@ def calib_records(maia: Any, sample_games: list[dict], grid) -> tuple[list[dict]
     the starting clock left, whether the move was Maia-3's top move at the nearest grid rating)."""
     meta, arrays = [], []
     grid = list(grid)
+    done, asked, start = 0, 0, time.time()
     for game in sample_games:
         base = games.base_seconds(game["TimeControl"])
         for white in (True, False):
@@ -594,6 +595,10 @@ def calib_records(maia: Any, sample_games: list[dict], grid) -> tuple[list[dict]
             rating = game["WhiteElo"] if white else game["BlackElo"]
             near = int(np.argmin([abs(r - rating) for r in grid]))
             probs = maia.probabilities(queries)
+            done += 1
+            asked += len(queries)
+            if done % 25 == 0:
+                log(f"calib: {done} player-games, {asked / (time.time() - start):.0f} queries/s")
             logp = np.empty((len(rows), len(grid)), dtype=np.float32)
             top = np.empty(len(rows), dtype=bool)
             for i, p in enumerate(rows):
