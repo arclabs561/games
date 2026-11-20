@@ -34,7 +34,6 @@ playing it against every code with `mastermind.score`, sharing nothing else with
 """
 
 import itertools
-import sys
 import time
 from collections import Counter
 from functools import cache
@@ -54,7 +53,7 @@ class Game:
 
     def __init__(self, colors: int, holes: int, canonical_from: int = 6):
         self.colors, self.holes = colors, holes
-        self.codes: list[Code] = list(itertools.product(range(colors), repeat=holes))
+        self.codes: list[Code] = self.codes_of(colors, holes)
         index = {c: i for i, c in enumerate(self.codes)}
         self.n = len(self.codes)
         # Replies (right place, right color in the wrong place), numbered 0..K-1.
@@ -88,6 +87,11 @@ class Game:
         )
         self.memo: dict[tuple[bytes, int], tuple[int, int | None]] = {}
         self.nodes = 0
+
+    @staticmethod
+    def codes_of(colors: int, holes: int) -> list[Code]:
+        """Every code, in the order the search numbers them."""
+        return list(itertools.product(range(colors), repeat=holes))
 
     def _capacity_bound(self, m: int, limit: int) -> int:
         """Least cost of m codes in a tree with at most `branches` non-winning replies per
@@ -240,8 +244,51 @@ def brute_force_cost(colors: int, holes: int, limit: int = 12) -> int:
     return cost(frozenset(codes), limit)
 
 
-def main() -> None:
-    colors, holes = (int(a) for a in sys.argv[1:3]) if len(sys.argv) > 2 else (6, 4)
+def tree_to_json(tree: Tree, codes: list[Code]) -> dict:
+    """A tree as nested JSON: the guess as a string of colors, and one subtree per reply."""
+    guess, children = tree
+    out: dict = {"guess": "".join(str(c + 1) for c in codes[guess])}
+    if children:
+        out["replies"] = {f"{b},{w}": tree_to_json(t, codes) for (b, w), t in children.items()}
+    return out
+
+
+def tree_from_json(node: dict, codes: list[Code]) -> Tree:
+    """The inverse of `tree_to_json`."""
+    index = {c: i for i, c in enumerate(codes)}
+    guess = index[tuple(int(ch) - 1 for ch in node["guess"])]
+    children: dict[tuple[int, int], Tree] = {}
+    for reply, t in node.get("replies", {}).items():
+        b, w = reply.split(",")
+        children[int(b), int(w)] = tree_from_json(t, codes)
+    return guess, children
+
+
+def summary(tree: Tree, codes: list[Code], limit: int) -> dict:
+    """Totals and the distribution of guesses of a tree, played against every code."""
+    counts = play(tree, codes)
+    dist = Counter(counts)
+    return {
+        "limit": limit,
+        "total": sum(counts),
+        "codes": len(codes),
+        "worst": max(counts),
+        "first_guess": "".join(str(c + 1) for c in codes[tree[0]]),
+        "distribution": [dist[k] for k in range(1, max(counts) + 1)],
+    }
+
+
+def main(argv: list[str] | None = None) -> None:
+    import argparse
+    import json
+    from pathlib import Path
+
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("colors", type=int, nargs="?", default=6)
+    parser.add_argument("holes", type=int, nargs="?", default=4)
+    parser.add_argument("--out", type=Path, help="write optimal.json, the trees and totals, here")
+    args = parser.parse_args(argv)
+    colors, holes = args.colors, args.holes
     game = Game(colors, holes)
     print(f"{colors} colors, {holes} pegs: {game.n:,} codes, {len(game.maps):,} symmetries")
     start = time.process_time()
@@ -250,17 +297,21 @@ def main() -> None:
         f"no strategy solves every code within {least - 1} guesses "
         f"({time.process_time() - start:.0f} s)"
     )
+    record: dict = {"colors": colors, "holes": holes, "least_worst_case": least, "trees": []}
     for limit in (12, least):
         start = time.process_time()
         tree = game.strategy_tree(limit)
-        counts = play(tree, game.codes)
-        dist = Counter(counts)
+        row = summary(tree, game.codes, limit)
+        seconds = time.process_time() - start
         print(
-            f"worst case at most {limit:>2}: total {sum(counts):,}, "
-            f"average {sum(counts) / game.n:.4f}, first guess {game.codes[tree[0]]}, "
-            f"distribution {[dist[k] for k in range(1, max(counts) + 1)]}, "
-            f"{time.process_time() - start:.0f} s"
+            f"worst case at most {limit:>2}: total {row['total']:,}, "
+            f"average {row['total'] / game.n:.4f}, first guess {row['first_guess']}, "
+            f"distribution {row['distribution']}, {seconds:.0f} s"
         )
+        record["trees"].append({**row, "tree": tree_to_json(tree, game.codes)})
+    if args.out:
+        args.out.mkdir(parents=True, exist_ok=True)
+        (args.out / "optimal.json").write_text(json.dumps(record, separators=(",", ":")) + "\n")
 
 
 if __name__ == "__main__":

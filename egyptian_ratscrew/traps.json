@@ -1,0 +1,632 @@
+[
+ {
+  "cards": 2,
+  "players": 2,
+  "slice": [
+   0,
+   1
+  ],
+  "deck_types": 14,
+  "with_traps": [],
+  "positions": 72,
+  "all_traps_slap_free": true,
+  "closed_classes_with_slap": 0
+ },
+ {
+  "cards": 2,
+  "players": 3,
+  "slice": [
+   0,
+   1
+  ],
+  "deck_types": 14,
+  "with_traps": [],
+  "positions": 76,
+  "all_traps_slap_free": true,
+  "closed_classes_with_slap": 0
+ },
+ {
+  "cards": 3,
+  "players": 2,
+  "slice": [
+   0,
+   1
+  ],
+  "deck_types": 38,
+  "with_traps": [],
+  "positions": 616,
+  "all_traps_slap_free": true,
+  "closed_classes_with_slap": 0
+ },
+ {
+  "cards": 3,
+  "players": 3,
+  "slice": [
+   0,
+   1
+  ],
+  "deck_types": 38,
+  "with_traps": [],
+  "positions": 836,
+  "all_traps_slap_free": true,
+  "closed_classes_with_slap": 0
+ },
+ {
+  "cards": 4,
+  "players": 2,
+  "slice": [
+   0,
+   1
+  ],
+  "deck_types": 87,
+  "with_traps": [],
+  "positions": 5475,
+  "all_traps_slap_free": true,
+  "closed_classes_with_slap": 0
+ },
+ {
+  "cards": 4,
+  "players": 3,
+  "slice": [
+   0,
+   1
+  ],
+  "deck_types": 87,
+  "with_traps": [],
+  "positions": 8966,
+  "all_traps_slap_free": true,
+  "closed_classes_with_slap": 0
+ },
+ {
+  "cards": 5,
+  "players": 2,
+  "slice": [
+   0,
+   1
+  ],
+  "deck_types": 177,
+  "with_traps": [],
+  "positions": 46246,
+  "all_traps_slap_free": true,
+  "closed_classes_with_slap": 0
+ },
+ {
+  "cards": 5,
+  "players": 3,
+  "slice": [
+   0,
+   1
+  ],
+  "deck_types": 177,
+  "with_traps": [],
+  "positions": 94301,
+  "all_traps_slap_free": true,
+  "closed_classes_with_slap": 0
+ },
+ {
+  "cards": 6,
+  "players": 2,
+  "slice": [
+   0,
+   1
+  ],
+  "deck_types": 324,
+  "with_traps": [
+   {
+    "deck": "2 2 3 3 J J",
+    "positions": 804,
+    "trapped_positions": 16,
+    "trapped_orders": 16,
+    "trapped_with_slap": 0,
+    "closed_classes": 2,
+    "closed_classes_with_slap": 0,
+    "all_traps_slap_free": true
+   },
+   {
+    "deck": "2 2 3 4 J J",
+    "positions": 1448,
+    "trapped_positions": 32,
+    "trapped_orders": 16,
+    "trapped_with_slap": 0,
+    "closed_classes": 2,
+    "closed_classes_with_slap": 0,
+    "all_traps_slap_free": true
+   },
+   {
+    "deck": "2 3 4 5 J J",
+    "positions": 2616,
+    "trapped_positions": 192,
+    "trapped_orders": 48,
+    "trapped_with_slap": 0,
+    "closed_classes": 12,
+    "closed_classes_with_slap": 0,
+    "all_traps_slap_free": true
+   }
+  ],
+  "positions": 415976,
+  "all_traps_slap_free": true,
+  "closed_classes_with_slap": 0
+ },
+ {
+  "cards": 6,
+  "players": 3,
+  "slice": [
+   0,
+   1
+  ],
+  "deck_types": 324,
+  "with_traps": [
+   {
+    "deck": "2 2 3 3 J J",
+    "positions": 2246,
+    "trapped_positions": 84,
+    "trapped_orders": 16,
+    "trapped_with_slap": 0,
+    "closed_classes": 6,
+    "closed_classes_with_slap": 0,
+    "all_traps_slap_free": true
+   },
+   {
+    "deck": "2 2 3 4 J J",
+    "positions": 3090,
+    "trapped_positions": 126,
+    "trapped_orders": 16,
+    "trapped_with_slap": 0,
+    "closed_classes": 5,
+    "closed_classes_with_slap": 0,
+    "all_traps_slap_free": true
+   },
+   {
+    "deck": "2 3 4 5 J J",
+    "positions": 3648,
+    "trapped_positions": 312,
+    "trapped_orders": 48,
+    "trapped_with_slap": 0,
+    "closed_classes": 12,
+    "closed_classes_with_slap": 0,
+    "all_traps_slap_free": true
+   }
+  ],
+  "positions": 941507,
+  "all_traps_slap_free": true,
+  "closed_classes_with_slap": 0
+ },
+ {
+  "cards": 7,
+  "players": 2,
+  "slice": [
+   0,
+   1
+  ],
+  "deck_types": 553,
+  "with_traps": [],
+  "positions": 3855897,
+  "all_traps_slap_free": true,
+  "closed_classes_with_slap": 0
+ },
+ {
+  "cards": 7,
+  "players": 3,
+  "slice": [
+   0,
+   1
+  ],
+  "deck_types": 553,
+  "with_traps": [],
+  "positions": 9360456,
+  "all_traps_slap_free": true,
+  "closed_classes_with_slap": 0
+ },
+ {
+  "cards": 8,
+  "players": 2,
+  "slice": [
+   0,
+   1
+  ],
+  "deck_types": 886,
+  "with_traps": [
+   {
+    "deck": "2 3 4 5 6 J J Q",
+    "positions": 187800,
+    "trapped_positions": 3720,
+    "trapped_orders": 960,
+    "trapped_with_slap": 0,
+    "closed_classes": 24,
+    "closed_classes_with_slap": 0,
+    "all_traps_slap_free": true
+   },
+   {
+    "deck": "2 3 4 5 6 J J K",
+    "positions": 187560,
+    "trapped_positions": 3720,
+    "trapped_orders": 960,
+    "trapped_with_slap": 0,
+    "closed_classes": 24,
+    "closed_classes_with_slap": 0,
+    "all_traps_slap_free": true
+   },
+   {
+    "deck": "2 3 4 5 6 J J A",
+    "positions": 185280,
+    "trapped_positions": 3720,
+    "trapped_orders": 960,
+    "trapped_with_slap": 0,
+    "closed_classes": 24,
+    "closed_classes_with_slap": 0,
+    "all_traps_slap_free": true
+   }
+  ],
+  "positions": 38931622,
+  "all_traps_slap_free": true,
+  "closed_classes_with_slap": 0
+ },
+ {
+  "cards": 8,
+  "players": 3,
+  "slice": [
+   0,
+   1
+  ],
+  "deck_types": 886,
+  "with_traps": [
+   {
+    "deck": "2 3 4 5 6 J J Q",
+    "positions": 322320,
+    "trapped_positions": 7320,
+    "trapped_orders": 720,
+    "trapped_with_slap": 0,
+    "closed_classes": 48,
+    "closed_classes_with_slap": 0,
+    "all_traps_slap_free": true
+   },
+   {
+    "deck": "2 3 4 5 6 J J K",
+    "positions": 330600,
+    "trapped_positions": 7320,
+    "trapped_orders": 720,
+    "trapped_with_slap": 0,
+    "closed_classes": 48,
+    "closed_classes_with_slap": 0,
+    "all_traps_slap_free": true
+   },
+   {
+    "deck": "2 3 4 5 6 J J A",
+    "positions": 325560,
+    "trapped_positions": 7320,
+    "trapped_orders": 720,
+    "trapped_with_slap": 0,
+    "closed_classes": 48,
+    "closed_classes_with_slap": 0,
+    "all_traps_slap_free": true
+   }
+  ],
+  "positions": 98034359,
+  "all_traps_slap_free": true,
+  "closed_classes_with_slap": 0
+ },
+ {
+  "cards": 9,
+  "players": 2,
+  "slice": [
+   0,
+   1
+  ],
+  "deck_types": 1349,
+  "with_traps": [
+   {
+    "deck": "2 2 3 3 4 4 5 J J",
+    "positions": 260694,
+    "trapped_positions": 276,
+    "trapped_orders": 384,
+    "trapped_with_slap": 0,
+    "closed_classes": 2,
+    "closed_classes_with_slap": 0,
+    "all_traps_slap_free": true
+   },
+   {
+    "deck": "2 2 3 3 4 5 6 J J",
+    "positions": 497496,
+    "trapped_positions": 1656,
+    "trapped_orders": 1152,
+    "trapped_with_slap": 0,
+    "closed_classes": 12,
+    "closed_classes_with_slap": 0,
+    "all_traps_slap_free": true
+   },
+   {
+    "deck": "2 2 3 4 5 6 7 J J",
+    "positions": 949560,
+    "trapped_positions": 61920,
+    "trapped_orders": 23040,
+    "trapped_with_slap": 480,
+    "closed_classes": 150,
+    "closed_classes_with_slap": 30,
+    "all_traps_slap_free": false
+   },
+   {
+    "deck": "2 3 4 5 6 7 8 J J",
+    "positions": 1814400,
+    "trapped_positions": 307440,
+    "trapped_orders": 60480,
+    "trapped_with_slap": 0,
+    "closed_classes": 2400,
+    "closed_classes_with_slap": 0,
+    "all_traps_slap_free": true
+   },
+   {
+    "deck": "2 2 3 3 4 5 6 J Q",
+    "positions": 972312,
+    "trapped_positions": 876,
+    "trapped_orders": 288,
+    "trapped_with_slap": 0,
+    "closed_classes": 12,
+    "closed_classes_with_slap": 0,
+    "all_traps_slap_free": true
+   },
+   {
+    "deck": "2 2 3 4 5 6 7 J Q",
+    "positions": 1852560,
+    "trapped_positions": 19320,
+    "trapped_orders": 3360,
+    "trapped_with_slap": 0,
+    "closed_classes": 160,
+    "closed_classes_with_slap": 0,
+    "all_traps_slap_free": true
+   },
+   {
+    "deck": "2 3 4 5 6 7 8 J Q",
+    "positions": 3522960,
+    "trapped_positions": 221760,
+    "trapped_orders": 20160,
+    "trapped_with_slap": 0,
+    "closed_classes": 1680,
+    "closed_classes_with_slap": 0,
+    "all_traps_slap_free": true
+   },
+   {
+    "deck": "2 2 2 3 3 3 4 Q Q",
+    "positions": 69818,
+    "trapped_positions": 274,
+    "trapped_orders": 864,
+    "trapped_with_slap": 0,
+    "closed_classes": 2,
+    "closed_classes_with_slap": 0,
+    "all_traps_slap_free": true
+   },
+   {
+    "deck": "2 2 2 3 3 4 4 Q Q",
+    "positions": 99944,
+    "trapped_positions": 600,
+    "trapped_orders": 1536,
+    "trapped_with_slap": 0,
+    "closed_classes": 4,
+    "closed_classes_with_slap": 0,
+    "all_traps_slap_free": true
+   },
+   {
+    "deck": "2 2 2 3 3 4 5 Q Q",
+    "positions": 190638,
+    "trapped_positions": 1552,
+    "trapped_orders": 2112,
+    "trapped_with_slap": 0,
+    "closed_classes": 10,
+    "closed_classes_with_slap": 0,
+    "all_traps_slap_free": true
+   },
+   {
+    "deck": "2 2 2 3 4 5 6 Q Q",
+    "positions": 361584,
+    "trapped_positions": 3912,
+    "trapped_orders": 2880,
+    "trapped_with_slap": 0,
+    "closed_classes": 24,
+    "closed_classes_with_slap": 0,
+    "all_traps_slap_free": true
+   },
+   {
+    "deck": "2 2 3 3 4 4 5 Q Q",
+    "positions": 275148,
+    "trapped_positions": 5124,
+    "trapped_orders": 5376,
+    "trapped_with_slap": 0,
+    "closed_classes": 30,
+    "closed_classes_with_slap": 0,
+    "all_traps_slap_free": true
+   },
+   {
+    "deck": "2 2 3 3 4 5 6 Q Q",
+    "positions": 522684,
+    "trapped_positions": 14784,
+    "trapped_orders": 8064,
+    "trapped_with_slap": 0,
+    "closed_classes": 84,
+    "closed_classes_with_slap": 0,
+    "all_traps_slap_free": true
+   },
+   {
+    "deck": "2 2 3 4 5 6 7 Q Q",
+    "positions": 987480,
+    "trapped_positions": 43800,
+    "trapped_orders": 12480,
+    "trapped_with_slap": 0,
+    "closed_classes": 240,
+    "closed_classes_with_slap": 0,
+    "all_traps_slap_free": true
+   },
+   {
+    "deck": "2 3 4 5 6 7 8 Q Q",
+    "positions": 1849680,
+    "trapped_positions": 136080,
+    "trapped_orders": 20160,
+    "trapped_with_slap": 0,
+    "closed_classes": 720,
+    "closed_classes_with_slap": 0,
+    "all_traps_slap_free": true
+   },
+   {
+    "deck": "2 2 2 3 3 3 J J J",
+    "positions": 22680,
+    "trapped_positions": 20,
+    "trapped_orders": 432,
+    "trapped_with_slap": 0,
+    "closed_classes": 2,
+    "closed_classes_with_slap": 0,
+    "all_traps_slap_free": true
+   },
+   {
+    "deck": "2 2 2 3 3 4 J J J",
+    "positions": 63023,
+    "trapped_positions": 60,
+    "trapped_orders": 432,
+    "trapped_with_slap": 0,
+    "closed_classes": 2,
+    "closed_classes_with_slap": 0,
+    "all_traps_slap_free": true
+   },
+   {
+    "deck": "2 2 2 3 4 5 J J J",
+    "positions": 120192,
+    "trapped_positions": 120,
+    "trapped_orders": 432,
+    "trapped_with_slap": 0,
+    "closed_classes": 4,
+    "closed_classes_with_slap": 0,
+    "all_traps_slap_free": true
+   },
+   {
+    "deck": "2 2 3 3 4 4 J J J",
+    "positions": 91512,
+    "trapped_positions": 240,
+    "trapped_orders": 1152,
+    "trapped_with_slap": 0,
+    "closed_classes": 8,
+    "closed_classes_with_slap": 0,
+    "all_traps_slap_free": true
+   },
+   {
+    "deck": "2 2 3 3 4 5 J J J",
+    "positions": 174712,
+    "trapped_positions": 720,
+    "trapped_orders": 1728,
+    "trapped_with_slap": 0,
+    "closed_classes": 24,
+    "closed_classes_with_slap": 0,
+    "all_traps_slap_free": true
+   },
+   {
+    "deck": "2 2 3 4 5 6 J J J",
+    "positions": 332976,
+    "trapped_positions": 2160,
+    "trapped_orders": 2592,
+    "trapped_with_slap": 0,
+    "closed_classes": 72,
+    "closed_classes_with_slap": 0,
+    "all_traps_slap_free": true
+   },
+   {
+    "deck": "2 3 4 5 6 7 J J J",
+    "positions": 634320,
+    "trapped_positions": 7200,
+    "trapped_orders": 4320,
+    "trapped_with_slap": 0,
+    "closed_classes": 240,
+    "closed_classes_with_slap": 0,
+    "all_traps_slap_free": true
+   },
+   {
+    "deck": "2 2 3 3 4 J J Q K",
+    "positions": 503518,
+    "trapped_positions": 232,
+    "trapped_orders": 192,
+    "trapped_with_slap": 0,
+    "closed_classes": 4,
+    "closed_classes_with_slap": 0,
+    "all_traps_slap_free": true
+   },
+   {
+    "deck": "2 2 3 4 5 J J Q K",
+    "positions": 959526,
+    "trapped_positions": 1392,
+    "trapped_orders": 576,
+    "trapped_with_slap": 0,
+    "closed_classes": 24,
+    "closed_classes_with_slap": 0,
+    "all_traps_slap_free": true
+   },
+   {
+    "deck": "2 3 4 5 6 J J Q K",
+    "positions": 1833480,
+    "trapped_positions": 13920,
+    "trapped_orders": 2880,
+    "trapped_with_slap": 0,
+    "closed_classes": 240,
+    "closed_classes_with_slap": 0,
+    "all_traps_slap_free": true
+   },
+   {
+    "deck": "2 2 3 3 4 J J Q A",
+    "positions": 502588,
+    "trapped_positions": 232,
+    "trapped_orders": 192,
+    "trapped_with_slap": 0,
+    "closed_classes": 4,
+    "closed_classes_with_slap": 0,
+    "all_traps_slap_free": true
+   },
+   {
+    "deck": "2 2 3 4 5 J J Q A",
+    "positions": 956268,
+    "trapped_positions": 1392,
+    "trapped_orders": 576,
+    "trapped_with_slap": 0,
+    "closed_classes": 24,
+    "closed_classes_with_slap": 0,
+    "all_traps_slap_free": true
+   },
+   {
+    "deck": "2 3 4 5 6 J J Q A",
+    "positions": 1822920,
+    "trapped_positions": 13920,
+    "trapped_orders": 2880,
+    "trapped_with_slap": 0,
+    "closed_classes": 240,
+    "closed_classes_with_slap": 0,
+    "all_traps_slap_free": true
+   },
+   {
+    "deck": "2 2 3 3 4 J J K A",
+    "positions": 501018,
+    "trapped_positions": 232,
+    "trapped_orders": 192,
+    "trapped_with_slap": 0,
+    "closed_classes": 4,
+    "closed_classes_with_slap": 0,
+    "all_traps_slap_free": true
+   },
+   {
+    "deck": "2 2 3 4 5 J J K A",
+    "positions": 951012,
+    "trapped_positions": 1392,
+    "trapped_orders": 576,
+    "trapped_with_slap": 0,
+    "closed_classes": 24,
+    "closed_classes_with_slap": 0,
+    "all_traps_slap_free": true
+   },
+   {
+    "deck": "2 3 4 5 6 J J K A",
+    "positions": 1809000,
+    "trapped_positions": 13920,
+    "trapped_orders": 2880,
+    "trapped_with_slap": 0,
+    "closed_classes": 240,
+    "closed_classes_with_slap": 0,
+    "all_traps_slap_free": true
+   }
+  ],
+  "positions": 416822605,
+  "all_traps_slap_free": false,
+  "closed_classes_with_slap": 30
+ }
+]

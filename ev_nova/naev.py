@@ -42,6 +42,7 @@ class System:
     volatility: float
     jumps: tuple[Jump, ...]
     spobs: tuple[str, ...]
+    pos: tuple[float, float] = (0.0, 0.0)  # map position, as in the system's XML file
 
 
 @dataclass(frozen=True)
@@ -127,6 +128,7 @@ def read_system(path: Path) -> System:
     general = root.find("general")
     assert general is not None, path
     nebula = general.find("nebula")
+    pos = root.find("pos")
     jumps = tuple(
         Jump(j.get("target", ""), j.find("hidden") is not None, j.find("exitonly") is not None)
         for j in root.iter("jump")
@@ -138,6 +140,7 @@ def read_system(path: Path) -> System:
         volatility=0.0 if nebula is None else float(nebula.get("volatility", "0")),
         jumps=jumps,
         spobs=tuple(s.text or "" for s in root.findall("spobs/spob")),
+        pos=(float(pos.get("x", "0")), float(pos.get("y", "0"))) if pos is not None else (0.0, 0.0),
     )
 
 
@@ -273,6 +276,7 @@ def export(naev: Path) -> dict:
                     for j in s.jumps
                 },
                 "refuel": any("refuel" in spobs[n].services for n in s.spobs),
+                "pos": [round(s.pos[0], 6), round(s.pos[1], 6)],
             }
             for s in sorted(systems.values(), key=lambda s: s.name)
         },

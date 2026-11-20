@@ -1,0 +1,182 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="780" height="390" viewBox="0 0 780 390" role="img" font-family="Helvetica, Arial, sans-serif">
+<title>Two-player Hanabi deal 161, before the first turn</title>
+<desc>Two hands of five cards, five empty piles, 8 hint tokens, 3 lives, and the 40 cards of the deck in draw order.</desc>
+<rect width="780" height="390" fill="#ffffff"/>
+<text x="20" y="24" font-size="13" fill="#52514e">Player 1, seen by player 2</text>
+<rect x="20" y="34" width="54" height="76" rx="6" fill="#f2f1ec" stroke="#0b0b0b"/>
+<text x="47" y="82" font-size="38" fill="#0b0b0b" text-anchor="middle" font-weight="bold">3</text>
+<text x="27" y="51" font-size="12" fill="#0b0b0b">W</text>
+<rect x="82" y="34" width="54" height="76" rx="6" fill="#c8372d" stroke="#0b0b0b"/>
+<text x="109" y="82" font-size="38" fill="#ffffff" text-anchor="middle" font-weight="bold">1</text>
+<text x="89" y="51" font-size="12" fill="#ffffff">R</text>
+<rect x="144" y="34" width="54" height="76" rx="6" fill="#c8372d" stroke="#0b0b0b"/>
+<text x="171" y="82" font-size="38" fill="#ffffff" text-anchor="middle" font-weight="bold">3</text>
+<text x="151" y="51" font-size="12" fill="#ffffff">R</text>
+<rect x="206" y="34" width="54" height="76" rx="6" fill="#2c8c4a" stroke="#0b0b0b"/>
+<text x="233" y="82" font-size="38" fill="#ffffff" text-anchor="middle" font-weight="bold">1</text>
+<text x="213" y="51" font-size="12" fill="#ffffff">G</text>
+<rect x="268" y="34" width="54" height="76" rx="6" fill="#c8372d" stroke="#0b0b0b"/>
+<text x="295" y="82" font-size="38" fill="#ffffff" text-anchor="middle" font-weight="bold">5</text>
+<text x="275" y="51" font-size="12" fill="#ffffff">R</text>
+<text x="20" y="136" font-size="13" fill="#52514e">Player 2, seen by player 1</text>
+<rect x="20" y="146" width="54" height="76" rx="6" fill="#e0a800" stroke="#0b0b0b"/>
+<text x="47" y="194" font-size="38" fill="#0b0b0b" text-anchor="middle" font-weight="bold">5</text>
+<text x="27" y="163" font-size="12" fill="#0b0b0b">Y</text>
+<rect x="82" y="146" width="54" height="76" rx="6" fill="#f2f1ec" stroke="#0b0b0b"/>
+<text x="109" y="194" font-size="38" fill="#0b0b0b" text-anchor="middle" font-weight="bold">5</text>
+<text x="89" y="163" font-size="12" fill="#0b0b0b">W</text>
+<rect x="144" y="146" width="54" height="76" rx="6" fill="#2a64c4" stroke="#0b0b0b"/>
+<text x="171" y="194" font-size="38" fill="#ffffff" text-anchor="middle" font-weight="bold">2</text>
+<text x="151" y="163" font-size="12" fill="#ffffff">B</text>
+<rect x="206" y="146" width="54" height="76" rx="6" fill="#2c8c4a" stroke="#0b0b0b"/>
+<text x="233" y="194" font-size="38" fill="#ffffff" text-anchor="middle" font-weight="bold">4</text>
+<text x="213" y="163" font-size="12" fill="#ffffff">G</text>
+<rect x="268" y="146" width="54" height="76" rx="6" fill="#2a64c4" stroke="#0b0b0b"/>
+<text x="295" y="194" font-size="38" fill="#ffffff" text-anchor="middle" font-weight="bold">3</text>
+<text x="275" y="163" font-size="12" fill="#ffffff">B</text>
+<text x="400" y="24" font-size="13" fill="#52514e">Piles, built from 1 to 5</text>
+<rect x="400" y="34" width="54" height="76" rx="6" fill="#ffffff" stroke="#c8372d" stroke-width="2" stroke-dasharray="5 3"/>
+<text x="427" y="76" font-size="11" fill="#52514e" text-anchor="middle">red</text>
+<rect x="464" y="34" width="54" height="76" rx="6" fill="#ffffff" stroke="#e0a800" stroke-width="2" stroke-dasharray="5 3"/>
+<text x="491" y="76" font-size="11" fill="#52514e" text-anchor="middle">yellow</text>
+<rect x="528" y="34" width="54" height="76" rx="6" fill="#ffffff" stroke="#2c8c4a" stroke-width="2" stroke-dasharray="5 3"/>
+<text x="555" y="76" font-size="11" fill="#52514e" text-anchor="middle">green</text>
+<rect x="592" y="34" width="54" height="76" rx="6" fill="#ffffff" stroke="#2a64c4" stroke-width="2" stroke-dasharray="5 3"/>
+<text x="619" y="76" font-size="11" fill="#52514e" text-anchor="middle">blue</text>
+<rect x="656" y="34" width="54" height="76" rx="6" fill="#ffffff" stroke="#52514e" stroke-width="2" stroke-dasharray="5 3"/>
+<text x="683" y="76" font-size="11" fill="#52514e" text-anchor="middle">white</text>
+<text x="400" y="146" font-size="13" fill="#52514e">Hint tokens: 8</text>
+<circle cx="408" cy="164" r="8" fill="#2a64c4"/>
+<circle cx="430" cy="164" r="8" fill="#2a64c4"/>
+<circle cx="452" cy="164" r="8" fill="#2a64c4"/>
+<circle cx="474" cy="164" r="8" fill="#2a64c4"/>
+<circle cx="496" cy="164" r="8" fill="#2a64c4"/>
+<circle cx="518" cy="164" r="8" fill="#2a64c4"/>
+<circle cx="540" cy="164" r="8" fill="#2a64c4"/>
+<circle cx="562" cy="164" r="8" fill="#2a64c4"/>
+<text x="600" y="146" font-size="13" fill="#52514e">Lives: 3</text>
+<circle cx="608" cy="164" r="8" fill="#ffffff" stroke="#c8372d" stroke-width="3"/>
+<circle cx="630" cy="164" r="8" fill="#ffffff" stroke="#c8372d" stroke-width="3"/>
+<circle cx="652" cy="164" r="8" fill="#ffffff" stroke="#c8372d" stroke-width="3"/>
+<text x="20" y="268" font-size="13" fill="#52514e">The deck: 40 cards, drawn from the left; no player sees them</text>
+<rect x="20" y="278" width="34" height="46" rx="4" fill="#e0a800" stroke="#0b0b0b"/>
+<text x="37" y="307" font-size="23" fill="#0b0b0b" text-anchor="middle" font-weight="bold">4</text>
+<text x="25" y="289" font-size="9" fill="#0b0b0b">Y</text>
+<rect x="58" y="278" width="34" height="46" rx="4" fill="#2c8c4a" stroke="#0b0b0b"/>
+<text x="75" y="307" font-size="23" fill="#ffffff" text-anchor="middle" font-weight="bold">2</text>
+<text x="63" y="289" font-size="9" fill="#ffffff">G</text>
+<rect x="96" y="278" width="34" height="46" rx="4" fill="#2a64c4" stroke="#0b0b0b"/>
+<text x="113" y="307" font-size="23" fill="#ffffff" text-anchor="middle" font-weight="bold">5</text>
+<text x="101" y="289" font-size="9" fill="#ffffff">B</text>
+<rect x="134" y="278" width="34" height="46" rx="4" fill="#c8372d" stroke="#0b0b0b"/>
+<text x="151" y="307" font-size="23" fill="#ffffff" text-anchor="middle" font-weight="bold">4</text>
+<text x="139" y="289" font-size="9" fill="#ffffff">R</text>
+<rect x="172" y="278" width="34" height="46" rx="4" fill="#f2f1ec" stroke="#0b0b0b"/>
+<text x="189" y="307" font-size="23" fill="#0b0b0b" text-anchor="middle" font-weight="bold">1</text>
+<text x="177" y="289" font-size="9" fill="#0b0b0b">W</text>
+<rect x="210" y="278" width="34" height="46" rx="4" fill="#f2f1ec" stroke="#0b0b0b"/>
+<text x="227" y="307" font-size="23" fill="#0b0b0b" text-anchor="middle" font-weight="bold">4</text>
+<text x="215" y="289" font-size="9" fill="#0b0b0b">W</text>
+<rect x="248" y="278" width="34" height="46" rx="4" fill="#f2f1ec" stroke="#0b0b0b"/>
+<text x="265" y="307" font-size="23" fill="#0b0b0b" text-anchor="middle" font-weight="bold">2</text>
+<text x="253" y="289" font-size="9" fill="#0b0b0b">W</text>
+<rect x="286" y="278" width="34" height="46" rx="4" fill="#e0a800" stroke="#0b0b0b"/>
+<text x="303" y="307" font-size="23" fill="#0b0b0b" text-anchor="middle" font-weight="bold">4</text>
+<text x="291" y="289" font-size="9" fill="#0b0b0b">Y</text>
+<rect x="324" y="278" width="34" height="46" rx="4" fill="#f2f1ec" stroke="#0b0b0b"/>
+<text x="341" y="307" font-size="23" fill="#0b0b0b" text-anchor="middle" font-weight="bold">3</text>
+<text x="329" y="289" font-size="9" fill="#0b0b0b">W</text>
+<rect x="362" y="278" width="34" height="46" rx="4" fill="#e0a800" stroke="#0b0b0b"/>
+<text x="379" y="307" font-size="23" fill="#0b0b0b" text-anchor="middle" font-weight="bold">1</text>
+<text x="367" y="289" font-size="9" fill="#0b0b0b">Y</text>
+<rect x="400" y="278" width="34" height="46" rx="4" fill="#c8372d" stroke="#0b0b0b"/>
+<text x="417" y="307" font-size="23" fill="#ffffff" text-anchor="middle" font-weight="bold">3</text>
+<text x="405" y="289" font-size="9" fill="#ffffff">R</text>
+<rect x="438" y="278" width="34" height="46" rx="4" fill="#e0a800" stroke="#0b0b0b"/>
+<text x="455" y="307" font-size="23" fill="#0b0b0b" text-anchor="middle" font-weight="bold">3</text>
+<text x="443" y="289" font-size="9" fill="#0b0b0b">Y</text>
+<rect x="476" y="278" width="34" height="46" rx="4" fill="#e0a800" stroke="#0b0b0b"/>
+<text x="493" y="307" font-size="23" fill="#0b0b0b" text-anchor="middle" font-weight="bold">1</text>
+<text x="481" y="289" font-size="9" fill="#0b0b0b">Y</text>
+<rect x="514" y="278" width="34" height="46" rx="4" fill="#2c8c4a" stroke="#0b0b0b"/>
+<text x="531" y="307" font-size="23" fill="#ffffff" text-anchor="middle" font-weight="bold">1</text>
+<text x="519" y="289" font-size="9" fill="#ffffff">G</text>
+<rect x="552" y="278" width="34" height="46" rx="4" fill="#2c8c4a" stroke="#0b0b0b"/>
+<text x="569" y="307" font-size="23" fill="#ffffff" text-anchor="middle" font-weight="bold">1</text>
+<text x="557" y="289" font-size="9" fill="#ffffff">G</text>
+<rect x="590" y="278" width="34" height="46" rx="4" fill="#2c8c4a" stroke="#0b0b0b"/>
+<text x="607" y="307" font-size="23" fill="#ffffff" text-anchor="middle" font-weight="bold">4</text>
+<text x="595" y="289" font-size="9" fill="#ffffff">G</text>
+<rect x="628" y="278" width="34" height="46" rx="4" fill="#e0a800" stroke="#0b0b0b"/>
+<text x="645" y="307" font-size="23" fill="#0b0b0b" text-anchor="middle" font-weight="bold">3</text>
+<text x="633" y="289" font-size="9" fill="#0b0b0b">Y</text>
+<rect x="666" y="278" width="34" height="46" rx="4" fill="#c8372d" stroke="#0b0b0b"/>
+<text x="683" y="307" font-size="23" fill="#ffffff" text-anchor="middle" font-weight="bold">4</text>
+<text x="671" y="289" font-size="9" fill="#ffffff">R</text>
+<rect x="704" y="278" width="34" height="46" rx="4" fill="#2c8c4a" stroke="#0b0b0b"/>
+<text x="721" y="307" font-size="23" fill="#ffffff" text-anchor="middle" font-weight="bold">2</text>
+<text x="709" y="289" font-size="9" fill="#ffffff">G</text>
+<rect x="742" y="278" width="34" height="46" rx="4" fill="#2c8c4a" stroke="#0b0b0b"/>
+<text x="759" y="307" font-size="23" fill="#ffffff" text-anchor="middle" font-weight="bold">3</text>
+<text x="747" y="289" font-size="9" fill="#ffffff">G</text>
+<rect x="20" y="332" width="34" height="46" rx="4" fill="#2c8c4a" stroke="#0b0b0b"/>
+<text x="37" y="361" font-size="23" fill="#ffffff" text-anchor="middle" font-weight="bold">3</text>
+<text x="25" y="343" font-size="9" fill="#ffffff">G</text>
+<rect x="58" y="332" width="34" height="46" rx="4" fill="#2a64c4" stroke="#0b0b0b"/>
+<text x="75" y="361" font-size="23" fill="#ffffff" text-anchor="middle" font-weight="bold">1</text>
+<text x="63" y="343" font-size="9" fill="#ffffff">B</text>
+<rect x="96" y="332" width="34" height="46" rx="4" fill="#c8372d" stroke="#0b0b0b"/>
+<text x="113" y="361" font-size="23" fill="#ffffff" text-anchor="middle" font-weight="bold">1</text>
+<text x="101" y="343" font-size="9" fill="#ffffff">R</text>
+<rect x="134" y="332" width="34" height="46" rx="4" fill="#f2f1ec" stroke="#0b0b0b"/>
+<text x="151" y="361" font-size="23" fill="#0b0b0b" text-anchor="middle" font-weight="bold">4</text>
+<text x="139" y="343" font-size="9" fill="#0b0b0b">W</text>
+<rect x="172" y="332" width="34" height="46" rx="4" fill="#c8372d" stroke="#0b0b0b"/>
+<text x="189" y="361" font-size="23" fill="#ffffff" text-anchor="middle" font-weight="bold">2</text>
+<text x="177" y="343" font-size="9" fill="#ffffff">R</text>
+<rect x="210" y="332" width="34" height="46" rx="4" fill="#f2f1ec" stroke="#0b0b0b"/>
+<text x="227" y="361" font-size="23" fill="#0b0b0b" text-anchor="middle" font-weight="bold">2</text>
+<text x="215" y="343" font-size="9" fill="#0b0b0b">W</text>
+<rect x="248" y="332" width="34" height="46" rx="4" fill="#2a64c4" stroke="#0b0b0b"/>
+<text x="265" y="361" font-size="23" fill="#ffffff" text-anchor="middle" font-weight="bold">4</text>
+<text x="253" y="343" font-size="9" fill="#ffffff">B</text>
+<rect x="286" y="332" width="34" height="46" rx="4" fill="#2c8c4a" stroke="#0b0b0b"/>
+<text x="303" y="361" font-size="23" fill="#ffffff" text-anchor="middle" font-weight="bold">5</text>
+<text x="291" y="343" font-size="9" fill="#ffffff">G</text>
+<rect x="324" y="332" width="34" height="46" rx="4" fill="#c8372d" stroke="#0b0b0b"/>
+<text x="341" y="361" font-size="23" fill="#ffffff" text-anchor="middle" font-weight="bold">2</text>
+<text x="329" y="343" font-size="9" fill="#ffffff">R</text>
+<rect x="362" y="332" width="34" height="46" rx="4" fill="#2a64c4" stroke="#0b0b0b"/>
+<text x="379" y="361" font-size="23" fill="#ffffff" text-anchor="middle" font-weight="bold">1</text>
+<text x="367" y="343" font-size="9" fill="#ffffff">B</text>
+<rect x="400" y="332" width="34" height="46" rx="4" fill="#f2f1ec" stroke="#0b0b0b"/>
+<text x="417" y="361" font-size="23" fill="#0b0b0b" text-anchor="middle" font-weight="bold">1</text>
+<text x="405" y="343" font-size="9" fill="#0b0b0b">W</text>
+<rect x="438" y="332" width="34" height="46" rx="4" fill="#c8372d" stroke="#0b0b0b"/>
+<text x="455" y="361" font-size="23" fill="#ffffff" text-anchor="middle" font-weight="bold">1</text>
+<text x="443" y="343" font-size="9" fill="#ffffff">R</text>
+<rect x="476" y="332" width="34" height="46" rx="4" fill="#2a64c4" stroke="#0b0b0b"/>
+<text x="493" y="361" font-size="23" fill="#ffffff" text-anchor="middle" font-weight="bold">1</text>
+<text x="481" y="343" font-size="9" fill="#ffffff">B</text>
+<rect x="514" y="332" width="34" height="46" rx="4" fill="#2a64c4" stroke="#0b0b0b"/>
+<text x="531" y="361" font-size="23" fill="#ffffff" text-anchor="middle" font-weight="bold">4</text>
+<text x="519" y="343" font-size="9" fill="#ffffff">B</text>
+<rect x="552" y="332" width="34" height="46" rx="4" fill="#f2f1ec" stroke="#0b0b0b"/>
+<text x="569" y="361" font-size="23" fill="#0b0b0b" text-anchor="middle" font-weight="bold">1</text>
+<text x="557" y="343" font-size="9" fill="#0b0b0b">W</text>
+<rect x="590" y="332" width="34" height="46" rx="4" fill="#e0a800" stroke="#0b0b0b"/>
+<text x="607" y="361" font-size="23" fill="#0b0b0b" text-anchor="middle" font-weight="bold">2</text>
+<text x="595" y="343" font-size="9" fill="#0b0b0b">Y</text>
+<rect x="628" y="332" width="34" height="46" rx="4" fill="#e0a800" stroke="#0b0b0b"/>
+<text x="645" y="361" font-size="23" fill="#0b0b0b" text-anchor="middle" font-weight="bold">1</text>
+<text x="633" y="343" font-size="9" fill="#0b0b0b">Y</text>
+<rect x="666" y="332" width="34" height="46" rx="4" fill="#2a64c4" stroke="#0b0b0b"/>
+<text x="683" y="361" font-size="23" fill="#ffffff" text-anchor="middle" font-weight="bold">3</text>
+<text x="671" y="343" font-size="9" fill="#ffffff">B</text>
+<rect x="704" y="332" width="34" height="46" rx="4" fill="#e0a800" stroke="#0b0b0b"/>
+<text x="721" y="361" font-size="23" fill="#0b0b0b" text-anchor="middle" font-weight="bold">2</text>
+<text x="709" y="343" font-size="9" fill="#0b0b0b">Y</text>
+<rect x="742" y="332" width="34" height="46" rx="4" fill="#2a64c4" stroke="#0b0b0b"/>
+<text x="759" y="361" font-size="23" fill="#ffffff" text-anchor="middle" font-weight="bold">2</text>
+<text x="747" y="343" font-size="9" fill="#ffffff">B</text>
+</svg>

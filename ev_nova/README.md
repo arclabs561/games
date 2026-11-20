@@ -4,7 +4,7 @@ Which loop of planets earns a trader the most per jump, and can the routes playe
 
 ![A schematic map of EV Nova systems as circles with their trading stops: Sol, Kania, Altair, Tuatha, Dani Fort, Dani, Dani Evera and Ver'ashan. Lines join the stops of the best routes, labeled with jumps per leg.](figures/evnova_routes.svg)
 
-*The EV Nova routes that are best for some cost of a landing, on a schematic map; positions are not the game's. Blue legs are on the wiki's route pages, and the orange one is an equal best round trip that they do not list.*
+*The EV Nova routes that are best for some cost of a landing, on a schematic map; positions are not the game's, because EV Nova's data are Ambrosia Software's copyright and are not in the repository (see Data). Blue legs are on the wiki's route pages, and the orange one is an equal best round trip that they do not list.*
 
 In *Escape Velocity Nova* (Ambrosia Software, 2002) and in [Naev](https://naev.org), an open-source game in the same style, a trader buys goods on one planet, flies to another and sells them. This folder treats the choice of where to trade as an optimization problem: which loop of planets earns the most per jump, how cargo space, credits and fuel change that loop, and whether the routes players recommend can be beaten.
 
@@ -61,6 +61,10 @@ The data are Naev's XML files at commit `65cf3a39b892` (November 13, 2026). Pric
 
 No published Naev trade guide was found to compare with. Two searches turned up only guides for other games.
 
+![A map of Naev's 554 systems as dots joined by jump lines, taller than wide. Three routes are drawn thick and labeled in the lower right part of the map: Dvaer alone, Scarlet and Druss one jump apart, and Modus Manis and An'ku two jumps apart by two paths. Holly, Tau Ceti and Iris, near the middle, are circled.](figures/naev_map.svg)
+
+*Naev's map, drawn from the system positions in its data files. As in Naev's own map, y points up: its view matrix puts y = 0 at the bottom (read from the code). The three routes that are best at some cost of a landing lie close together in the south. The systems with the highest betweenness are near the middle. Under CC BY-SA 4.0, like the data it is drawn from.*
+
 ![A log-log plot of credits per ton per unit of cost against the cost of a landing, from 1/10 to 10 jumps, for three routes; the best rate is drawn thick, from Dvaer Prime and Eist Shipyard at the lowest costs, to Burnan and Lora-Mor, to Modus and Tankard Cloister above 111/86.](figures/naev_landing.svg)
 
 *Naev: the rate of each route that is best for some landing cost. Each rate is the gain per pass over jumps plus x per landing; the thick line is the best of the three. Where two lines cross, the best route changes.*
@@ -90,12 +94,14 @@ The EV Nova wiki lists recommended routes on its [Trade Routes](https://evnova.m
 
 | Source | What | License | Committed |
 |---|---|---|---|
-| [naev/naev](https://github.com/naev/naev) XML data, commit `65cf3a39b892` | systems, jumps, spobs, commodities | CC BY-SA 4.0 | yes, as `naev.json` (CC BY-SA 4.0) |
+| [naev/naev](https://github.com/naev/naev) XML data, commit `65cf3a39b892` | systems with their map positions, jumps, spobs, commodities | CC BY-SA 4.0 | yes, as `naev.json` and `figures/naev_map.svg` (CC BY-SA 4.0) |
 | Naev's `src/economy.c` | the price model | GPL-3 | no; reimplemented in `naev.py` |
 | EV Nova 1.1.1, ConText export from [vasi/evnova-utils](https://github.com/vasi/evnova-utils) | systems, stops, prices | Ambrosia Software's copyright | no |
 | EV Nova wiki | recommended routes, price levels, the 80% and 125% rule | not checked | the routes' stops, jumps and price levels, in `guides.py` |
 
-**Naev.** `naev.json` is derived from the XML files in [naev/naev](https://github.com/naev/naev) at commit `65cf3a39b892614c003ac13d24e43855e98fa36b`. Naev's `LICENSE` puts its XML data under the Creative Commons Attribution-ShareAlike 4.0 license, so `naev.json` is under CC BY-SA 4.0 too, with credit to the Naev developers. `uv run python -m ev_nova.naev --checkout PATH` rebuilds it from a checkout.
+**Naev.** Naev's `LICENSE` puts its source code under GPL-3 and, except where noted, every other file, XML files included, under CC BY-SA 4.0 or later. The system positions are in the XML files, so they fall under CC BY-SA, not the GPL. That license allows copying and adapting them, with credit and under the same license. So `naev.json` keeps the positions, and the map above, drawn from them, is under CC BY-SA 4.0 with credit to the Naev developers. Rebuilding `naev.json` with the positions added leaves every other line as it was.
+
+`naev.json` is derived from the XML files in [naev/naev](https://github.com/naev/naev) at commit `65cf3a39b892614c003ac13d24e43855e98fa36b`. Naev's `LICENSE` puts its XML data under the Creative Commons Attribution-ShareAlike 4.0 license, so `naev.json` is under CC BY-SA 4.0 too, with credit to the Naev developers. `uv run python -m ev_nova.naev --checkout PATH` rebuilds it from a checkout.
 
 The prices follow `economy_initialiseCommodityPrices` in Naev's `src/economy.c`, which is under GPL-3. `naev.py` is a separate implementation of the same arithmetic. Each spob's price starts from the commodity's base price, times modifiers for the spob's class, population, faction and presence range. The system's radius, nebula volatility and interference raise it. Then each price is averaged with the others in its system, and each system's average with its neighbors'. Over time a price swings around this mean as the sum of two sine waves. One wave, of 3% to 8% of the price, has a period of 2,000/(jumps + 1) periods and is shared by all stops in a system. The other wave's period comes from the length of the spob's landscape image name minus 19. Naev computes that length in unsigned arithmetic, so names shorter than 19 characters (all of them) give a period near 10^17 periods, and that wave never moves. This is read from the code, not observed in the game. Only the eight standard commodities are modeled; one spob also trades Neblaze, which no other spob trades.
 
@@ -113,7 +119,7 @@ The tests use a small made-up galaxy. Set `EV_NOVA_CONTEXT` to the path of an ex
 ## Open questions
 
 - Whether Naev's mean prices match the game. A running copy of Naev could check a few spobs.
-- Time. A jump in Naev takes flying time that depends on the system, and the source comments put a jump at about three periods and a landing at about one. Rates per period would need a model of flight time.
+- Time. A jump in Naev takes flying time that depends on the system, and the source comments put a jump at about three periods and a landing at about one. Rates per period would need a model of flight time. The map positions in `naev.json` are a first step: a jump point marked `autopos` lies at the system's radius, in the direction of the target system (`src/space.c`), so the distance flown inside a system between two such points can be computed. Ship speeds and the time of the jump itself are still needed.
 - Missions against trading. Cargo missions in both games pay for delivery and need no capital. They are not modeled.
 - Price drift in Naev, used on purpose. Prices in a system rise and fall together, with periods of a few hundred periods, so waiting for a good phase may beat flying at once.
 - Story changes. EV Nova's galaxy changes with control bits, and Naev's with its campaign. Only the start of an EV Nova game and Naev's base data are studied. EV Nova's disasters (`öops`), which shift one price for a while, are left out, as are hypergates and wormholes.
@@ -127,7 +133,7 @@ uv run --group ev_nova python -m ev_nova.study                                  
 uv run --group ev_nova python -m ev_nova.study --evnova path/to/NovaConText.txt  # both games
 uv run python -m ev_nova.naev --checkout path/to/naev                            # rebuild naev.json
 uv run pytest tests/test_ev_nova.py
-uv run python -m ev_nova.figures                                                 # the figures (about a minute)
+uv run python -m ev_nova.figures                                                 # the figures, the Naev map included (about a minute)
 ```
 
 ## Files
@@ -136,7 +142,7 @@ uv run python -m ev_nova.figures                                                
 |---|---|
 | `routes.py` | The model, Howard's method with its certificate, Karp's algorithm, brute force, the landing-cost sweep, fuel, credits, and the graph measures |
 | `naev.py` | Naev's XML reader and price model; writes `naev.json` |
-| `naev.json` | Naev's systems, jumps, trading spobs and mean prices (CC BY-SA 4.0) |
+| `naev.json` | Naev's systems with their map positions, jumps, trading spobs and mean prices (CC BY-SA 4.0) |
 | `evnova.py` | Reader for a ConText export of EV Nova, with the control-bit tests that hide and show systems |
 | `guides.py` | The published EV Nova routes, with their sources |
 | `study.py` | Prints every result above |

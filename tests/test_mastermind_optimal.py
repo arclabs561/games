@@ -36,3 +36,35 @@ def test_bounds_and_symmetries():
     assert list(least) == list(range(game.n)) and len(stabilizer) == len(game.maps)
     # The five classes of first guess: 1111, 1112, 1122, 1123 and 1234.
     assert len(set(stabilizer.min(0).tolist())) == 5
+
+
+def test_committed_optimal_trees():
+    """The trees the full search wrote (results/optimal.json), played against every code."""
+    import json
+    from collections import Counter
+    from pathlib import Path
+
+    from mastermind.optimal import Game, summary, tree_from_json, tree_to_json
+
+    path = Path(__file__).parent.parent / "mastermind" / "results" / "optimal.json"
+    record = json.loads(path.read_text())
+    codes = Game.codes_of(6, 4)
+    assert (record["colors"], record["holes"], record["least_worst_case"]) == (6, 4, 5)
+    totals = []
+    for row in record["trees"]:
+        tree = tree_from_json(row["tree"], codes)
+        assert tree_to_json(tree, codes) == row["tree"]
+        played = summary(tree, codes, row["limit"])
+        assert {k: row[k] for k in played} == played
+        assert len(Counter(play(tree, codes))) == row["worst"]
+        totals.append((row["limit"], row["total"], row["worst"], row["first_guess"]))
+    assert totals == [(12, 5625, 6, "1123"), (5, 5626, 5, "1123")]
+
+
+def test_tree_json_round_trip_small_game():
+    from mastermind.optimal import summary, tree_from_json, tree_to_json
+
+    game = Game(3, 3)
+    tree = game.strategy_tree()
+    assert tree_from_json(tree_to_json(tree, game.codes), game.codes) == tree
+    assert summary(tree, game.codes, 12)["total"] == game.cost(game.all_codes())

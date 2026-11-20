@@ -84,7 +84,8 @@ def distance(values: list[int], target: int) -> int:
     return min(abs(v - target) for v in values[max(i - 1, 0) : i + 1])
 
 
-def main() -> None:
+def survey() -> dict:
+    """Alliot's Table 2 and the selections that reach every target or none."""
     sels = selections()
     # Distance to the nearest value of any size, and, as Alliot's Table 2 counts it, to the
     # nearest value from 101 to 999.
@@ -99,8 +100,21 @@ def main() -> None:
             near_range[distance(in_range, t) if in_range else len(TARGETS)] += 1
         hits_all += [s] if len(in_range) == len(TARGETS) else []
         hits_none += [s] if not in_range else []
-    total = len(sels) * len(TARGETS)
-    print(f"{len(sels):,} selections x {len(TARGETS)} targets = {total:,} problems")
+    return {
+        "selections": len(sels),
+        "near_range": near_range,
+        "near_any": near_any,
+        "hits_all": hits_all,
+        "hits_none": hits_none,
+    }
+
+
+def main() -> None:
+    r = survey()
+    sels, near_range, near_any = r["selections"], r["near_range"], r["near_any"]
+    hits_all, hits_none = r["hits_all"], r["hits_none"]
+    total = sels * len(TARGETS)
+    print(f"{sels:,} selections x {len(TARGETS)} targets = {total:,} problems")
     print("distance  nearest value 101-999      nearest value of any size")
     cum_range = cum_any = 0
     for d in range(5):
