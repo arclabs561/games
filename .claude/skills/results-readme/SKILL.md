@@ -26,6 +26,16 @@ Taken from the READMEs that read best here (Erase, Spot It, EV Nova, Boggle) and
 8. **Open questions.** Specific enough that someone could start on one.
 9. **Usage** with timings, then **Files**.
 
+## Shared with the paper
+
+When a game has a paper, the README keeps the opening, the results table, the rules as
+modeled, the checks and the open questions, and links into the paper by section name; proofs
+and long explanation live only in the paper. The shared parts are Markdown fragments in
+`<game>/docs/`, placed in the README between `<!-- shared:<name> -->` and `<!-- /shared -->` and
+filled by `uv run tools/sync_docs.py` from `<game>/results.json`, so every quoted number has one
+source. Edit the fragment, never the README between the markers; a test compares the two. The
+typst-paper-pipeline skill has the paper's side.
+
 ## Pictures and demonstrations
 
 No README had a single image when this was written; every one should.
