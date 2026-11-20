@@ -11,7 +11,7 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: codenames-bench-2
+  group: codenames-bench-3
   cancel-in-progress: false
 env:
   FRAMEWORK_COMMIT: fc28bc9fc7206f9ba2034d6f0a0b0fcf8e65dcc6
@@ -46,33 +46,6 @@ jobs:
           rm -rf codenames/.cache/bench/nltk_data
           ls -l codenames/.cache/bench
 
-  reproduce:
-    needs: data
-    runs-on: ubuntu-latest
-    timeout-minutes: 60
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
-        with:
-          python-version: "3.12"
-      - uses: actions/cache/restore@caa296126883cff596d87d8935842f9db880ef25 # v5.1.0
-        with:
-          path: codenames/.cache/bench
-          key: bench-data-v1
-          fail-on-cache-miss: true
-      - name: Replay the published games with the port
-        run: |
-          mkdir -p "$RUNNER_TEMP/out"
-          uv run --group codenames python -m codenames.bench_play reproduce --out "$RUNNER_TEMP/out/reproduce.json"
-          cp codenames/.cache/bench/vectors.json "$RUNNER_TEMP/out/vectors.json"
-          python3 -c "import json; d=json.load(open('codenames/.cache/bench/forms.json')); print(json.dumps({'nltk': d['nltk'], 'words': len(d['forms'])}))" > "$RUNNER_TEMP/out/forms.json"
-      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-        with:
-          name: reproduce
-          path: ${{ runner.temp }}/out
-
   crossplay:
     needs: data
     runs-on: ubuntu-latest
@@ -80,8 +53,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        giver: [w2v, glove, w2vglove, gemma2-first, potion-first, potion-c3-self, potion-c3-population]
-        strict: ["", "--strict"]
+        giver: [w2v, glove, w2vglove]
+        strict: ["--strict"]
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -127,7 +100,7 @@ jobs:
           path: ${{ runner.temp }}/out
 
   store:
-    needs: [reproduce, crossplay]
+    needs: [crossplay]
     if: always()
     runs-on: ubuntu-latest
     permissions:
