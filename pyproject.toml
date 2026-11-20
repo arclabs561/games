@@ -84,6 +84,14 @@ maps = [
     "scikit-learn>=1.9",
     "scipy>=1.18",
 ]
+mtg_decks = [
+    "matplotlib>=3.11",
+    "numpy>=2.5",
+    "pandas>=3.1",
+    "pot>=0.9",
+    "rankops>=0.1.26",
+    "scipy>=1.18",
+]
 mastermind = [
     "matplotlib>=3.11",
     "numpy>=2.5",
@@ -112,7 +120,7 @@ build-backend = "uv_build"
 
 [tool.uv.build-backend]
 module-root = ""
-module-name = ["boggle", "cannonballs", "chess_ratings", "codenames", "drive_ya_nuts", "egyptian_ratscrew", "ev_nova", "freecell", "hanabi", "maps", "mastermind", "peggle", "pokemon", "spot_it", "tenzi", "yahtzee", "yugioh"]
+module-name = ["boggle", "cannonballs", "chess_ratings", "codenames", "drive_ya_nuts", "egyptian_ratscrew", "ev_nova", "freecell", "hanabi", "maps", "mastermind", "mtg_decks", "peggle", "pokemon", "spot_it", "tenzi", "yahtzee", "yugioh"]
 
 [tool.ruff]
 line-length = 100
