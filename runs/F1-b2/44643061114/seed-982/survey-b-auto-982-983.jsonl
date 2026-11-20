@@ -1,0 +1,3 @@
+{"deal": 982, "cells": 0, "verdict": "lost", "states": 20, "most_home": 3, "frozen": ["AC", "2C", "2D", "2H", "2S", "3C", "3D", "3H", "3S", "4C", "4D", "4H", "4S", "5D", "5S", "6C", "6D", "6S", "7D", "7H", "7S", "8C", "8D", "8S", "9C", "9D", "9H", "9S", "TC", "TD", "TH", "TS", "JC", "JD", "JH", "JS", "QC", "QD", "QH", "QS", "KC", "KD", "KH", "KS"]}
+{"deal": 982, "cells": 1, "verdict": "lost", "states": 18719, "most_home": 6, "frozen": ["2D", "2H", "3C", "3H", "3S", "5D", "6D", "6S", "7D", "7H", "TC", "TS", "JD", "JH"]}
+{"deal": 982, "cells": 2, "verdict": "unknown", "states": 260000000}

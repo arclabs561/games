@@ -1,0 +1,2 @@
+{"deal": 20410, "cells": 0, "verdict": "lost", "states": 100, "most_home": 4, "frozen": ["AS", "2C", "2D", "2S", "3C", "3D", "3H", "3S", "4C", "4D", "4S", "5C", "5D", "5H", "6C", "6H", "7C", "8D", "8H", "8S", "9C", "9D", "9H", "TC", "TH", "TS", "JC", "JD", "JS", "QC", "QD", "QH", "QS", "KC", "KD", "KH", "KS"]}
+{"deal": 20410, "cells": 1, "verdict": "unknown", "states": 260000000}

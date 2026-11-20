@@ -1,0 +1,26 @@
+{
+ "experiment": "F1-b2",
+ "run": "seed-1716,5351,6395,9608,11744,13705,16322,21165,25763,29834",
+ "commit": "5ea322a763bd052dff1b83b163e560f73c02ecf7",
+ "platform": "actions",
+ "command": [
+  "python",
+  "-m",
+  "freecell.survey",
+  "--solver",
+  "b",
+  "--autoplay",
+  "--deals",
+  "SEED",
+  "--out",
+  "OUT",
+  "--cap",
+  "260000000"
+ ],
+ "returncode": 0,
+ "seconds": 5152.0,
+ "job_id": "44643061114",
+ "hardware": "GitHub Actions 1000099264",
+ "gpu": null,
+ "python": "3.14.4"
+}

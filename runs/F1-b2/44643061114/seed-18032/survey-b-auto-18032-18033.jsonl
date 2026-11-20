@@ -1,0 +1,3 @@
+{"deal": 18032, "cells": 0, "verdict": "lost", "states": 2694, "most_home": 3, "frozen": ["AC", "AH", "2C", "2D", "2H", "3C", "3D", "3H", "3S", "4C", "6C", "7D", "8C", "8S", "9D", "9H", "TH", "QC", "QH", "KD", "KH", "KS"]}
+{"deal": 18032, "cells": 1, "verdict": "lost", "states": 199770280, "most_home": 11, "frozen": ["3C", "3D", "TH", "KD"]}
+{"deal": 18032, "cells": 2, "verdict": "won", "states": 152426, "moves": 6201, "replay": true}
