@@ -1,0 +1,174 @@
+{
+ "cost": [
+  {
+   "name": "Four 4s, 5s or 6s go in their upper box",
+   "source": "Cornell math department, Yahtzee strategy page",
+   "url": "https://pi.math.cornell.edu/~mec/2006-2007/Probability/Yahtzee.htm",
+   "quote": "take the points in the upper section if they are available",
+   "value": 254.49194734979082,
+   "cost": 0.0976621321720188,
+   "applies": 0.956512523529926,
+   "obeyed": 0.9653186264719942
+  },
+  {
+   "name": "Four of a kind goes in its upper box while the bonus is open",
+   "source": "Board Game Arena forum, 2026",
+   "url": "https://forum.boardgamearena.com/viewtopic.php?t=50222",
+   "quote": "Always score 4 of a kind on the top if we need it there",
+   "value": 254.48152793504215,
+   "cost": 0.10808154692068683,
+   "applies": 1.5307560185316753,
+   "obeyed": 0.9736954016999247
+  },
+  {
+   "name": "Three or four 1s, 2s or 3s go in their upper box",
+   "source": "1967 rule booklet, as quoted by the Yahtzee Manifesto",
+   "url": "https://www.yahtzeemanifesto.com/yahtzee-strategy.php",
+   "quote": "it is better to score them in the UPPER SECTION",
+   "value": 253.0356006397914,
+   "cost": 1.5540088421714415,
+   "applies": 1.7636114152302138,
+   "obeyed": 0.8312396462014913
+  },
+  {
+   "name": "Upper boxes take three or more of their face, or a zero",
+   "source": "Yahtzee Manifesto, strategy cheat sheet",
+   "url": "https://www.yahtzeemanifesto.com/yahtzee-strategy.php",
+   "quote": "Aim for at least 3-of-a-kind in every Upper box.",
+   "value": 244.79498576122,
+   "cost": 9.794623720742834,
+   "applies": 11.168654871669293,
+   "obeyed": 0.8595055875155198
+  },
+  {
+   "name": "A roll that fits a lower box goes there, not in the upper section",
+   "source": "Straight Dope message board, 2024",
+   "url": "https://boards.straightdope.com/t/whats-the-best-yahtzee-strategy/1006177",
+   "quote": "I generally choose the bottom",
+   "value": 244.85173096729915,
+   "cost": 9.737878514663691,
+   "applies": 7.675434841695272,
+   "obeyed": 0.6063815116276849
+  },
+  {
+   "name": "A full house goes in Full House, not Three of a Kind",
+   "source": "Straight Dope message board, 2020",
+   "url": "https://boards.straightdope.com/t/is-there-an-optimum-strategy-to-yahtzee/855164",
+   "quote": "Take the full house over a high scoring 3-of-a-kind.",
+   "value": 254.54460348346115,
+   "cost": 0.04500599850169351,
+   "applies": 0.9145713911607455,
+   "obeyed": 0.9797141267399816
+  },
+  {
+   "name": "Chance takes 21 or more, except in the last three turns",
+   "source": "Yahtzee Manifesto, strategy cheat sheet",
+   "url": "https://www.yahtzeemanifesto.com/yahtzee-strategy.php",
+   "quote": "Save it for rolls of 21+ points",
+   "value": 254.14474676092232,
+   "cost": 0.44486272104052205,
+   "applies": 6.106287403626921,
+   "obeyed": 0.9635513657600429
+  },
+  {
+   "name": "Chance stays open for the first six turns",
+   "source": "Hasbro rule booklet, tips and tactics",
+   "url": "https://www.hasbro.com/common/documents/dad2af551c4311ddbd0b0800200c9a66/8302f43150569047f57eb8d746ba9d86.pdf",
+   "quote": "Leave your CHANCE roll until later in the game",
+   "value": 252.51312749789759,
+   "cost": 2.0764819840652535,
+   "applies": 5.999999999999999,
+   "obeyed": 0.9189689167525725
+  },
+  {
+   "name": "The Yahtzee box is not scratched before the last turn",
+   "source": "Yahtzee Manifesto, strategy cheat sheet",
+   "url": "https://www.yahtzeemanifesto.com/yahtzee-strategy.php",
+   "quote": "Keep it open as long as possible",
+   "value": 249.89758917006046,
+   "cost": 4.6920203119023824,
+   "applies": 8.39848486133314,
+   "obeyed": 0.934868461838585
+  },
+  {
+   "name": "A forced zero goes in the upper section",
+   "source": "Yahtzee Manifesto, strategy cheat sheet",
+   "url": "https://www.yahtzeemanifesto.com/yahtzee-strategy.php",
+   "quote": "Scratch it in the Upper Section (e.g. Ones)",
+   "value": 253.49333983832594,
+   "cost": 1.0962696436369015,
+   "applies": 0.22983772397336,
+   "obeyed": 0.36355689970897154
+  },
+  {
+   "name": "With three or four of a kind and its upper box open, go for the Yahtzee",
+   "source": "Cornell math department, Yahtzee strategy page",
+   "url": "https://pi.math.cornell.edu/~mec/2006-2007/Probability/Yahtzee.htm",
+   "quote": "you should definitely go for the Yahtzee",
+   "value": 254.26301933302443,
+   "cost": 0.32659014893840776,
+   "applies": 3.791445968268234,
+   "obeyed": 0.9631478146823804
+  },
+  {
+   "name": "With three of a kind, keep them, except in the last three turns",
+   "source": "Board Game Arena forum, 2026",
+   "url": "https://forum.boardgamearena.com/viewtopic.php?t=50222",
+   "quote": "If we throw 3 of something, always continue with it",
+   "value": 254.18662179052737,
+   "cost": 0.4029876914354702,
+   "applies": 5.3900435344021735,
+   "obeyed": 0.968359967195712
+  },
+  {
+   "name": "With three of a kind and the bonus not made, stop rolling",
+   "source": "dice-war.com strategy page",
+   "url": "https://dice-war.com/yahtzee/strategy.html",
+   "quote": "bank the sure points in Four of a Kind or Three of a Kind",
+   "value": 218.41284368918772,
+   "cost": 36.176765792775115,
+   "applies": 5.946641403701027,
+   "obeyed": 0.06464564386679783
+  },
+  {
+   "name": "With a lone pair of 1s or 2s early on, do not keep the pair",
+   "source": "Cornell math department, Yahtzee strategy page",
+   "url": "https://pi.math.cornell.edu/~mec/2006-2007/Probability/Yahtzee.htm",
+   "quote": "will not get you many points",
+   "value": 254.3706523221054,
+   "cost": 0.2189571598574389,
+   "applies": 0.7716049382716047,
+   "obeyed": 0.6379379095403589
+  },
+  {
+   "name": "With two pair and Full House open, keep both pairs",
+   "source": "yahtzee.org.uk strategy page",
+   "url": "http://yahtzee.org.uk/strategy.html",
+   "quote": "hold the two's and sixes",
+   "value": 250.77141275033912,
+   "cost": 3.818196731623715,
+   "applies": 2.672134468188866,
+   "obeyed": 0.18072237745321293
+  },
+  {
+   "name": "With two pair before the last six turns, do not keep both pairs",
+   "source": "Board Game Arena forum, 2026",
+   "url": "https://forum.boardgamearena.com/viewtopic.php?t=50222",
+   "quote": "Don't chase full houses unless we are late in the game",
+   "value": 254.50147564772038,
+   "cost": 0.08813383424245558,
+   "applies": 2.9035766657693958,
+   "obeyed": 0.938892629899647
+  },
+  {
+   "name": "With a small straight after the first roll, chase the large straight",
+   "source": "Yahtzee Manifesto, strategy cheat sheet",
+   "url": "https://www.yahtzeemanifesto.com/yahtzee-strategy.php",
+   "quote": "Use your remaining rolls to chase a Large Straight instead.",
+   "value": 254.09078897199515,
+   "cost": 0.4988205099676861,
+   "applies": 0.9384812399878264,
+   "obeyed": 0.6457335370427809
+  }
+ ]
+}

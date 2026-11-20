@@ -8,7 +8,7 @@ noisy than two independent samples would be (common random numbers).
 
 import numpy as np
 
-from yahtzee.solver import Tables, turn
+from yahtzee.solver import Rule, Tables, turn
 
 
 def deal(t: Tables, games: int, seed: int) -> np.ndarray:
@@ -18,8 +18,10 @@ def deal(t: Tables, games: int, seed: int) -> np.ndarray:
     return np.random.default_rng(seed).integers(1, rules.faces + 1, size=shape, dtype=np.int8)
 
 
-def play(t: Tables, values: np.ndarray, dice: np.ndarray, batch: int = 2048) -> np.ndarray:
-    """The final score of each game, playing the choices that E defines."""
+def play(
+    t: Tables, values: np.ndarray, dice: np.ndarray, batch: int = 2048, rule: Rule | None = None
+) -> np.ndarray:
+    """The final score of each game, playing the choices that E defines (and `rule` fixes)."""
     rules = t.rules
     n, faces = rules.dice, rules.faces
     games = len(dice)
@@ -41,7 +43,7 @@ def play(t: Tables, values: np.ndarray, dice: np.ndarray, batch: int = 2048) -> 
     for k in range(len(rules.categories)):
         uniq, inv = np.unique(state, return_inverse=True)
         for lo in range(0, len(uniq), batch):
-            tr = turn(t, values, uniq[lo : lo + batch], choices=True)
+            tr = turn(t, values, uniq[lo : lo + batch], choices=True, rule=rule)
             g = np.nonzero((inv >= lo) & (inv < lo + batch))[0]
             b = inv[g] - lo
             r = lookup[add(np.zeros(len(g), dtype=np.int64), dice[g, k, 0], n)]
