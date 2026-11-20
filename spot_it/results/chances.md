@@ -1,6 +1,6 @@
 # What are the chances in the game?
 
-Exact chances for draws from the 57-card and 55-card decks, and the Triplet counts. Moved unchanged from the [Spot It README](../README.md), which keeps the short answers. Lemmas 1 to 3 and Theorem 4 are in [proofs.md](proofs.md); the cited works are listed under Sources in the README.
+Exact chances for draws from the 57-card and 55-card decks, and the Triplet counts. The [Spot It README](../README.md) gives the short answers. Lemmas 1 to 3 and Theorem 4 are in [proofs.md](proofs.md); the cited works are listed under Sources in the README.
 
 
 All of these are exact, from counting cards of the plane of order 7 (`chance.py`).

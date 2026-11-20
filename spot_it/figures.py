@@ -3,7 +3,10 @@
     uv run python -m spot_it.figures      # rewrites spot_it/figures/*.svg
 
 Each of the 57 symbols of the plane of order 7 is drawn as a generic glyph: one of eight
-shapes in one of eight colors. `pair` draws two cards of the plane and their one shared
+shapes in one of eight colors, with the color's number, 1 to 8, written inside so that no
+symbol is told from another by color alone. The colors are the Okabe-Ito set with brown in
+place of yellow (too faint on white); every two stay at least 0.076 apart in Oklab under a
+simulation of each of the three kinds of color blindness (Machado et al., 2009). `pair` draws two cards of the plane and their one shared
 symbol. `missing` removes two cards at random (seed 0), counts the symbols of the 55 left,
 and draws the two cards that the counts give back. A test compares both with the
 committed files.
@@ -66,7 +69,9 @@ class Svg:
 
 # Glyphs
 
-COLORS = ["#2a78d6", "#d95926", "#1baf7a", "#c98500", "#d55181", "#008300", "#6250d6", "#e34948"]
+COLORS = ["#000000", "#e69f00", "#56b4e9", "#009e73", "#8c510a", "#0072b2", "#d55e00", "#cc79a7"]
+# the color of the number written on a glyph of each color: dark on the light fills
+LABEL_INK = ["#ffffff", INK, INK, "#ffffff", "#ffffff", "#ffffff", INK, INK]
 SHAPES = ["circle", "square", "triangle", "diamond", "star", "hexagon", "plus", "ring"]
 
 
@@ -80,8 +85,9 @@ def polygon(x: float, y: float, r: float, corners: int, turn: float = 90, inner:
 
 
 def glyph(svg: Svg, symbol: int, x: float, y: float, r: float) -> None:
-    """Symbol s is shape s mod 8 in color s div 8."""
+    """Symbol s is shape s mod 8 in color s div 8, with the color's number inside."""
     shape, color = SHAPES[symbol % 8], COLORS[symbol // 8]
+    label = LABEL_INK[symbol // 8] if shape != "ring" else INK
     if shape == "circle":
         svg.add("circle", cx=x, cy=y, r=r * 0.85, fill=color)
     elif shape == "ring":
@@ -100,6 +106,17 @@ def glyph(svg: Svg, symbol: int, x: float, y: float, r: float) -> None:
             "hexagon": (6, 0, 1),
         }[shape]
         svg.add("polygon", points=polygon(x, y, r, corners, turn, inner), fill=color)
+    dy = {"triangle": r * 0.05}.get(shape, 0)
+    svg.add(
+        "text",
+        str(symbol // 8 + 1),
+        x=x,
+        y=y + dy + r * 0.32,
+        font_size=r * (0.7 if shape in ("triangle", "star") else 0.9),
+        font_weight="bold",
+        fill=label,
+        text_anchor="middle",
+    )
 
 
 def card(
@@ -144,7 +161,8 @@ def pair() -> str:
         520,
         270,
         "Two cards of the plane of order 7 and their one shared symbol",
-        "Two round cards with eight generic symbols each, shapes in colors. Exactly one symbol "
+        "Two round cards with eight generic symbols each: shapes in colors, each with its "
+        "color's number inside. Exactly one symbol "
         "is on both cards, and it is circled with a dashed line on each.",
     )
     card(svg, a, 130, 125, 110, frozenset({shared}), seed=1)

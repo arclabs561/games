@@ -127,3 +127,16 @@ def test_triplet_free_sets():
     assert pg5[6] == 5**5 - 5**2 and pg5[5] == 6 * pg5[6] and pg5[7] == 0
     pg4 = chance.triplet_free_counts(plane.projective_plane(4), kmax=7)
     assert pg4[6] == 168 and pg4[7] == 0
+
+
+def test_symbol_just_called_is_the_next_match_with_chance_6_in_55():
+    """The README's advice: after a match on symbol s, holding a card with s, the next card
+    shares s with chance 6/55 and each other symbol of the held card with chance 7/55."""
+    deck = plane.projective_plane(7)
+    held, old = deck[0], next(c for c in deck[1:] if len(deck[0] & c) == 1)
+    (s,) = held & old
+    rest = [c for c in deck if c not in (held, old)]
+    assert len(rest) == 55
+    shares = {t: Fraction(sum(t in c for c in rest), len(rest)) for t in held}
+    assert shares[s] == Fraction(6, 55)
+    assert all(shares[t] == Fraction(7, 55) for t in held - {s})

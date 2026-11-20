@@ -1,6 +1,6 @@
 # Notes on Spot It
 
-Detail behind the [Spot It README](../README.md), moved here from it. Every number is as it was in the README; a test checks that none was lost.
+Detail behind the [Spot It README](../README.md). A test checks that no number was lost when this detail moved out of the README.
 
 | Note | Question |
 |---|---|

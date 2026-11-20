@@ -1,10 +1,10 @@
 # Spot It
 
-Which two cards does the 55-card box leave out, and could a deck like this be made any other way? Any 55 cards of 8 symbols drawn from 57, every two sharing exactly one symbol, complete in exactly one way to the 57-card projective plane of order 7. So one symbol is on 6 cards and fourteen on 7, and these counts give the two missing cards. Proved, and checked on all 1,596 ways to remove two cards. Any nine cards hold three with a common symbol, and three cards drawn share one with chance exactly 6/55.
+Which two cards does the 55-card box leave out, and could a deck like this be made any other way? Any 55 cards of 8 symbols drawn from 57, every two sharing exactly one symbol, complete in exactly one way to the 57-card projective plane of order 7. So one symbol is on 6 cards and fourteen on 7, and in any such deck these counts give the two missing cards. Proved, and checked on all 1,596 ways to remove two cards. For the real box, a player listed the two missing cards in 2011; both carry the snowman, as the proof requires of the symbol on 6 cards (taken from a cited source, not checked against a card list here). Any nine cards hold three with a common symbol, and three cards drawn share one with chance exactly 6/55 (exact, by counting).
 
-![Two round cards with eight generic symbols each, shapes in colors; exactly one symbol, a gold square, is on both cards and is circled with a dashed line on each.](figures/pair.svg)
+![Two round cards with eight generic symbols each, shapes in colors; exactly one symbol, a green square numbered 4, is on both cards and is circled with a dashed line on each.](figures/pair.svg)
 
-*Two cards of the plane of order 7, with generic symbols: one of eight shapes in one of eight colors. Every two cards share exactly one symbol.*
+*Two cards of the plane of order 7, with generic symbols: one of eight shapes in one of eight colors, with the color's number inside so that color is never the only difference. Every two cards share exactly one symbol.*
 
 ## Rules as modeled
 
@@ -12,7 +12,7 @@ Spot It, sold as Dobble in Europe, has 55 round cards with 8 symbols on each. Th
 
 - A **deck** is a list of **cards**, and a card is a set of **symbols**. A deck has the **Spot It property** if every two of its cards share exactly one symbol.
 - A **projective plane of order n** is a deck of n² + n + 1 cards with n + 1 symbols each, using n² + n + 1 symbols, in which every two symbols also appear together on exactly one card. For n = 7 that is 57 cards of 8 symbols on 57 symbols.
-- The box has 55 cards. People who counted the symbols found 57 ([a list of the 57](https://www.markporthouse.net/spot-it-dobble-symbol-list); [Tangente](https://tangente-mag.com/en/articles/the-geometry-behind-dobble)). Asked about the two missing cards, the publisher answered on the Tric Trac forum that practical production reasons led them to print 55 cards, not 57, and that every box holds the same 55 ([forum, 2011](https://forum.trictrac.net/t/dobble-et-la-geometrie-finie/95005)).
+- The box has 55 cards. People who counted the symbols found 57 ([a list of the 57](https://www.markporthouse.net/spot-it-dobble-symbol-list); [Tangente](https://tangente-mag.com/en/articles/the-geometry-behind-dobble)). Asked about the two missing cards, the publisher answered on the Tric Trac forum that practical production reasons led them to print 55 cards, not 57, and that every box holds the same 55 ([forum, 2011](https://forum.trictrac.net/t/dobble-et-la-geometrie-finie/95005)). An earlier post in the same thread ([post 6](https://forum.trictrac.net/t/dobble-et-la-geometrie-finie/95005/6), August 2011) lists the symbols of the two missing cards.
 
 Below, the 55-card deck is the plane of order 7 with two cards removed. The section "Does every such deck extend to the plane?" shows that no other deck is possible: any 55 cards of 8 symbols from 57 symbols with the Spot It property arise in this way.
 
@@ -31,11 +31,11 @@ Exact unless marked. The last column links the note in [`results/`](results/READ
 | Maximal families of order 3 | Exhaustive search | [extension](results/extension.md) |
 | Large maximal families of orders 4, 5 and 7 | Seeded random search; lower bounds only | [extension](results/extension.md) |
 | Uniqueness of the planes of orders 2, 3 and 4 | Exhaustive count of completions against the automorphism counts | [extension](results/extension.md) |
-| Orders 6, 10 and 12, uniqueness for 7 and 8 | Cited (Bruck–Ryser; Lam et al.; Hall; Hall, Swift and Walker) | [extension](results/extension.md) |
+| Orders 6 and 10 do not exist; order 12 is open; the planes of orders 7 and 8 are unique | Cited (Bruck–Ryser; Lam, Thiel and Swiercz; Pierce and Hall; Hall, Swift and Walker) | [extension](results/extension.md) |
 | Chances in the table | Exact, by counting; two of them also by listing pairs and triples | [chances](results/chances.md) |
 | Nine cards always hold a triplet | Proof (Bose's parity argument), and exhaustive count | [chances](results/chances.md) |
 | The sets of eight cards with no triplet are the conics | Exhaustive comparison with every quadratic form, as Segre's theorem predicts | [chances](results/chances.md) |
-| The real deck's card list | Not checked: the only list found has an unknown license and describes 57 cards | below |
+| The real box's two missing cards: both carry the snowman, with seven other symbols each, as Theorem 4 requires | Taken from a cited source (one player's box, 2011); not checked against a card list here | below |
 
 ## How the results are checked
 
@@ -50,7 +50,7 @@ CI runs the tests in `tests/test_spot_it.py`, `tests/test_spot_it_figures.py` an
 
 ## Which decks have the Spot It property?
 
-The projective planes of every prime-power order q up to 13, built in two ways. One uses coordinates over the field with q elements; the other is the slope construction that most deck generators use. For q = 4, 8 and 9 the arithmetic is that of a finite field built from polynomials (`field.py`). With plain arithmetic mod n, the slope construction works only for prime n. For n = 6, for instance, 180 of the pairs of its 43 cards share no symbol and 144 share two or more. The table for n = 4 to 12 is in [constructions.md](results/constructions.md).
+The projective planes of every prime-power order q up to 13 have the property, and `plane.py` builds each in two ways. One uses coordinates over the field with q elements; the other is the slope construction that most deck generators use. For q = 4, 8 and 9 the arithmetic is that of a finite field built from polynomials (`field.py`). With plain arithmetic mod n, the slope construction works only for prime n. For n = 6, for instance, 180 of the pairs of its 43 cards share no symbol and 144 share two or more. The table for n = 4 to 12 is in [constructions.md](results/constructions.md).
 
 ## Which two cards are missing?
 
@@ -64,15 +64,22 @@ The answer is unique: no other card of 8 symbols from the 57 shares exactly one 
 
 ## Does every such deck extend to the plane?
 
-Yes. Any 55 cards of 8 symbols, drawn from 57 symbols, with the Spot It property, complete to a projective plane of order 7 on the same 57 symbols in exactly one way (Theorem 4). No card list is needed: the symbol counts 6, 7 and 8 above are forced. More generally, on n² + n + 1 symbols every such family of at least n² cards completes, uniquely, and for odd n so does every family of n² − 1 cards: for order 7, any 48 or more cards. The bound n² is Vanstone's, in dual form, and Fowler proves n² − 1 for every n.
+Yes. Any 55 cards of 8 symbols, drawn from 57 symbols, with the Spot It property, complete to a projective plane of order 7 on the same 57 symbols in exactly one way (Theorem 4). No card list is needed: the symbol counts 6, 7 and 8 above are forced. More generally, on n² + n + 1 symbols every such family of at least n² cards completes, uniquely, and so does every family of n² − 1 cards: for order 7, any 48 or more cards. Theorem 4 proves n² − 1 for odd n, and Fowler proves it for every n; the bound n² is Vanstone's, in dual form.
 
-The count of Lemma 2 also shows that 55 cards of 8 symbols need at least 57 symbols. Unless all 55 share one symbol, exactly 57 are used. A maximal family other than a plane has at most n² − 1 cards, or n² − 2 when n is odd. For order 7 there is one of nine cards on 36 symbols, built from the complete graph on 9 vertices. Seeded random searches found maximal families of 13, 19 and 37 cards for orders 4, 5 and 7, lower bounds only. `extend.py` confirms by counting that the planes of orders 2, 3 and 4 are unique. Order 12, a deck of 157 cards, is the smallest order still open. Detail, with the cited results on which orders exist: [extension.md](results/extension.md).
+The count of Lemma 2 also shows that 55 cards of 8 symbols need at least 57 symbols. Unless all 55 share one symbol, exactly 57 are used. A maximal family other than a plane has at most n² − 2 cards, by Fowler's theorem. For order 7 there is one of nine cards on 36 symbols, built from the complete graph on 9 vertices. Seeded random searches found maximal families of 13, 19 and 37 cards for orders 4, 5 and 7, lower bounds only. `extend.py` confirms by counting that the planes of orders 2, 3 and 4 are unique. Order 12, a deck of 157 cards, is the smallest order still open. Detail, with the cited results on which orders exist: [extension.md](results/extension.md).
 
 ## What does the real deck look like?
 
-A dataset of card photos [on Kaggle](https://www.kaggle.com/datasets/grouby/dobble-card-images) includes a list of which symbols are on which card. Its license is listed as unknown, so the list is not committed here. It describes 57 cards taken from a 2012 MathsJam talk, not the 55 cards of a box, and it does not say which two cards a box leaves out. A check run once outside the repository found that its 57 cards form a projective plane of order 7. That is a check of the list, not of a box.
+The symbol counts of an actual box follow from Theorem 4 once the box has 55 cards of 8 symbols, the Spot It property, and 57 symbols: one symbol on 6 cards, fourteen on 7 and 42 on 8.
 
-The symbol counts of an actual box are therefore not checked against a card list. They follow from Theorem 4 once the box has 55 cards of 8 symbols, the Spot It property, and 57 symbols: one symbol on 6 cards, fourteen on 7 and 42 on 8.
+A player on the Tric Trac forum listed the two cards missing from a box in August 2011 ([post 6](https://forum.trictrac.net/t/dobble-et-la-geometrie-finie/95005/6)), and the publisher's reply in the same thread says every box holds the same 55 cards. In English, the two cards are:
+
+- snowman, man, cactus, dinosaur, maple leaf, flower, ice cube, question mark;
+- snowman, light bulb, dog, ladybug, exclamation mark, skull, eye, stop sign.
+
+That is the shape Theorem 4 requires: one symbol, the snowman, on both cards and so on 6 cards of the box, and fourteen others split seven and seven. These are one player's counts, not checked here against a card list of a box. Lists of which symbols are on which card are facts, and the post is cited for them.
+
+A dataset of card photos [on Kaggle](https://www.kaggle.com/datasets/grouby/dobble-card-images) includes a list of which symbols are on which of 57 cards, taken from a 2012 MathsJam talk. Its license is listed as unknown, so the list is not committed here. A check run once outside the repository found that its 57 cards form a projective plane of order 7. That is a check of the list, not of a box.
 
 ## What are the chances in the game?
 
@@ -83,6 +90,8 @@ All of these are exact, from counting cards of the plane of order 7 (`chance.py`
 | Chance that three cards drawn show a common symbol | 6/55 = 0.1091 | 6/55 = 0.1091 |
 | Chance that 8 cards drawn have no symbol on three of them | 16,758/1,652,411,475 ≈ 0.00001 | 98/9,663,225 ≈ 0.00001 |
 | Chance that 9 cards drawn have no symbol on three of them | 0 | 0 |
+
+A player who has just matched a symbol and then holds the card that carried it sometimes looks for the same symbol first. On the next card it is the match with chance 6/55 ≈ 0.109 in the full deck, the chance in the first row, while each of the card's other seven symbols is the match with chance 7/55 ≈ 0.127. So the symbol just called is slightly the worst place to look first (exact, by counting).
 
 ## Data
 
@@ -113,11 +122,11 @@ No card art is used. The figures draw generic symbols, and the decks here are bu
 
 - What is the largest maximal family of order 7 that is not a plane? Random searches found 37 cards, and Theorem 4 allows at most 47.
 - Does a plane of order 12, a deck of 157 cards, exist? It is the smallest order still open.
-- Which two cards does a real box leave out? A card list of an actual box, with a license that allows checking it here, would settle it.
+- Do the two cards the forum post lists agree with a card list of an actual box? A list with a license that allows checking it here would settle it.
 
 ## Usage
 
-The code uses only the standard library. Times are from one run on a shared machine.
+The code uses only the standard library. Times are from one run on a two-core computer.
 
 ```bash
 uv run python -m spot_it.field     # field axioms for 2 to 16 elements (under a second)
