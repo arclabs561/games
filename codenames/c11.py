@@ -637,10 +637,10 @@ def score(lists_path: Path = LISTS, guesses: Path = GUESSES, runs: Path = RUNS) 
     result["c10_arms"] = score_filter(rows, g, "c10", TEST)
     a, b = strict["per_board"], result["c10_arms"]["per_board"]
     both = [i for i in range(len(a)) if a[i]["kept"] and b[i]["kept"]]
-    result["strict_minus_c10"] = {
-        h: bootstrap([a[i][h] - b[i][h] for i in both]) for h in ("h_a1", "h_a2")
-    }
-    result["strict_minus_c10"]["boards"] = len(both)
+    paired: dict = {"boards": len(both)}
+    for h in ("h_a1", "h_a2"):
+        paired[h] = bootstrap([a[i][h] - b[i][h] for i in both])
+    result["strict_minus_c10"] = paired
     result["repeat"] = repeat_summary(rows, g, TEST)
     result["pilot_replies"] = {
         m: reply_counts(
