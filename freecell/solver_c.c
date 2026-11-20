@@ -10,7 +10,9 @@
 
    Safe cards are played home after every move, by the rule of rules.py (a card goes home when
    it can and every card that could sit on it, one rank lower of the other color, is home or
-   is an ace). A position is the multiset of columns, the set of free cells and the
+   is an ace). With the word "horne", the rule is Horne's instead, which the solvers of
+   Fish's reports use: a card of rank r goes home when it can and the foundations of the
+   other color are at r - 2 or more and the other foundation of its color at r - 3 or more. A position is the multiset of columns, the set of free cells and the
    foundations; the count of positions is comparable with Solver B run with "auto".
 
    A position is written in few bits, relative to the deal. Each column of the deal keeps its
@@ -40,7 +42,8 @@
    and a line "end".
    Arguments: a folder for the waiting files (default /tmp), the most positions in one layer
    (0 for no limit), the most bytes of waiting positions held in memory before they are
-   written to files (default 1 GB), and optionally "layers".
+   written to files (default 1 GB), and optionally "layers", "horne" and "win=<budget>"
+   (the hunt for a line that wins, below).
 
    A win is reported without its line of moves; Solver B or Solver A finds and replays
    lines. Solver C shares no code with either.
@@ -299,10 +302,20 @@ static void wait_clear_all(void) {
 }
 
 /* ---- moves ---- */
+static int horne;
+static int suit_in_play[4];
 static int safe(const Pos *p, int c) {
     if (p->home[suit_of(c)] != rank_of(c) - 1) return 0;
     int r = rank_of(c);
     if (r <= 2) return 1;
+    if (horne) { /* Horne's rule: other color at least r - 2, same color at least r - 3 */
+        for (int s = 0; s < 4; s++) {
+            if (!suit_in_play[s] || s == suit_of(c)) continue;
+            int need = is_red(s) != is_red(c) ? r - 2 : r - 3;
+            if (p->home[s] < need) return 0;
+        }
+        return 1;
+    }
     for (int s = 0; s < 4; s++) {
         int d = 4 * (r - 2) + s;
         if (!inplay[d] || is_red(d) == is_red(c)) continue;
@@ -742,6 +755,7 @@ int main(int argc, char **argv) {
     if (argc > 3) memory_limit = strtoull(argv[3], 0, 10);
     for (int i = 4; i < argc; i++) {
         if (!strcmp(argv[i], "layers")) want_layers = 1;
+        else if (!strcmp(argv[i], "horne")) horne = 1;
         else if (!strncmp(argv[i], "win=", 4)) { win_mode = 1; budget = strtoull(argv[i] + 4, 0, 10); }
     }
     /* address space for each table: as many codes as physical memory could hold */
@@ -761,11 +775,13 @@ int main(int argc, char **argv) {
         char *tok = strtok(line, " \t\n");
         if (!tok) continue;
         memset(inplay, 0, sizeof inplay);
+        memset(suit_in_play, 0, sizeof suit_in_play);
         if (!strcmp(tok, "ms")) {
             long deal = atol(strtok(0, " \t\n"));
             ncells = atoi(strtok(0, " \t\n"));
             nranks = 13; nsuits = 4; ncols = 8;
             microsoft(deal);
+            for (int c = 0; c < 52; c++) inplay[c] = 1;
         } else if (!strcmp(tok, "deck")) {
             nranks = atoi(strtok(0, " \t\n"));
             nsuits = atoi(strtok(0, " \t\n"));
@@ -783,6 +799,7 @@ int main(int argc, char **argv) {
         } else { printf("error input\n"); fflush(stdout); continue; }
         decksize = 0;
         for (int c = 0; c < 52; c++) bottom_of[c] = -1;
+        for (int c = 0; c < 52; c++) suit_in_play[c % 4] |= inplay[c];
         Pos start;
         memset(&start, 0, sizeof start);
         for (int i = 0; i < ncols; i++) {

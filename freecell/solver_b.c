@@ -31,7 +31,10 @@
    foundations of the current layer are stored, and a position with more cards home waits in
    a list for its own layer. Cards never leave the foundations, so a layer is complete once
    every layer with fewer cards home is done. The output is as above, followed by one line
-   "layer <clubs> <diamonds> <hearts> <spades> <positions>" per layer and a line "end".
+   "layer <clubs> <diamonds> <hearts> <spades> <positions>" per layer and a line "end". The
+   word "horne" plays cards home by Horne's rule instead: a card of rank r goes when the
+   foundations of the other color are at r - 2 or more and the other one of its color at
+   r - 3 or more.
 */
 #include <stdint.h>
 #include <stdio.h>
@@ -239,8 +242,20 @@ static Frame *fr; static uint64_t frcap;
 static int use_auto;
 static Move *au; static uint64_t aucap, nau;
 
+static int use_horne; /* Horne's rule in place of the one above (see solve_layers) */
 static int safe_home(const Pos *p, int c) {
     if (p->home[st(c)] != rk(c) - 1) return 0;
+    if (use_horne) {
+        if (rk(c) <= 2) return 1;
+        for (int s = 0; s < 4; s++) {
+            int any = 0;
+            for (int r = 1; r <= nranks; r++) any |= present[4 * (r - 1) + s];
+            if (!any || s == st(c)) continue;
+            int other = (s == 1 || s == 2) != red(c);
+            if (p->home[s] < rk(c) - (other ? 2 : 3)) return 0;
+        }
+        return 1;
+    }
     for (int d = 0; d < NCARD; d++)
         if (present[d] && rk(d) == rk(c) - 1 && red(d) != red(c) && rk(d) != 1 &&
             p->home[st(d)] < rk(d))
@@ -509,6 +524,7 @@ int main(int argc, char **argv) {
         if (!strcmp(argv[i], "fence")) want_fence = 1;
         else if (!strcmp(argv[i], "auto")) use_auto = 1;
         else if (!strcmp(argv[i], "layers")) by_layers = 1;
+        else if (!strcmp(argv[i], "horne")) use_horne = 1;
     }
     char line[4096];
     static int cols[16][NCARD];

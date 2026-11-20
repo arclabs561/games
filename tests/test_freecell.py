@@ -200,6 +200,21 @@ def test_solver_c_on_microsoft_deals(tmp_path):
 
 
 @needs_cc
+def test_horne_rule_keeps_every_verdict_and_both_layered_solvers_count_alike(tmp_path):
+    # Horne's rule plays more cards home than rules.safe; on deals 1 to 60 with one cell the
+    # verdicts are the same, the counts differ on some, and the two solvers agree on each.
+    problems = [native.ms_problem(d, 1) for d in range(1, 61)]
+    plain = solve_c(problems, tmp_path, cap=300_000)
+    horne = solve_c(problems, tmp_path, cap=300_000, horne=True)
+    lost = [i for i, a in enumerate(plain) if a["verdict"] == "lost"]
+    assert [plain[i]["verdict"] for i in range(60)] == [horne[i]["verdict"] for i in range(60)]
+    differ = [i for i in lost if plain[i]["states"] != horne[i]["states"]]
+    assert [i + 1 for i in differ] == [3, 12, 18, 20, 41, 46, 50, 52]
+    b_horne = solve_b_layers([problems[i] for i in differ], horne=True)
+    assert [b["states"] for b in b_horne] == [horne[i]["states"] for i in differ]
+
+
+@needs_cc
 def test_solver_c_hunt_gives_lines_that_replay(tmp_path):
     for deal, cells in ((164, 0), (2, 1)):
         ans = hunt_c(native.ms_problem(deal, cells), tmp_path, 50_000_000)

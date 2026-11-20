@@ -14,7 +14,13 @@ table filled a 16 GB runner on eight levels. Two searches are run on them here:
 - **Solver B** with a larger budget and another seed for the order of its moves, to find a
   line that wins.
 
-A job is named `<solver>-<deal>-<cells>`, with solver c, bl or w, or `b-<deal>-<cells>-<seed>`
+Solvers `ch` and `blh` are Solver C and Solver B by layers with Horne's rule for safe cards
+(a card of rank r goes home when the other color's foundations are at r - 2 or more and the
+other foundation of its color at r - 3 or more), the rule of the solvers in Fish's reports,
+so that their counts of positions can be compared with his.
+
+A job is named `<solver>-<deal>-<cells>`, with solver c, bl, ch, blh or w, or
+`b-<deal>-<cells>-<seed>`
 (':' also separates). Each writes `<out>/open-<job>.json`; the layered searches also write
 the positions of each layer to `<out>/layers-<solver>-<deal>-<cells>.tsv`, and Solver C its
 progress to `<out>/progress-<solver>-<deal>-<cells>.log`.
@@ -58,11 +64,13 @@ def solve_c(
     layers: bool = False,
     log: Path | None = None,
     memory: int = 1 << 30,
+    horne: bool = False,
 ) -> list[dict]:
     """Solver C on each problem; with `layers`, each answer lists its layers' positions.
-    Waiting positions go to files in `folder` when they take more than `memory` bytes."""
+    Waiting positions go to files in `folder` when they take more than `memory` bytes.
+    With `horne`, cards go home by Horne's rule."""
     args = [str(native.binary(SOLVER_C)), str(folder), str(cap), str(memory)]
-    args += ["layers"] if layers else []
+    args += (["layers"] if layers else []) + (["horne"] if horne else [])
     env = dict(os.environ, SOLVER_C_PROGRESS="1") if log else None
     with open(log or os.devnull, "w") as err:
         proc = subprocess.run(
@@ -99,10 +107,10 @@ def solve_c(
     return out
 
 
-def solve_b_layers(problems: list[str]) -> list[dict]:
-    """Solver B, one foundation at a time, on each problem."""
+def solve_b_layers(problems: list[str], horne: bool = False) -> list[dict]:
+    """Solver B, one foundation at a time, on each problem (Horne's rule with `horne`)."""
     proc = subprocess.run(
-        [str(native.binary()), "0", "0", "layers"],
+        [str(native.binary()), "0", "0", "layers", *(["horne"] if horne else [])],
         input="".join(p + "\n" for p in problems),
         capture_output=True,
         text=True,
@@ -147,14 +155,15 @@ def run_job(job: str, out: Path, budget: int, cap: int) -> dict:
     tag = f"{solver}-{deal}-{cells}"
     t0 = time.time()
     rec: dict = {"job": job, "deal": deal_n, "cells": cells_n, "solver": solver}
-    if solver in ("c", "bl"):
+    if solver in ("c", "bl", "ch", "blh"):
         problem = native.ms_problem(deal_n, cells_n)
-        if solver == "c":
+        horne = solver.endswith("h")
+        if solver.startswith("c"):
             with tempfile.TemporaryDirectory(dir=out) as tmp:
                 log = out / f"progress-{tag}.log"
-                (ans,) = solve_c([problem], Path(tmp), cap, True, log)
+                (ans,) = solve_c([problem], Path(tmp), cap, True, log, horne=horne)
         else:
-            (ans,) = solve_b_layers([problem])
+            (ans,) = solve_b_layers([problem], horne)
         layers = ans.pop("layers")
         rows = "".join("\t".join(map(str, r)) + "\n" for r in layers)
         (out / f"layers-{tag}.tsv").write_text("C\tD\tH\tS\tpositions\n" + rows)
