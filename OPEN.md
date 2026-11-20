@@ -1,17 +1,15 @@
 # Open questions
 
-70 open questions from 16 games' READMEs, collected by `tools/open_questions.py`. Edit the READMEs, not this file, then run `python3 tools/open_questions.py`; a test checks that this file is current.
+74 open questions from 18 games' READMEs, collected by `tools/open_questions.py`. Edit the READMEs, not this file, then run `python3 tools/open_questions.py`; a test checks that this file is current.
 
 Each status comes from the question's wording, by the rules in the script's docstring. It guides the choice of what to work on next and is not itself a finding.
 
 | Status | Questions |
 |---|---:|
-| blocked on data | 9 |
-| blocked on compute | 4 |
-| partly answered | 12 |
-| open | 45 |
-
-No open-questions section: [Egyptian Ratscrew](egyptian_ratscrew/README.md), [Yahtzee](yahtzee/README.md).
+| blocked on data | 8 |
+| blocked on compute | 3 |
+| partly answered | 11 |
+| open | 52 |
 
 | Game | Question | Status |
 |---|---|---|
@@ -36,13 +34,17 @@ No open-questions section: [Egyptian Ratscrew](egyptian_ratscrew/README.md), [Ya
 | [Codenames](codenames/README.md) | Do language-model clues fare better with people than with embedding guessers? | blocked on data |
 | [Codenames](codenames/README.md) | Would GRPO with an entropy bonus, more replies per board, or several gradient steps per batch keep exploring past the first listed clue? | open |
 | [Codenames](codenames/README.md) | Why does gpt-oss-120b return empty replies on many test calls and almost no validation calls? | open |
-| [Drive Ya Nuts](drive_ya_nuts/README.md) | How many classes of solvable sets are there when a nut may appear twice? A comment on the Stack Exchange question reports 6,901,100; it was not checked here. | partly answered |
+| [Drive Ya Nuts](drive_ya_nuts/README.md) | How many solutions do the 6,901,100 classes of multisets have? The listing counts rings around C0 for each class, which is not the number of solutions of one multiset. Counting those would need the listing of every ring that contains C0, as `exact.py` does for sets. | open |
 | [Drive Ya Nuts](drive_ya_nuts/README.md) | How were the original nuts chosen? A designer who kept drawing until a set had one solution would find one after about 18.7 draws on average. | open |
+| [Egyptian Ratscrew](egyptian_ratscrew/README.md) | Can a deal of the full deck reach a trapped position? A trap with slaps in it, as in the nine-card deck, would not show up as a slap-free loop of Beggar-my-neighbour, so searching those loops is not enough. | open |
+| [Egyptian Ratscrew](egyptian_ratscrew/README.md) | Which nine-card deck types have a trap with three players? The census was run for two players only. | open |
+| [Egyptian Ratscrew](egyptian_ratscrew/README.md) | What is the smallest deck with a trap with slaps in it for three players? For two players it has nine cards, and the census finds one such deck type among the 1,349. | open |
+| [Egyptian Ratscrew](egyptian_ratscrew/README.md) | Is the seat effect with four players zero, or too small to see in 200,000 games? | open |
 | [Erase](erase/README.md) | A proof of Theorem 15 that does not check cases is still open. | open |
 | [Erase](erase/README.md) | Do the thresholds for targets other than 10 hold for hands of more than 11 cards? The paper's induction to larger hands is worked out only for 10. | partly answered |
 | [Erase](erase/README.md) | Does any target above 30 have a threshold above 9? Only 14 reaches 9 among the targets checked, because of one multiset of eight cards. | partly answered |
 | [EV Nova and Naev](ev_nova/README.md) | Whether Naev's mean prices match the game. A running copy of Naev could check a few spobs. | blocked on data |
-| [EV Nova and Naev](ev_nova/README.md) | Time. A jump in Naev takes flying time that depends on the system, and the source comments put a jump at about three periods and a landing at about one. Rates per period would need a model of flight time. | partly answered |
+| [EV Nova and Naev](ev_nova/README.md) | Time. A jump in Naev takes flying time that depends on the system, and the source comments put a jump at about three periods and a landing at about one. Rates per period would need a model of flight time. The map positions in `naev.json` are a first step: a jump point marked `autopos` lies at the system's radius, in the direction of the target system (`src/space.c`), so the distance flown inside a system between two such points can be computed. Ship speeds and the time of the jump itself are still needed. | partly answered |
 | [EV Nova and Naev](ev_nova/README.md) | Missions against trading. Cargo missions in both games pay for delivery and need no capital. They are not modeled. | open |
 | [EV Nova and Naev](ev_nova/README.md) | Price drift in Naev, used on purpose. Prices in a system rise and fall together, with periods of a few hundred periods, so waiting for a good phase may beat flying at once. | open |
 | [EV Nova and Naev](ev_nova/README.md) | Story changes. EV Nova's galaxy changes with control bits, and Naev's with its campaign. Only the start of an EV Nova game and Naev's base data are studied. EV Nova's disasters (`öops`), which shift one price for a while, are left out, as are hypergates and wormholes. | open |
@@ -52,13 +54,10 @@ No open-questions section: [Egyptian Ratscrew](egyptian_ratscrew/README.md), [Ya
 | [FreeCell](freecell/README.md) | **A short certificate with free cells.** No proof that 11982 is lost avoids listing positions. Sells (2026) tried counting free places at the moment a stuck card must move; he found that it fails once a column can be emptied. With a free cell, the only certificate here is the fence. A short argument like the stuck-card set would need to bound how long cards can stay in free cells. | partly answered |
 | [FreeCell](freecell/README.md) | **Deals with no frozen card.** In 27 lost deals every card moves in some line. What makes deal 8927 lost with three free cells? | open |
 | [FreeCell](freecell/README.md) | **Further deals.** Fish (2012) reports 82,126 deals lost with two free cells among the first 400,000. Pringle and Fish (2018) count 102,075 deals lost with four among all FreeCell Pro deals. Neither is rerun here. A survey of the first million deals with four free cells was started and cancelled before it finished; no result of it is reported. | blocked on compute |
-| [Hanabi](hanabi/README.md) | Split the points between a team's score and its deal's ceiling into what hidden information costs and what play costs. That needs an agent that plays the real game well, scored on the same 3,079 decks: an H-group convention bot, or the challenge's human proxies, which are only reachable through its evaluation service. | blocked on data |
-| [Hanabi](hanabi/README.md) | Trace the 67 human games whose drops a search could not settle, with larger budgets. | blocked on compute |
-| [Hanabi](hanabi/README.md) | Settle the 23 deals still undecided (listed above). No certificate here proves any of them lost, and 13 are won in the free-order game, so many may be won; a search guided by the free-order game's winning line might find a real one. | partly answered |
-| [Hanabi](hanabi/README.md) | The free-order game drops tokens. No full deal here is lost to tokens alone, but some small decks are: with three players, hands of one card and one token, 24 of the 180 orderings of a four-card deck are lost though the free-order game wins them. | partly answered |
-| [Hanabi](hanabi/README.md) | The best real (not open-information) score for each deal is unknown; Endgame-Analyzer on [git.abstractnonsen.se](https://git.abstractnonsen.se/Hanabi/Endgame-Analyzer) solves the case where players know their own cards but not the deck, for endgames. | open |
-| [Hanabi](hanabi/README.md) | Plan H4's policies were still improving when training stopped. Whether the gap between self-play and cross-play at α = 0.05 closes with more steps, as in Forkel et al., is open; 10⁹ steps a seed would take about 4.6 hours an arm on an A10G at the speed measured. | blocked on compute |
-| [Hanabi](hanabi/README.md) | Whether playing the newest card is the habit that separates the clusters of low-entropy seeds could be tested by forcing or forbidding it in one policy and replaying the cross-play games. | open |
+| [Hanabi](hanabi/README.md) | Split the points between a team's score and its deal's ceiling into what hidden information costs and what play costs. That needs an agent that plays the real game well, scored on the same 3,079 decks. | open |
+| [Hanabi](hanabi/README.md) | Settle the 23 deals still undecided ([h1.md](results/h1.md) lists them). No certificate proves any of them lost, and 13 are won in the free-order game. | partly answered |
+| [Hanabi](hanabi/README.md) | The best real (not open-information) score of each deal is unknown. | open |
+| [Hanabi](hanabi/README.md) | Whether the gap between self-play and cross-play at α = 0.05 closes with more training, as in Forkel et al. | blocked on compute |
 | [Maps](maps/README.md) | Does CIEDE2000 instead of Oklab distance change which shelf method wins? | open |
 | [Maps](maps/README.md) | A NeRV sweep (λ KL(P‖Q) + (1 − λ) KL(Q‖P)) would trace the whole frontier between precision and recall on these data; λ = 1 is SNE, already implemented. | open |
 | [Maps](maps/README.md) | How far apart are t-SNE's local minima on the Pokémon, over 20 seeds, in cost and in T and C? | open |
@@ -69,19 +68,22 @@ No open-questions section: [Egyptian Ratscrew](egyptian_ratscrew/README.md), [Ya
 | [Mastermind](mastermind/README.md) | Is there a rule for the first guess that keeps more of the best possible chance than minimax's 99.41%? | open |
 | [Peggle: who is the better player?](peggle/README.md) | Who shoots first in a Peggle duel, and how large is that edge? The first-shooter edges here are assumed values, not measurements. | blocked on data |
 | [Peggle: who is the better player?](peggle/README.md) | A player whose chance rises from 0.45 to 0.55 halfway through 1,000 games is usually declared the worse player by the 95% rule. Does some rule that looks only at wins and games avoid this, or does it need the order of the games? | open |
-| [Pokémon](pokemon/README.md) | **Schmitz's typing duel.** Why his 27-typing equilibrium differs from the unique one here. His matchup table is an image; reading it would settle whether the game or the solver differs. | blocked on data |
-| [Pokémon](pokemon/README.md) | **Weighted scores.** The notebook's sums treat every attacking type as equally likely. Weighting by Showdown usage would change which typings and Pokémon rank first. | open |
-| [Pokémon](pokemon/README.md) | **Sets beyond damage.** Setup moves, recovery, hazards, items, Terastallization, and a policy that switches by choice. The six most used Pokémon do far better in full battles than under perfect switching, which suggests that what the sets leave out matters. | open |
-| [Pokémon](pokemon/README.md) | **Full battles beyond 63 teams.** The full-battle equilibrium is over a fixed pool. A double oracle whose best response is searched in the simulator would say whether some other team beats it. | open |
-| [Pokémon](pokemon/README.md) | **Level 4 played out.** The same expected-damage fights carried through six-against-six battles with the level-5 policy would separate the effect of perfect switching from that of Showdown's mechanics. | open |
-| [Pokémon](pokemon/README.md) | **A larger pool.** 40 Pokémon by use; how the equilibria move with 60 or 80. | open |
-| [Pokémon](pokemon/README.md) | **Emerald Kaizo encounters.** How often each species appears, and the generator's timing, which the independent model leaves out. | open |
+| [Pokémon](pokemon/README.md) | **Schmitz's typing duel.** His matchup table is an image; reading it would settle whether his game or his solver differs from the one here. | blocked on data |
+| [Pokémon](pokemon/README.md) | **Weighted scores.** Weighting the notebook's sums by Showdown usage would change which typings and Pokémon rank first. | open |
+| [Pokémon](pokemon/README.md) | **Sets beyond damage.** Setup moves, recovery, hazards, items, Terastallization, and a policy that switches by choice. The six most used Pokémon do far better in full battles than under perfect switching. | open |
+| [Pokémon](pokemon/README.md) | **Beyond 63 teams.** A double oracle whose best response is searched in the simulator would say whether some other team beats the full-battle equilibrium. | open |
+| [Pokémon](pokemon/README.md) | **Level 4 played out**, through six-against-six battles with the level-5 policy, to separate perfect switching from Showdown's mechanics; and **a larger pool** of 60 or 80 Pokémon. | open |
+| [Pokémon](pokemon/README.md) | **Emerald Kaizo encounters.** How often each species appears, and the generator's timing. | open |
 | [Spot It](spot_it/README.md) | What is the largest maximal family of order 7 that is not a plane? Random searches found 37 cards, and Theorem 4 allows at most 47. | partly answered |
 | [Spot It](spot_it/README.md) | Does a plane of order 12, a deck of 157 cards, exist? It is the smallest order still open. | open |
 | [Spot It](spot_it/README.md) | Which two cards does a real box leave out? A card list of an actual box, with a license that allows checking it here, would settle it. | blocked on data |
 | [Tenzi](tenzi/README.md) | The slides' chart of a player who rolls faster gives a jump of 0.0235 at equal speeds, about half the exact chance of a tie between two players, 0.048. Where does 0.0235 come from? | open |
 | [Tenzi](tenzi/README.md) | What is the best strategy in a race against players who watch our dice and react to them? | open |
-| [Yu-Gi-Oh! opening hands](yugioh/README.md) | Real draw cards have costs: banishing cards from the deck or the Extra Deck, or no further draws that turn. Modeling one specific card, cost included, would show how far below these upper bounds it falls. | open |
+| [Yahtzee](yahtzee/README.md) | Why Glenn's rule lists score 7.9 points more here than he reports. His tables leave open what a keep rule such as "Small straight" keeps, and whether a "tripleton" may be four of a kind. | partly answered |
+| [Yahtzee](yahtzee/README.md) | Which rules Kelly and Liese used, and whether exact rational arithmetic for the full game reproduces their fraction. | open |
+| [Yahtzee](yahtzee/README.md) | Whether a card can get closer than 9 points. The split of the sheet's loss suggests where to look: keeps that depend on more than the most common face, the longest run and the pairs. | open |
+| [Yahtzee](yahtzee/README.md) | Why Glenn counts 1,260 impossible pairs of upper boxes and totals where this solver counts 1,302, though the state count matches Verhoeff's. | open |
+| [Yu-Gi-Oh! opening hands](yugioh/README.md) | Pot of Prosperity is modeled above with its costs. Some cards banish cards from the deck, such as Pot of Desires (10 face-down). That changes nothing in the opening hand, because the banished cards are random. It matters when a starter searches a card that the banish removes. That needs a model of search targets, which roles do not have. | open |
 | [Yu-Gi-Oh! opening hands](yugioh/README.md) | A starter that needs the turn's one Normal Summon competes with another such starter. A need that counts Normal Summons would separate those hands. | open |
 | [Yu-Gi-Oh! opening hands](yugioh/README.md) | "Worth in starters" is measured on one need. For "a starter and an extender" a looker could be worth more, since it can take whichever card is missing. | open |
 | [Yu-Gi-Oh! opening hands](yugioh/README.md) | Ratios in real tournament decks, if a source with clear terms is found. | blocked on data |
