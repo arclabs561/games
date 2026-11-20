@@ -90,37 +90,80 @@ def sgns_embedding(s: np.ndarray, seed: int) -> np.ndarray:
     return w + c
 
 
-def neighbor_tests(data: Data, x: np.ndarray, tribes: dict[str, str] | None) -> dict:
-    """What a card's K nearest neighbors share with it, and the same by chance."""
+def partner_vote(cards: list[cardfacts.Card], i: int, nbrs) -> float:
+    """1 if the partner color leads the neighbors' other colors, 1/t on a t-way tie, else 0."""
+    c = cards[i]
+    partner = cardfacts.tribe_partner(c, cardfacts.BLB_TRIBES)
+    votes = {col: 0 for col in cardfacts.WUBRG if col != c.colors}
+    for j in nbrs:
+        for col in cards[j].colors:
+            if col != c.colors:
+                votes[col] += 1
+    top = max(votes.values())
+    tied = [col for col, v in votes.items() if v == top]
+    return 1 / len(tied) if top > 0 and partner in tied else 0.0
+
+
+def neighbor_tests(
+    data: Data, x: np.ndarray, tribes: dict[str, str] | None, per_card: bool = False
+) -> dict:
+    """What a card's K nearest neighbors share with it.
+
+    - pair: the share of neighbors whose most-played color pair is the card's;
+    - color: for one-color cards, the share of neighbors that include the card's color;
+    - tribe_partner (Bloomburrow): for one-color creatures of an archetype's creature
+      type, whether the archetype's other color leads the colors of the neighbors that
+      are not of the card's own color;
+    - tribe_partner_offcolor: the same vote among the K nearest cards that do not
+      include the card's color at all (defined after the first was seen; exploratory).
+
+    With per_card, the per-card values behind each mean are returned too, for intervals.
+    """
     nb = embed.neighbors(x, K)
     cards = data.cards
     pair = [c.pair or None for c in cards]
+    rows: dict[str, list[float]] = {
+        "pair": [
+            float(np.mean([pair[j] == pair[i] for j in nb[i]]))
+            for i in range(len(cards))
+            if pair[i]
+        ]
+    }
     out = {"pair": embed.agreement(nb, pair)}
     mono = [i for i, c in enumerate(cards) if len(c.colors) == 1]
     out["color"] = float(
         np.mean([np.mean([cards[i].colors in cards[j].colors for j in nb[i]]) for i in mono])
     )
     if tribes:
-        hits = []
-        for i, c in enumerate(cards):
-            partner = cardfacts.tribe_partner(c, tribes)
-            if partner is None:
-                continue
-            votes = {col: 0 for col in cardfacts.WUBRG if col != c.colors}
-            for j in nb[i]:
-                for col in cards[j].colors:
-                    if col != c.colors:
-                        votes[col] += 1
-            top = max(votes.values())
-            tied = [col for col, v in votes.items() if v == top]
-            hits.append(1 / len(tied) if top > 0 and partner in tied else 0.0)
-        out["tribe_partner"] = float(np.mean(hits))
-        out["tribe_cards"] = len(hits)
+        sim = embed.cosine(x)
+        eligible = [
+            i for i, c in enumerate(cards) if cardfacts.tribe_partner(c, tribes) is not None
+        ]
+        rows["tribe_partner"] = [partner_vote(cards, i, nb[i]) for i in eligible]
+        out["tribe_partner"] = float(np.mean(rows["tribe_partner"]))
+        off = []
+        for i in eligible:
+            others = [
+                j
+                for j in np.argsort(-sim[i], kind="stable")
+                if j != i and cards[i].colors not in cards[j].colors
+            ]
+            off.append(partner_vote(cards, i, others[:K]))
+        rows["tribe_partner_offcolor"] = off
+        out["tribe_partner_offcolor"] = float(np.mean(off))
+        out["tribe_cards"] = len(eligible)
+    if per_card:
+        out["per_card"] = rows
     return out
 
 
 def chance_tests(data: Data, tribes: dict[str, str] | None) -> dict:
-    """The same measures if each card's neighbors were drawn at random from the rest."""
+    """The same measures if each card's neighbors were drawn at random from the rest.
+
+    pair_within_color: the pair measure for one-color cards whose neighbors are drawn at
+    random from the other cards that include the card's color, the level that color
+    alone would give.
+    """
     cards = data.cards
     n = len(cards)
     out = {"pair": embed.chance_agreement([c.pair or None for c in cards])}
@@ -133,20 +176,46 @@ def chance_tests(data: Data, tribes: dict[str, str] | None) -> dict:
             ]
         )
     )
+    within = []
+    for i in mono:
+        same = [j for j in range(n) if j != i and cards[i].colors in cards[j].colors]
+        within.append(np.mean([cards[j].pair == cards[i].pair for j in same]))
+    out["pair_within_color"] = float(np.mean(within))
     if tribes:
         out["tribe_partner"] = 0.25  # four other colors, none favored
+        out["tribe_partner_offcolor"] = 0.25
     return out
+
+
+def q1_ppmi(data: Data, tribes: dict[str, str] | None) -> tuple[dict, dict]:
+    """Neighbor tests for the PPMI embedding, with bootstrap intervals over cards."""
+    base = neighbor_tests(data, ppmi_embedding(data.s, data.held, data.n_decks), tribes, True)
+    rng = np.random.default_rng(0)
+    intervals = {}
+    for key, vals in base.pop("per_card").items():
+        v = np.array(vals)
+        idx = rng.integers(0, v.size, size=(10_000, v.size))
+        intervals[key] = interval(v[idx].mean(axis=1))
+    return base, intervals
+
+
+def q1_sgns(data: Data, tribes: dict[str, str] | None, seed: int) -> dict:
+    """Neighbor tests for skip-gram trained with one seed."""
+    return neighbor_tests(data, sgns_embedding(data.s, seed), tribes)
+
+
+def q1_null(data: Data, tribes: dict[str, str] | None, seed: int) -> dict:
+    """Neighbor tests for PPMI on one draw of shuffled decks."""
+    x0 = embed.null_counts(data.held, data.sizes, seed)
+    s0, _, h0 = dk.cooccurrence(x0)
+    return neighbor_tests(data, ppmi_embedding(s0, h0, data.n_decks), tribes)
 
 
 def question1(data: Data, tribes: dict[str, str] | None) -> dict:
     """Neighbor tests for PPMI, for SGNS over seeds, for the null over seeds, and chance."""
-    base = neighbor_tests(data, ppmi_embedding(data.s, data.held, data.n_decks), tribes)
-    learned = [neighbor_tests(data, sgns_embedding(data.s, seed), tribes) for seed in SGNS_SEEDS]
-    nulls = []
-    for seed in NULL_SEEDS:
-        x0 = embed.null_counts(data.held, data.sizes, seed)
-        s0, _, h0 = dk.cooccurrence(x0)
-        nulls.append(neighbor_tests(data, ppmi_embedding(s0, h0, data.n_decks), tribes))
+    base, intervals = q1_ppmi(data, tribes)
+    learned = [q1_sgns(data, tribes, seed) for seed in SGNS_SEEDS]
+    nulls = [q1_null(data, tribes, seed) for seed in NULL_SEEDS]
 
     def spread(runs: list[dict]) -> dict:
         return {
@@ -164,9 +233,13 @@ def question1(data: Data, tribes: dict[str, str] | None) -> dict:
         "dim": DIM,
         "cards": len(data.cards),
         "ppmi": base,
+        "ppmi_intervals": intervals,
+        "ppmi_intervals_method": "bootstrap over cards, 10,000 resamples, seed 0",
         "sgns": spread(learned),
+        "sgns_runs": learned,
         "sgns_seeds": SGNS_SEEDS,
         "null": spread(nulls),
+        "null_runs": nulls,
         "null_seeds": NULL_SEEDS,
         "chance": chance_tests(data, tribes),
     }
@@ -203,23 +276,32 @@ def pairing_scores(sw: list[transport.Swap], data: Data) -> dict:
 def question2(data: Data, x: np.ndarray, deck_size: float) -> dict:
     """For each color pair: move the average losing deck onto the average winning deck."""
     cost = transport.ground_cost(x)
-    out = {}
+    out: dict[str, dict] = {}
+    pairing: dict[str, dict[str, dict[str, float]]] = {}
     for g in cardfacts.PAIRS:
         lost, won = data.targets[(g, "lost")], data.targets[(g, "won")]
         plan, c = transport.emd(lost, won, cost)
         ot_sw = transport.swaps(plan)
         base_sw = transport.baseline_swaps(lost, won)
+        pairing[g] = {
+            "transport": pairing_scores(ot_sw, data),
+            "baseline": pairing_scores(base_sw, data),
+            "random": pairing_scores(random_pairing(lost, won, 0), data),
+        }
         out[g] = {
             "moved": round(transport.total_variation(lost, won) * deck_size, 4),
             "cost": round(c, 6),
             "transport": name_swaps(ot_sw, data.names, deck_size, SWAPS_SHOWN),
             "baseline": name_swaps(base_sw, data.names, deck_size, SWAPS_SHOWN),
-            "pairing": {
-                "transport": pairing_scores(ot_sw, data),
-                "baseline": pairing_scores(base_sw, data),
-                "random": pairing_scores(random_pairing(lost, won, 0), data),
-            },
+            "pairing": pairing[g],
         }
+    out["mean_over_pairs"] = {
+        arm: {
+            k: float(np.mean([pairing[g][arm][k] for g in cardfacts.PAIRS]))
+            for k in ("mana_gap", "same_kind")
+        }
+        for arm in ("transport", "baseline", "random")
+    }
     return out
 
 

@@ -1,15 +1,15 @@
 # Open questions
 
-79 open questions from 18 games' READMEs, collected by `tools/open_questions.py`. Edit the READMEs, not this file, then run `python3 tools/open_questions.py`; a test checks that this file is current.
+84 open questions from 19 games' READMEs, collected by `tools/open_questions.py`. Edit the READMEs, not this file, then run `python3 tools/open_questions.py`; a test checks that this file is current.
 
 Each status comes from the question's wording, by the rules in the script's docstring. It guides the choice of what to work on next and is not itself a finding.
 
 | Status | Questions |
 |---|---:|
-| blocked on data | 8 |
+| blocked on data | 9 |
 | blocked on compute | 3 |
 | partly answered | 8 |
-| open | 60 |
+| open | 64 |
 
 | Game | Question | Status |
 |---|---|---|
@@ -67,6 +67,11 @@ Each status comes from the question's wording, by the rules in the script's docs
 | [Mastermind](mastermind/README.md) | How does the game choose a screen's words, and are duds chosen to share letters with the password? A list of real screens would settle whether the ENABLE screens here are easier or harder than the game's. | blocked on data |
 | [Mastermind](mastermind/README.md) | ENABLE has many words that a game would not use, such as JAUK and WHIT. Would screens of common words change the table? | open |
 | [Mastermind](mastermind/README.md) | Is there a rule for the first guess that keeps more of the best possible chance than minimax's 99.41%? | open |
+| [Magic draft decks: which cards go together, and how decks that win differ](mtg_decks/README.md) | Do the neighbor results and the transport-versus-frequency comparison hold on a newer set and on the untouched test quarter? Plan [D1](../experiments/plans/D1.md) fixes how this will be checked. | open |
+| [Magic draft decks: which cards go together, and how decks that win differ](mtg_decks/README.md) | A measure of the drafter separate from the games scored (for example, win rate in other formats or earlier sets) would let the deck scores be adjusted for skill without the leak noted above. | open |
+| [Magic draft decks: which cards go together, and how decks that win differ](mtg_decks/README.md) | Transport with a cost from card facts (mana value, type) as well as the embedding, against the same held-out scores. | open |
+| [Magic draft decks: which cards go together, and how decks that win differ](mtg_decks/README.md) | The same methods on Yu-Gi-Oh tournament decks, if a source with clear terms is found. | blocked on data |
+| [Magic draft decks: which cards go together, and how decks that win differ](mtg_decks/README.md) | Draft picks instead of final decks: 17Lands' draft files record what each drafter took and passed, which would separate what was available from what was chosen. | open |
 | [Peggle: who is the better player?](peggle/README.md) | **The first-shooter edge in Peggle.** Who shoots first in a Peggle duel, and how large is that edge? The first-shooter edges here are assumed values, not measurements. Their size in actual duels, and whether it depends on the board, would need recorded duels. | blocked on data |
 | [Peggle: who is the better player?](peggle/README.md) | **Drift and stopping.** A player whose chance rises from 0.45 to 0.55 halfway through 1,000 games is usually declared the worse player by the 95% rule. Does some rule that looks only at wins and games avoid this, or does it need the order of the games? For skill that changes smoothly, is there a stopping rule whose verdict keeps a clear meaning, such as "better over the last 100 games", with a guarantee like Ville's inequality? | open |
 | [Peggle: who is the better player?](peggle/README.md) | **Other boundaries.** A threshold that changes with n could keep the 5% for equal players and declare the better player better more often at p = 0.55 than one fixed threshold does. Which boundary does this best for a given cap is not worked out here. | open |

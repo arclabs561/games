@@ -1,0 +1,4313 @@
+group,outcome,card,mass
+BG,lost,Agate Assault,0.00008640
+BG,lost,Agate-Blade Assassin,0.00619143
+BG,lost,Alania's Pathmaker,0.00005476
+BG,lost,Azure Beastbinder,0.00006582
+BG,lost,Bakersbane Duo,0.03811791
+BG,lost,Bandit's Talent,0.00331861
+BG,lost,Banishing Light,0.00039565
+BG,lost,Bark-Knuckle Boxer,0.00813663
+BG,lost,Barkform Harvester,0.00488114
+BG,lost,"Baylen, the Haymaker",0.00000841
+BG,lost,Bellowing Crier,0.00000124
+BG,lost,"Beza, the Bounding Spring",0.00002822
+BG,lost,Blacksmith's Talent,0.00003709
+BG,lost,Blooming Blast,0.00001117
+BG,lost,Bonebind Orator,0.03232358
+BG,lost,Bonecache Overseer,0.01761375
+BG,lost,Brambleguard Captain,0.00000717
+BG,lost,Brambleguard Veteran,0.00669947
+BG,lost,Brazen Collector,0.00001352
+BG,lost,Brightblade Stoat,0.00000558
+BG,lost,Builder's Talent,0.00040173
+BG,lost,Bumbleflower's Sharepot,0.00846556
+BG,lost,Burrowguard Mentor,0.00010277
+BG,lost,Bushy Bodyguard,0.01503484
+BG,lost,Byway Barterer,0.00008708
+BG,lost,Cache Grab,0.04547058
+BG,lost,Calamitous Tide,0.00001045
+BG,lost,"Camellia, the Seedmiser",0.00931775
+BG,lost,Caretaker's Talent,0.00013650
+BG,lost,Carrot Cake,0.00023765
+BG,lost,Cindering Cutthroat,0.00308181
+BG,lost,"Clement, the Worrywort",0.00030469
+BG,lost,Clifftop Lookout,0.00440262
+BG,lost,Coiling Rebirth,0.00243957
+BG,lost,Conduct Electricity,0.00002745
+BG,lost,Consumed by Greed,0.01231865
+BG,lost,Corpseberry Cultivator,0.04267085
+BG,lost,Coruscation Mage,0.00000739
+BG,lost,Cruelclaw's Heist,0.00226948
+BG,lost,Crumb and Get It,0.00000986
+BG,lost,Curious Forager,0.01499677
+BG,lost,Daggerfang Duo,0.03223906
+BG,lost,Daring Waverider,0.00001188
+BG,lost,Darkstar Augur,0.00357340
+BG,lost,Dawn's Truce,0.00000356
+BG,lost,Dazzling Denial,0.00000356
+BG,lost,Dewdrop Cure,0.00002043
+BG,lost,Dire Downdraft,0.00004851
+BG,lost,Diresight,0.00812872
+BG,lost,Dour Port-Mage,0.00013230
+BG,lost,Downwind Ambusher,0.01287619
+BG,lost,"Dragonhawk, Fate's Tempest",0.00007804
+BG,lost,Dreamdew Entrancer,0.00120377
+BG,lost,Driftgloom Coyote,0.00003325
+BG,lost,Druid of the Spade,0.00813250
+BG,lost,Early Winter,0.01292841
+BG,lost,Eddymurk Crab,0.00000500
+BG,lost,Emberheart Challenger,0.00001473
+BG,lost,Essence Channeler,0.00003475
+BG,lost,Fabled Passage,0.00171595
+BG,lost,Feather of Flight,0.00002127
+BG,lost,Fecund Greenshell,0.00460216
+BG,lost,Feed the Cycle,0.01161103
+BG,lost,Fell,0.01030131
+BG,lost,Festival of Embers,0.00000334
+BG,lost,Finch Formation,0.00001546
+BG,lost,"Finneas, Ace Archer",0.00004582
+BG,lost,Fireglass Mentor,0.00010606
+BG,lost,Flamecache Gecko,0.00000933
+BG,lost,For the Common Good,0.00020914
+BG,lost,Fountainport,0.00152148
+BG,lost,Fountainport Bell,0.00719809
+BG,lost,Frilled Sparkshooter,0.00001297
+BG,lost,Galewind Moose,0.01085151
+BG,lost,"Gev, Scaled Scorch",0.00011445
+BG,lost,"Glarb, Calamity's Augur",0.00139378
+BG,lost,Glidedive Duo,0.01720325
+BG,lost,Gossip's Talent,0.00003171
+BG,lost,Harvestrite Host,0.00000594
+BG,lost,Hazardroot Herbalist,0.00167897
+BG,lost,Hazel's Nocturne,0.00872500
+BG,lost,Head of the Homestead,0.00545076
+BG,lost,Heaped Harvest,0.02067474
+BG,lost,Hearthborn Battler,0.00001439
+BG,lost,Heirloom Epic,0.00045563
+BG,lost,"Helga, Skittish Seer",0.00001748
+BG,lost,Hidden Grotto,0.01031673
+BG,lost,High Stride,0.00603819
+BG,lost,Hired Claw,0.00000872
+BG,lost,Hivespine Wolverine,0.00965099
+BG,lost,Honored Dreyleader,0.01684163
+BG,lost,Hop to It,0.00002007
+BG,lost,"Hugs, Grisly Guardian",0.00008937
+BG,lost,Hunter's Talent,0.01065073
+BG,lost,Huskburster Swarm,0.00876205
+BG,lost,Innkeeper's Talent,0.00375133
+BG,lost,Into the Flood Maw,0.00000228
+BG,lost,Intrepid Rabbit,0.00006039
+BG,lost,Iridescent Vinelasher,0.00292682
+BG,lost,Jackdaw Savior,0.00005236
+BG,lost,Jolly Gerbils,0.00000129
+BG,lost,Junkblade Bruiser,0.00507908
+BG,lost,"Kastral, the Windcrested",0.00001714
+BG,lost,Keen-Eyed Curator,0.00407427
+BG,lost,Kindlespark Duo,0.00000387
+BG,lost,Kitnap,0.00003073
+BG,lost,"Kitsa, Otterball Elite",0.00002927
+BG,lost,Ledger Shredder,0.00000995
+BG,lost,Lifecreed Duo,0.00003577
+BG,lost,Lightshell Duo,0.00004207
+BG,lost,Lilypad Village,0.00006796
+BG,lost,Lilysplash Mentor,0.00135365
+BG,lost,Long River Lurker,0.00006416
+BG,lost,Longstalk Brawl,0.02153311
+BG,lost,"Lumra, Bellow of the Woods",0.00206347
+BG,lost,Lunar Convocation,0.00009451
+BG,lost,Lupinflower Village,0.00002850
+BG,lost,Mabel's Mettle,0.00000129
+BG,lost,"Mabel, Heir to Cragflame",0.00001023
+BG,lost,"Maha, Its Feathers Night",0.00216300
+BG,lost,Manifold Mouse,0.00000371
+BG,lost,Mind Drill Assailant,0.00384558
+BG,lost,Mind Spiral,0.00019364
+BG,lost,Mindwhisker,0.00017943
+BG,lost,Mistbreath Elder,0.00215396
+BG,lost,Mockingbird,0.00027851
+BG,lost,Moonrise Cleric,0.00314904
+BG,lost,Moonstone Harbinger,0.00360362
+BG,lost,Mudflat Village,0.00787808
+BG,lost,"Muerra, Trash Tactician",0.00025941
+BG,lost,Nettle Guard,0.00000106
+BG,lost,Nightwhorl Hermit,0.00000713
+BG,lost,Nocturnal Hunger,0.02632968
+BG,lost,Oakhollow Village,0.00633996
+BG,lost,Osteomancer Adept,0.00606175
+BG,lost,Otterball Antics,0.00000685
+BG,lost,Overprotect,0.00959474
+BG,lost,Patchwork Banner,0.00481042
+BG,lost,Pawpatch Formation,0.00803273
+BG,lost,Pawpatch Recruit,0.00343772
+BG,lost,Pearl of Wisdom,0.00001858
+BG,lost,Peerless Recycling,0.00461212
+BG,lost,Persistent Marshstalker,0.00533487
+BG,lost,Pileated Provisioner,0.00000955
+BG,lost,Plumecreed Escort,0.00003455
+BG,lost,Plumecreed Mentor,0.00000114
+BG,lost,Polliwallop,0.01716000
+BG,lost,Pond Prophet,0.00838615
+BG,lost,Portent of Calamity,0.00003604
+BG,lost,Psychic Whorl,0.00175915
+BG,lost,Rabid Gnaw,0.00009485
+BG,lost,Raccoon Rallier,0.00000371
+BG,lost,"Ral, Crackling Wit",0.00000946
+BG,lost,Ravine Raider,0.00372257
+BG,lost,Repel Calamity,0.00006060
+BG,lost,Rottenmouth Viper,0.00201520
+BG,lost,Roughshod Duo,0.00001098
+BG,lost,Run Away Together,0.00003487
+BG,lost,Rust-Shield Rampager,0.01219782
+BG,lost,Ruthless Negotiation,0.00534270
+BG,lost,Salvation Swan,0.00022811
+BG,lost,Savor,0.03323920
+BG,lost,Scales of Shale,0.00939554
+BG,lost,Scavenger's Talent,0.00514471
+BG,lost,Scrapshooter,0.00373463
+BG,lost,Season of Gathering,0.00208397
+BG,lost,Season of Loss,0.00222510
+BG,lost,Season of Weaving,0.00006582
+BG,lost,Season of the Bold,0.00001457
+BG,lost,Season of the Burrow,0.00004768
+BG,lost,Seedpod Squire,0.00002712
+BG,lost,Shore Up,0.00001321
+BG,lost,Shoreline Looter,0.00027332
+BG,lost,Short Bow,0.00113641
+BG,lost,Shrike Force,0.00000826
+BG,lost,Sinister Monolith,0.00178875
+BG,lost,Skyskipper Duo,0.00011594
+BG,lost,Sonar Strike,0.00004538
+BG,lost,Spellgyre,0.00000826
+BG,lost,Splash Lasher,0.00010213
+BG,lost,Splash Portal,0.00001203
+BG,lost,Star Charter,0.00010771
+BG,lost,Starfall Invocation,0.00006922
+BG,lost,Starforged Sword,0.00036852
+BG,lost,Stargaze,0.00492411
+BG,lost,Starlit Soothsayer,0.00364259
+BG,lost,Starscape Cleric,0.00393088
+BG,lost,Starseer Mentor,0.00060045
+BG,lost,Stickytongue Sentinel,0.01788396
+BG,lost,Stocking the Pantry,0.00231466
+BG,lost,Stormchaser's Talent,0.00004421
+BG,lost,Sugar Coat,0.00002908
+BG,lost,Sunshower Druid,0.00554656
+BG,lost,Sword of Fire and Ice,0.00018182
+BG,lost,Swords to Plowshares,0.00001625
+BG,lost,Take Out the Trash,0.00012777
+BG,lost,Tangle Tumbler,0.00146771
+BG,lost,Teapot Slinger,0.00000948
+BG,lost,Tender Wildguide,0.00397297
+BG,lost,The Infamous Cruelclaw,0.00024394
+BG,lost,Thornplate Intimidator,0.01052218
+BG,lost,Thornvault Forager,0.00543439
+BG,lost,Thought Shucker,0.00000457
+BG,lost,Thought-Stalker Warlock,0.01155397
+BG,lost,Three Tree City,0.00027446
+BG,lost,Three Tree Mascot,0.00504026
+BG,lost,Three Tree Rootweaver,0.01813765
+BG,lost,Three Tree Scribe,0.00462909
+BG,lost,Thundertrap Trainer,0.00005589
+BG,lost,Tidecaller Mentor,0.00031936
+BG,lost,"Toski, Bearer of Secrets",0.00033350
+BG,lost,Treeguard Duo,0.01856147
+BG,lost,Treetop Sentries,0.03391199
+BG,lost,Uncharted Haven,0.01191372
+BG,lost,Valley Flamecaller,0.00000124
+BG,lost,Valley Floodcaller,0.00001564
+BG,lost,Valley Mightcaller,0.00349218
+BG,lost,Valley Questcaller,0.00002703
+BG,lost,Valley Rally,0.00000352
+BG,lost,Valley Rotcaller,0.00454727
+BG,lost,Veteran Guardmouse,0.00000461
+BG,lost,Vinereap Mentor,0.02674880
+BG,lost,"Vren, the Relentless",0.00188178
+BG,lost,Wandertale Mentor,0.00012439
+BG,lost,Warren Elder,0.00000591
+BG,lost,Warren Warleader,0.00004363
+BG,lost,Waterspout Warden,0.00000342
+BG,lost,Wax-Wane Witness,0.00001211
+BG,lost,Wear Down,0.00028392
+BG,lost,Whiskerquill Scribe,0.00000253
+BG,lost,Whiskervale Forerunner,0.00004721
+BG,lost,Wick's Patrol,0.01507959
+BG,lost,"Wick, the Whorled Mind",0.00158778
+BG,lost,Wildfire Howl,0.00000212
+BG,lost,Wishing Well,0.00000742
+BG,lost,"Ygra, Eater of All",0.00329149
+BG,lost,"Zoraline, Cosmos Caller",0.00076427
+BG,won,Agate Assault,0.00009727
+BG,won,Agate-Blade Assassin,0.00539478
+BG,won,Alania's Pathmaker,0.00004786
+BG,won,Azure Beastbinder,0.00007468
+BG,won,Bakersbane Duo,0.03964679
+BG,won,Bandit's Talent,0.00304058
+BG,won,Banishing Light,0.00033300
+BG,won,Bark-Knuckle Boxer,0.00828073
+BG,won,Barkform Harvester,0.00462808
+BG,won,"Baylen, the Haymaker",0.00000851
+BG,won,"Beza, the Bounding Spring",0.00001736
+BG,won,Blacksmith's Talent,0.00003534
+BG,won,Blooming Blast,0.00000478
+BG,won,Bonebind Orator,0.03283952
+BG,won,Bonecache Overseer,0.01774275
+BG,won,Brambleguard Captain,0.00000205
+BG,won,Brambleguard Veteran,0.00661287
+BG,won,Brazen Collector,0.00000485
+BG,won,Brightblade Stoat,0.00001274
+BG,won,Builder's Talent,0.00034488
+BG,won,Bumbleflower's Sharepot,0.00766078
+BG,won,Burrowguard Mentor,0.00006352
+BG,won,Bushy Bodyguard,0.01545296
+BG,won,Byway Barterer,0.00007132
+BG,won,Cache Grab,0.04768880
+BG,won,Calamitous Tide,0.00000474
+BG,won,"Camellia, the Seedmiser",0.01005364
+BG,won,Caretaker's Talent,0.00010838
+BG,won,Carrot Cake,0.00021843
+BG,won,Cindering Cutthroat,0.00263150
+BG,won,"Clement, the Worrywort",0.00024027
+BG,won,Clifftop Lookout,0.00425142
+BG,won,Coiling Rebirth,0.00225202
+BG,won,Conduct Electricity,0.00002900
+BG,won,Consumed by Greed,0.01276391
+BG,won,Corpseberry Cultivator,0.04160511
+BG,won,Coruscation Mage,0.00001073
+BG,won,Cruelclaw's Heist,0.00219699
+BG,won,Crumb and Get It,0.00000505
+BG,won,Curious Forager,0.01495489
+BG,won,Daggerfang Duo,0.03205515
+BG,won,Daring Waverider,0.00001207
+BG,won,Darkstar Augur,0.00373562
+BG,won,Dawn's Truce,0.00000189
+BG,won,Dazzling Denial,0.00000095
+BG,won,Dewdrop Cure,0.00002379
+BG,won,Dire Downdraft,0.00004895
+BG,won,Diresight,0.00755094
+BG,won,Dour Port-Mage,0.00011498
+BG,won,Downwind Ambusher,0.01376921
+BG,won,"Dragonhawk, Fate's Tempest",0.00007114
+BG,won,Dreamdew Entrancer,0.00124354
+BG,won,Driftgloom Coyote,0.00003642
+BG,won,Druid of the Spade,0.00747464
+BG,won,Early Winter,0.01184939
+BG,won,Eddymurk Crab,0.00000398
+BG,won,Emberheart Challenger,0.00000717
+BG,won,Essence Channeler,0.00001528
+BG,won,Fabled Passage,0.00188798
+BG,won,Feather of Flight,0.00000856
+BG,won,Fecund Greenshell,0.00503774
+BG,won,Feed the Cycle,0.01211352
+BG,won,Fell,0.01096881
+BG,won,Festival of Embers,0.00000175
+BG,won,Finch Formation,0.00001236
+BG,won,"Finneas, Ace Archer",0.00005021
+BG,won,Fireglass Mentor,0.00009527
+BG,won,Flamecache Gecko,0.00000466
+BG,won,For the Common Good,0.00013653
+BG,won,Fountainport,0.00153084
+BG,won,Fountainport Bell,0.00676762
+BG,won,Frilled Sparkshooter,0.00000560
+BG,won,Galewind Moose,0.01112162
+BG,won,"Gev, Scaled Scorch",0.00009935
+BG,won,"Glarb, Calamity's Augur",0.00137024
+BG,won,Glidedive Duo,0.01728819
+BG,won,Gossip's Talent,0.00001627
+BG,won,Harvestrite Host,0.00001229
+BG,won,Hazardroot Herbalist,0.00153069
+BG,won,Hazel's Nocturne,0.00867153
+BG,won,Head of the Homestead,0.00513026
+BG,won,Heaped Harvest,0.01909432
+BG,won,Hearthborn Battler,0.00001623
+BG,won,Heirloom Epic,0.00035929
+BG,won,"Helga, Skittish Seer",0.00000910
+BG,won,Hidden Grotto,0.01043079
+BG,won,High Stride,0.00581811
+BG,won,Hired Claw,0.00000792
+BG,won,Hivespine Wolverine,0.01004198
+BG,won,Honored Dreyleader,0.01691037
+BG,won,Hop to It,0.00000575
+BG,won,"Hugs, Grisly Guardian",0.00007230
+BG,won,Hunter's Talent,0.01194171
+BG,won,Huskburster Swarm,0.00845545
+BG,won,Innkeeper's Talent,0.00407652
+BG,won,Into the Flood Maw,0.00000091
+BG,won,Intrepid Rabbit,0.00005774
+BG,won,Iridescent Vinelasher,0.00294788
+BG,won,Jackdaw Savior,0.00003952
+BG,won,Junkblade Bruiser,0.00441066
+BG,won,"Kastral, the Windcrested",0.00001672
+BG,won,Keen-Eyed Curator,0.00435716
+BG,won,Kindlespark Duo,0.00000103
+BG,won,Kitnap,0.00004327
+BG,won,"Kitsa, Otterball Elite",0.00002550
+BG,won,Ledger Shredder,0.00000886
+BG,won,Lifecreed Duo,0.00001704
+BG,won,Lightshell Duo,0.00003415
+BG,won,Lilypad Village,0.00004687
+BG,won,Lilysplash Mentor,0.00137601
+BG,won,Long River Lurker,0.00005798
+BG,won,Longstalk Brawl,0.02158562
+BG,won,"Lumra, Bellow of the Woods",0.00214294
+BG,won,Lunar Convocation,0.00005611
+BG,won,Lupinflower Village,0.00002021
+BG,won,"Mabel, Heir to Cragflame",0.00000934
+BG,won,"Maha, Its Feathers Night",0.00241335
+BG,won,Manifold Mouse,0.00000098
+BG,won,Mind Drill Assailant,0.00331057
+BG,won,Mind Spiral,0.00017971
+BG,won,Mindwhisker,0.00013262
+BG,won,Mistbreath Elder,0.00209325
+BG,won,Mockingbird,0.00026137
+BG,won,Moonrise Cleric,0.00263483
+BG,won,Moonstone Harbinger,0.00331329
+BG,won,Mudflat Village,0.00849853
+BG,won,"Muerra, Trash Tactician",0.00024547
+BG,won,Nettle Guard,0.00000084
+BG,won,Nightwhorl Hermit,0.00000466
+BG,won,Nocturnal Hunger,0.02670545
+BG,won,Oakhollow Village,0.00614900
+BG,won,Osteomancer Adept,0.00621864
+BG,won,Otterball Antics,0.00000364
+BG,won,Overprotect,0.00969633
+BG,won,Patchwork Banner,0.00479768
+BG,won,Pawpatch Formation,0.00796959
+BG,won,Pawpatch Recruit,0.00348340
+BG,won,Pearl of Wisdom,0.00001070
+BG,won,Peerless Recycling,0.00392670
+BG,won,Persistent Marshstalker,0.00502505
+BG,won,Pileated Provisioner,0.00000866
+BG,won,Plumecreed Escort,0.00003396
+BG,won,Plumecreed Mentor,0.00000091
+BG,won,Polliwallop,0.01668360
+BG,won,Pond Prophet,0.00812186
+BG,won,Portent of Calamity,0.00002893
+BG,won,Psychic Whorl,0.00147367
+BG,won,Rabbit Response,0.00000103
+BG,won,Rabid Gnaw,0.00010053
+BG,won,Raccoon Rallier,0.00000295
+BG,won,"Ral, Crackling Wit",0.00000848
+BG,won,Ravine Raider,0.00325655
+BG,won,Repel Calamity,0.00005799
+BG,won,Rockface Village,0.00000088
+BG,won,Rottenmouth Viper,0.00208189
+BG,won,Roughshod Duo,0.00000977
+BG,won,Run Away Together,0.00003769
+BG,won,Rust-Shield Rampager,0.01150109
+BG,won,Ruthless Negotiation,0.00576039
+BG,won,Salvation Swan,0.00024311
+BG,won,Savor,0.03496885
+BG,won,Scales of Shale,0.00910960
+BG,won,Scavenger's Talent,0.00516268
+BG,won,Scrapshooter,0.00385206
+BG,won,Season of Gathering,0.00210114
+BG,won,Season of Loss,0.00256457
+BG,won,Season of Weaving,0.00006714
+BG,won,Season of the Bold,0.00001168
+BG,won,Season of the Burrow,0.00004338
+BG,won,Seedpod Squire,0.00002042
+BG,won,Shore Up,0.00001245
+BG,won,Shoreline Looter,0.00023184
+BG,won,Short Bow,0.00100030
+BG,won,Shrike Force,0.00000091
+BG,won,Sinister Monolith,0.00151002
+BG,won,Skyskipper Duo,0.00007885
+BG,won,Sonar Strike,0.00003089
+BG,won,Spellgyre,0.00000658
+BG,won,Splash Lasher,0.00008520
+BG,won,Splash Portal,0.00001056
+BG,won,Star Charter,0.00006466
+BG,won,Starfall Invocation,0.00008295
+BG,won,Starforged Sword,0.00026176
+BG,won,Stargaze,0.00477119
+BG,won,Starlit Soothsayer,0.00304490
+BG,won,Starscape Cleric,0.00356665
+BG,won,Starseer Mentor,0.00050818
+BG,won,Stickytongue Sentinel,0.01764859
+BG,won,Stocking the Pantry,0.00191789
+BG,won,Stormchaser's Talent,0.00003019
+BG,won,Sugar Coat,0.00003932
+BG,won,Sunshower Druid,0.00484227
+BG,won,Sword of Fire and Ice,0.00019627
+BG,won,Swords to Plowshares,0.00001472
+BG,won,Take Out the Trash,0.00012247
+BG,won,Tangle Tumbler,0.00129607
+BG,won,Teapot Slinger,0.00000777
+BG,won,Tender Wildguide,0.00422086
+BG,won,The Infamous Cruelclaw,0.00022635
+BG,won,Thornplate Intimidator,0.00982132
+BG,won,Thornvault Forager,0.00563654
+BG,won,Thought Shucker,0.00000636
+BG,won,Thought-Stalker Warlock,0.01238769
+BG,won,Three Tree City,0.00022450
+BG,won,Three Tree Mascot,0.00462444
+BG,won,Three Tree Rootweaver,0.01759658
+BG,won,Three Tree Scribe,0.00467120
+BG,won,Thundertrap Trainer,0.00004699
+BG,won,Tidecaller Mentor,0.00026751
+BG,won,"Toski, Bearer of Secrets",0.00031856
+BG,won,Treeguard Duo,0.01859271
+BG,won,Treetop Sentries,0.03359911
+BG,won,Uncharted Haven,0.01200022
+BG,won,Valley Floodcaller,0.00000670
+BG,won,Valley Mightcaller,0.00356629
+BG,won,Valley Questcaller,0.00002379
+BG,won,Valley Rally,0.00000185
+BG,won,Valley Rotcaller,0.00455895
+BG,won,Veteran Guardmouse,0.00001025
+BG,won,Vinereap Mentor,0.02938482
+BG,won,"Vren, the Relentless",0.00203517
+BG,won,Wandertale Mentor,0.00012536
+BG,won,Warren Elder,0.00000295
+BG,won,Warren Warleader,0.00004473
+BG,won,Waterspout Warden,0.00000182
+BG,won,Wax-Wane Witness,0.00000525
+BG,won,Wear Down,0.00022534
+BG,won,Whiskerquill Scribe,0.00000509
+BG,won,Whiskervale Forerunner,0.00005789
+BG,won,Wick's Patrol,0.01622966
+BG,won,"Wick, the Whorled Mind",0.00143011
+BG,won,Wildfire Howl,0.00000084
+BG,won,Wishing Well,0.00000492
+BG,won,"Ygra, Eater of All",0.00368161
+BG,won,"Zoraline, Cosmos Caller",0.00077589
+BR,lost,Agate Assault,0.02466322
+BR,lost,Agate-Blade Assassin,0.03488507
+BR,lost,Alania's Pathmaker,0.02025675
+BR,lost,"Alania, Divergent Storm",0.00010431
+BR,lost,Artist's Talent,0.00072909
+BR,lost,Azure Beastbinder,0.00002709
+BR,lost,Bakersbane Duo,0.00000884
+BR,lost,Bandit's Talent,0.00390564
+BR,lost,Banishing Light,0.00006630
+BR,lost,Barkform Harvester,0.00109725
+BR,lost,Blacksmith's Talent,0.00946349
+BR,lost,Blooming Blast,0.01078521
+BR,lost,Bonebind Orator,0.01738595
+BR,lost,Bonecache Overseer,0.00083864
+BR,lost,Brambleguard Captain,0.00681362
+BR,lost,Brave-Kin Duo,0.00000425
+BR,lost,Brazen Collector,0.01286515
+BR,lost,Brightblade Stoat,0.00000638
+BR,lost,Builder's Talent,0.00001824
+BR,lost,Bumbleflower's Sharepot,0.00060369
+BR,lost,Bushy Bodyguard,0.00001663
+BR,lost,Byway Barterer,0.00523181
+BR,lost,Cache Grab,0.00002045
+BR,lost,"Camellia, the Seedmiser",0.00006536
+BR,lost,Caretaker's Talent,0.00000663
+BR,lost,Carrot Cake,0.00000663
+BR,lost,Cindering Cutthroat,0.04299272
+BR,lost,Coiling Rebirth,0.00178946
+BR,lost,Conduct Electricity,0.00620695
+BR,lost,Consumed by Greed,0.01121888
+BR,lost,Corpseberry Cultivator,0.00101607
+BR,lost,Coruscation Mage,0.00970654
+BR,lost,Cruelclaw's Heist,0.00236114
+BR,lost,Crumb and Get It,0.00000921
+BR,lost,Daggerfang Duo,0.01306604
+BR,lost,Daring Waverider,0.00000663
+BR,lost,Darkstar Augur,0.00400598
+BR,lost,Dewdrop Cure,0.00000691
+BR,lost,Dire Downdraft,0.00000461
+BR,lost,Diresight,0.00594904
+BR,lost,Dour Port-Mage,0.00001346
+BR,lost,Downwind Ambusher,0.01322594
+BR,lost,"Dragonhawk, Fate's Tempest",0.00261830
+BR,lost,Early Winter,0.00924703
+BR,lost,Eddymurk Crab,0.00001089
+BR,lost,Emberheart Challenger,0.00433596
+BR,lost,Essence Channeler,0.00001072
+BR,lost,Fabled Passage,0.00161152
+BR,lost,Feather of Flight,0.00000691
+BR,lost,Fecund Greenshell,0.00000663
+BR,lost,Feed the Cycle,0.01112007
+BR,lost,Fell,0.01131740
+BR,lost,Festival of Embers,0.00023523
+BR,lost,Finch Formation,0.00000221
+BR,lost,Fireglass Mentor,0.03327144
+BR,lost,Flamecache Gecko,0.02323574
+BR,lost,Fountainport,0.00103352
+BR,lost,Fountainport Bell,0.00343579
+BR,lost,Frilled Sparkshooter,0.02722204
+BR,lost,"Gev, Scaled Scorch",0.01346677
+BR,lost,Glidedive Duo,0.02587075
+BR,lost,Gossip's Talent,0.00000230
+BR,lost,Harnesser of Storms,0.00279159
+BR,lost,Hazel's Nocturne,0.00710282
+BR,lost,Heaped Harvest,0.00000230
+BR,lost,Heartfire Hero,0.00736023
+BR,lost,Hearthborn Battler,0.00604822
+BR,lost,Heirloom Epic,0.00018499
+BR,lost,Hidden Grotto,0.00606403
+BR,lost,Hired Claw,0.00880067
+BR,lost,Hivespine Wolverine,0.00000721
+BR,lost,Hoarder's Overflow,0.00094614
+BR,lost,Hop to It,0.00000461
+BR,lost,"Hugs, Grisly Guardian",0.00001468
+BR,lost,Hunter's Talent,0.00021422
+BR,lost,Huskburster Swarm,0.00451610
+BR,lost,Innkeeper's Talent,0.00017339
+BR,lost,Intrepid Rabbit,0.00003621
+BR,lost,Iridescent Vinelasher,0.00630624
+BR,lost,Jackdaw Savior,0.00002827
+BR,lost,Junkblade Bruiser,0.00297946
+BR,lost,Kindlespark Duo,0.02016127
+BR,lost,Kitnap,0.00000721
+BR,lost,Lifecreed Duo,0.00001116
+BR,lost,Lightshell Duo,0.00002277
+BR,lost,Lilypad Village,0.00001949
+BR,lost,Longstalk Brawl,0.00000442
+BR,lost,"Lumra, Bellow of the Woods",0.00000912
+BR,lost,Lunar Convocation,0.00005163
+BR,lost,Lupinflower Village,0.00000425
+BR,lost,Mabel's Mettle,0.00000663
+BR,lost,"Mabel, Heir to Cragflame",0.00040379
+BR,lost,"Maha, Its Feathers Night",0.00191134
+BR,lost,Manifold Mouse,0.00314220
+BR,lost,Might of the Meek,0.00567042
+BR,lost,Mind Drill Assailant,0.00166349
+BR,lost,Mind Spiral,0.00001548
+BR,lost,Mindwhisker,0.00002243
+BR,lost,Mistbreath Elder,0.00001329
+BR,lost,Mockingbird,0.00004055
+BR,lost,Moonrise Cleric,0.00405702
+BR,lost,Moonstone Harbinger,0.00400684
+BR,lost,Mudflat Village,0.00791895
+BR,lost,"Muerra, Trash Tactician",0.00011295
+BR,lost,Nettle Guard,0.00000566
+BR,lost,Nightwhorl Hermit,0.00001557
+BR,lost,Nocturnal Hunger,0.02668661
+BR,lost,Oakhollow Village,0.00001354
+BR,lost,Osteomancer Adept,0.00351907
+BR,lost,Otterball Antics,0.00001385
+BR,lost,Overprotect,0.00001550
+BR,lost,Parting Gust,0.00000230
+BR,lost,Patchwork Banner,0.00428212
+BR,lost,Pawpatch Recruit,0.00001327
+BR,lost,Pearl of Wisdom,0.00001335
+BR,lost,Persistent Marshstalker,0.00712574
+BR,lost,Pileated Provisioner,0.00001382
+BR,lost,Playful Shove,0.00829070
+BR,lost,Plumecreed Escort,0.00000673
+BR,lost,Polliwallop,0.00000859
+BR,lost,Portent of Calamity,0.00001277
+BR,lost,Psychic Whorl,0.00188732
+BR,lost,Quaketusk Boar,0.01226868
+BR,lost,Rabid Gnaw,0.01373204
+BR,lost,Raccoon Rallier,0.01478516
+BR,lost,"Ral, Crackling Wit",0.00025278
+BR,lost,Ravine Raider,0.03912708
+BR,lost,Repel Calamity,0.00004151
+BR,lost,Reptilian Recruiter,0.01456237
+BR,lost,Rockface Village,0.00887919
+BR,lost,Rottenmouth Viper,0.00182097
+BR,lost,Roughshod Duo,0.01790597
+BR,lost,Run Away Together,0.00000461
+BR,lost,Ruthless Negotiation,0.00456092
+BR,lost,Salvation Swan,0.00003721
+BR,lost,Savor,0.02758507
+BR,lost,Sazacap's Brew,0.00802305
+BR,lost,Scales of Shale,0.03949528
+BR,lost,Scavenger's Talent,0.00083762
+BR,lost,Season of Gathering,0.00000425
+BR,lost,Season of Loss,0.00198802
+BR,lost,Season of the Bold,0.00204785
+BR,lost,Season of the Burrow,0.00000205
+BR,lost,Seedglaive Mentor,0.00007417
+BR,lost,Seedpod Squire,0.00000614
+BR,lost,Shoreline Looter,0.00007396
+BR,lost,Short Bow,0.00207446
+BR,lost,Shrike Force,0.00000461
+BR,lost,Sinister Monolith,0.00432686
+BR,lost,Skyskipper Duo,0.00000663
+BR,lost,Sonar Strike,0.00003114
+BR,lost,Splash Lasher,0.00000894
+BR,lost,Star Charter,0.00001346
+BR,lost,Starforged Sword,0.00096194
+BR,lost,Stargaze,0.00225391
+BR,lost,Starlit Soothsayer,0.00510380
+BR,lost,Starscape Cleric,0.00726353
+BR,lost,Starseer Mentor,0.00024567
+BR,lost,Steampath Charger,0.03975712
+BR,lost,Stickytongue Sentinel,0.00000663
+BR,lost,Stocking the Pantry,0.00000663
+BR,lost,Stormcatch Mentor,0.00000894
+BR,lost,Stormchaser's Talent,0.00002453
+BR,lost,Stormsplitter,0.00022708
+BR,lost,Sugar Coat,0.00001146
+BR,lost,Sunshower Druid,0.00000721
+BR,lost,Sunspine Lynx,0.00357247
+BR,lost,Sword of Fire and Ice,0.00019368
+BR,lost,Swords to Plowshares,0.00000663
+BR,lost,Take Out the Trash,0.03324099
+BR,lost,Tangle Tumbler,0.00010996
+BR,lost,Teapot Slinger,0.00979883
+BR,lost,Tempest Angler,0.00196495
+BR,lost,The Infamous Cruelclaw,0.00454642
+BR,lost,Thistledown Players,0.00000425
+BR,lost,Thornplate Intimidator,0.01284417
+BR,lost,Thornvault Forager,0.00000481
+BR,lost,Thought-Stalker Warlock,0.01726217
+BR,lost,Three Tree City,0.00029477
+BR,lost,Three Tree Mascot,0.00324732
+BR,lost,Thundertrap Trainer,0.00000912
+BR,lost,Tidecaller Mentor,0.00004795
+BR,lost,"Toski, Bearer of Secrets",0.00002407
+BR,lost,Treeguard Duo,0.00002425
+BR,lost,Uncharted Haven,0.00784950
+BR,lost,Valley Flamecaller,0.00641013
+BR,lost,Valley Floodcaller,0.00001327
+BR,lost,Valley Questcaller,0.00000481
+BR,lost,Valley Rally,0.00389433
+BR,lost,Valley Rotcaller,0.00484849
+BR,lost,Veteran Guardmouse,0.00350676
+BR,lost,Vinereap Mentor,0.00002190
+BR,lost,"Vren, the Relentless",0.00090213
+BR,lost,Wandertale Mentor,0.00003858
+BR,lost,War Squeak,0.00489355
+BR,lost,Warren Elder,0.00000623
+BR,lost,Warren Warleader,0.00000481
+BR,lost,Wax-Wane Witness,0.00000663
+BR,lost,Whiskerquill Scribe,0.00952071
+BR,lost,Whiskervale Forerunner,0.00009452
+BR,lost,Wick's Patrol,0.01087838
+BR,lost,"Wick, the Whorled Mind",0.00207772
+BR,lost,Wildfire Howl,0.00243523
+BR,lost,Wishing Well,0.00000638
+BR,lost,"Ygra, Eater of All",0.00032254
+BR,lost,"Zoraline, Cosmos Caller",0.00030498
+BR,won,Agate Assault,0.02435265
+BR,won,Agate-Blade Assassin,0.03536360
+BR,won,Alania's Pathmaker,0.02016835
+BR,won,"Alania, Divergent Storm",0.00010164
+BR,won,Artist's Talent,0.00049342
+BR,won,Azure Beastbinder,0.00002145
+BR,won,Bakersbane Duo,0.00000348
+BR,won,Bandit's Talent,0.00345625
+BR,won,Banishing Light,0.00003616
+BR,won,Barkform Harvester,0.00094174
+BR,won,Blacksmith's Talent,0.00973286
+BR,won,Blooming Blast,0.01037767
+BR,won,Bonebind Orator,0.01750827
+BR,won,Bonecache Overseer,0.00062125
+BR,won,Brambleguard Captain,0.00641450
+BR,won,Brave-Kin Duo,0.00000111
+BR,won,Brazen Collector,0.01308722
+BR,won,Brightblade Stoat,0.00000167
+BR,won,Builder's Talent,0.00001942
+BR,won,Bumbleflower's Sharepot,0.00039909
+BR,won,Bushy Bodyguard,0.00001512
+BR,won,Byway Barterer,0.00530133
+BR,won,Cache Grab,0.00001246
+BR,won,"Camellia, the Seedmiser",0.00004760
+BR,won,Caretaker's Talent,0.00000522
+BR,won,Cindering Cutthroat,0.04313322
+BR,won,Coiling Rebirth,0.00157352
+BR,won,Conduct Electricity,0.00524308
+BR,won,Consumed by Greed,0.01178059
+BR,won,Corpseberry Cultivator,0.00094875
+BR,won,Coruscation Mage,0.00936100
+BR,won,Cruelclaw's Heist,0.00201542
+BR,won,Crumb and Get It,0.00000181
+BR,won,Daggerfang Duo,0.01215356
+BR,won,Daring Waverider,0.00000348
+BR,won,Darkstar Augur,0.00459413
+BR,won,Dire Downdraft,0.00000181
+BR,won,Diresight,0.00540141
+BR,won,Dour Port-Mage,0.00001465
+BR,won,Downwind Ambusher,0.01426100
+BR,won,"Dragonhawk, Fate's Tempest",0.00296660
+BR,won,Early Winter,0.00826524
+BR,won,Eddymurk Crab,0.00000682
+BR,won,Emberheart Challenger,0.00465798
+BR,won,Essence Channeler,0.00000334
+BR,won,Fabled Passage,0.00163507
+BR,won,Feather of Flight,0.00000181
+BR,won,Fecund Greenshell,0.00000522
+BR,won,Feed the Cycle,0.01140101
+BR,won,Fell,0.01192768
+BR,won,Festival of Embers,0.00017419
+BR,won,Finch Formation,0.00000174
+BR,won,Fireglass Mentor,0.03467642
+BR,won,Flamecache Gecko,0.02435656
+BR,won,Fountainport,0.00104466
+BR,won,Fountainport Bell,0.00310346
+BR,won,Frilled Sparkshooter,0.02631796
+BR,won,"Gev, Scaled Scorch",0.01507351
+BR,won,Glidedive Duo,0.02667391
+BR,won,Harnesser of Storms,0.00242222
+BR,won,Hazel's Nocturne,0.00698688
+BR,won,Heartfire Hero,0.00738066
+BR,won,Hearthborn Battler,0.00596700
+BR,won,Heirloom Epic,0.00017897
+BR,won,Hidden Grotto,0.00567922
+BR,won,Hired Claw,0.00968110
+BR,won,Hivespine Wolverine,0.00000378
+BR,won,Hoarder's Overflow,0.00088956
+BR,won,"Hugs, Grisly Guardian",0.00001148
+BR,won,Hunter's Talent,0.00015198
+BR,won,Huskburster Swarm,0.00382650
+BR,won,Innkeeper's Talent,0.00015667
+BR,won,Intrepid Rabbit,0.00003369
+BR,won,Iridescent Vinelasher,0.00657495
+BR,won,Jackdaw Savior,0.00003161
+BR,won,Junkblade Bruiser,0.00276966
+BR,won,Kindlespark Duo,0.01796236
+BR,won,Lifecreed Duo,0.00001352
+BR,won,Lightshell Duo,0.00001413
+BR,won,Lilypad Village,0.00001136
+BR,won,Longstalk Brawl,0.00000174
+BR,won,"Lumra, Bellow of the Woods",0.00000717
+BR,won,Lunar Convocation,0.00002615
+BR,won,Lupinflower Village,0.00000111
+BR,won,Mabel's Mettle,0.00000870
+BR,won,"Mabel, Heir to Cragflame",0.00035096
+BR,won,"Maha, Its Feathers Night",0.00242048
+BR,won,Manifold Mouse,0.00325307
+BR,won,Might of the Meek,0.00490497
+BR,won,Mind Drill Assailant,0.00145963
+BR,won,Mind Spiral,0.00000522
+BR,won,Mindwhisker,0.00000873
+BR,won,Mistbreath Elder,0.00001561
+BR,won,Mockingbird,0.00004373
+BR,won,Moonrise Cleric,0.00377083
+BR,won,Moonstone Harbinger,0.00380313
+BR,won,Mudflat Village,0.00843315
+BR,won,"Muerra, Trash Tactician",0.00010595
+BR,won,Nightwhorl Hermit,0.00000348
+BR,won,Nocturnal Hunger,0.02715679
+BR,won,Oakhollow Village,0.00000725
+BR,won,Osteomancer Adept,0.00357475
+BR,won,Otterball Antics,0.00000515
+BR,won,Overprotect,0.00002646
+BR,won,Patchwork Banner,0.00487664
+BR,won,Pawpatch Recruit,0.00001217
+BR,won,Pearl of Wisdom,0.00000161
+BR,won,Persistent Marshstalker,0.00655842
+BR,won,Pileated Provisioner,0.00000362
+BR,won,Playful Shove,0.00782379
+BR,won,Plumecreed Escort,0.00000174
+BR,won,Polliwallop,0.00001505
+BR,won,Portent of Calamity,0.00000831
+BR,won,Psychic Whorl,0.00155284
+BR,won,Quaketusk Boar,0.01228018
+BR,won,Rabid Gnaw,0.01445614
+BR,won,Raccoon Rallier,0.01408090
+BR,won,"Ral, Crackling Wit",0.00026644
+BR,won,Ravine Raider,0.04068112
+BR,won,Repel Calamity,0.00002334
+BR,won,Reptilian Recruiter,0.01444550
+BR,won,Rockface Village,0.00918109
+BR,won,Rottenmouth Viper,0.00192579
+BR,won,Roughshod Duo,0.01745315
+BR,won,Run Away Together,0.00000181
+BR,won,Ruthless Negotiation,0.00479139
+BR,won,Salvation Swan,0.00003462
+BR,won,Savor,0.02876830
+BR,won,Sazacap's Brew,0.00709692
+BR,won,Scales of Shale,0.04229448
+BR,won,Scavenger's Talent,0.00057354
+BR,won,Season of Loss,0.00213179
+BR,won,Season of the Bold,0.00197616
+BR,won,Season of the Burrow,0.00001127
+BR,won,Seedglaive Mentor,0.00003425
+BR,won,Seedpod Squire,0.00000161
+BR,won,Shoreline Looter,0.00003669
+BR,won,Short Bow,0.00184846
+BR,won,Shrike Force,0.00000181
+BR,won,Sinister Monolith,0.00387891
+BR,won,Skyskipper Duo,0.00000174
+BR,won,Sonar Strike,0.00002616
+BR,won,Splash Lasher,0.00000710
+BR,won,Star Charter,0.00001352
+BR,won,Starforged Sword,0.00084598
+BR,won,Stargaze,0.00202090
+BR,won,Starlit Soothsayer,0.00446937
+BR,won,Starscape Cleric,0.00757953
+BR,won,Starseer Mentor,0.00014279
+BR,won,Steampath Charger,0.03943857
+BR,won,Stickytongue Sentinel,0.00000348
+BR,won,Stocking the Pantry,0.00000696
+BR,won,Stormcatch Mentor,0.00000174
+BR,won,Stormchaser's Talent,0.00001378
+BR,won,Stormsplitter,0.00019419
+BR,won,Sugar Coat,0.00000167
+BR,won,Sunshower Druid,0.00000378
+BR,won,Sunspine Lynx,0.00332406
+BR,won,Sword of Fire and Ice,0.00022037
+BR,won,Swords to Plowshares,0.00000522
+BR,won,Take Out the Trash,0.03443464
+BR,won,Tangle Tumbler,0.00007666
+BR,won,Teapot Slinger,0.00983894
+BR,won,Tempest Angler,0.00151363
+BR,won,The Infamous Cruelclaw,0.00452730
+BR,won,Thistledown Players,0.00000334
+BR,won,Thornplate Intimidator,0.01227912
+BR,won,Thornvault Forager,0.00000378
+BR,won,Thought-Stalker Warlock,0.01913013
+BR,won,Three Tree City,0.00027025
+BR,won,Three Tree Mascot,0.00327540
+BR,won,Thundertrap Trainer,0.00000543
+BR,won,Tidecaller Mentor,0.00005585
+BR,won,"Toski, Bearer of Secrets",0.00002936
+BR,won,Treeguard Duo,0.00002770
+BR,won,Uncharted Haven,0.00815157
+BR,won,Valley Flamecaller,0.00675850
+BR,won,Valley Floodcaller,0.00000689
+BR,won,Valley Questcaller,0.00000378
+BR,won,Valley Rally,0.00347625
+BR,won,Valley Rotcaller,0.00505300
+BR,won,Veteran Guardmouse,0.00314462
+BR,won,Vinereap Mentor,0.00001847
+BR,won,"Vren, the Relentless",0.00083021
+BR,won,Wandertale Mentor,0.00001545
+BR,won,War Squeak,0.00427620
+BR,won,Warren Elder,0.00000334
+BR,won,Warren Warleader,0.00000189
+BR,won,Wax-Wane Witness,0.00000696
+BR,won,Whiskerquill Scribe,0.00854306
+BR,won,Whiskervale Forerunner,0.00005912
+BR,won,Wick's Patrol,0.01107757
+BR,won,"Wick, the Whorled Mind",0.00167816
+BR,won,Wildfire Howl,0.00202469
+BR,won,Wishing Well,0.00000167
+BR,won,"Ygra, Eater of All",0.00027105
+BR,won,"Zoraline, Cosmos Caller",0.00026956
+RG,lost,Agate Assault,0.02899173
+RG,lost,Agate-Blade Assassin,0.00000268
+RG,lost,Alania's Pathmaker,0.02918909
+RG,lost,"Alania, Divergent Storm",0.00015835
+RG,lost,Artist's Talent,0.00020469
+RG,lost,Azure Beastbinder,0.00002422
+RG,lost,Bakersbane Duo,0.03065981
+RG,lost,Bandit's Talent,0.00000571
+RG,lost,Banishing Light,0.00034840
+RG,lost,Bark-Knuckle Boxer,0.01675459
+RG,lost,Barkform Harvester,0.00158692
+RG,lost,"Baylen, the Haymaker",0.00031254
+RG,lost,"Beza, the Bounding Spring",0.00004049
+RG,lost,Blacksmith's Talent,0.00886799
+RG,lost,Blooming Blast,0.00943651
+RG,lost,Bonebind Orator,0.00000536
+RG,lost,Bonecache Overseer,0.00000875
+RG,lost,Brambleguard Captain,0.00851365
+RG,lost,Brambleguard Veteran,0.02025810
+RG,lost,Brave-Kin Duo,0.00000774
+RG,lost,Brazen Collector,0.01665276
+RG,lost,Builder's Talent,0.00003457
+RG,lost,Bumbleflower's Sharepot,0.00230270
+RG,lost,Burrowguard Mentor,0.00010784
+RG,lost,Bushy Bodyguard,0.00760094
+RG,lost,Byway Barterer,0.00684195
+RG,lost,Cache Grab,0.01035945
+RG,lost,Calamitous Tide,0.00000536
+RG,lost,"Camellia, the Seedmiser",0.00018872
+RG,lost,Caretaker's Talent,0.00003221
+RG,lost,Carrot Cake,0.00001390
+RG,lost,Cindering Cutthroat,0.00898585
+RG,lost,"Clement, the Worrywort",0.00011694
+RG,lost,Clifftop Lookout,0.00626102
+RG,lost,Coiling Rebirth,0.00001578
+RG,lost,Conduct Electricity,0.01422158
+RG,lost,Consumed by Greed,0.00000745
+RG,lost,Corpseberry Cultivator,0.00478437
+RG,lost,Coruscation Mage,0.00599232
+RG,lost,Crumb and Get It,0.00003830
+RG,lost,Curious Forager,0.00768254
+RG,lost,Daggerfang Duo,0.00000784
+RG,lost,Daring Waverider,0.00000292
+RG,lost,Darkstar Augur,0.00011196
+RG,lost,Dawn's Truce,0.00001609
+RG,lost,Dire Downdraft,0.00000292
+RG,lost,Diresight,0.00003137
+RG,lost,Dour Port-Mage,0.00004030
+RG,lost,Downwind Ambusher,0.00009907
+RG,lost,"Dragonhawk, Fate's Tempest",0.00325117
+RG,lost,Dreamdew Entrancer,0.00073136
+RG,lost,Driftgloom Coyote,0.00000745
+RG,lost,Druid of the Spade,0.00443123
+RG,lost,Early Winter,0.00009250
+RG,lost,Emberheart Challenger,0.00404771
+RG,lost,Fabled Passage,0.00162427
+RG,lost,Feather of Flight,0.00001024
+RG,lost,Fecund Greenshell,0.00451038
+RG,lost,Feed the Cycle,0.00009170
+RG,lost,Fell,0.00019873
+RG,lost,Festival of Embers,0.00009370
+RG,lost,Finch Formation,0.00001036
+RG,lost,"Finneas, Ace Archer",0.00005229
+RG,lost,Fireglass Mentor,0.00024117
+RG,lost,Flamecache Gecko,0.00884192
+RG,lost,Flowerfoot Swordmaster,0.00000875
+RG,lost,For the Common Good,0.00014549
+RG,lost,Fountainport,0.00110519
+RG,lost,Fountainport Bell,0.00489338
+RG,lost,Frilled Sparkshooter,0.01145776
+RG,lost,Galewind Moose,0.01278662
+RG,lost,"Gev, Scaled Scorch",0.00015992
+RG,lost,"Glarb, Calamity's Augur",0.00001143
+RG,lost,Glidedive Duo,0.00006399
+RG,lost,Gossip's Talent,0.00000805
+RG,lost,Harnesser of Storms,0.00248280
+RG,lost,Harvestrite Host,0.00002551
+RG,lost,Hazardroot Herbalist,0.00317421
+RG,lost,Hazel's Nocturne,0.00009543
+RG,lost,Head of the Homestead,0.00599328
+RG,lost,Heaped Harvest,0.01029620
+RG,lost,Heartfire Hero,0.00757148
+RG,lost,Hearthborn Battler,0.00411824
+RG,lost,Heirloom Epic,0.00053626
+RG,lost,"Helga, Skittish Seer",0.00002966
+RG,lost,Hidden Grotto,0.00782911
+RG,lost,High Stride,0.01001116
+RG,lost,Hired Claw,0.00404036
+RG,lost,Hivespine Wolverine,0.01123649
+RG,lost,Hoarder's Overflow,0.00443797
+RG,lost,Honored Dreyleader,0.00161155
+RG,lost,Hop to It,0.00001619
+RG,lost,"Hugs, Grisly Guardian",0.00628362
+RG,lost,Hunter's Talent,0.01195000
+RG,lost,Huskburster Swarm,0.00006141
+RG,lost,Innkeeper's Talent,0.00410136
+RG,lost,Intrepid Rabbit,0.00010371
+RG,lost,Iridescent Vinelasher,0.00008170
+RG,lost,Jackdaw Savior,0.00000805
+RG,lost,Jolly Gerbils,0.00003785
+RG,lost,Junkblade Bruiser,0.03324853
+RG,lost,"Kastral, the Windcrested",0.00001620
+RG,lost,Keen-Eyed Curator,0.00535772
+RG,lost,Kindlespark Duo,0.00387273
+RG,lost,Kitnap,0.00000805
+RG,lost,Lightshell Duo,0.00000292
+RG,lost,Lilypad Village,0.00002323
+RG,lost,Lilysplash Mentor,0.00067859
+RG,lost,Long River Lurker,0.00004801
+RG,lost,Longstalk Brawl,0.02709738
+RG,lost,"Lumra, Bellow of the Woods",0.00222230
+RG,lost,Lupinflower Village,0.00001547
+RG,lost,"Mabel, Heir to Cragflame",0.00087382
+RG,lost,"Maha, Its Feathers Night",0.00007861
+RG,lost,Manifold Mouse,0.00284118
+RG,lost,Might of the Meek,0.00669587
+RG,lost,Mind Spiral,0.00014655
+RG,lost,Mindwhisker,0.00002207
+RG,lost,Mistbreath Elder,0.00189828
+RG,lost,Mockingbird,0.00023970
+RG,lost,Mouse Trapper,0.00002421
+RG,lost,Mudflat Village,0.00003846
+RG,lost,"Muerra, Trash Tactician",0.01257270
+RG,lost,Nocturnal Hunger,0.00032151
+RG,lost,Oakhollow Village,0.00740429
+RG,lost,Osteomancer Adept,0.00009618
+RG,lost,Overprotect,0.01174655
+RG,lost,Patchwork Banner,0.00450953
+RG,lost,Pawpatch Formation,0.00520730
+RG,lost,Pawpatch Recruit,0.00408701
+RG,lost,Pearl of Wisdom,0.00001947
+RG,lost,Peerless Recycling,0.00446429
+RG,lost,Pileated Provisioner,0.00005534
+RG,lost,Playful Shove,0.00801590
+RG,lost,Plumecreed Escort,0.00001583
+RG,lost,Polliwallop,0.02201870
+RG,lost,Pond Prophet,0.00602785
+RG,lost,Portent of Calamity,0.00004809
+RG,lost,Quaketusk Boar,0.01553554
+RG,lost,Rabid Gnaw,0.01466098
+RG,lost,Raccoon Rallier,0.02821235
+RG,lost,"Ral, Crackling Wit",0.00044379
+RG,lost,Ravine Raider,0.00000268
+RG,lost,Repel Calamity,0.00003582
+RG,lost,Reptilian Recruiter,0.00483967
+RG,lost,Rockface Village,0.00830141
+RG,lost,Rottenmouth Viper,0.00035490
+RG,lost,Roughshod Duo,0.03947386
+RG,lost,Run Away Together,0.00000279
+RG,lost,Rust-Shield Rampager,0.02832678
+RG,lost,Ruthless Negotiation,0.00000805
+RG,lost,Salvation Swan,0.00018731
+RG,lost,Savor,0.00013417
+RG,lost,Sazacap's Brew,0.00995974
+RG,lost,Scales of Shale,0.00005470
+RG,lost,Scavenger's Talent,0.00002388
+RG,lost,Scrapshooter,0.00504555
+RG,lost,Season of Gathering,0.00216397
+RG,lost,Season of Loss,0.00004825
+RG,lost,Season of Weaving,0.00004884
+RG,lost,Season of the Bold,0.00246412
+RG,lost,Season of the Burrow,0.00003324
+RG,lost,Seasoned Warrenguard,0.00000279
+RG,lost,Seedglaive Mentor,0.00024403
+RG,lost,Seedpod Squire,0.00001354
+RG,lost,Shore Up,0.00000559
+RG,lost,Shoreline Looter,0.00006612
+RG,lost,Short Bow,0.00285332
+RG,lost,Shrike Force,0.00001648
+RG,lost,Sinister Monolith,0.00001332
+RG,lost,Skyskipper Duo,0.00001787
+RG,lost,Sonar Strike,0.00007050
+RG,lost,Spellgyre,0.00000745
+RG,lost,Splash Lasher,0.00004205
+RG,lost,Splash Portal,0.00000292
+RG,lost,Starfall Invocation,0.00007217
+RG,lost,Starforged Sword,0.00136713
+RG,lost,Stargaze,0.00001688
+RG,lost,Starlit Soothsayer,0.00000248
+RG,lost,Starscape Cleric,0.00000805
+RG,lost,Steampath Charger,0.01695643
+RG,lost,Stickytongue Sentinel,0.01486597
+RG,lost,Stocking the Pantry,0.00123027
+RG,lost,Stormcatch Mentor,0.00000774
+RG,lost,Stormchaser's Talent,0.00001341
+RG,lost,Stormsplitter,0.00014046
+RG,lost,Sugar Coat,0.00002923
+RG,lost,Sunshower Druid,0.00567616
+RG,lost,Sunspine Lynx,0.00434338
+RG,lost,Sword of Fire and Ice,0.00013067
+RG,lost,Swords to Plowshares,0.00003821
+RG,lost,Take Out the Trash,0.03829627
+RG,lost,Tangle Tumbler,0.00038655
+RG,lost,Teapot Slinger,0.01740232
+RG,lost,Tempest Angler,0.00161572
+RG,lost,Tender Wildguide,0.00410738
+RG,lost,The Infamous Cruelclaw,0.00041403
+RG,lost,Thistledown Players,0.00000838
+RG,lost,Thornplate Intimidator,0.00003297
+RG,lost,Thornvault Forager,0.00352431
+RG,lost,Thought-Stalker Warlock,0.00015892
+RG,lost,Three Tree City,0.00022784
+RG,lost,Three Tree Mascot,0.00392907
+RG,lost,Three Tree Rootweaver,0.02328505
+RG,lost,Three Tree Scribe,0.00451455
+RG,lost,"Toski, Bearer of Secrets",0.00032180
+RG,lost,Treeguard Duo,0.02372611
+RG,lost,Treetop Sentries,0.00964999
+RG,lost,Uncharted Haven,0.01048258
+RG,lost,Valley Flamecaller,0.00524976
+RG,lost,Valley Mightcaller,0.00384127
+RG,lost,Valley Questcaller,0.00001891
+RG,lost,Valley Rally,0.00346849
+RG,lost,Valley Rotcaller,0.00002670
+RG,lost,Veteran Guardmouse,0.00670054
+RG,lost,Vinereap Mentor,0.00007456
+RG,lost,"Vren, the Relentless",0.00004595
+RG,lost,Wandertale Mentor,0.03177362
+RG,lost,War Squeak,0.00354072
+RG,lost,Warren Elder,0.00001949
+RG,lost,Warren Warleader,0.00005367
+RG,lost,Wax-Wane Witness,0.00001568
+RG,lost,Wear Down,0.00036385
+RG,lost,Whiskerquill Scribe,0.01214941
+RG,lost,Whiskervale Forerunner,0.00019356
+RG,lost,Wick's Patrol,0.00006211
+RG,lost,Wildfire Howl,0.00594112
+RG,lost,"Ygra, Eater of All",0.00075265
+RG,won,Agate Assault,0.02903191
+RG,won,Alania's Pathmaker,0.02983436
+RG,won,"Alania, Divergent Storm",0.00012146
+RG,won,Artist's Talent,0.00013802
+RG,won,Azure Beastbinder,0.00002790
+RG,won,Bakersbane Duo,0.03123618
+RG,won,Bandit's Talent,0.00000504
+RG,won,Banishing Light,0.00032140
+RG,won,Bark-Knuckle Boxer,0.01761025
+RG,won,Barkform Harvester,0.00132493
+RG,won,"Baylen, the Haymaker",0.00021070
+RG,won,"Beza, the Bounding Spring",0.00002712
+RG,won,Blacksmith's Talent,0.00890239
+RG,won,Blooming Blast,0.00954161
+RG,won,Bonebind Orator,0.00001622
+RG,won,Bonecache Overseer,0.00001914
+RG,won,Brambleguard Captain,0.00864856
+RG,won,Brambleguard Veteran,0.02105874
+RG,won,Brave-Kin Duo,0.00000669
+RG,won,Brazen Collector,0.01669173
+RG,won,Builder's Talent,0.00004656
+RG,won,Bumbleflower's Sharepot,0.00198293
+RG,won,Burrowguard Mentor,0.00013503
+RG,won,Bushy Bodyguard,0.00761992
+RG,won,Byway Barterer,0.00699599
+RG,won,Cache Grab,0.01047878
+RG,won,Calamitous Tide,0.00000463
+RG,won,"Camellia, the Seedmiser",0.00021206
+RG,won,Caretaker's Talent,0.00002273
+RG,won,Carrot Cake,0.00002984
+RG,won,Cindering Cutthroat,0.00849122
+RG,won,"Clement, the Worrywort",0.00007303
+RG,won,Clifftop Lookout,0.00579578
+RG,won,Coiling Rebirth,0.00000455
+RG,won,Conduct Electricity,0.01360081
+RG,won,Consumed by Greed,0.00001073
+RG,won,Corpseberry Cultivator,0.00422069
+RG,won,Coruscation Mage,0.00628851
+RG,won,Crumb and Get It,0.00003728
+RG,won,Curious Forager,0.00746099
+RG,won,Daggerfang Duo,0.00000696
+RG,won,Darkstar Augur,0.00010236
+RG,won,Dawn's Truce,0.00001159
+RG,won,Diresight,0.00001975
+RG,won,Dour Port-Mage,0.00003913
+RG,won,Downwind Ambusher,0.00007399
+RG,won,"Dragonhawk, Fate's Tempest",0.00366107
+RG,won,Dreamdew Entrancer,0.00061552
+RG,won,Driftgloom Coyote,0.00001287
+RG,won,Druid of the Spade,0.00404453
+RG,won,Early Winter,0.00008650
+RG,won,Emberheart Challenger,0.00454795
+RG,won,Fabled Passage,0.00172680
+RG,won,Feather of Flight,0.00002651
+RG,won,Fecund Greenshell,0.00493485
+RG,won,Feed the Cycle,0.00005083
+RG,won,Fell,0.00019515
+RG,won,Festival of Embers,0.00005412
+RG,won,Finch Formation,0.00001325
+RG,won,"Finneas, Ace Archer",0.00004217
+RG,won,Fireglass Mentor,0.00023177
+RG,won,Flamecache Gecko,0.00931657
+RG,won,Flowerfoot Swordmaster,0.00000504
+RG,won,For the Common Good,0.00007502
+RG,won,Fountainport,0.00112029
+RG,won,Fountainport Bell,0.00447897
+RG,won,Frilled Sparkshooter,0.01035091
+RG,won,Galewind Moose,0.01284650
+RG,won,"Gev, Scaled Scorch",0.00013350
+RG,won,Glidedive Duo,0.00003762
+RG,won,Harnesser of Storms,0.00246686
+RG,won,Harvestrite Host,0.00002676
+RG,won,Hazardroot Herbalist,0.00304391
+RG,won,Hazel's Nocturne,0.00009781
+RG,won,Head of the Homestead,0.00580043
+RG,won,Heaped Harvest,0.00889480
+RG,won,Heartfire Hero,0.00808849
+RG,won,Hearthborn Battler,0.00410129
+RG,won,Heirloom Epic,0.00047474
+RG,won,"Helga, Skittish Seer",0.00002525
+RG,won,Hidden Grotto,0.00779042
+RG,won,High Stride,0.00963156
+RG,won,Hired Claw,0.00435435
+RG,won,Hivespine Wolverine,0.01173040
+RG,won,Hoarder's Overflow,0.00397019
+RG,won,Honored Dreyleader,0.00144146
+RG,won,Hop to It,0.00001362
+RG,won,"Hugs, Grisly Guardian",0.00652784
+RG,won,Hunter's Talent,0.01345344
+RG,won,Huskburster Swarm,0.00005578
+RG,won,Innkeeper's Talent,0.00470949
+RG,won,Intrepid Rabbit,0.00012056
+RG,won,Iridescent Vinelasher,0.00005630
+RG,won,Jackdaw Savior,0.00001854
+RG,won,Jolly Gerbils,0.00002314
+RG,won,Junkblade Bruiser,0.03285774
+RG,won,"Kastral, the Windcrested",0.00000927
+RG,won,Keen-Eyed Curator,0.00560585
+RG,won,Kindlespark Duo,0.00347010
+RG,won,Kitnap,0.00000463
+RG,won,Lilypad Village,0.00001604
+RG,won,Lilysplash Mentor,0.00057188
+RG,won,Long River Lurker,0.00001893
+RG,won,Longstalk Brawl,0.02777044
+RG,won,"Lumra, Bellow of the Woods",0.00204911
+RG,won,Lupinflower Village,0.00001560
+RG,won,"Mabel, Heir to Cragflame",0.00084268
+RG,won,"Maha, Its Feathers Night",0.00004287
+RG,won,Manifold Mouse,0.00313643
+RG,won,Might of the Meek,0.00640401
+RG,won,Mind Spiral,0.00013688
+RG,won,Mindwhisker,0.00002110
+RG,won,Mistbreath Elder,0.00176398
+RG,won,Mockingbird,0.00019354
+RG,won,Mouse Trapper,0.00003219
+RG,won,Mudflat Village,0.00003059
+RG,won,"Muerra, Trash Tactician",0.01317575
+RG,won,Nocturnal Hunger,0.00024925
+RG,won,Oakhollow Village,0.00718677
+RG,won,Osteomancer Adept,0.00010293
+RG,won,Overprotect,0.01218006
+RG,won,Patchwork Banner,0.00470222
+RG,won,Pawpatch Formation,0.00494565
+RG,won,Pawpatch Recruit,0.00401755
+RG,won,Pearl of Wisdom,0.00002821
+RG,won,Peerless Recycling,0.00406345
+RG,won,Pileated Provisioner,0.00004521
+RG,won,Playful Shove,0.00794723
+RG,won,Plumecreed Escort,0.00001609
+RG,won,Polliwallop,0.02173395
+RG,won,Pond Prophet,0.00530603
+RG,won,Portent of Calamity,0.00004268
+RG,won,Quaketusk Boar,0.01589613
+RG,won,Rabid Gnaw,0.01535630
+RG,won,Raccoon Rallier,0.02707069
+RG,won,"Ral, Crackling Wit",0.00042708
+RG,won,Repel Calamity,0.00005690
+RG,won,Reptilian Recruiter,0.00448001
+RG,won,Rockface Village,0.00889114
+RG,won,Rottenmouth Viper,0.00035122
+RG,won,Roughshod Duo,0.03969418
+RG,won,Run Away Together,0.00001690
+RG,won,Rust-Shield Rampager,0.02851414
+RG,won,Ruthless Negotiation,0.00000232
+RG,won,Salvation Swan,0.00014355
+RG,won,Savor,0.00012034
+RG,won,Sazacap's Brew,0.00901430
+RG,won,Scales of Shale,0.00004668
+RG,won,Scavenger's Talent,0.00001161
+RG,won,Scrapshooter,0.00524400
+RG,won,Season of Gathering,0.00220246
+RG,won,Season of Loss,0.00004693
+RG,won,Season of Weaving,0.00002667
+RG,won,Season of the Bold,0.00239596
+RG,won,Season of the Burrow,0.00002618
+RG,won,Seedglaive Mentor,0.00024074
+RG,won,Seedpod Squire,0.00000687
+RG,won,Shore Up,0.00001690
+RG,won,Shoreline Looter,0.00002572
+RG,won,Short Bow,0.00273299
+RG,won,Shrike Force,0.00000949
+RG,won,Sinister Monolith,0.00001188
+RG,won,Skyskipper Duo,0.00003346
+RG,won,Sonar Strike,0.00004352
+RG,won,Splash Lasher,0.00003655
+RG,won,Splash Portal,0.00001260
+RG,won,Starfall Invocation,0.00002621
+RG,won,Starforged Sword,0.00126997
+RG,won,Stargaze,0.00001448
+RG,won,Starscape Cleric,0.00000927
+RG,won,Steampath Charger,0.01568240
+RG,won,Stickytongue Sentinel,0.01459616
+RG,won,Stocking the Pantry,0.00114954
+RG,won,Stormchaser's Talent,0.00000927
+RG,won,Stormsplitter,0.00016822
+RG,won,Sugar Coat,0.00002934
+RG,won,Sunshower Druid,0.00516558
+RG,won,Sunspine Lynx,0.00430222
+RG,won,Sword of Fire and Ice,0.00018303
+RG,won,Swords to Plowshares,0.00001922
+RG,won,Take Out the Trash,0.04086380
+RG,won,Tangle Tumbler,0.00030396
+RG,won,Teapot Slinger,0.01777481
+RG,won,Tempest Angler,0.00129971
+RG,won,Tender Wildguide,0.00427454
+RG,won,The Infamous Cruelclaw,0.00046005
+RG,won,Thistledown Players,0.00000483
+RG,won,Thornplate Intimidator,0.00003796
+RG,won,Thornvault Forager,0.00363448
+RG,won,Thought-Stalker Warlock,0.00013044
+RG,won,Three Tree City,0.00018105
+RG,won,Three Tree Mascot,0.00362903
+RG,won,Three Tree Rootweaver,0.02337996
+RG,won,Three Tree Scribe,0.00410447
+RG,won,"Toski, Bearer of Secrets",0.00026014
+RG,won,Treeguard Duo,0.02422130
+RG,won,Treetop Sentries,0.00913997
+RG,won,Uncharted Haven,0.01041336
+RG,won,Valley Flamecaller,0.00540234
+RG,won,Valley Mightcaller,0.00375439
+RG,won,Valley Questcaller,0.00002406
+RG,won,Valley Rally,0.00322101
+RG,won,Valley Rotcaller,0.00001783
+RG,won,Veteran Guardmouse,0.00679395
+RG,won,Vinereap Mentor,0.00007161
+RG,won,"Vren, the Relentless",0.00003307
+RG,won,Wandertale Mentor,0.03432125
+RG,won,War Squeak,0.00308939
+RG,won,Warren Elder,0.00001414
+RG,won,Warren Warleader,0.00002935
+RG,won,Wax-Wane Witness,0.00001355
+RG,won,Wear Down,0.00024824
+RG,won,Whiskerquill Scribe,0.01167526
+RG,won,Whiskervale Forerunner,0.00021453
+RG,won,Wick's Patrol,0.00003655
+RG,won,Wildfire Howl,0.00551834
+RG,won,"Ygra, Eater of All",0.00077316
+UB,lost,Agate Assault,0.00025782
+UB,lost,Agate-Blade Assassin,0.00861087
+UB,lost,Alania's Pathmaker,0.00004371
+UB,lost,"Alania, Divergent Storm",0.00036395
+UB,lost,Artist's Talent,0.00000324
+UB,lost,Azure Beastbinder,0.00774572
+UB,lost,Bandit's Talent,0.00608719
+UB,lost,Banishing Light,0.00018039
+UB,lost,Bark-Knuckle Boxer,0.00000893
+UB,lost,Barkform Harvester,0.00239257
+UB,lost,Bellowing Crier,0.02198263
+UB,lost,Blacksmith's Talent,0.00002407
+UB,lost,Blooming Blast,0.00000798
+UB,lost,Bonebind Orator,0.02310688
+UB,lost,Bonecache Overseer,0.00067247
+UB,lost,Brambleguard Captain,0.00000573
+UB,lost,Brambleguard Veteran,0.00000859
+UB,lost,Brightblade Stoat,0.00000971
+UB,lost,Builder's Talent,0.00010716
+UB,lost,Bumbleflower's Sharepot,0.00148898
+UB,lost,Bushy Bodyguard,0.00000596
+UB,lost,Byway Barterer,0.00001526
+UB,lost,Cache Grab,0.00010144
+UB,lost,Calamitous Tide,0.00890013
+UB,lost,"Camellia, the Seedmiser",0.00006446
+UB,lost,Caretaker's Talent,0.00001169
+UB,lost,Carrot Cake,0.00004625
+UB,lost,Cindering Cutthroat,0.00265811
+UB,lost,"Clement, the Worrywort",0.00013060
+UB,lost,Clifftop Lookout,0.00002458
+UB,lost,Coiling Rebirth,0.00282763
+UB,lost,Conduct Electricity,0.00008428
+UB,lost,Consumed by Greed,0.01281985
+UB,lost,Corpseberry Cultivator,0.00083022
+UB,lost,Coruscation Mage,0.00002359
+UB,lost,Cruelclaw's Heist,0.00358911
+UB,lost,Crumb and Get It,0.00000798
+UB,lost,Curious Forager,0.00002961
+UB,lost,Daggerfang Duo,0.03548129
+UB,lost,Daring Waverider,0.01243594
+UB,lost,Darkstar Augur,0.00341010
+UB,lost,Dazzling Denial,0.02019934
+UB,lost,Dire Downdraft,0.02699064
+UB,lost,Diresight,0.01041780
+UB,lost,Dour Port-Mage,0.00435232
+UB,lost,Downwind Ambusher,0.01281846
+UB,lost,"Dragonhawk, Fate's Tempest",0.00003015
+UB,lost,Dreamdew Entrancer,0.00095468
+UB,lost,Driftgloom Coyote,0.00000893
+UB,lost,Early Winter,0.01395710
+UB,lost,Eddymurk Crab,0.01276839
+UB,lost,"Eluge, the Shoreless Sea",0.00118111
+UB,lost,Essence Channeler,0.00001752
+UB,lost,Fabled Passage,0.00217848
+UB,lost,Feather of Flight,0.00000958
+UB,lost,Fecund Greenshell,0.00006584
+UB,lost,Feed the Cycle,0.01258957
+UB,lost,Fell,0.01208750
+UB,lost,Festival of Embers,0.00000859
+UB,lost,Finch Formation,0.00503423
+UB,lost,Fireglass Mentor,0.00016968
+UB,lost,Flamecache Gecko,0.00000870
+UB,lost,Fountainport,0.00173359
+UB,lost,Fountainport Bell,0.01025776
+UB,lost,Galewind Moose,0.00000893
+UB,lost,"Gev, Scaled Scorch",0.00006019
+UB,lost,"Glarb, Calamity's Augur",0.00156966
+UB,lost,Glidedive Duo,0.01733864
+UB,lost,Gossip's Talent,0.00485604
+UB,lost,Harnesser of Storms,0.00002098
+UB,lost,Hazel's Nocturne,0.00811916
+UB,lost,Heaped Harvest,0.00003543
+UB,lost,Heartfire Hero,0.00000859
+UB,lost,Hearthborn Battler,0.00001180
+UB,lost,Heirloom Epic,0.00007478
+UB,lost,"Helga, Skittish Seer",0.00000893
+UB,lost,Hidden Grotto,0.01356013
+UB,lost,High Stride,0.00000551
+UB,lost,Hired Claw,0.00000859
+UB,lost,Hivespine Wolverine,0.00000971
+UB,lost,Hoarder's Overflow,0.00000893
+UB,lost,Hop to It,0.00000596
+UB,lost,Hunter's Talent,0.00028980
+UB,lost,Huskburster Swarm,0.00906433
+UB,lost,Innkeeper's Talent,0.00032092
+UB,lost,Into the Flood Maw,0.00690796
+UB,lost,Intrepid Rabbit,0.00001355
+UB,lost,Iridescent Vinelasher,0.00302151
+UB,lost,Jackdaw Savior,0.00003288
+UB,lost,Jolly Gerbils,0.00001657
+UB,lost,"Kastral, the Windcrested",0.00100062
+UB,lost,Keen-Eyed Curator,0.00000931
+UB,lost,Kitnap,0.00661259
+UB,lost,"Kitsa, Otterball Elite",0.00250710
+UB,lost,Knightfisher,0.00564044
+UB,lost,Ledger Shredder,0.00045938
+UB,lost,Lifecreed Duo,0.00004935
+UB,lost,Lightshell Duo,0.02572708
+UB,lost,Lilypad Village,0.00700832
+UB,lost,Lilysplash Mentor,0.00057609
+UB,lost,Long River Lurker,0.00716253
+UB,lost,Long River's Pull,0.00673515
+UB,lost,Longstalk Brawl,0.00002397
+UB,lost,"Lumra, Bellow of the Woods",0.00001514
+UB,lost,Lunar Convocation,0.00002341
+UB,lost,Lupinflower Village,0.00003774
+UB,lost,"Mabel, Heir to Cragflame",0.00000893
+UB,lost,"Maha, Its Feathers Night",0.00231989
+UB,lost,Mind Drill Assailant,0.02781290
+UB,lost,Mind Spiral,0.01265200
+UB,lost,Mindwhisker,0.02395108
+UB,lost,Mistbreath Elder,0.00001861
+UB,lost,Mockingbird,0.00551131
+UB,lost,Moonrise Cleric,0.00350579
+UB,lost,Moonstone Harbinger,0.00426940
+UB,lost,Mudflat Village,0.00823938
+UB,lost,Nettle Guard,0.00000573
+UB,lost,Nightwhorl Hermit,0.01941944
+UB,lost,Nocturnal Hunger,0.03122396
+UB,lost,Oakhollow Village,0.00004293
+UB,lost,Osteomancer Adept,0.00414736
+UB,lost,Otterball Antics,0.00434226
+UB,lost,Overprotect,0.00001752
+UB,lost,Patchwork Banner,0.00400753
+UB,lost,Pawpatch Recruit,0.00000893
+UB,lost,Pearl of Wisdom,0.01078001
+UB,lost,Peerless Recycling,0.00002636
+UB,lost,Persistent Marshstalker,0.02109069
+UB,lost,Pileated Provisioner,0.00000971
+UB,lost,Playful Shove,0.00002646
+UB,lost,Plumecreed Escort,0.01349096
+UB,lost,Plumecreed Mentor,0.00025309
+UB,lost,Polliwallop,0.00010013
+UB,lost,Pond Prophet,0.00779799
+UB,lost,Portent of Calamity,0.00134746
+UB,lost,Psychic Whorl,0.00886734
+UB,lost,Rabid Gnaw,0.00007253
+UB,lost,"Ral, Crackling Wit",0.00070457
+UB,lost,Ravine Raider,0.00358960
+UB,lost,Repel Calamity,0.00007164
+UB,lost,Rockface Village,0.00001752
+UB,lost,Rottenmouth Viper,0.00200490
+UB,lost,Run Away Together,0.00881155
+UB,lost,Rust-Shield Rampager,0.00000893
+UB,lost,Ruthless Negotiation,0.00991376
+UB,lost,Salvation Swan,0.00016238
+UB,lost,Savor,0.03288650
+UB,lost,Scales of Shale,0.00883027
+UB,lost,Scavenger's Talent,0.00179181
+UB,lost,Season of Gathering,0.00000893
+UB,lost,Season of Loss,0.00267015
+UB,lost,Season of Weaving,0.00337517
+UB,lost,Season of the Burrow,0.00000608
+UB,lost,Seedpod Squire,0.00336415
+UB,lost,Shore Up,0.01621667
+UB,lost,Shoreline Looter,0.02396416
+UB,lost,Short Bow,0.00070232
+UB,lost,Shrike Force,0.00001849
+UB,lost,Sinister Monolith,0.00220606
+UB,lost,Skyskipper Duo,0.00820810
+UB,lost,Sonar Strike,0.00008282
+UB,lost,Spellgyre,0.01126469
+UB,lost,Splash Lasher,0.01212354
+UB,lost,Splash Portal,0.00496816
+UB,lost,Star Charter,0.00001790
+UB,lost,Starfall Invocation,0.00008595
+UB,lost,Starforged Sword,0.00032655
+UB,lost,Stargaze,0.00460291
+UB,lost,Starlit Soothsayer,0.00317331
+UB,lost,Starscape Cleric,0.00345030
+UB,lost,Starseer Mentor,0.00031241
+UB,lost,Steampath Charger,0.00000870
+UB,lost,Stormcatch Mentor,0.00002971
+UB,lost,Stormchaser's Talent,0.00514268
+UB,lost,Stormsplitter,0.00001180
+UB,lost,Sugar Coat,0.01097262
+UB,lost,Sword of Fire and Ice,0.00018602
+UB,lost,Swords to Plowshares,0.00002822
+UB,lost,Take Out the Trash,0.00025152
+UB,lost,Tangle Tumbler,0.00006133
+UB,lost,Tempest Angler,0.00372092
+UB,lost,Tender Wildguide,0.00005735
+UB,lost,The Infamous Cruelclaw,0.00028107
+UB,lost,Thornplate Intimidator,0.01431785
+UB,lost,Thornvault Forager,0.00000647
+UB,lost,Thought Shucker,0.02700116
+UB,lost,Thought-Stalker Warlock,0.01346035
+UB,lost,Three Tree City,0.00028785
+UB,lost,Three Tree Mascot,0.00447697
+UB,lost,Three Tree Rootweaver,0.00004703
+UB,lost,Three Tree Scribe,0.00001752
+UB,lost,Thundertrap Trainer,0.00558429
+UB,lost,Tidecaller Mentor,0.02975184
+UB,lost,"Toski, Bearer of Secrets",0.00000859
+UB,lost,Treeguard Duo,0.00002720
+UB,lost,Treetop Sentries,0.00000573
+UB,lost,Uncharted Haven,0.01366932
+UB,lost,Valley Flamecaller,0.00000298
+UB,lost,Valley Floodcaller,0.00467562
+UB,lost,Valley Questcaller,0.00000584
+UB,lost,Valley Rotcaller,0.00368064
+UB,lost,Vinereap Mentor,0.00003545
+UB,lost,"Vren, the Relentless",0.01315052
+UB,lost,Warren Warleader,0.00002844
+UB,lost,Waterspout Warden,0.00298918
+UB,lost,Wax-Wane Witness,0.00002795
+UB,lost,Whiskervale Forerunner,0.00000573
+UB,lost,Wick's Patrol,0.01771377
+UB,lost,"Wick, the Whorled Mind",0.00789412
+UB,lost,Wildfire Howl,0.00000870
+UB,lost,Wishing Well,0.00055146
+UB,lost,"Ygra, Eater of All",0.00061776
+UB,lost,"Zoraline, Cosmos Caller",0.00047347
+UB,won,Agate Assault,0.00015835
+UB,won,Agate-Blade Assassin,0.00767671
+UB,won,Alania's Pathmaker,0.00003714
+UB,won,"Alania, Divergent Storm",0.00035956
+UB,won,Artist's Talent,0.00000558
+UB,won,Azure Beastbinder,0.00846296
+UB,won,Bandit's Talent,0.00568063
+UB,won,Banishing Light,0.00016205
+UB,won,Bark-Knuckle Boxer,0.00000514
+UB,won,Barkform Harvester,0.00217586
+UB,won,Bellowing Crier,0.02107163
+UB,won,Blacksmith's Talent,0.00002075
+UB,won,Blooming Blast,0.00001146
+UB,won,Bonebind Orator,0.02283964
+UB,won,Bonecache Overseer,0.00058750
+UB,won,Brambleguard Captain,0.00000247
+UB,won,Builder's Talent,0.00007488
+UB,won,Bumbleflower's Sharepot,0.00124800
+UB,won,Bushy Bodyguard,0.00001797
+UB,won,Byway Barterer,0.00002065
+UB,won,Cache Grab,0.00009673
+UB,won,Calamitous Tide,0.00853717
+UB,won,"Camellia, the Seedmiser",0.00006791
+UB,won,Caretaker's Talent,0.00000988
+UB,won,Carrot Cake,0.00002294
+UB,won,Cindering Cutthroat,0.00265651
+UB,won,"Clement, the Worrywort",0.00008792
+UB,won,Clifftop Lookout,0.00002141
+UB,won,Coiling Rebirth,0.00242972
+UB,won,Conduct Electricity,0.00003766
+UB,won,Consumed by Greed,0.01419462
+UB,won,Corpseberry Cultivator,0.00060819
+UB,won,Coruscation Mage,0.00001768
+UB,won,Cruelclaw's Heist,0.00327608
+UB,won,Crumb and Get It,0.00001146
+UB,won,Curious Forager,0.00003810
+UB,won,Daggerfang Duo,0.03616257
+UB,won,Daring Waverider,0.01318957
+UB,won,Darkstar Augur,0.00331918
+UB,won,Dazzling Denial,0.02052058
+UB,won,Dewdrop Cure,0.00000257
+UB,won,Dire Downdraft,0.02767468
+UB,won,Diresight,0.01016242
+UB,won,Dour Port-Mage,0.00436489
+UB,won,Downwind Ambusher,0.01390647
+UB,won,"Dragonhawk, Fate's Tempest",0.00002589
+UB,won,Dreamdew Entrancer,0.00107937
+UB,won,Driftgloom Coyote,0.00000770
+UB,won,Early Winter,0.01278523
+UB,won,Eddymurk Crab,0.01300147
+UB,won,"Eluge, the Shoreless Sea",0.00104987
+UB,won,Essence Channeler,0.00002252
+UB,won,Fabled Passage,0.00218398
+UB,won,Feather of Flight,0.00001105
+UB,won,Fecund Greenshell,0.00003488
+UB,won,Feed the Cycle,0.01332407
+UB,won,Fell,0.01287030
+UB,won,Festival of Embers,0.00000741
+UB,won,Finch Formation,0.00414720
+UB,won,Fireglass Mentor,0.00012157
+UB,won,Flamecache Gecko,0.00000504
+UB,won,Fountainport,0.00170156
+UB,won,Fountainport Bell,0.01044868
+UB,won,Galewind Moose,0.00000770
+UB,won,"Gev, Scaled Scorch",0.00004759
+UB,won,"Glarb, Calamity's Augur",0.00161886
+UB,won,Glidedive Duo,0.01824589
+UB,won,Gossip's Talent,0.00376725
+UB,won,Harnesser of Storms,0.00001055
+UB,won,Hazel's Nocturne,0.00786351
+UB,won,Heaped Harvest,0.00004461
+UB,won,Heartfire Hero,0.00000494
+UB,won,Hearthborn Battler,0.00000770
+UB,won,Heirloom Epic,0.00007065
+UB,won,Hidden Grotto,0.01392315
+UB,won,High Stride,0.00000238
+UB,won,Hivespine Wolverine,0.00000558
+UB,won,Hoarder's Overflow,0.00000257
+UB,won,Hunter's Talent,0.00029547
+UB,won,Huskburster Swarm,0.00834720
+UB,won,Innkeeper's Talent,0.00031965
+UB,won,Into the Flood Maw,0.00688239
+UB,won,Intrepid Rabbit,0.00002485
+UB,won,Iridescent Vinelasher,0.00282762
+UB,won,Jackdaw Savior,0.00001797
+UB,won,Jolly Gerbils,0.00001640
+UB,won,"Kastral, the Windcrested",0.00089468
+UB,won,Keen-Eyed Curator,0.00000535
+UB,won,Kitnap,0.00686298
+UB,won,"Kitsa, Otterball Elite",0.00276870
+UB,won,Knightfisher,0.00547792
+UB,won,Ledger Shredder,0.00049357
+UB,won,Lifecreed Duo,0.00004333
+UB,won,Lightshell Duo,0.02637142
+UB,won,Lilypad Village,0.00675293
+UB,won,Lilysplash Mentor,0.00052751
+UB,won,Long River Lurker,0.00656743
+UB,won,Long River's Pull,0.00662666
+UB,won,Longstalk Brawl,0.00004242
+UB,won,"Lumra, Bellow of the Woods",0.00000781
+UB,won,Lunar Convocation,0.00001532
+UB,won,Lupinflower Village,0.00006554
+UB,won,"Mabel, Heir to Cragflame",0.00001027
+UB,won,"Maha, Its Feathers Night",0.00241052
+UB,won,Mind Drill Assailant,0.02536292
+UB,won,Mind Spiral,0.01258229
+UB,won,Mindwhisker,0.02563679
+UB,won,Mistbreath Elder,0.00001070
+UB,won,Mockingbird,0.00544823
+UB,won,Moonrise Cleric,0.00318606
+UB,won,Moonstone Harbinger,0.00411071
+UB,won,Mudflat Village,0.00853198
+UB,won,Nettle Guard,0.00000247
+UB,won,Nightwhorl Hermit,0.01642466
+UB,won,Nocturnal Hunger,0.03204972
+UB,won,Oakhollow Village,0.00003300
+UB,won,Osteomancer Adept,0.00437008
+UB,won,Otterball Antics,0.00402407
+UB,won,Overprotect,0.00001274
+UB,won,Patchwork Banner,0.00415057
+UB,won,Pawpatch Recruit,0.00002498
+UB,won,Pearl of Wisdom,0.01089903
+UB,won,Peerless Recycling,0.00005151
+UB,won,Persistent Marshstalker,0.02240934
+UB,won,Playful Shove,0.00002548
+UB,won,Plumecreed Escort,0.01382752
+UB,won,Plumecreed Mentor,0.00016548
+UB,won,Polliwallop,0.00008714
+UB,won,Pond Prophet,0.00769295
+UB,won,Portent of Calamity,0.00129465
+UB,won,Psychic Whorl,0.00824557
+UB,won,Rabid Gnaw,0.00011712
+UB,won,"Ral, Crackling Wit",0.00081508
+UB,won,Ravine Raider,0.00308466
+UB,won,Repel Calamity,0.00004081
+UB,won,Rockface Village,0.00001007
+UB,won,Rottenmouth Viper,0.00204042
+UB,won,Run Away Together,0.00734824
+UB,won,Ruthless Negotiation,0.01069826
+UB,won,Salvation Swan,0.00015787
+UB,won,Savor,0.03649673
+UB,won,Scales of Shale,0.00924207
+UB,won,Scavenger's Talent,0.00170388
+UB,won,Season of Gathering,0.00001328
+UB,won,Season of Loss,0.00318904
+UB,won,Season of Weaving,0.00367062
+UB,won,Season of the Burrow,0.00000524
+UB,won,Seedpod Squire,0.00285139
+UB,won,Shore Up,0.01500982
+UB,won,Shoreline Looter,0.02708013
+UB,won,Short Bow,0.00059771
+UB,won,Shrike Force,0.00001070
+UB,won,Sinister Monolith,0.00174854
+UB,won,Skyskipper Duo,0.00745136
+UB,won,Sonar Strike,0.00004953
+UB,won,Spellgyre,0.01167608
+UB,won,Splash Lasher,0.01271198
+UB,won,Splash Portal,0.00433512
+UB,won,Star Charter,0.00001276
+UB,won,Starfall Invocation,0.00007837
+UB,won,Starforged Sword,0.00018975
+UB,won,Stargaze,0.00435280
+UB,won,Starlit Soothsayer,0.00259562
+UB,won,Starscape Cleric,0.00348214
+UB,won,Starseer Mentor,0.00033465
+UB,won,Steampath Charger,0.00000504
+UB,won,Stormcatch Mentor,0.00002301
+UB,won,Stormchaser's Talent,0.00591057
+UB,won,Stormsplitter,0.00001728
+UB,won,Sugar Coat,0.01067726
+UB,won,Sword of Fire and Ice,0.00020457
+UB,won,Swords to Plowshares,0.00003226
+UB,won,Take Out the Trash,0.00021195
+UB,won,Tangle Tumbler,0.00005580
+UB,won,Tempest Angler,0.00361590
+UB,won,Tender Wildguide,0.00003106
+UB,won,The Infamous Cruelclaw,0.00020698
+UB,won,Thornplate Intimidator,0.01332981
+UB,won,Thornvault Forager,0.00000279
+UB,won,Thought Shucker,0.02479055
+UB,won,Thought-Stalker Warlock,0.01475582
+UB,won,Three Tree City,0.00027244
+UB,won,Three Tree Mascot,0.00421648
+UB,won,Three Tree Rootweaver,0.00004547
+UB,won,Three Tree Scribe,0.00000770
+UB,won,Thundertrap Trainer,0.00560270
+UB,won,Tidecaller Mentor,0.03036091
+UB,won,"Toski, Bearer of Secrets",0.00000494
+UB,won,Treeguard Duo,0.00001872
+UB,won,Treetop Sentries,0.00001728
+UB,won,Uncharted Haven,0.01370306
+UB,won,Valley Flamecaller,0.00000514
+UB,won,Valley Floodcaller,0.00457625
+UB,won,Valley Mightcaller,0.00000229
+UB,won,Valley Questcaller,0.00000504
+UB,won,Valley Rotcaller,0.00397886
+UB,won,Vinereap Mentor,0.00004814
+UB,won,"Vren, the Relentless",0.01391381
+UB,won,Warren Warleader,0.00003265
+UB,won,Waterspout Warden,0.00226420
+UB,won,Wax-Wane Witness,0.00002164
+UB,won,Whiskervale Forerunner,0.00002263
+UB,won,Wick's Patrol,0.01909979
+UB,won,"Wick, the Whorled Mind",0.00736595
+UB,won,Wildfire Howl,0.00000751
+UB,won,Wishing Well,0.00058405
+UB,won,"Ygra, Eater of All",0.00052748
+UB,won,"Zoraline, Cosmos Caller",0.00039926
+UG,lost,Agate Assault,0.00012344
+UG,lost,Alania's Pathmaker,0.00002072
+UG,lost,"Alania, Divergent Storm",0.00009939
+UG,lost,Artist's Talent,0.00000175
+UG,lost,Azure Beastbinder,0.00528610
+UG,lost,Bakersbane Duo,0.02015963
+UG,lost,Bandit's Talent,0.00003779
+UG,lost,Banishing Light,0.00044578
+UG,lost,Bark-Knuckle Boxer,0.00645631
+UG,lost,Barkform Harvester,0.00209580
+UG,lost,Bellowing Crier,0.02679924
+UG,lost,"Beza, the Bounding Spring",0.00005641
+UG,lost,Blacksmith's Talent,0.00002387
+UG,lost,Blooming Blast,0.00001861
+UG,lost,Bonebind Orator,0.00004551
+UG,lost,Bonecache Overseer,0.00002161
+UG,lost,Brambleguard Captain,0.00000483
+UG,lost,Brambleguard Veteran,0.00532443
+UG,lost,Brazen Collector,0.00000465
+UG,lost,Brightblade Stoat,0.00001811
+UG,lost,Builder's Talent,0.00008008
+UG,lost,Bumbleflower's Sharepot,0.00183095
+UG,lost,Burrowguard Mentor,0.00015440
+UG,lost,Bushy Bodyguard,0.00457755
+UG,lost,Byway Barterer,0.00001935
+UG,lost,Cache Grab,0.01100755
+UG,lost,Calamitous Tide,0.00808816
+UG,lost,"Camellia, the Seedmiser",0.00019802
+UG,lost,Caretaker's Talent,0.00002462
+UG,lost,Carrot Cake,0.00003355
+UG,lost,Cindering Cutthroat,0.00000626
+UG,lost,"Clement, the Worrywort",0.01073526
+UG,lost,Clifftop Lookout,0.01201584
+UG,lost,Coiling Rebirth,0.00001896
+UG,lost,Conduct Electricity,0.00009087
+UG,lost,Consumed by Greed,0.00002714
+UG,lost,Corpseberry Cultivator,0.00218429
+UG,lost,Coruscation Mage,0.00000336
+UG,lost,Cruelclaw's Heist,0.00000465
+UG,lost,Crumb and Get It,0.00001809
+UG,lost,Curious Forager,0.00682560
+UG,lost,Daggerfang Duo,0.00001452
+UG,lost,Daring Waverider,0.00691618
+UG,lost,Darkstar Augur,0.00006553
+UG,lost,Dawn's Truce,0.00000961
+UG,lost,Dazzling Denial,0.01282901
+UG,lost,Dewdrop Cure,0.00000465
+UG,lost,Dire Downdraft,0.02513284
+UG,lost,Diresight,0.00000183
+UG,lost,Dour Port-Mage,0.00893234
+UG,lost,Downwind Ambusher,0.00021206
+UG,lost,"Dragonhawk, Fate's Tempest",0.00006670
+UG,lost,Dreamdew Entrancer,0.01086789
+UG,lost,Driftgloom Coyote,0.00002480
+UG,lost,Druid of the Spade,0.00146497
+UG,lost,Early Winter,0.00026578
+UG,lost,Eddymurk Crab,0.00694704
+UG,lost,"Eluge, the Shoreless Sea",0.00093334
+UG,lost,Emberheart Challenger,0.00000918
+UG,lost,Fabled Passage,0.00207349
+UG,lost,Feather of Flight,0.00000504
+UG,lost,Fecund Greenshell,0.00432186
+UG,lost,Feed the Cycle,0.00025002
+UG,lost,Fell,0.00036675
+UG,lost,Finch Formation,0.01020368
+UG,lost,"Finneas, Ace Archer",0.00005217
+UG,lost,Flamecache Gecko,0.00000483
+UG,lost,For the Common Good,0.00008729
+UG,lost,Fountainport,0.00162231
+UG,lost,Fountainport Bell,0.00635214
+UG,lost,Galewind Moose,0.00992083
+UG,lost,"Glarb, Calamity's Augur",0.00208510
+UG,lost,Glidedive Duo,0.00015561
+UG,lost,Gossip's Talent,0.00645070
+UG,lost,Harnesser of Storms,0.00000453
+UG,lost,Hazardroot Herbalist,0.00113587
+UG,lost,Hazel's Nocturne,0.00015199
+UG,lost,Head of the Homestead,0.00654796
+UG,lost,Heaped Harvest,0.00811498
+UG,lost,Hearthborn Battler,0.00001326
+UG,lost,Heirloom Epic,0.00041515
+UG,lost,"Helga, Skittish Seer",0.00116110
+UG,lost,Hidden Grotto,0.00904716
+UG,lost,High Stride,0.00562253
+UG,lost,Hired Claw,0.00000161
+UG,lost,Hivespine Wolverine,0.00944689
+UG,lost,Honored Dreyleader,0.00084578
+UG,lost,"Hugs, Grisly Guardian",0.00003826
+UG,lost,Hunter's Talent,0.01034708
+UG,lost,Huskburster Swarm,0.00009424
+UG,lost,Innkeeper's Talent,0.00353102
+UG,lost,Into the Flood Maw,0.00777956
+UG,lost,Intrepid Rabbit,0.00003742
+UG,lost,Iridescent Vinelasher,0.00003689
+UG,lost,Jackdaw Savior,0.00005357
+UG,lost,Jolly Gerbils,0.00000525
+UG,lost,Junkblade Bruiser,0.00241322
+UG,lost,"Kastral, the Windcrested",0.00152152
+UG,lost,Keen-Eyed Curator,0.00359781
+UG,lost,Kindlespark Duo,0.00000607
+UG,lost,Kitnap,0.00561348
+UG,lost,"Kitsa, Otterball Elite",0.00183452
+UG,lost,Knightfisher,0.00593565
+UG,lost,Ledger Shredder,0.00045662
+UG,lost,Lifecreed Duo,0.00002491
+UG,lost,Lightshell Duo,0.00821703
+UG,lost,Lilypad Village,0.00706125
+UG,lost,Lilysplash Mentor,0.02701787
+UG,lost,Long River Lurker,0.02239681
+UG,lost,Long River's Pull,0.00544412
+UG,lost,Longstalk Brawl,0.02548770
+UG,lost,"Lumra, Bellow of the Woods",0.00176032
+UG,lost,Lupinflower Village,0.00002074
+UG,lost,Mabel's Mettle,0.00001007
+UG,lost,"Mabel, Heir to Cragflame",0.00000644
+UG,lost,"Maha, Its Feathers Night",0.00006251
+UG,lost,Mind Drill Assailant,0.00122605
+UG,lost,Mind Spiral,0.00935392
+UG,lost,Mindwhisker,0.00967043
+UG,lost,Mistbreath Elder,0.00717945
+UG,lost,Mockingbird,0.00520990
+UG,lost,Moonstone Harbinger,0.00000968
+UG,lost,Mudflat Village,0.00005054
+UG,lost,"Muerra, Trash Tactician",0.00014967
+UG,lost,Nettle Guard,0.00000525
+UG,lost,Nightwhorl Hermit,0.00252015
+UG,lost,Nocturnal Hunger,0.00074928
+UG,lost,Oakhollow Village,0.00693740
+UG,lost,Osteomancer Adept,0.00011292
+UG,lost,Otterball Antics,0.00182085
+UG,lost,Overprotect,0.01003068
+UG,lost,Parting Gust,0.00000951
+UG,lost,Patchwork Banner,0.00599064
+UG,lost,Pawpatch Formation,0.00538553
+UG,lost,Pawpatch Recruit,0.00332348
+UG,lost,Pearl of Wisdom,0.00617669
+UG,lost,Peerless Recycling,0.00300803
+UG,lost,Persistent Marshstalker,0.00002829
+UG,lost,Pileated Provisioner,0.00009660
+UG,lost,Plumecreed Escort,0.01297022
+UG,lost,Plumecreed Mentor,0.00057637
+UG,lost,Polliwallop,0.03946972
+UG,lost,Pond Prophet,0.05249371
+UG,lost,Portent of Calamity,0.00084365
+UG,lost,Psychic Whorl,0.00001323
+UG,lost,Quaketusk Boar,0.00000155
+UG,lost,Rabid Gnaw,0.00004300
+UG,lost,"Ral, Crackling Wit",0.00058233
+UG,lost,Ravine Raider,0.00000465
+UG,lost,Repel Calamity,0.00006738
+UG,lost,Rockface Village,0.00001429
+UG,lost,Rottenmouth Viper,0.00051121
+UG,lost,Roughshod Duo,0.00000987
+UG,lost,Run Away Together,0.02595533
+UG,lost,Rust-Shield Rampager,0.00697093
+UG,lost,Ruthless Negotiation,0.00000673
+UG,lost,Salvation Swan,0.00051054
+UG,lost,Savor,0.00035580
+UG,lost,Sazacap's Brew,0.00001051
+UG,lost,Scales of Shale,0.00000835
+UG,lost,Scavenger's Talent,0.00006664
+UG,lost,Scrapshooter,0.00365665
+UG,lost,Season of Gathering,0.00203899
+UG,lost,Season of Loss,0.00007675
+UG,lost,Season of Weaving,0.00311244
+UG,lost,Season of the Bold,0.00000835
+UG,lost,Season of the Burrow,0.00001601
+UG,lost,Seasoned Warrenguard,0.00000597
+UG,lost,Seedpod Squire,0.00426083
+UG,lost,Shore Up,0.01960035
+UG,lost,Shoreline Looter,0.01390412
+UG,lost,Short Bow,0.00079801
+UG,lost,Shrike Force,0.00001566
+UG,lost,Sinister Monolith,0.00000813
+UG,lost,Skyskipper Duo,0.03166701
+UG,lost,Sonar Strike,0.00002584
+UG,lost,Spellgyre,0.00659819
+UG,lost,Splash Lasher,0.01996508
+UG,lost,Splash Portal,0.01485181
+UG,lost,Star Charter,0.00000483
+UG,lost,Starfall Invocation,0.00010577
+UG,lost,Starforged Sword,0.00045786
+UG,lost,Stargaze,0.00000525
+UG,lost,Starlit Soothsayer,0.00000465
+UG,lost,Stickytongue Sentinel,0.03995799
+UG,lost,Stocking the Pantry,0.00177824
+UG,lost,Stormcatch Mentor,0.00000970
+UG,lost,Stormchaser's Talent,0.00258476
+UG,lost,Stormsplitter,0.00001280
+UG,lost,Sugar Coat,0.01157087
+UG,lost,Sunshower Druid,0.03579544
+UG,lost,Sword of Fire and Ice,0.00019796
+UG,lost,Swords to Plowshares,0.00003427
+UG,lost,Take Out the Trash,0.00017358
+UG,lost,Tangle Tumbler,0.00015716
+UG,lost,Teapot Slinger,0.00000504
+UG,lost,Tempest Angler,0.00200107
+UG,lost,Tender Wildguide,0.00384000
+UG,lost,The Infamous Cruelclaw,0.00000139
+UG,lost,Thornplate Intimidator,0.00004781
+UG,lost,Thornvault Forager,0.00312176
+UG,lost,Thought Shucker,0.00344793
+UG,lost,Thought-Stalker Warlock,0.00031610
+UG,lost,Three Tree City,0.00039580
+UG,lost,Three Tree Mascot,0.00354565
+UG,lost,Three Tree Rootweaver,0.01883711
+UG,lost,Three Tree Scribe,0.02101112
+UG,lost,Thundertrap Trainer,0.00358556
+UG,lost,Tidecaller Mentor,0.00033257
+UG,lost,"Toski, Bearer of Secrets",0.00026220
+UG,lost,Treeguard Duo,0.02877960
+UG,lost,Treetop Sentries,0.00728934
+UG,lost,Uncharted Haven,0.01222129
+UG,lost,Valley Flamecaller,0.00000483
+UG,lost,Valley Floodcaller,0.00370171
+UG,lost,Valley Mightcaller,0.00474949
+UG,lost,Valley Questcaller,0.00001731
+UG,lost,Valley Rotcaller,0.00001743
+UG,lost,Veteran Guardmouse,0.00000483
+UG,lost,Vinereap Mentor,0.00015686
+UG,lost,"Vren, the Relentless",0.00118924
+UG,lost,Wandertale Mentor,0.00003792
+UG,lost,Warren Elder,0.00000930
+UG,lost,Warren Warleader,0.00003037
+UG,lost,Waterspout Warden,0.01851159
+UG,lost,Wax-Wane Witness,0.00000465
+UG,lost,Wear Down,0.00037259
+UG,lost,Whiskerquill Scribe,0.00000465
+UG,lost,Whiskervale Forerunner,0.00017229
+UG,lost,Wick's Patrol,0.00007644
+UG,lost,"Wick, the Whorled Mind",0.00007101
+UG,lost,Wishing Well,0.00012327
+UG,lost,"Ygra, Eater of All",0.00074033
+UG,lost,"Zoraline, Cosmos Caller",0.00001092
+UG,won,Agate Assault,0.00012710
+UG,won,Alania's Pathmaker,0.00001437
+UG,won,"Alania, Divergent Storm",0.00008107
+UG,won,Azure Beastbinder,0.00547136
+UG,won,Bakersbane Duo,0.02070935
+UG,won,Bandit's Talent,0.00001210
+UG,won,Banishing Light,0.00039539
+UG,won,Bark-Knuckle Boxer,0.00638260
+UG,won,Barkform Harvester,0.00201446
+UG,won,Bellowing Crier,0.02527276
+UG,won,"Beza, the Bounding Spring",0.00003106
+UG,won,Blacksmith's Talent,0.00001448
+UG,won,Blooming Blast,0.00002219
+UG,won,Bonebind Orator,0.00003608
+UG,won,Bonecache Overseer,0.00001257
+UG,won,Brambleguard Captain,0.00000132
+UG,won,Brambleguard Veteran,0.00563463
+UG,won,Brightblade Stoat,0.00001135
+UG,won,Builder's Talent,0.00005915
+UG,won,Bumbleflower's Sharepot,0.00163526
+UG,won,Burrowguard Mentor,0.00009287
+UG,won,Bushy Bodyguard,0.00421823
+UG,won,Byway Barterer,0.00001198
+UG,won,Cache Grab,0.01090170
+UG,won,Calamitous Tide,0.00791014
+UG,won,"Camellia, the Seedmiser",0.00016745
+UG,won,Caretaker's Talent,0.00000960
+UG,won,Carrot Cake,0.00002231
+UG,won,Cindering Cutthroat,0.00000519
+UG,won,"Clement, the Worrywort",0.01076185
+UG,won,Clifftop Lookout,0.01150946
+UG,won,Coiling Rebirth,0.00002480
+UG,won,Conduct Electricity,0.00006332
+UG,won,Consumed by Greed,0.00001445
+UG,won,Corpseberry Cultivator,0.00193626
+UG,won,Crumb and Get It,0.00001225
+UG,won,Curious Forager,0.00680805
+UG,won,Daggerfang Duo,0.00000546
+UG,won,Daring Waverider,0.00725967
+UG,won,Darkstar Augur,0.00006575
+UG,won,Dawn's Truce,0.00000260
+UG,won,Dazzling Denial,0.01200123
+UG,won,Dewdrop Cure,0.00000781
+UG,won,Dire Downdraft,0.02545890
+UG,won,Dour Port-Mage,0.00944158
+UG,won,Downwind Ambusher,0.00026519
+UG,won,"Dragonhawk, Fate's Tempest",0.00006693
+UG,won,Dreamdew Entrancer,0.01280966
+UG,won,Driftgloom Coyote,0.00001331
+UG,won,Druid of the Spade,0.00128887
+UG,won,Early Winter,0.00022921
+UG,won,Eddymurk Crab,0.00641740
+UG,won,"Eluge, the Shoreless Sea",0.00082695
+UG,won,Emberheart Challenger,0.00000127
+UG,won,Fabled Passage,0.00208227
+UG,won,Feather of Flight,0.00000552
+UG,won,Fecund Greenshell,0.00514439
+UG,won,Feed the Cycle,0.00017829
+UG,won,Fell,0.00035472
+UG,won,Finch Formation,0.00871095
+UG,won,"Finneas, Ace Archer",0.00002679
+UG,won,For the Common Good,0.00006098
+UG,won,Fountainport,0.00160512
+UG,won,Fountainport Bell,0.00612184
+UG,won,Galewind Moose,0.01033967
+UG,won,"Glarb, Calamity's Augur",0.00210213
+UG,won,Glidedive Duo,0.00011932
+UG,won,Gossip's Talent,0.00571491
+UG,won,Hazardroot Herbalist,0.00095750
+UG,won,Hazel's Nocturne,0.00016448
+UG,won,Head of the Homestead,0.00648893
+UG,won,Heaped Harvest,0.00740581
+UG,won,Hearthborn Battler,0.00000543
+UG,won,Heirloom Epic,0.00036688
+UG,won,"Helga, Skittish Seer",0.00099470
+UG,won,Hidden Grotto,0.00876316
+UG,won,High Stride,0.00534089
+UG,won,Hivespine Wolverine,0.00955323
+UG,won,Honored Dreyleader,0.00064699
+UG,won,Hop to It,0.00000382
+UG,won,"Hugs, Grisly Guardian",0.00002052
+UG,won,Hunter's Talent,0.01175190
+UG,won,Huskburster Swarm,0.00006832
+UG,won,Innkeeper's Talent,0.00402672
+UG,won,Into the Flood Maw,0.00754785
+UG,won,Intrepid Rabbit,0.00002982
+UG,won,Iridescent Vinelasher,0.00003104
+UG,won,Jackdaw Savior,0.00004293
+UG,won,Jolly Gerbils,0.00000576
+UG,won,Junkblade Bruiser,0.00197023
+UG,won,"Kastral, the Windcrested",0.00140241
+UG,won,Keen-Eyed Curator,0.00365687
+UG,won,Kindlespark Duo,0.00000591
+UG,won,Kitnap,0.00582065
+UG,won,"Kitsa, Otterball Elite",0.00200227
+UG,won,Knightfisher,0.00563908
+UG,won,Ledger Shredder,0.00052148
+UG,won,Lifecreed Duo,0.00001339
+UG,won,Lightshell Duo,0.00766909
+UG,won,Lilypad Village,0.00705066
+UG,won,Lilysplash Mentor,0.02829316
+UG,won,Long River Lurker,0.02354088
+UG,won,Long River's Pull,0.00495598
+UG,won,Longstalk Brawl,0.02522964
+UG,won,"Lumra, Bellow of the Woods",0.00183455
+UG,won,Lupinflower Village,0.00000771
+UG,won,Mabel's Mettle,0.00000828
+UG,won,"Mabel, Heir to Cragflame",0.00000132
+UG,won,"Maha, Its Feathers Night",0.00005023
+UG,won,Manifold Mouse,0.00000794
+UG,won,Mind Drill Assailant,0.00107865
+UG,won,Mind Spiral,0.00867343
+UG,won,Mindwhisker,0.00975912
+UG,won,Mistbreath Elder,0.00761736
+UG,won,Mockingbird,0.00541748
+UG,won,Moonstone Harbinger,0.00000403
+UG,won,Mudflat Village,0.00004193
+UG,won,"Muerra, Trash Tactician",0.00014688
+UG,won,Nightwhorl Hermit,0.00197613
+UG,won,Nocturnal Hunger,0.00073064
+UG,won,Oakhollow Village,0.00683644
+UG,won,Osteomancer Adept,0.00008781
+UG,won,Otterball Antics,0.00153484
+UG,won,Overprotect,0.01041830
+UG,won,Parting Gust,0.00000521
+UG,won,Patchwork Banner,0.00661964
+UG,won,Pawpatch Formation,0.00538183
+UG,won,Pawpatch Recruit,0.00347123
+UG,won,Pearl of Wisdom,0.00568009
+UG,won,Peerless Recycling,0.00287633
+UG,won,Persistent Marshstalker,0.00002897
+UG,won,Pileated Provisioner,0.00005936
+UG,won,Plumecreed Escort,0.01299663
+UG,won,Plumecreed Mentor,0.00045201
+UG,won,Polliwallop,0.04125113
+UG,won,Pond Prophet,0.05664741
+UG,won,Portent of Calamity,0.00076937
+UG,won,Psychic Whorl,0.00000270
+UG,won,Quaketusk Boar,0.00000127
+UG,won,Rabid Gnaw,0.00003500
+UG,won,"Ral, Crackling Wit",0.00053422
+UG,won,Repel Calamity,0.00007349
+UG,won,Rockface Village,0.00001577
+UG,won,Rottenmouth Viper,0.00053864
+UG,won,Roughshod Duo,0.00000535
+UG,won,Run Away Together,0.02499012
+UG,won,Rust-Shield Rampager,0.00644911
+UG,won,Ruthless Negotiation,0.00000685
+UG,won,Salvation Swan,0.00046460
+UG,won,Savor,0.00036555
+UG,won,Sazacap's Brew,0.00000576
+UG,won,Scales of Shale,0.00000720
+UG,won,Scavenger's Talent,0.00003621
+UG,won,Scrapshooter,0.00369945
+UG,won,Season of Gathering,0.00202139
+UG,won,Season of Loss,0.00007717
+UG,won,Season of Weaving,0.00344249
+UG,won,Season of the Bold,0.00000526
+UG,won,Season of the Burrow,0.00001709
+UG,won,Seasoned Warrenguard,0.00000245
+UG,won,Seedpod Squire,0.00364955
+UG,won,Shore Up,0.01860146
+UG,won,Shoreline Looter,0.01480502
+UG,won,Short Bow,0.00064776
+UG,won,Shrike Force,0.00001027
+UG,won,Sinister Monolith,0.00000138
+UG,won,Skyskipper Duo,0.03055880
+UG,won,Sonar Strike,0.00001566
+UG,won,Spellgyre,0.00632257
+UG,won,Splash Lasher,0.02026421
+UG,won,Splash Portal,0.01501302
+UG,won,Star Charter,0.00000132
+UG,won,Starfall Invocation,0.00007334
+UG,won,Starforged Sword,0.00034774
+UG,won,Starlit Soothsayer,0.00000255
+UG,won,Stickytongue Sentinel,0.04061236
+UG,won,Stocking the Pantry,0.00153045
+UG,won,Stormcatch Mentor,0.00000276
+UG,won,Stormchaser's Talent,0.00274375
+UG,won,Stormsplitter,0.00001052
+UG,won,Sugar Coat,0.01151112
+UG,won,Sunshower Druid,0.03603665
+UG,won,Sword of Fire and Ice,0.00027228
+UG,won,Swords to Plowshares,0.00004586
+UG,won,Take Out the Trash,0.00014119
+UG,won,Tangle Tumbler,0.00012902
+UG,won,Teapot Slinger,0.00000552
+UG,won,Tempest Angler,0.00164205
+UG,won,Tender Wildguide,0.00430919
+UG,won,Thornplate Intimidator,0.00006496
+UG,won,Thornvault Forager,0.00330220
+UG,won,Thought Shucker,0.00316234
+UG,won,Thought-Stalker Warlock,0.00029074
+UG,won,Three Tree City,0.00030658
+UG,won,Three Tree Mascot,0.00307945
+UG,won,Three Tree Rootweaver,0.01867288
+UG,won,Three Tree Scribe,0.02200965
+UG,won,Thundertrap Trainer,0.00369427
+UG,won,Tidecaller Mentor,0.00029593
+UG,won,"Toski, Bearer of Secrets",0.00026483
+UG,won,Treeguard Duo,0.02941700
+UG,won,Treetop Sentries,0.00696481
+UG,won,Uncharted Haven,0.01223808
+UG,won,Valley Flamecaller,0.00000132
+UG,won,Valley Floodcaller,0.00346914
+UG,won,Valley Mightcaller,0.00500189
+UG,won,Valley Questcaller,0.00001014
+UG,won,Valley Rotcaller,0.00001029
+UG,won,Veteran Guardmouse,0.00000265
+UG,won,Vinereap Mentor,0.00015702
+UG,won,"Vren, the Relentless",0.00119934
+UG,won,Wandertale Mentor,0.00002766
+UG,won,Warren Elder,0.00001163
+UG,won,Warren Warleader,0.00003424
+UG,won,Waterspout Warden,0.01715312
+UG,won,Wax-Wane Witness,0.00000509
+UG,won,Wear Down,0.00030065
+UG,won,Whiskerquill Scribe,0.00000127
+UG,won,Whiskervale Forerunner,0.00014792
+UG,won,Wick's Patrol,0.00008686
+UG,won,"Wick, the Whorled Mind",0.00005296
+UG,won,Wishing Well,0.00007560
+UG,won,"Ygra, Eater of All",0.00076578
+UG,won,"Zoraline, Cosmos Caller",0.00001927
+UR,lost,Agate Assault,0.03444205
+UR,lost,Alania's Pathmaker,0.02081455
+UR,lost,"Alania, Divergent Storm",0.01205264
+UR,lost,Artist's Talent,0.00416674
+UR,lost,Azure Beastbinder,0.00504492
+UR,lost,Bakersbane Duo,0.00001693
+UR,lost,Bandit's Talent,0.00000873
+UR,lost,Banishing Light,0.00011702
+UR,lost,Barkform Harvester,0.00088002
+UR,lost,Bellowing Crier,0.01059417
+UR,lost,Blacksmith's Talent,0.00367052
+UR,lost,Blooming Blast,0.01387118
+UR,lost,Brambleguard Captain,0.00216117
+UR,lost,Brazen Collector,0.00896065
+UR,lost,Builder's Talent,0.00002328
+UR,lost,Bumbleflower's Sharepot,0.00104820
+UR,lost,Byway Barterer,0.00393691
+UR,lost,Calamitous Tide,0.01110319
+UR,lost,Caretaker's Talent,0.00001803
+UR,lost,Cindering Cutthroat,0.00188526
+UR,lost,"Clement, the Worrywort",0.00002147
+UR,lost,Coiling Rebirth,0.00000419
+UR,lost,Conduct Electricity,0.01588487
+UR,lost,Coruscation Mage,0.02468060
+UR,lost,Cruelclaw's Heist,0.00001209
+UR,lost,Crumb and Get It,0.00001693
+UR,lost,Daggerfang Duo,0.00003404
+UR,lost,Daring Waverider,0.01709303
+UR,lost,Darkstar Augur,0.00007439
+UR,lost,Dazzling Denial,0.02292842
+UR,lost,Dewdrop Cure,0.00001257
+UR,lost,Dire Downdraft,0.02989571
+UR,lost,Diresight,0.00003290
+UR,lost,Dour Port-Mage,0.00315501
+UR,lost,"Dragonhawk, Fate's Tempest",0.00208218
+UR,lost,Dreamdew Entrancer,0.00030956
+UR,lost,Driftgloom Coyote,0.00000911
+UR,lost,Early Winter,0.00012122
+UR,lost,Eddymurk Crab,0.01890825
+UR,lost,"Eluge, the Shoreless Sea",0.00208019
+UR,lost,Emberheart Challenger,0.00442767
+UR,lost,Fabled Passage,0.00187981
+UR,lost,Feather of Flight,0.00001257
+UR,lost,Fecund Greenshell,0.00001209
+UR,lost,Feed the Cycle,0.00007356
+UR,lost,Fell,0.00019971
+UR,lost,Festival of Embers,0.00168511
+UR,lost,Finch Formation,0.00652081
+UR,lost,Fireglass Mentor,0.00012179
+UR,lost,Flamecache Gecko,0.00575430
+UR,lost,For the Common Good,0.00001257
+UR,lost,Fountainport,0.00142078
+UR,lost,Fountainport Bell,0.00753086
+UR,lost,Frilled Sparkshooter,0.00273033
+UR,lost,Galewind Moose,0.00001209
+UR,lost,"Gev, Scaled Scorch",0.00010190
+UR,lost,"Glarb, Calamity's Augur",0.00001122
+UR,lost,Glidedive Duo,0.00000776
+UR,lost,Gossip's Talent,0.00178096
+UR,lost,Harnesser of Storms,0.02060457
+UR,lost,Hazel's Nocturne,0.00007166
+UR,lost,Head of the Homestead,0.00001209
+UR,lost,Heaped Harvest,0.00000436
+UR,lost,Heartfire Hero,0.00384603
+UR,lost,Hearthborn Battler,0.00438920
+UR,lost,Heirloom Epic,0.00024027
+UR,lost,"Helga, Skittish Seer",0.00001179
+UR,lost,Hidden Grotto,0.00656214
+UR,lost,Hired Claw,0.00320908
+UR,lost,Hoarder's Overflow,0.00120967
+UR,lost,Hop to It,0.00001209
+UR,lost,"Hugs, Grisly Guardian",0.00000436
+UR,lost,Hunter's Talent,0.00012339
+UR,lost,Huskburster Swarm,0.00002130
+UR,lost,Innkeeper's Talent,0.00013932
+UR,lost,Into the Flood Maw,0.01302780
+UR,lost,Iridescent Vinelasher,0.00002566
+UR,lost,Jackdaw Savior,0.00006692
+UR,lost,Junkblade Bruiser,0.00093025
+UR,lost,"Kastral, the Windcrested",0.00064210
+UR,lost,Keen-Eyed Curator,0.00001309
+UR,lost,Kindlespark Duo,0.03442166
+UR,lost,Kitnap,0.00707097
+UR,lost,"Kitsa, Otterball Elite",0.00448441
+UR,lost,Knightfisher,0.00450270
+UR,lost,Ledger Shredder,0.00080262
+UR,lost,Lightshell Duo,0.02449666
+UR,lost,Lilypad Village,0.00541368
+UR,lost,Lilysplash Mentor,0.00013567
+UR,lost,Long River Lurker,0.00407376
+UR,lost,Long River's Pull,0.00788179
+UR,lost,Longstalk Brawl,0.00003342
+UR,lost,Lupinflower Village,0.00002245
+UR,lost,Mabel's Mettle,0.00001257
+UR,lost,"Mabel, Heir to Cragflame",0.00019983
+UR,lost,"Maha, Its Feathers Night",0.00002619
+UR,lost,Manifold Mouse,0.00150760
+UR,lost,Might of the Meek,0.01887639
+UR,lost,Mind Drill Assailant,0.00233410
+UR,lost,Mind Spiral,0.01631103
+UR,lost,Mindwhisker,0.00952391
+UR,lost,Mockingbird,0.00464453
+UR,lost,Mouse Trapper,0.00001257
+UR,lost,Mudflat Village,0.00001257
+UR,lost,"Muerra, Trash Tactician",0.00005137
+UR,lost,Nightwhorl Hermit,0.00371436
+UR,lost,Nocturnal Hunger,0.00043949
+UR,lost,Osteomancer Adept,0.00000913
+UR,lost,Otterball Antics,0.02476989
+UR,lost,Overprotect,0.00001257
+UR,lost,Patchwork Banner,0.00275868
+UR,lost,Pearl of Wisdom,0.04397696
+UR,lost,Peerless Recycling,0.00001179
+UR,lost,Persistent Marshstalker,0.00000776
+UR,lost,Playful Shove,0.01504162
+UR,lost,Plumecreed Escort,0.01191209
+UR,lost,Plumecreed Mentor,0.00009295
+UR,lost,Polliwallop,0.00005032
+UR,lost,Pond Prophet,0.00588640
+UR,lost,Portent of Calamity,0.00207518
+UR,lost,Psychic Whorl,0.00001292
+UR,lost,Quaketusk Boar,0.00829560
+UR,lost,Rabid Gnaw,0.01294288
+UR,lost,Raccoon Rallier,0.00397608
+UR,lost,"Ral, Crackling Wit",0.00809134
+UR,lost,Ravine Raider,0.00000455
+UR,lost,Repel Calamity,0.00003581
+UR,lost,Reptilian Recruiter,0.00131367
+UR,lost,Rockface Village,0.00408293
+UR,lost,Rottenmouth Viper,0.00015288
+UR,lost,Roughshod Duo,0.00433725
+UR,lost,Run Away Together,0.01329594
+UR,lost,Ruthless Negotiation,0.00002575
+UR,lost,Salvation Swan,0.00011683
+UR,lost,Savor,0.00019182
+UR,lost,Sazacap's Brew,0.01532603
+UR,lost,Scales of Shale,0.00002002
+UR,lost,Scavenger's Talent,0.00001309
+UR,lost,Season of Loss,0.00002518
+UR,lost,Season of Weaving,0.00296499
+UR,lost,Season of the Bold,0.00280264
+UR,lost,Seedglaive Mentor,0.00003585
+UR,lost,Seedpod Squire,0.00334183
+UR,lost,Shore Up,0.02744605
+UR,lost,Shoreline Looter,0.01497680
+UR,lost,Short Bow,0.00092219
+UR,lost,Skyskipper Duo,0.00410344
+UR,lost,Sonar Strike,0.00003360
+UR,lost,Spellgyre,0.01205640
+UR,lost,Splash Lasher,0.00938123
+UR,lost,Splash Portal,0.00579067
+UR,lost,Starfall Invocation,0.00003806
+UR,lost,Starforged Sword,0.00048193
+UR,lost,Stargaze,0.00001309
+UR,lost,Steampath Charger,0.00641308
+UR,lost,Stormcatch Mentor,0.02891590
+UR,lost,Stormchaser's Talent,0.01023377
+UR,lost,Stormsplitter,0.00251325
+UR,lost,Sugar Coat,0.01217069
+UR,lost,Sunspine Lynx,0.00271966
+UR,lost,Sword of Fire and Ice,0.00016902
+UR,lost,Swords to Plowshares,0.00001309
+UR,lost,Take Out the Trash,0.03814403
+UR,lost,Tangle Tumbler,0.00008427
+UR,lost,Teapot Slinger,0.00521069
+UR,lost,Tempest Angler,0.05255158
+UR,lost,Tender Wildguide,0.00002676
+UR,lost,The Infamous Cruelclaw,0.00031908
+UR,lost,Thornplate Intimidator,0.00000455
+UR,lost,Thought Shucker,0.00568778
+UR,lost,Thought-Stalker Warlock,0.00012658
+UR,lost,Three Tree City,0.00026212
+UR,lost,Three Tree Mascot,0.00196753
+UR,lost,Three Tree Rootweaver,0.00000838
+UR,lost,Thundertrap Trainer,0.00806529
+UR,lost,Tidecaller Mentor,0.00013452
+UR,lost,Treeguard Duo,0.00002182
+UR,lost,Uncharted Haven,0.00898493
+UR,lost,Valley Flamecaller,0.00503144
+UR,lost,Valley Floodcaller,0.00882837
+UR,lost,Valley Questcaller,0.00001257
+UR,lost,Valley Rally,0.00237392
+UR,lost,Valley Rotcaller,0.00001257
+UR,lost,Veteran Guardmouse,0.00097848
+UR,lost,"Vren, the Relentless",0.00070451
+UR,lost,Wandertale Mentor,0.00002328
+UR,lost,War Squeak,0.00224611
+UR,lost,Warren Warleader,0.00001257
+UR,lost,Waterspout Warden,0.00278733
+UR,lost,Whiskerquill Scribe,0.00388112
+UR,lost,Whiskervale Forerunner,0.00005032
+UR,lost,"Wick, the Whorled Mind",0.00018140
+UR,lost,Wildfire Howl,0.01022834
+UR,lost,Wishing Well,0.00200242
+UR,won,Agate Assault,0.03538823
+UR,won,Alania's Pathmaker,0.02049412
+UR,won,"Alania, Divergent Storm",0.01164558
+UR,won,Artist's Talent,0.00368756
+UR,won,Azure Beastbinder,0.00544510
+UR,won,Bakersbane Duo,0.00001652
+UR,won,Bandit's Talent,0.00000851
+UR,won,Banishing Light,0.00012710
+UR,won,Barkform Harvester,0.00092091
+UR,won,Bellowing Crier,0.00932773
+UR,won,Blacksmith's Talent,0.00338126
+UR,won,Blooming Blast,0.01432954
+UR,won,Brambleguard Captain,0.00201506
+UR,won,Brazen Collector,0.00918215
+UR,won,Bumbleflower's Sharepot,0.00078397
+UR,won,Byway Barterer,0.00431497
+UR,won,Calamitous Tide,0.01141947
+UR,won,Caretaker's Talent,0.00001758
+UR,won,Cindering Cutthroat,0.00195300
+UR,won,"Clement, the Worrywort",0.00002537
+UR,won,Coiling Rebirth,0.00000409
+UR,won,Conduct Electricity,0.01522628
+UR,won,Coruscation Mage,0.02500128
+UR,won,Crumb and Get It,0.00000817
+UR,won,Daggerfang Duo,0.00001243
+UR,won,Daring Waverider,0.01770533
+UR,won,Darkstar Augur,0.00004866
+UR,won,Dazzling Denial,0.02363158
+UR,won,Dewdrop Cure,0.00000409
+UR,won,Dire Downdraft,0.03180973
+UR,won,Diresight,0.00003209
+UR,won,Dour Port-Mage,0.00301455
+UR,won,"Dragonhawk, Fate's Tempest",0.00231458
+UR,won,Dreamdew Entrancer,0.00038840
+UR,won,Driftgloom Coyote,0.00001777
+UR,won,Early Winter,0.00005979
+UR,won,Eddymurk Crab,0.02012126
+UR,won,"Eluge, the Shoreless Sea",0.00212867
+UR,won,Emberheart Challenger,0.00503585
+UR,won,Fabled Passage,0.00182873
+UR,won,Feather of Flight,0.00000409
+UR,won,Fecund Greenshell,0.00000393
+UR,won,Feed the Cycle,0.00003868
+UR,won,Fell,0.00017597
+UR,won,Festival of Embers,0.00147818
+UR,won,Finch Formation,0.00560131
+UR,won,Fireglass Mentor,0.00010614
+UR,won,Flamecache Gecko,0.00626275
+UR,won,For the Common Good,0.00001226
+UR,won,Fountainport,0.00125860
+UR,won,Fountainport Bell,0.00850943
+UR,won,Frilled Sparkshooter,0.00236638
+UR,won,Galewind Moose,0.00000393
+UR,won,"Gev, Scaled Scorch",0.00006287
+UR,won,"Glarb, Calamity's Augur",0.00000730
+UR,won,Glidedive Duo,0.00001936
+UR,won,Gossip's Talent,0.00121097
+UR,won,Harnesser of Storms,0.01994460
+UR,won,Hazel's Nocturne,0.00007497
+UR,won,Head of the Homestead,0.00000393
+UR,won,Heaped Harvest,0.00000426
+UR,won,Heartfire Hero,0.00339240
+UR,won,Hearthborn Battler,0.00493206
+UR,won,Heirloom Epic,0.00014695
+UR,won,"Helga, Skittish Seer",0.00000393
+UR,won,Hidden Grotto,0.00591873
+UR,won,Hired Claw,0.00361958
+UR,won,Hoarder's Overflow,0.00094769
+UR,won,"Hugs, Grisly Guardian",0.00001277
+UR,won,Hunter's Talent,0.00013339
+UR,won,Huskburster Swarm,0.00001226
+UR,won,Innkeeper's Talent,0.00015471
+UR,won,Into the Flood Maw,0.01373989
+UR,won,Iridescent Vinelasher,0.00001669
+UR,won,Jackdaw Savior,0.00000851
+UR,won,Junkblade Bruiser,0.00076005
+UR,won,"Kastral, the Windcrested",0.00061571
+UR,won,Keen-Eyed Curator,0.00000851
+UR,won,Kindlespark Duo,0.03101972
+UR,won,Kitnap,0.00729165
+UR,won,"Kitsa, Otterball Elite",0.00450602
+UR,won,Knightfisher,0.00402408
+UR,won,Ledger Shredder,0.00075975
+UR,won,Lightshell Duo,0.02417864
+UR,won,Lilypad Village,0.00520500
+UR,won,Lilysplash Mentor,0.00007065
+UR,won,Long River Lurker,0.00358906
+UR,won,Long River's Pull,0.00727808
+UR,won,Longstalk Brawl,0.00003602
+UR,won,Mabel's Mettle,0.00000409
+UR,won,"Mabel, Heir to Cragflame",0.00018575
+UR,won,"Maha, Its Feathers Night",0.00000426
+UR,won,Manifold Mouse,0.00145155
+UR,won,Might of the Meek,0.01962152
+UR,won,Mind Drill Assailant,0.00197946
+UR,won,Mind Spiral,0.01629386
+UR,won,Mindwhisker,0.01052908
+UR,won,Mockingbird,0.00469827
+UR,won,Mouse Trapper,0.00000409
+UR,won,Mudflat Village,0.00001635
+UR,won,"Muerra, Trash Tactician",0.00003733
+UR,won,Nightwhorl Hermit,0.00330823
+UR,won,Nocturnal Hunger,0.00038657
+UR,won,Osteomancer Adept,0.00000464
+UR,won,Otterball Antics,0.02578391
+UR,won,Overprotect,0.00000409
+UR,won,Patchwork Banner,0.00274976
+UR,won,Pearl of Wisdom,0.04685780
+UR,won,Peerless Recycling,0.00001179
+UR,won,Persistent Marshstalker,0.00001514
+UR,won,Playful Shove,0.01618141
+UR,won,Plumecreed Escort,0.01239895
+UR,won,Plumecreed Mentor,0.00005809
+UR,won,Polliwallop,0.00006937
+UR,won,Pond Prophet,0.00525344
+UR,won,Portent of Calamity,0.00193782
+UR,won,Psychic Whorl,0.00000851
+UR,won,Quaketusk Boar,0.00822568
+UR,won,Rabid Gnaw,0.01450702
+UR,won,Raccoon Rallier,0.00337135
+UR,won,"Ral, Crackling Wit",0.00875738
+UR,won,Ravine Raider,0.00000444
+UR,won,Repel Calamity,0.00001150
+UR,won,Reptilian Recruiter,0.00093887
+UR,won,Rockface Village,0.00347234
+UR,won,Rottenmouth Viper,0.00010838
+UR,won,Roughshod Duo,0.00348194
+UR,won,Run Away Together,0.01127469
+UR,won,Ruthless Negotiation,0.00002089
+UR,won,Salvation Swan,0.00010064
+UR,won,Savor,0.00017304
+UR,won,Sazacap's Brew,0.01504354
+UR,won,Scales of Shale,0.00001953
+UR,won,Scavenger's Talent,0.00000426
+UR,won,Season of Loss,0.00001244
+UR,won,Season of Weaving,0.00308462
+UR,won,Season of the Bold,0.00297063
+UR,won,Seedglaive Mentor,0.00001544
+UR,won,Seedpod Squire,0.00273254
+UR,won,Shore Up,0.02716658
+UR,won,Shoreline Looter,0.01693672
+UR,won,Short Bow,0.00084165
+UR,won,Skyskipper Duo,0.00342799
+UR,won,Sonar Strike,0.00004635
+UR,won,Spellgyre,0.01184714
+UR,won,Splash Lasher,0.00978598
+UR,won,Splash Portal,0.00511006
+UR,won,Starfall Invocation,0.00002534
+UR,won,Starforged Sword,0.00027639
+UR,won,Stargaze,0.00000426
+UR,won,Steampath Charger,0.00527673
+UR,won,Stormcatch Mentor,0.02915279
+UR,won,Stormchaser's Talent,0.01134830
+UR,won,Stormsplitter,0.00198253
+UR,won,Sugar Coat,0.01210526
+UR,won,Sunspine Lynx,0.00262376
+UR,won,Sword of Fire and Ice,0.00007172
+UR,won,Swords to Plowshares,0.00001703
+UR,won,Take Out the Trash,0.04164911
+UR,won,Tangle Tumbler,0.00005500
+UR,won,Teapot Slinger,0.00451757
+UR,won,Tempest Angler,0.05129375
+UR,won,Tender Wildguide,0.00001740
+UR,won,The Infamous Cruelclaw,0.00024867
+UR,won,Thornplate Intimidator,0.00000444
+UR,won,Thought Shucker,0.00490200
+UR,won,Thought-Stalker Warlock,0.00008592
+UR,won,Three Tree City,0.00015090
+UR,won,Three Tree Mascot,0.00177414
+UR,won,Three Tree Rootweaver,0.00000787
+UR,won,Thundertrap Trainer,0.00883268
+UR,won,Tidecaller Mentor,0.00015980
+UR,won,Treeguard Duo,0.00000851
+UR,won,Uncharted Haven,0.00941369
+UR,won,Valley Flamecaller,0.00504023
+UR,won,Valley Floodcaller,0.00892188
+UR,won,Valley Questcaller,0.00001226
+UR,won,Valley Rally,0.00190396
+UR,won,Valley Rotcaller,0.00001226
+UR,won,Veteran Guardmouse,0.00074266
+UR,won,"Vren, the Relentless",0.00068339
+UR,won,Wandertale Mentor,0.00002270
+UR,won,War Squeak,0.00187534
+UR,won,Warren Warleader,0.00002452
+UR,won,Waterspout Warden,0.00226377
+UR,won,Whiskerquill Scribe,0.00393440
+UR,won,Whiskervale Forerunner,0.00006300
+UR,won,"Wick, the Whorled Mind",0.00018169
+UR,won,Wildfire Howl,0.01037986
+UR,won,Wishing Well,0.00217432
+WB,lost,Agate Assault,0.00004137
+WB,lost,Agate-Blade Assassin,0.02551102
+WB,lost,Alania's Pathmaker,0.00000464
+WB,lost,Azure Beastbinder,0.00005575
+WB,lost,Bakersbane Duo,0.00001632
+WB,lost,Bandit's Talent,0.00557615
+WB,lost,Banishing Light,0.02467986
+WB,lost,Barkform Harvester,0.00183193
+WB,lost,"Baylen, the Haymaker",0.00000643
+WB,lost,Bellowing Crier,0.00000668
+WB,lost,"Beza, the Bounding Spring",0.00203055
+WB,lost,Blacksmith's Talent,0.00005811
+WB,lost,Blooming Blast,0.00001153
+WB,lost,Bonebind Orator,0.02119478
+WB,lost,Bonecache Overseer,0.00153468
+WB,lost,Brambleguard Captain,0.00001023
+WB,lost,Brave-Kin Duo,0.00472252
+WB,lost,Brazen Collector,0.00000482
+WB,lost,Brightblade Stoat,0.01172941
+WB,lost,Builder's Talent,0.00523676
+WB,lost,Bumbleflower's Sharepot,0.00436187
+WB,lost,Burrowguard Mentor,0.00010780
+WB,lost,Bushy Bodyguard,0.00000650
+WB,lost,Byway Barterer,0.00002435
+WB,lost,Cache Grab,0.00001017
+WB,lost,"Camellia, the Seedmiser",0.00013091
+WB,lost,Caretaker's Talent,0.00188886
+WB,lost,Carrot Cake,0.02794060
+WB,lost,Cindering Cutthroat,0.00584600
+WB,lost,Clifftop Lookout,0.00000522
+WB,lost,Coiling Rebirth,0.00259026
+WB,lost,Conduct Electricity,0.00002231
+WB,lost,Consumed by Greed,0.01083226
+WB,lost,Corpseberry Cultivator,0.00180811
+WB,lost,Coruscation Mage,0.00001445
+WB,lost,Cruelclaw's Heist,0.00240296
+WB,lost,Crumb and Get It,0.02027311
+WB,lost,Curious Forager,0.00003239
+WB,lost,Daggerfang Duo,0.01277127
+WB,lost,Darkstar Augur,0.00594836
+WB,lost,Dawn's Truce,0.00074534
+WB,lost,Dazzling Denial,0.00000464
+WB,lost,Dewdrop Cure,0.00156626
+WB,lost,Dire Downdraft,0.00002802
+WB,lost,Diresight,0.01232522
+WB,lost,Dour Port-Mage,0.00000167
+WB,lost,Downwind Ambusher,0.01210461
+WB,lost,"Dragonhawk, Fate's Tempest",0.00003587
+WB,lost,Driftgloom Coyote,0.01050644
+WB,lost,Druid of the Spade,0.00001016
+WB,lost,Early Winter,0.01172201
+WB,lost,Eddymurk Crab,0.00000675
+WB,lost,Emberheart Challenger,0.00001584
+WB,lost,Essence Channeler,0.00758746
+WB,lost,Fabled Passage,0.00151239
+WB,lost,Feather of Flight,0.00512188
+WB,lost,Fecund Greenshell,0.00005021
+WB,lost,Feed the Cycle,0.01049855
+WB,lost,Fell,0.01035697
+WB,lost,Festival of Embers,0.00000334
+WB,lost,"Finneas, Ace Archer",0.00009588
+WB,lost,Fireglass Mentor,0.00019163
+WB,lost,Flamecache Gecko,0.00000893
+WB,lost,Flowerfoot Swordmaster,0.00170686
+WB,lost,For the Common Good,0.00000161
+WB,lost,Fountainport,0.00181286
+WB,lost,Fountainport Bell,0.00698860
+WB,lost,Galewind Moose,0.00001004
+WB,lost,"Gev, Scaled Scorch",0.00023195
+WB,lost,"Glarb, Calamity's Augur",0.00001524
+WB,lost,Glidedive Duo,0.03234751
+WB,lost,Gossip's Talent,0.00001002
+WB,lost,Harnesser of Storms,0.00000149
+WB,lost,Harvestrite Host,0.00601173
+WB,lost,Hazardroot Herbalist,0.00000447
+WB,lost,Hazel's Nocturne,0.00875430
+WB,lost,Head of the Homestead,0.00947408
+WB,lost,Heaped Harvest,0.00007849
+WB,lost,Heartfire Hero,0.00000482
+WB,lost,Hearthborn Battler,0.00000830
+WB,lost,Heirloom Epic,0.00102169
+WB,lost,Hidden Grotto,0.00890272
+WB,lost,High Stride,0.00000522
+WB,lost,Hired Claw,0.00001450
+WB,lost,Hoarder's Overflow,0.00000482
+WB,lost,Hop to It,0.00666078
+WB,lost,Hunter's Talent,0.00024474
+WB,lost,Huskburster Swarm,0.00416293
+WB,lost,Innkeeper's Talent,0.00034767
+WB,lost,Into the Flood Maw,0.00000501
+WB,lost,Intrepid Rabbit,0.02379075
+WB,lost,Iridescent Vinelasher,0.00352322
+WB,lost,Jackdaw Savior,0.00455536
+WB,lost,Jolly Gerbils,0.00805733
+WB,lost,"Kastral, the Windcrested",0.00092499
+WB,lost,Kindlespark Duo,0.00000501
+WB,lost,Kitnap,0.00001981
+WB,lost,"Kitsa, Otterball Elite",0.00002130
+WB,lost,Knightfisher,0.00002134
+WB,lost,Ledger Shredder,0.00000726
+WB,lost,Lifecreed Duo,0.03995957
+WB,lost,Lightshell Duo,0.00000501
+WB,lost,Lilypad Village,0.00002109
+WB,lost,Lilysplash Mentor,0.00000482
+WB,lost,Longstalk Brawl,0.00004228
+WB,lost,"Lumra, Bellow of the Woods",0.00001808
+WB,lost,Lunar Convocation,0.00797801
+WB,lost,Lupinflower Village,0.00733144
+WB,lost,Mabel's Mettle,0.00482876
+WB,lost,"Mabel, Heir to Cragflame",0.00027865
+WB,lost,"Maha, Its Feathers Night",0.00218145
+WB,lost,Manifold Mouse,0.00003617
+WB,lost,Might of the Meek,0.00000174
+WB,lost,Mind Drill Assailant,0.00285185
+WB,lost,Mind Spiral,0.00008166
+WB,lost,Mindwhisker,0.00006616
+WB,lost,Mistbreath Elder,0.00000879
+WB,lost,Mockingbird,0.00011212
+WB,lost,Moonrise Cleric,0.04069869
+WB,lost,Moonstone Harbinger,0.01785158
+WB,lost,Mouse Trapper,0.00225164
+WB,lost,Mudflat Village,0.00845618
+WB,lost,Nettle Guard,0.01652984
+WB,lost,Nightwhorl Hermit,0.00000161
+WB,lost,Nocturnal Hunger,0.02665532
+WB,lost,Oakhollow Village,0.00001486
+WB,lost,Osteomancer Adept,0.00355472
+WB,lost,Otterball Antics,0.00000946
+WB,lost,Overprotect,0.00001524
+WB,lost,Parting Gust,0.00726279
+WB,lost,Patchwork Banner,0.00540841
+WB,lost,Pawpatch Formation,0.00000482
+WB,lost,Pawpatch Recruit,0.00004769
+WB,lost,Peerless Recycling,0.00001526
+WB,lost,Persistent Marshstalker,0.00524523
+WB,lost,Pileated Provisioner,0.00638223
+WB,lost,Playful Shove,0.00000464
+WB,lost,Plumecreed Escort,0.00002330
+WB,lost,Plumecreed Mentor,0.00058260
+WB,lost,Polliwallop,0.00004050
+WB,lost,Pond Prophet,0.00000348
+WB,lost,Portent of Calamity,0.00000464
+WB,lost,Psychic Whorl,0.00278049
+WB,lost,Quaketusk Boar,0.00001526
+WB,lost,Rabbit Response,0.00641283
+WB,lost,Rabid Gnaw,0.00001664
+WB,lost,"Ral, Crackling Wit",0.00000746
+WB,lost,Ravine Raider,0.00677732
+WB,lost,Repel Calamity,0.00831272
+WB,lost,Reptilian Recruiter,0.00000464
+WB,lost,Rockface Village,0.00004116
+WB,lost,Rottenmouth Viper,0.00193247
+WB,lost,Roughshod Duo,0.00000946
+WB,lost,Run Away Together,0.00001234
+WB,lost,Rust-Shield Rampager,0.00001933
+WB,lost,Ruthless Negotiation,0.00550098
+WB,lost,Salvation Swan,0.00381158
+WB,lost,Savor,0.02900784
+WB,lost,Sazacap's Brew,0.00000161
+WB,lost,Scales of Shale,0.01545381
+WB,lost,Scavenger's Talent,0.00222977
+WB,lost,Season of Gathering,0.00002062
+WB,lost,Season of Loss,0.00211621
+WB,lost,Season of Weaving,0.00003623
+WB,lost,Season of the Bold,0.00000501
+WB,lost,Season of the Burrow,0.00189837
+WB,lost,Seasoned Warrenguard,0.00270318
+WB,lost,Seedglaive Mentor,0.00004914
+WB,lost,Seedpod Squire,0.00562532
+WB,lost,Shore Up,0.00000501
+WB,lost,Shoreline Looter,0.00009691
+WB,lost,Short Bow,0.00183651
+WB,lost,Shrike Force,0.00668424
+WB,lost,Sinister Monolith,0.00958013
+WB,lost,Skyskipper Duo,0.00003039
+WB,lost,Sonar Strike,0.02815613
+WB,lost,Splash Lasher,0.00001695
+WB,lost,Splash Portal,0.00000482
+WB,lost,Star Charter,0.01779911
+WB,lost,Starfall Invocation,0.00483106
+WB,lost,Starforged Sword,0.00049895
+WB,lost,Stargaze,0.00576342
+WB,lost,Starlit Soothsayer,0.02570966
+WB,lost,Starscape Cleric,0.01833415
+WB,lost,Starseer Mentor,0.02314126
+WB,lost,Steampath Charger,0.00000638
+WB,lost,Stocking the Pantry,0.00000545
+WB,lost,Stormchaser's Talent,0.00000316
+WB,lost,Sugar Coat,0.00003585
+WB,lost,Sunshower Druid,0.00000946
+WB,lost,Sword of Fire and Ice,0.00019892
+WB,lost,Swords to Plowshares,0.00031085
+WB,lost,Take Out the Trash,0.00001835
+WB,lost,Tangle Tumbler,0.00089559
+WB,lost,Tender Wildguide,0.00002520
+WB,lost,The Infamous Cruelclaw,0.00021000
+WB,lost,Thistledown Players,0.00692567
+WB,lost,Thornplate Intimidator,0.01130713
+WB,lost,Thornvault Forager,0.00000649
+WB,lost,Thought-Stalker Warlock,0.01230043
+WB,lost,Three Tree City,0.00021580
+WB,lost,Three Tree Mascot,0.00480521
+WB,lost,Three Tree Rootweaver,0.00002343
+WB,lost,Thundertrap Trainer,0.00002041
+WB,lost,Tidecaller Mentor,0.00008975
+WB,lost,"Toski, Bearer of Secrets",0.00003692
+WB,lost,Treeguard Duo,0.00002409
+WB,lost,Treetop Sentries,0.00001392
+WB,lost,Uncharted Haven,0.01075683
+WB,lost,Valley Flamecaller,0.00001448
+WB,lost,Valley Floodcaller,0.00001893
+WB,lost,Valley Questcaller,0.00426607
+WB,lost,Valley Rotcaller,0.00425294
+WB,lost,Veteran Guardmouse,0.00162362
+WB,lost,Vinereap Mentor,0.00011785
+WB,lost,"Vren, the Relentless",0.00111775
+WB,lost,Warren Elder,0.02106493
+WB,lost,Warren Warleader,0.00175778
+WB,lost,Waterspout Warden,0.00000501
+WB,lost,Wax-Wane Witness,0.03205444
+WB,lost,Whiskervale Forerunner,0.00222350
+WB,lost,Wick's Patrol,0.01188362
+WB,lost,"Wick, the Whorled Mind",0.00152718
+WB,lost,Wishing Well,0.00000501
+WB,lost,"Ygra, Eater of All",0.00044361
+WB,lost,"Zoraline, Cosmos Caller",0.00967502
+WB,won,Agate Assault,0.00005405
+WB,won,Agate-Blade Assassin,0.02501165
+WB,won,Alania's Pathmaker,0.00000496
+WB,won,Azure Beastbinder,0.00003009
+WB,won,Bakersbane Duo,0.00002098
+WB,won,Bandit's Talent,0.00495075
+WB,won,Banishing Light,0.02531083
+WB,won,Barkform Harvester,0.00153283
+WB,won,"Baylen, the Haymaker",0.00000258
+WB,won,Bellowing Crier,0.00000670
+WB,won,"Beza, the Bounding Spring",0.00221368
+WB,won,Blacksmith's Talent,0.00005224
+WB,won,Bonebind Orator,0.02126661
+WB,won,Bonecache Overseer,0.00134007
+WB,won,Brambleguard Captain,0.00000955
+WB,won,Brave-Kin Duo,0.00419259
+WB,won,Brazen Collector,0.00000387
+WB,won,Brightblade Stoat,0.01217565
+WB,won,Builder's Talent,0.00513519
+WB,won,Bumbleflower's Sharepot,0.00413306
+WB,won,Burrowguard Mentor,0.00014554
+WB,won,Bushy Bodyguard,0.00000258
+WB,won,Byway Barterer,0.00001914
+WB,won,Cache Grab,0.00000134
+WB,won,"Camellia, the Seedmiser",0.00009001
+WB,won,Caretaker's Talent,0.00195369
+WB,won,Carrot Cake,0.02946612
+WB,won,Cindering Cutthroat,0.00539207
+WB,won,Clifftop Lookout,0.00000140
+WB,won,Coiling Rebirth,0.00242966
+WB,won,Conduct Electricity,0.00001372
+WB,won,Consumed by Greed,0.01098171
+WB,won,Corpseberry Cultivator,0.00154153
+WB,won,Coruscation Mage,0.00000516
+WB,won,Cruelclaw's Heist,0.00221634
+WB,won,Crumb and Get It,0.02033051
+WB,won,Curious Forager,0.00003453
+WB,won,Daggerfang Duo,0.01187360
+WB,won,Darkstar Augur,0.00636800
+WB,won,Dawn's Truce,0.00067867
+WB,won,Dazzling Denial,0.00000372
+WB,won,Dewdrop Cure,0.00138637
+WB,won,Dire Downdraft,0.00000918
+WB,won,Diresight,0.01185028
+WB,won,Dour Port-Mage,0.00000134
+WB,won,Downwind Ambusher,0.01250487
+WB,won,"Dragonhawk, Fate's Tempest",0.00002320
+WB,won,Driftgloom Coyote,0.01088064
+WB,won,Early Winter,0.01080611
+WB,won,Emberheart Challenger,0.00000754
+WB,won,Essence Channeler,0.00760899
+WB,won,Fabled Passage,0.00161279
+WB,won,Feather of Flight,0.00503771
+WB,won,Fecund Greenshell,0.00003341
+WB,won,Feed the Cycle,0.01072354
+WB,won,Fell,0.01052855
+WB,won,Festival of Embers,0.00000134
+WB,won,Finch Formation,0.00000140
+WB,won,"Finneas, Ace Archer",0.00008116
+WB,won,Fireglass Mentor,0.00016531
+WB,won,Flamecache Gecko,0.00000431
+WB,won,Flowerfoot Swordmaster,0.00153518
+WB,won,For the Common Good,0.00000258
+WB,won,Fountainport,0.00178116
+WB,won,Fountainport Bell,0.00662717
+WB,won,Galewind Moose,0.00001053
+WB,won,"Gev, Scaled Scorch",0.00019879
+WB,won,"Glarb, Calamity's Augur",0.00000547
+WB,won,Glidedive Duo,0.03270126
+WB,won,Gossip's Talent,0.00000536
+WB,won,Harnesser of Storms,0.00000838
+WB,won,Harvestrite Host,0.00642626
+WB,won,Hazardroot Herbalist,0.00000479
+WB,won,Hazel's Nocturne,0.00859835
+WB,won,Head of the Homestead,0.00967271
+WB,won,Heaped Harvest,0.00005155
+WB,won,Heartfire Hero,0.00000258
+WB,won,Hearthborn Battler,0.00000526
+WB,won,Heirloom Epic,0.00087102
+WB,won,Hidden Grotto,0.00876904
+WB,won,High Stride,0.00000559
+WB,won,Hired Claw,0.00001319
+WB,won,Hoarder's Overflow,0.00000258
+WB,won,Hop to It,0.00708218
+WB,won,Hunter's Talent,0.00027594
+WB,won,Huskburster Swarm,0.00355305
+WB,won,Innkeeper's Talent,0.00029558
+WB,won,Into the Flood Maw,0.00000402
+WB,won,Intrepid Rabbit,0.02471745
+WB,won,Iridescent Vinelasher,0.00374047
+WB,won,Jackdaw Savior,0.00470037
+WB,won,Jolly Gerbils,0.00810461
+WB,won,"Kastral, the Windcrested",0.00077027
+WB,won,Kindlespark Duo,0.00000146
+WB,won,Kitnap,0.00001353
+WB,won,"Kitsa, Otterball Elite",0.00001414
+WB,won,Knightfisher,0.00000438
+WB,won,Ledger Shredder,0.00000146
+WB,won,Lifecreed Duo,0.04097213
+WB,won,Lilypad Village,0.00001822
+WB,won,Lilysplash Mentor,0.00000516
+WB,won,Longstalk Brawl,0.00002998
+WB,won,"Lumra, Bellow of the Woods",0.00000913
+WB,won,Lunar Convocation,0.00762218
+WB,won,Lupinflower Village,0.00761704
+WB,won,Mabel's Mettle,0.00444846
+WB,won,"Mabel, Heir to Cragflame",0.00025307
+WB,won,"Maha, Its Feathers Night",0.00240760
+WB,won,Manifold Mouse,0.00003444
+WB,won,Mind Drill Assailant,0.00257194
+WB,won,Mind Spiral,0.00005058
+WB,won,Mindwhisker,0.00005509
+WB,won,Mistbreath Elder,0.00000414
+WB,won,Mockingbird,0.00008157
+WB,won,Moonrise Cleric,0.04236000
+WB,won,Moonstone Harbinger,0.01802322
+WB,won,Mouse Trapper,0.00202468
+WB,won,Mudflat Village,0.00853398
+WB,won,Nettle Guard,0.01646497
+WB,won,Nocturnal Hunger,0.02674591
+WB,won,Oakhollow Village,0.00001826
+WB,won,Osteomancer Adept,0.00387792
+WB,won,Otterball Antics,0.00000372
+WB,won,Overprotect,0.00000938
+WB,won,Parting Gust,0.00704884
+WB,won,Patchwork Banner,0.00562028
+WB,won,Pawpatch Formation,0.00000387
+WB,won,Pawpatch Recruit,0.00004471
+WB,won,Peerless Recycling,0.00000956
+WB,won,Persistent Marshstalker,0.00493293
+WB,won,Pileated Provisioner,0.00589427
+WB,won,Plumecreed Escort,0.00002525
+WB,won,Plumecreed Mentor,0.00049246
+WB,won,Polliwallop,0.00002568
+WB,won,Pond Prophet,0.00000140
+WB,won,Portent of Calamity,0.00000496
+WB,won,Psychic Whorl,0.00235419
+WB,won,Rabbit Response,0.00609151
+WB,won,Rabid Gnaw,0.00002511
+WB,won,"Ral, Crackling Wit",0.00000359
+WB,won,Ravine Raider,0.00637144
+WB,won,Repel Calamity,0.00864266
+WB,won,Reptilian Recruiter,0.00000621
+WB,won,Rockface Village,0.00003210
+WB,won,Rottenmouth Viper,0.00186105
+WB,won,Roughshod Duo,0.00001289
+WB,won,Run Away Together,0.00001008
+WB,won,Rust-Shield Rampager,0.00000994
+WB,won,Ruthless Negotiation,0.00543677
+WB,won,Salvation Swan,0.00389758
+WB,won,Savor,0.03014338
+WB,won,Sazacap's Brew,0.00000902
+WB,won,Scales of Shale,0.01498910
+WB,won,Scavenger's Talent,0.00217246
+WB,won,Season of Gathering,0.00003552
+WB,won,Season of Loss,0.00246327
+WB,won,Season of Weaving,0.00002001
+WB,won,Season of the Bold,0.00000536
+WB,won,Season of the Burrow,0.00218043
+WB,won,Seasoned Warrenguard,0.00287609
+WB,won,Seedglaive Mentor,0.00005427
+WB,won,Seedpod Squire,0.00507255
+WB,won,Shore Up,0.00000402
+WB,won,Shoreline Looter,0.00007993
+WB,won,Short Bow,0.00162264
+WB,won,Shrike Force,0.00655560
+WB,won,Sinister Monolith,0.00873679
+WB,won,Skyskipper Duo,0.00001576
+WB,won,Sonar Strike,0.02873453
+WB,won,Splash Lasher,0.00001008
+WB,won,Splash Portal,0.00000258
+WB,won,Star Charter,0.01770140
+WB,won,Starfall Invocation,0.00502067
+WB,won,Starforged Sword,0.00041898
+WB,won,Stargaze,0.00537449
+WB,won,Starlit Soothsayer,0.02365897
+WB,won,Starscape Cleric,0.01879344
+WB,won,Starseer Mentor,0.02330893
+WB,won,Stickytongue Sentinel,0.00000134
+WB,won,Stocking the Pantry,0.00000583
+WB,won,Stormchaser's Talent,0.00000656
+WB,won,Sugar Coat,0.00001735
+WB,won,Sword of Fire and Ice,0.00026129
+WB,won,Swords to Plowshares,0.00030039
+WB,won,Take Out the Trash,0.00004267
+WB,won,Tangle Tumbler,0.00089731
+WB,won,Tender Wildguide,0.00001754
+WB,won,The Infamous Cruelclaw,0.00014098
+WB,won,Thistledown Players,0.00660119
+WB,won,Thornplate Intimidator,0.01059736
+WB,won,Thornvault Forager,0.00000392
+WB,won,Thought-Stalker Warlock,0.01349291
+WB,won,Three Tree City,0.00017818
+WB,won,Three Tree Mascot,0.00437152
+WB,won,Three Tree Rootweaver,0.00001193
+WB,won,Thundertrap Trainer,0.00002585
+WB,won,Tidecaller Mentor,0.00005511
+WB,won,"Toski, Bearer of Secrets",0.00005389
+WB,won,Treeguard Duo,0.00001663
+WB,won,Treetop Sentries,0.00002095
+WB,won,Uncharted Haven,0.01069941
+WB,won,Valley Flamecaller,0.00002283
+WB,won,Valley Floodcaller,0.00002340
+WB,won,Valley Questcaller,0.00493806
+WB,won,Valley Rotcaller,0.00438544
+WB,won,Veteran Guardmouse,0.00143199
+WB,won,Vinereap Mentor,0.00010655
+WB,won,"Vren, the Relentless",0.00110860
+WB,won,Warren Elder,0.02177356
+WB,won,Warren Warleader,0.00198230
+WB,won,Waterspout Warden,0.00000670
+WB,won,Wax-Wane Witness,0.03108897
+WB,won,Whiskervale Forerunner,0.00206212
+WB,won,Wick's Patrol,0.01233820
+WB,won,"Wick, the Whorled Mind",0.00138640
+WB,won,Wishing Well,0.00000670
+WB,won,"Ygra, Eater of All",0.00051295
+WB,won,"Zoraline, Cosmos Caller",0.01100009
+WG,lost,Agate Assault,0.00011547
+WG,lost,Agate-Blade Assassin,0.00000395
+WG,lost,Alania's Pathmaker,0.00003528
+WG,lost,Azure Beastbinder,0.00002374
+WG,lost,Bakersbane Duo,0.02336120
+WG,lost,Bandit's Talent,0.00000914
+WG,lost,Banishing Light,0.02513883
+WG,lost,Bark-Knuckle Boxer,0.00869833
+WG,lost,Barkform Harvester,0.00224503
+WG,lost,"Baylen, the Haymaker",0.00223566
+WG,lost,Bellowing Crier,0.00000761
+WG,lost,"Beza, the Bounding Spring",0.00211887
+WG,lost,Blacksmith's Talent,0.00009275
+WG,lost,Blooming Blast,0.00002725
+WG,lost,Bonebind Orator,0.00001556
+WG,lost,Bonecache Overseer,0.00001293
+WG,lost,Brambleguard Captain,0.00004902
+WG,lost,Brambleguard Veteran,0.00583111
+WG,lost,Brave-Kin Duo,0.01587276
+WG,lost,Brazen Collector,0.00000127
+WG,lost,Brightblade Stoat,0.01007004
+WG,lost,Builder's Talent,0.00622953
+WG,lost,Bumbleflower's Sharepot,0.00423806
+WG,lost,Burrowguard Mentor,0.02448823
+WG,lost,Bushy Bodyguard,0.00804840
+WG,lost,Byway Barterer,0.00009836
+WG,lost,Cache Grab,0.00954885
+WG,lost,"Camellia, the Seedmiser",0.00033450
+WG,lost,Caretaker's Talent,0.00572527
+WG,lost,Carrot Cake,0.04242499
+WG,lost,Cindering Cutthroat,0.00000286
+WG,lost,"Clement, the Worrywort",0.00013716
+WG,lost,Clifftop Lookout,0.00356193
+WG,lost,Coiling Rebirth,0.00000915
+WG,lost,Conduct Electricity,0.00005835
+WG,lost,Consumed by Greed,0.00000507
+WG,lost,Corpseberry Cultivator,0.00395661
+WG,lost,Coruscation Mage,0.00001984
+WG,lost,Crumb and Get It,0.02468017
+WG,lost,Curious Forager,0.00683991
+WG,lost,Daggerfang Duo,0.00003949
+WG,lost,Daring Waverider,0.00000132
+WG,lost,Darkstar Augur,0.00009043
+WG,lost,Dawn's Truce,0.00087417
+WG,lost,Dazzling Denial,0.00001954
+WG,lost,Dewdrop Cure,0.00345943
+WG,lost,Dire Downdraft,0.00001860
+WG,lost,Diresight,0.00002176
+WG,lost,Dour Port-Mage,0.00004007
+WG,lost,Downwind Ambusher,0.00010913
+WG,lost,"Dragonhawk, Fate's Tempest",0.00003303
+WG,lost,Dreamdew Entrancer,0.00064428
+WG,lost,Driftgloom Coyote,0.01065121
+WG,lost,Druid of the Spade,0.02914008
+WG,lost,Early Winter,0.00009531
+WG,lost,Emberheart Challenger,0.00003571
+WG,lost,Essence Channeler,0.00173787
+WG,lost,Fabled Passage,0.00139072
+WG,lost,Feather of Flight,0.00840507
+WG,lost,Fecund Greenshell,0.00365615
+WG,lost,Feed the Cycle,0.00009774
+WG,lost,Fell,0.00015425
+WG,lost,Finch Formation,0.00004207
+WG,lost,"Finneas, Ace Archer",0.00905147
+WG,lost,Flamecache Gecko,0.00000401
+WG,lost,Flowerfoot Swordmaster,0.00519718
+WG,lost,For the Common Good,0.00099796
+WG,lost,Fountainport,0.00179342
+WG,lost,Fountainport Bell,0.00585891
+WG,lost,Frilled Sparkshooter,0.00000253
+WG,lost,Galewind Moose,0.00865789
+WG,lost,"Glarb, Calamity's Augur",0.00001976
+WG,lost,Glidedive Duo,0.00006301
+WG,lost,Gossip's Talent,0.00002330
+WG,lost,Harnesser of Storms,0.00001112
+WG,lost,Harvestrite Host,0.01837211
+WG,lost,Hazardroot Herbalist,0.01048071
+WG,lost,Hazel's Nocturne,0.00006533
+WG,lost,Head of the Homestead,0.04123040
+WG,lost,Heaped Harvest,0.00650755
+WG,lost,Heartfire Hero,0.00002743
+WG,lost,Hearthborn Battler,0.00001451
+WG,lost,Heirloom Epic,0.00356563
+WG,lost,"Helga, Skittish Seer",0.00032784
+WG,lost,Hidden Grotto,0.00781765
+WG,lost,High Stride,0.00918821
+WG,lost,Hired Claw,0.00000955
+WG,lost,Hivespine Wolverine,0.00785490
+WG,lost,Honored Dreyleader,0.00153106
+WG,lost,Hop to It,0.01695606
+WG,lost,"Hugs, Grisly Guardian",0.00003682
+WG,lost,Hunter's Talent,0.01064123
+WG,lost,Huskburster Swarm,0.00003227
+WG,lost,Innkeeper's Talent,0.00415212
+WG,lost,Into the Flood Maw,0.00000380
+WG,lost,Intrepid Rabbit,0.04127538
+WG,lost,Iridescent Vinelasher,0.00001087
+WG,lost,Jackdaw Savior,0.00317551
+WG,lost,Jolly Gerbils,0.00844974
+WG,lost,Junkblade Bruiser,0.00375359
+WG,lost,"Kastral, the Windcrested",0.00078660
+WG,lost,Keen-Eyed Curator,0.00376873
+WG,lost,Kitnap,0.00001795
+WG,lost,"Kitsa, Otterball Elite",0.00000775
+WG,lost,Knightfisher,0.00001517
+WG,lost,Ledger Shredder,0.00000775
+WG,lost,Lifecreed Duo,0.01200165
+WG,lost,Lightshell Duo,0.00000907
+WG,lost,Lilypad Village,0.00002108
+WG,lost,Lilysplash Mentor,0.00069863
+WG,lost,Long River Lurker,0.00002795
+WG,lost,Longstalk Brawl,0.02301908
+WG,lost,"Lumra, Bellow of the Woods",0.00164167
+WG,lost,Lunar Convocation,0.00003394
+WG,lost,Lupinflower Village,0.00768422
+WG,lost,Mabel's Mettle,0.00788656
+WG,lost,"Mabel, Heir to Cragflame",0.00068775
+WG,lost,"Maha, Its Feathers Night",0.00005619
+WG,lost,Manifold Mouse,0.00008771
+WG,lost,Might of the Meek,0.00000463
+WG,lost,Mind Drill Assailant,0.00000253
+WG,lost,Mind Spiral,0.00007708
+WG,lost,Mindwhisker,0.00002124
+WG,lost,Mistbreath Elder,0.00231877
+WG,lost,Mockingbird,0.00012149
+WG,lost,Moonrise Cleric,0.00445612
+WG,lost,Moonstone Harbinger,0.00001087
+WG,lost,Mouse Trapper,0.00493028
+WG,lost,Mudflat Village,0.00004438
+WG,lost,"Muerra, Trash Tactician",0.00020033
+WG,lost,Nettle Guard,0.02034607
+WG,lost,Nightwhorl Hermit,0.00000676
+WG,lost,Nocturnal Hunger,0.00025128
+WG,lost,Oakhollow Village,0.00841942
+WG,lost,Osteomancer Adept,0.00007305
+WG,lost,Overprotect,0.01054940
+WG,lost,Parting Gust,0.00762849
+WG,lost,Patchwork Banner,0.00799268
+WG,lost,Pawpatch Formation,0.00592506
+WG,lost,Pawpatch Recruit,0.00531377
+WG,lost,Pearl of Wisdom,0.00001044
+WG,lost,Peerless Recycling,0.00288093
+WG,lost,Pileated Provisioner,0.01082631
+WG,lost,Playful Shove,0.00000922
+WG,lost,Plumecreed Escort,0.00003043
+WG,lost,Plumecreed Mentor,0.00030707
+WG,lost,Polliwallop,0.01770789
+WG,lost,Pond Prophet,0.00585352
+WG,lost,Portent of Calamity,0.00002336
+WG,lost,Psychic Whorl,0.00000253
+WG,lost,Quaketusk Boar,0.00000973
+WG,lost,Rabbit Response,0.02749516
+WG,lost,Rabid Gnaw,0.00010038
+WG,lost,Raccoon Rallier,0.00001204
+WG,lost,"Ral, Crackling Wit",0.00001717
+WG,lost,Repel Calamity,0.00841628
+WG,lost,Reptilian Recruiter,0.00000412
+WG,lost,Rockface Village,0.00005390
+WG,lost,Rottenmouth Viper,0.00026533
+WG,lost,Roughshod Duo,0.00002404
+WG,lost,Run Away Together,0.00000798
+WG,lost,Rust-Shield Rampager,0.01340329
+WG,lost,Ruthless Negotiation,0.00000791
+WG,lost,Salvation Swan,0.00391024
+WG,lost,Savor,0.00019778
+WG,lost,Sazacap's Brew,0.00001777
+WG,lost,Scales of Shale,0.00002349
+WG,lost,Scavenger's Talent,0.00008703
+WG,lost,Scrapshooter,0.00367319
+WG,lost,Season of Gathering,0.00199595
+WG,lost,Season of Loss,0.00004547
+WG,lost,Season of Weaving,0.00001601
+WG,lost,Season of the Bold,0.00000784
+WG,lost,Season of the Burrow,0.00246846
+WG,lost,Seasoned Warrenguard,0.01389509
+WG,lost,Seedglaive Mentor,0.00015933
+WG,lost,Seedpod Squire,0.00703886
+WG,lost,Shore Up,0.00000366
+WG,lost,Shoreline Looter,0.00004124
+WG,lost,Short Bow,0.00303215
+WG,lost,Shrike Force,0.00702464
+WG,lost,Sinister Monolith,0.00002540
+WG,lost,Skyskipper Duo,0.00005411
+WG,lost,Sonar Strike,0.01527631
+WG,lost,Splash Lasher,0.00005197
+WG,lost,Splash Portal,0.00000240
+WG,lost,Star Charter,0.00268222
+WG,lost,Starfall Invocation,0.00301655
+WG,lost,Starforged Sword,0.00103188
+WG,lost,Stargaze,0.00000430
+WG,lost,Starlit Soothsayer,0.00000523
+WG,lost,Starscape Cleric,0.00000667
+WG,lost,Starseer Mentor,0.00017763
+WG,lost,Steampath Charger,0.00000127
+WG,lost,Stickytongue Sentinel,0.01611138
+WG,lost,Stocking the Pantry,0.00140850
+WG,lost,Stormchaser's Talent,0.00001248
+WG,lost,Sugar Coat,0.00005978
+WG,lost,Sunshower Druid,0.00733843
+WG,lost,Sunspine Lynx,0.00000507
+WG,lost,Sword of Fire and Ice,0.00014163
+WG,lost,Swords to Plowshares,0.00028601
+WG,lost,Take Out the Trash,0.00016879
+WG,lost,Tangle Tumbler,0.00452768
+WG,lost,Teapot Slinger,0.00001181
+WG,lost,Tender Wildguide,0.00398225
+WG,lost,The Infamous Cruelclaw,0.00000527
+WG,lost,Thistledown Players,0.01040265
+WG,lost,Thornplate Intimidator,0.00003889
+WG,lost,Thornvault Forager,0.00313958
+WG,lost,Thought Shucker,0.00000661
+WG,lost,Thought-Stalker Warlock,0.00009116
+WG,lost,Three Tree City,0.00043667
+WG,lost,Three Tree Mascot,0.00567981
+WG,lost,Three Tree Rootweaver,0.01352043
+WG,lost,Three Tree Scribe,0.00437148
+WG,lost,Thundertrap Trainer,0.00001203
+WG,lost,"Toski, Bearer of Secrets",0.00027761
+WG,lost,Treeguard Duo,0.02985170
+WG,lost,Treetop Sentries,0.00898140
+WG,lost,Uncharted Haven,0.01015902
+WG,lost,Valley Flamecaller,0.00000836
+WG,lost,Valley Mightcaller,0.00450179
+WG,lost,Valley Questcaller,0.00496233
+WG,lost,Valley Rally,0.00003640
+WG,lost,Valley Rotcaller,0.00000782
+WG,lost,Veteran Guardmouse,0.00410287
+WG,lost,Vinereap Mentor,0.00016774
+WG,lost,"Vren, the Relentless",0.00001301
+WG,lost,Wandertale Mentor,0.00011334
+WG,lost,War Squeak,0.00000659
+WG,lost,Warren Elder,0.03771561
+WG,lost,Warren Warleader,0.00287548
+WG,lost,Waterspout Warden,0.00000380
+WG,lost,Wax-Wane Witness,0.00453845
+WG,lost,Wear Down,0.00040239
+WG,lost,Whiskervale Forerunner,0.00363585
+WG,lost,Wick's Patrol,0.00002211
+WG,lost,"Wick, the Whorled Mind",0.00000824
+WG,lost,"Ygra, Eater of All",0.00051259
+WG,lost,"Zoraline, Cosmos Caller",0.00044950
+WG,won,Agate Assault,0.00010365
+WG,won,Agate-Blade Assassin,0.00000105
+WG,won,Alania's Pathmaker,0.00003690
+WG,won,Azure Beastbinder,0.00001564
+WG,won,Bakersbane Duo,0.02360101
+WG,won,Bandit's Talent,0.00001249
+WG,won,Banishing Light,0.02578512
+WG,won,Bark-Knuckle Boxer,0.00870491
+WG,won,Barkform Harvester,0.00203029
+WG,won,"Baylen, the Haymaker",0.00208183
+WG,won,Bellowing Crier,0.00001220
+WG,won,"Beza, the Bounding Spring",0.00235881
+WG,won,Blacksmith's Talent,0.00008619
+WG,won,Blooming Blast,0.00001574
+WG,won,Bonebind Orator,0.00001138
+WG,won,Bonecache Overseer,0.00000625
+WG,won,Brambleguard Captain,0.00002782
+WG,won,Brambleguard Veteran,0.00551356
+WG,won,Brave-Kin Duo,0.01488404
+WG,won,Brazen Collector,0.00000101
+WG,won,Brightblade Stoat,0.01037459
+WG,won,Builder's Talent,0.00620709
+WG,won,Bumbleflower's Sharepot,0.00380375
+WG,won,Burrowguard Mentor,0.02672370
+WG,won,Bushy Bodyguard,0.00785627
+WG,won,Byway Barterer,0.00007633
+WG,won,Cache Grab,0.00893391
+WG,won,"Camellia, the Seedmiser",0.00029111
+WG,won,Caretaker's Talent,0.00590536
+WG,won,Carrot Cake,0.04563976
+WG,won,Cindering Cutthroat,0.00000210
+WG,won,"Clement, the Worrywort",0.00011053
+WG,won,Clifftop Lookout,0.00316665
+WG,won,Conduct Electricity,0.00004051
+WG,won,Consumed by Greed,0.00001412
+WG,won,Corpseberry Cultivator,0.00343525
+WG,won,Coruscation Mage,0.00001949
+WG,won,Crumb and Get It,0.02494459
+WG,won,Curious Forager,0.00671556
+WG,won,Daggerfang Duo,0.00004184
+WG,won,Darkstar Augur,0.00010194
+WG,won,Dawn's Truce,0.00072189
+WG,won,Dazzling Denial,0.00001230
+WG,won,Dewdrop Cure,0.00311573
+WG,won,Dire Downdraft,0.00003016
+WG,won,Diresight,0.00001737
+WG,won,Dour Port-Mage,0.00004118
+WG,won,Downwind Ambusher,0.00009398
+WG,won,"Dragonhawk, Fate's Tempest",0.00001660
+WG,won,Dreamdew Entrancer,0.00067139
+WG,won,Driftgloom Coyote,0.01083365
+WG,won,Druid of the Spade,0.02900304
+WG,won,Early Winter,0.00006542
+WG,won,Emberheart Challenger,0.00002867
+WG,won,Essence Channeler,0.00164878
+WG,won,Fabled Passage,0.00137202
+WG,won,Feather of Flight,0.00869505
+WG,won,Fecund Greenshell,0.00386864
+WG,won,Feed the Cycle,0.00008919
+WG,won,Fell,0.00013898
+WG,won,Finch Formation,0.00004302
+WG,won,"Finneas, Ace Archer",0.00941082
+WG,won,Flamecache Gecko,0.00000319
+WG,won,Flowerfoot Swordmaster,0.00503932
+WG,won,For the Common Good,0.00077835
+WG,won,Fountainport,0.00176600
+WG,won,Fountainport Bell,0.00559525
+WG,won,Galewind Moose,0.00875493
+WG,won,"Glarb, Calamity's Augur",0.00001344
+WG,won,Glidedive Duo,0.00003736
+WG,won,Gossip's Talent,0.00001573
+WG,won,Harnesser of Storms,0.00000894
+WG,won,Harvestrite Host,0.01993666
+WG,won,Hazardroot Herbalist,0.01004983
+WG,won,Hazel's Nocturne,0.00005272
+WG,won,Head of the Homestead,0.04219196
+WG,won,Heaped Harvest,0.00544425
+WG,won,Heartfire Hero,0.00001619
+WG,won,Hearthborn Battler,0.00002086
+WG,won,Heirloom Epic,0.00350293
+WG,won,"Helga, Skittish Seer",0.00027649
+WG,won,Hidden Grotto,0.00746715
+WG,won,High Stride,0.00866196
+WG,won,Hired Claw,0.00001189
+WG,won,Hivespine Wolverine,0.00762143
+WG,won,Honored Dreyleader,0.00120133
+WG,won,Hop to It,0.01873153
+WG,won,"Hugs, Grisly Guardian",0.00002606
+WG,won,Hunter's Talent,0.01118563
+WG,won,Huskburster Swarm,0.00003188
+WG,won,Innkeeper's Talent,0.00457877
+WG,won,Intrepid Rabbit,0.04385484
+WG,won,Iridescent Vinelasher,0.00000323
+WG,won,Jackdaw Savior,0.00324170
+WG,won,Jolly Gerbils,0.00863806
+WG,won,Junkblade Bruiser,0.00308310
+WG,won,"Kastral, the Windcrested",0.00071250
+WG,won,Keen-Eyed Curator,0.00379849
+WG,won,Kitnap,0.00002076
+WG,won,"Kitsa, Otterball Elite",0.00000206
+WG,won,Knightfisher,0.00000542
+WG,won,Ledger Shredder,0.00000508
+WG,won,Lifecreed Duo,0.01172739
+WG,won,Lightshell Duo,0.00001243
+WG,won,Lilypad Village,0.00001048
+WG,won,Lilysplash Mentor,0.00056110
+WG,won,Long River Lurker,0.00000993
+WG,won,Longstalk Brawl,0.02263313
+WG,won,"Lumra, Bellow of the Woods",0.00157942
+WG,won,Lunar Convocation,0.00002510
+WG,won,Lupinflower Village,0.00822004
+WG,won,Mabel's Mettle,0.00761067
+WG,won,"Mabel, Heir to Cragflame",0.00069863
+WG,won,"Maha, Its Feathers Night",0.00004807
+WG,won,Manifold Mouse,0.00007736
+WG,won,Might of the Meek,0.00000834
+WG,won,Mind Drill Assailant,0.00000206
+WG,won,Mind Spiral,0.00006213
+WG,won,Mindwhisker,0.00001794
+WG,won,Mistbreath Elder,0.00219125
+WG,won,Mockingbird,0.00007064
+WG,won,Moonrise Cleric,0.00421864
+WG,won,Moonstone Harbinger,0.00000874
+WG,won,Mouse Trapper,0.00449614
+WG,won,Mudflat Village,0.00004977
+WG,won,"Muerra, Trash Tactician",0.00013880
+WG,won,Nettle Guard,0.02001668
+WG,won,Nightwhorl Hermit,0.00000543
+WG,won,Nocturnal Hunger,0.00022405
+WG,won,Oakhollow Village,0.00831689
+WG,won,Osteomancer Adept,0.00006140
+WG,won,Overprotect,0.01065162
+WG,won,Parting Gust,0.00712647
+WG,won,Patchwork Banner,0.00888235
+WG,won,Pawpatch Formation,0.00557878
+WG,won,Pawpatch Recruit,0.00542716
+WG,won,Pearl of Wisdom,0.00000831
+WG,won,Peerless Recycling,0.00264404
+WG,won,Pileated Provisioner,0.01039475
+WG,won,Playful Shove,0.00000210
+WG,won,Plumecreed Escort,0.00002326
+WG,won,Plumecreed Mentor,0.00026209
+WG,won,Polliwallop,0.01696348
+WG,won,Pond Prophet,0.00518286
+WG,won,Portent of Calamity,0.00002397
+WG,won,Psychic Whorl,0.00000206
+WG,won,Quaketusk Boar,0.00000546
+WG,won,Rabbit Response,0.02760310
+WG,won,Rabid Gnaw,0.00008235
+WG,won,Raccoon Rallier,0.00000730
+WG,won,"Ral, Crackling Wit",0.00001687
+WG,won,Repel Calamity,0.00874257
+WG,won,Reptilian Recruiter,0.00000109
+WG,won,Rockface Village,0.00002788
+WG,won,Rottenmouth Viper,0.00024072
+WG,won,Roughshod Duo,0.00002230
+WG,won,Run Away Together,0.00000749
+WG,won,Rust-Shield Rampager,0.01290703
+WG,won,Ruthless Negotiation,0.00000210
+WG,won,Salvation Swan,0.00386070
+WG,won,Savor,0.00020543
+WG,won,Sazacap's Brew,0.00002140
+WG,won,Scales of Shale,0.00001450
+WG,won,Scavenger's Talent,0.00006819
+WG,won,Scrapshooter,0.00371372
+WG,won,Season of Gathering,0.00192630
+WG,won,Season of Loss,0.00004694
+WG,won,Season of Weaving,0.00000722
+WG,won,Season of the Bold,0.00000531
+WG,won,Season of the Burrow,0.00282683
+WG,won,Seasoned Warrenguard,0.01455592
+WG,won,Seedglaive Mentor,0.00011817
+WG,won,Seedpod Squire,0.00645251
+WG,won,Shoreline Looter,0.00004219
+WG,won,Short Bow,0.00270434
+WG,won,Shrike Force,0.00728210
+WG,won,Sinister Monolith,0.00002572
+WG,won,Skyskipper Duo,0.00005982
+WG,won,Sonar Strike,0.01510002
+WG,won,Splash Lasher,0.00004475
+WG,won,Star Charter,0.00246250
+WG,won,Starfall Invocation,0.00298757
+WG,won,Starforged Sword,0.00089403
+WG,won,Stargaze,0.00000228
+WG,won,Starlit Soothsayer,0.00000202
+WG,won,Starscape Cleric,0.00000228
+WG,won,Starseer Mentor,0.00015063
+WG,won,Stickytongue Sentinel,0.01572882
+WG,won,Stocking the Pantry,0.00121610
+WG,won,Stormchaser's Talent,0.00001530
+WG,won,Sugar Coat,0.00003920
+WG,won,Sunshower Druid,0.00644815
+WG,won,Sunspine Lynx,0.00000202
+WG,won,Sword of Fire and Ice,0.00013016
+WG,won,Swords to Plowshares,0.00028499
+WG,won,Take Out the Trash,0.00015698
+WG,won,Tangle Tumbler,0.00445162
+WG,won,Teapot Slinger,0.00000835
+WG,won,Tender Wildguide,0.00413776
+WG,won,The Infamous Cruelclaw,0.00000524
+WG,won,Thistledown Players,0.00939199
+WG,won,Thornplate Intimidator,0.00002172
+WG,won,Thornvault Forager,0.00319860
+WG,won,Thought Shucker,0.00000732
+WG,won,Thought-Stalker Warlock,0.00006547
+WG,won,Three Tree City,0.00042472
+WG,won,Three Tree Mascot,0.00512148
+WG,won,Three Tree Rootweaver,0.01301154
+WG,won,Three Tree Scribe,0.00394647
+WG,won,Thundertrap Trainer,0.00000970
+WG,won,"Toski, Bearer of Secrets",0.00028166
+WG,won,Treeguard Duo,0.03062834
+WG,won,Treetop Sentries,0.00840222
+WG,won,Uncharted Haven,0.01013540
+WG,won,Valley Flamecaller,0.00000114
+WG,won,Valley Mightcaller,0.00494942
+WG,won,Valley Questcaller,0.00571900
+WG,won,Valley Rally,0.00004172
+WG,won,Valley Rotcaller,0.00000618
+WG,won,Veteran Guardmouse,0.00345623
+WG,won,Vinereap Mentor,0.00015654
+WG,won,"Vren, the Relentless",0.00001354
+WG,won,Wandertale Mentor,0.00010795
+WG,won,War Squeak,0.00000524
+WG,won,Warren Elder,0.03853314
+WG,won,Warren Warleader,0.00319666
+WG,won,Waterspout Warden,0.00000202
+WG,won,Wax-Wane Witness,0.00410443
+WG,won,Wear Down,0.00026912
+WG,won,Whiskervale Forerunner,0.00366202
+WG,won,Wick's Patrol,0.00001638
+WG,won,"Wick, the Whorled Mind",0.00000765
+WG,won,"Ygra, Eater of All",0.00052392
+WG,won,"Zoraline, Cosmos Caller",0.00043128
+WR,lost,Agate Assault,0.02113713
+WR,lost,Agate-Blade Assassin,0.00001401
+WR,lost,Alania's Pathmaker,0.01211595
+WR,lost,"Alania, Divergent Storm",0.00000633
+WR,lost,Artist's Talent,0.00018951
+WR,lost,Azure Beastbinder,0.00000633
+WR,lost,Bakersbane Duo,0.00000553
+WR,lost,Bandit's Talent,0.00001121
+WR,lost,Banishing Light,0.02412618
+WR,lost,Bark-Knuckle Boxer,0.00000202
+WR,lost,Barkform Harvester,0.00085562
+WR,lost,"Baylen, the Haymaker",0.00025718
+WR,lost,"Beza, the Bounding Spring",0.00178698
+WR,lost,Blacksmith's Talent,0.01561919
+WR,lost,Blooming Blast,0.00905766
+WR,lost,Bonebind Orator,0.00001073
+WR,lost,Bonecache Overseer,0.00000540
+WR,lost,Brambleguard Captain,0.01866869
+WR,lost,Brambleguard Veteran,0.00000617
+WR,lost,Brave-Kin Duo,0.02870415
+WR,lost,Brazen Collector,0.01197210
+WR,lost,Brightblade Stoat,0.01152963
+WR,lost,Builder's Talent,0.00204668
+WR,lost,Bumbleflower's Sharepot,0.00096757
+WR,lost,Burrowguard Mentor,0.00016265
+WR,lost,Bushy Bodyguard,0.00000583
+WR,lost,Byway Barterer,0.00458050
+WR,lost,Caretaker's Talent,0.00155894
+WR,lost,Carrot Cake,0.01678325
+WR,lost,Cindering Cutthroat,0.00633841
+WR,lost,Coiling Rebirth,0.00000533
+WR,lost,Conduct Electricity,0.00574961
+WR,lost,Corpseberry Cultivator,0.00000560
+WR,lost,Coruscation Mage,0.00586716
+WR,lost,Cruelclaw's Heist,0.00000520
+WR,lost,Crumb and Get It,0.02928802
+WR,lost,Daggerfang Duo,0.00000187
+WR,lost,Darkstar Augur,0.00002899
+WR,lost,Dawn's Truce,0.00080599
+WR,lost,Dazzling Denial,0.00000405
+WR,lost,Dewdrop Cure,0.00362410
+WR,lost,Diresight,0.00001143
+WR,lost,Downwind Ambusher,0.00002404
+WR,lost,"Dragonhawk, Fate's Tempest",0.00219192
+WR,lost,Driftgloom Coyote,0.00965514
+WR,lost,Druid of the Spade,0.00000763
+WR,lost,Early Winter,0.00000560
+WR,lost,Emberheart Challenger,0.00723164
+WR,lost,Essence Channeler,0.00116924
+WR,lost,Fabled Passage,0.00123025
+WR,lost,Feather of Flight,0.01224215
+WR,lost,Fecund Greenshell,0.00001005
+WR,lost,Feed the Cycle,0.00001772
+WR,lost,Fell,0.00004426
+WR,lost,Festival of Embers,0.00010014
+WR,lost,Finch Formation,0.00002455
+WR,lost,"Finneas, Ace Archer",0.00012046
+WR,lost,Fireglass Mentor,0.00012612
+WR,lost,Flamecache Gecko,0.00850406
+WR,lost,Flowerfoot Swordmaster,0.01950222
+WR,lost,For the Common Good,0.00000944
+WR,lost,Fountainport,0.00097520
+WR,lost,Fountainport Bell,0.00249994
+WR,lost,Frilled Sparkshooter,0.00494336
+WR,lost,Galewind Moose,0.00000998
+WR,lost,"Gev, Scaled Scorch",0.00014532
+WR,lost,Glidedive Duo,0.00003617
+WR,lost,Gossip's Talent,0.00000388
+WR,lost,Harnesser of Storms,0.00159970
+WR,lost,Harvestrite Host,0.00945509
+WR,lost,Hazardroot Herbalist,0.00001898
+WR,lost,Hazel's Nocturne,0.00000944
+WR,lost,Head of the Homestead,0.00968600
+WR,lost,Heaped Harvest,0.00000957
+WR,lost,Heartfire Hero,0.02051217
+WR,lost,Hearthborn Battler,0.00375887
+WR,lost,Heirloom Epic,0.00075254
+WR,lost,Hidden Grotto,0.00507034
+WR,lost,High Stride,0.00001194
+WR,lost,Hired Claw,0.00397553
+WR,lost,Hivespine Wolverine,0.00000801
+WR,lost,Hoarder's Overflow,0.00067149
+WR,lost,Hop to It,0.00727811
+WR,lost,"Hugs, Grisly Guardian",0.00003267
+WR,lost,Hunter's Talent,0.00022855
+WR,lost,Innkeeper's Talent,0.00038928
+WR,lost,Intrepid Rabbit,0.03366264
+WR,lost,Iridescent Vinelasher,0.00003284
+WR,lost,Jackdaw Savior,0.00355199
+WR,lost,Jolly Gerbils,0.00825904
+WR,lost,Junkblade Bruiser,0.00247167
+WR,lost,"Kastral, the Windcrested",0.00027565
+WR,lost,Kindlespark Duo,0.00292577
+WR,lost,Kitnap,0.00000633
+WR,lost,Lifecreed Duo,0.00669120
+WR,lost,Lightshell Duo,0.00001167
+WR,lost,Lilypad Village,0.00003377
+WR,lost,Long River Lurker,0.00000828
+WR,lost,Longstalk Brawl,0.00003466
+WR,lost,Lunar Convocation,0.00001322
+WR,lost,Lupinflower Village,0.00683049
+WR,lost,Mabel's Mettle,0.01350288
+WR,lost,"Mabel, Heir to Cragflame",0.01101335
+WR,lost,"Maha, Its Feathers Night",0.00002043
+WR,lost,Manifold Mouse,0.00933060
+WR,lost,Might of the Meek,0.02814385
+WR,lost,Mind Spiral,0.00000756
+WR,lost,Mindwhisker,0.00000607
+WR,lost,Mistbreath Elder,0.00000583
+WR,lost,Mockingbird,0.00002146
+WR,lost,Moonrise Cleric,0.00276568
+WR,lost,Mouse Trapper,0.01547873
+WR,lost,Mudflat Village,0.00001143
+WR,lost,"Muerra, Trash Tactician",0.00004830
+WR,lost,Nettle Guard,0.03563105
+WR,lost,Nocturnal Hunger,0.00006051
+WR,lost,Oakhollow Village,0.00002092
+WR,lost,Osteomancer Adept,0.00002224
+WR,lost,Otterball Antics,0.00001012
+WR,lost,Overprotect,0.00004514
+WR,lost,Parting Gust,0.00691504
+WR,lost,Patchwork Banner,0.00448619
+WR,lost,Pawpatch Formation,0.00000607
+WR,lost,Pawpatch Recruit,0.00009129
+WR,lost,Pearl of Wisdom,0.00000995
+WR,lost,Pileated Provisioner,0.01084376
+WR,lost,Playful Shove,0.00674865
+WR,lost,Plumecreed Escort,0.00000809
+WR,lost,Plumecreed Mentor,0.00012243
+WR,lost,Polliwallop,0.00001560
+WR,lost,Psychic Whorl,0.00000194
+WR,lost,Quaketusk Boar,0.01113223
+WR,lost,Rabbit Response,0.01153622
+WR,lost,Rabid Gnaw,0.01476677
+WR,lost,Raccoon Rallier,0.02708718
+WR,lost,"Ral, Crackling Wit",0.00016672
+WR,lost,Repel Calamity,0.00784611
+WR,lost,Reptilian Recruiter,0.00287205
+WR,lost,Rockface Village,0.01132532
+WR,lost,Rottenmouth Viper,0.00011451
+WR,lost,Roughshod Duo,0.02336498
+WR,lost,Rust-Shield Rampager,0.00000607
+WR,lost,Ruthless Negotiation,0.00000520
+WR,lost,Salvation Swan,0.00374297
+WR,lost,Savor,0.00001823
+WR,lost,Sazacap's Brew,0.01100668
+WR,lost,Scales of Shale,0.00003382
+WR,lost,Scrapshooter,0.00000617
+WR,lost,Season of Gathering,0.00000625
+WR,lost,Season of Loss,0.00002383
+WR,lost,Season of Weaving,0.00001012
+WR,lost,Season of the Bold,0.00173131
+WR,lost,Season of the Burrow,0.00197375
+WR,lost,Seasoned Warrenguard,0.00428341
+WR,lost,Seedglaive Mentor,0.02632174
+WR,lost,Seedpod Squire,0.01043452
+WR,lost,Shore Up,0.00000202
+WR,lost,Short Bow,0.00900876
+WR,lost,Shrike Force,0.00877462
+WR,lost,Sinister Monolith,0.00000583
+WR,lost,Sonar Strike,0.01101604
+WR,lost,Splash Lasher,0.00000763
+WR,lost,Star Charter,0.00154447
+WR,lost,Starfall Invocation,0.00266730
+WR,lost,Starforged Sword,0.00198304
+WR,lost,Stargaze,0.00000194
+WR,lost,Starscape Cleric,0.00001376
+WR,lost,Starseer Mentor,0.00003617
+WR,lost,Steampath Charger,0.01398571
+WR,lost,Stickytongue Sentinel,0.00000818
+WR,lost,Stormcatch Mentor,0.00001774
+WR,lost,Stormsplitter,0.00020562
+WR,lost,Sugar Coat,0.00000607
+WR,lost,Sunspine Lynx,0.00291114
+WR,lost,Sword of Fire and Ice,0.00024605
+WR,lost,Swords to Plowshares,0.00030630
+WR,lost,Take Out the Trash,0.02982387
+WR,lost,Tangle Tumbler,0.00102639
+WR,lost,Teapot Slinger,0.00505091
+WR,lost,Tempest Angler,0.00132496
+WR,lost,Tender Wildguide,0.00003220
+WR,lost,The Infamous Cruelclaw,0.00013069
+WR,lost,Thistledown Players,0.02658050
+WR,lost,Thought-Stalker Warlock,0.00005839
+WR,lost,Three Tree City,0.00023197
+WR,lost,Three Tree Mascot,0.00350204
+WR,lost,Three Tree Rootweaver,0.00001167
+WR,lost,Thundertrap Trainer,0.00000388
+WR,lost,"Toski, Bearer of Secrets",0.00001756
+WR,lost,Treeguard Duo,0.00003852
+WR,lost,Uncharted Haven,0.00648837
+WR,lost,Valley Flamecaller,0.00465793
+WR,lost,Valley Floodcaller,0.00000607
+WR,lost,Valley Mightcaller,0.00001167
+WR,lost,Valley Questcaller,0.00439470
+WR,lost,Valley Rally,0.00835890
+WR,lost,Valley Rotcaller,0.00000187
+WR,lost,Veteran Guardmouse,0.02752066
+WR,lost,Wandertale Mentor,0.00007466
+WR,lost,War Squeak,0.01102487
+WR,lost,Warren Elder,0.02341630
+WR,lost,Warren Warleader,0.00190834
+WR,lost,Wax-Wane Witness,0.00200121
+WR,lost,Whiskerquill Scribe,0.03302156
+WR,lost,Whiskervale Forerunner,0.00705092
+WR,lost,"Wick, the Whorled Mind",0.00000187
+WR,lost,Wildfire Howl,0.00107887
+WR,lost,"Zoraline, Cosmos Caller",0.00015111
+WR,won,Agate Assault,0.02131307
+WR,won,Agate-Blade Assassin,0.00001161
+WR,won,Alania's Pathmaker,0.01150296
+WR,won,"Alania, Divergent Storm",0.00001061
+WR,won,Artist's Talent,0.00012249
+WR,won,Azure Beastbinder,0.00000354
+WR,won,Bakersbane Duo,0.00000313
+WR,won,Bandit's Talent,0.00001565
+WR,won,Banishing Light,0.02403301
+WR,won,Bark-Knuckle Boxer,0.00001187
+WR,won,Barkform Harvester,0.00069478
+WR,won,"Baylen, the Haymaker",0.00021536
+WR,won,"Beza, the Bounding Spring",0.00184454
+WR,won,Blacksmith's Talent,0.01540487
+WR,won,Blooming Blast,0.00926863
+WR,won,Bonebind Orator,0.00000597
+WR,won,Bonecache Overseer,0.00000452
+WR,won,Brambleguard Captain,0.01893825
+WR,won,Brambleguard Veteran,0.00000354
+WR,won,Brave-Kin Duo,0.02848105
+WR,won,Brazen Collector,0.01205269
+WR,won,Brightblade Stoat,0.01176400
+WR,won,Builder's Talent,0.00192955
+WR,won,Bumbleflower's Sharepot,0.00084391
+WR,won,Burrowguard Mentor,0.00017298
+WR,won,Bushy Bodyguard,0.00000651
+WR,won,Byway Barterer,0.00457957
+WR,won,Caretaker's Talent,0.00155530
+WR,won,Carrot Cake,0.01665468
+WR,won,Cindering Cutthroat,0.00602374
+WR,won,Coiling Rebirth,0.00000145
+WR,won,Conduct Electricity,0.00512415
+WR,won,Corpseberry Cultivator,0.00000163
+WR,won,Coruscation Mage,0.00562500
+WR,won,Cruelclaw's Heist,0.00000581
+WR,won,Crumb and Get It,0.02942710
+WR,won,Daggerfang Duo,0.00000782
+WR,won,Darkstar Augur,0.00002724
+WR,won,Dawn's Truce,0.00058327
+WR,won,Dazzling Denial,0.00000339
+WR,won,Dewdrop Cure,0.00341914
+WR,won,Diresight,0.00000319
+WR,won,Downwind Ambusher,0.00001519
+WR,won,"Dragonhawk, Fate's Tempest",0.00240352
+WR,won,Driftgloom Coyote,0.00967754
+WR,won,Druid of the Spade,0.00000671
+WR,won,Early Winter,0.00000156
+WR,won,Emberheart Challenger,0.00769215
+WR,won,Essence Channeler,0.00104209
+WR,won,Fabled Passage,0.00128995
+WR,won,Feather of Flight,0.01300214
+WR,won,Fecund Greenshell,0.00000163
+WR,won,Feed the Cycle,0.00000658
+WR,won,Fell,0.00003069
+WR,won,Festival of Embers,0.00005802
+WR,won,Finch Formation,0.00000816
+WR,won,"Finneas, Ace Archer",0.00012068
+WR,won,Fireglass Mentor,0.00009430
+WR,won,Flamecache Gecko,0.00881847
+WR,won,Flowerfoot Swordmaster,0.01967204
+WR,won,For the Common Good,0.00000942
+WR,won,Fountainport,0.00096334
+WR,won,Fountainport Bell,0.00232970
+WR,won,Frilled Sparkshooter,0.00436271
+WR,won,Galewind Moose,0.00000877
+WR,won,"Gev, Scaled Scorch",0.00011799
+WR,won,Glidedive Duo,0.00002970
+WR,won,Harnesser of Storms,0.00134036
+WR,won,Harvestrite Host,0.01007019
+WR,won,Hazardroot Herbalist,0.00001903
+WR,won,Hazel's Nocturne,0.00000490
+WR,won,Head of the Homestead,0.00967700
+WR,won,Heaped Harvest,0.00000990
+WR,won,Heartfire Hero,0.02214991
+WR,won,Hearthborn Battler,0.00366780
+WR,won,Heirloom Epic,0.00064186
+WR,won,Hidden Grotto,0.00499602
+WR,won,High Stride,0.00001136
+WR,won,Hired Claw,0.00409537
+WR,won,Hivespine Wolverine,0.00000339
+WR,won,Hoarder's Overflow,0.00041009
+WR,won,Hop to It,0.00730732
+WR,won,"Hugs, Grisly Guardian",0.00002555
+WR,won,Hunter's Talent,0.00016525
+WR,won,Innkeeper's Talent,0.00036708
+WR,won,Intrepid Rabbit,0.03529528
+WR,won,Iridescent Vinelasher,0.00001465
+WR,won,Jackdaw Savior,0.00359784
+WR,won,Jolly Gerbils,0.00792772
+WR,won,Junkblade Bruiser,0.00227788
+WR,won,"Kastral, the Windcrested",0.00023120
+WR,won,Keen-Eyed Curator,0.00000452
+WR,won,Kindlespark Duo,0.00239204
+WR,won,Kitnap,0.00000354
+WR,won,Lifecreed Duo,0.00605198
+WR,won,Lightshell Duo,0.00001122
+WR,won,Lilypad Village,0.00001440
+WR,won,Long River Lurker,0.00001224
+WR,won,Longstalk Brawl,0.00002963
+WR,won,Lunar Convocation,0.00000460
+WR,won,Lupinflower Village,0.00714123
+WR,won,Mabel's Mettle,0.01353466
+WR,won,"Mabel, Heir to Cragflame",0.01270578
+WR,won,"Maha, Its Feathers Night",0.00000509
+WR,won,Manifold Mouse,0.01117658
+WR,won,Might of the Meek,0.02827142
+WR,won,Mind Spiral,0.00001187
+WR,won,Mistbreath Elder,0.00000651
+WR,won,Mockingbird,0.00002411
+WR,won,Moonrise Cleric,0.00233295
+WR,won,Mouse Trapper,0.01508967
+WR,won,Mudflat Village,0.00000626
+WR,won,"Muerra, Trash Tactician",0.00003551
+WR,won,Nettle Guard,0.03633276
+WR,won,Nocturnal Hunger,0.00003926
+WR,won,Oakhollow Village,0.00001427
+WR,won,Osteomancer Adept,0.00002309
+WR,won,Otterball Antics,0.00000509
+WR,won,Overprotect,0.00003769
+WR,won,Parting Gust,0.00656538
+WR,won,Patchwork Banner,0.00477979
+WR,won,Pawpatch Formation,0.00000339
+WR,won,Pawpatch Recruit,0.00008772
+WR,won,Pearl of Wisdom,0.00000170
+WR,won,Pileated Provisioner,0.01067522
+WR,won,Playful Shove,0.00649559
+WR,won,Plumecreed Escort,0.00000678
+WR,won,Plumecreed Mentor,0.00016791
+WR,won,Polliwallop,0.00001747
+WR,won,Quaketusk Boar,0.01124369
+WR,won,Rabbit Response,0.01112270
+WR,won,Rabid Gnaw,0.01612538
+WR,won,Raccoon Rallier,0.02666596
+WR,won,"Ral, Crackling Wit",0.00012954
+WR,won,Repel Calamity,0.00792634
+WR,won,Reptilian Recruiter,0.00246086
+WR,won,Rockface Village,0.01169717
+WR,won,Rottenmouth Viper,0.00013349
+WR,won,Roughshod Duo,0.02349192
+WR,won,Rust-Shield Rampager,0.00000170
+WR,won,Ruthless Negotiation,0.00000291
+WR,won,Salvation Swan,0.00393461
+WR,won,Savor,0.00001379
+WR,won,Sazacap's Brew,0.01004373
+WR,won,Scales of Shale,0.00004643
+WR,won,Scrapshooter,0.00000354
+WR,won,Season of Gathering,0.00000877
+WR,won,Season of Loss,0.00000966
+WR,won,Season of Weaving,0.00000848
+WR,won,Season of the Bold,0.00167383
+WR,won,Season of the Burrow,0.00209486
+WR,won,Seasoned Warrenguard,0.00424408
+WR,won,Seedglaive Mentor,0.02638832
+WR,won,Seedpod Squire,0.01059916
+WR,won,Shore Up,0.00000170
+WR,won,Short Bow,0.00906061
+WR,won,Shrike Force,0.00887513
+WR,won,Sinister Monolith,0.00000488
+WR,won,Sonar Strike,0.01043758
+WR,won,Star Charter,0.00138256
+WR,won,Starfall Invocation,0.00245345
+WR,won,Starforged Sword,0.00171286
+WR,won,Stargaze,0.00000163
+WR,won,Starscape Cleric,0.00001930
+WR,won,Starseer Mentor,0.00002253
+WR,won,Steampath Charger,0.01318296
+WR,won,Stickytongue Sentinel,0.00001039
+WR,won,Stormcatch Mentor,0.00001122
+WR,won,Stormsplitter,0.00012915
+WR,won,Sugar Coat,0.00000170
+WR,won,Sunspine Lynx,0.00272234
+WR,won,Sword of Fire and Ice,0.00031025
+WR,won,Swords to Plowshares,0.00030072
+WR,won,Take Out the Trash,0.03135460
+WR,won,Tangle Tumbler,0.00092376
+WR,won,Teapot Slinger,0.00456268
+WR,won,Tempest Angler,0.00097101
+WR,won,Tender Wildguide,0.00002799
+WR,won,The Infamous Cruelclaw,0.00010180
+WR,won,Thistledown Players,0.02603446
+WR,won,Thornvault Forager,0.00000170
+WR,won,Thought-Stalker Warlock,0.00003389
+WR,won,Three Tree City,0.00021514
+WR,won,Three Tree Mascot,0.00339176
+WR,won,Three Tree Rootweaver,0.00001122
+WR,won,"Toski, Bearer of Secrets",0.00000658
+WR,won,Treeguard Duo,0.00003956
+WR,won,Uncharted Haven,0.00643465
+WR,won,Valley Flamecaller,0.00471923
+WR,won,Valley Floodcaller,0.00000170
+WR,won,Valley Mightcaller,0.00000958
+WR,won,Valley Questcaller,0.00509204
+WR,won,Valley Rally,0.00810779
+WR,won,Valley Rotcaller,0.00001095
+WR,won,Veteran Guardmouse,0.02691546
+WR,won,Wandertale Mentor,0.00005708
+WR,won,War Squeak,0.00960135
+WR,won,Warren Elder,0.02353126
+WR,won,Warren Warleader,0.00208963
+WR,won,Wax-Wane Witness,0.00165764
+WR,won,Whiskerquill Scribe,0.03326375
+WR,won,Whiskervale Forerunner,0.00706541
+WR,won,"Wick, the Whorled Mind",0.00000156
+WR,won,Wildfire Howl,0.00098356
+WR,won,"Zoraline, Cosmos Caller",0.00017886
+WU,lost,Agate Assault,0.00005614
+WU,lost,Alania's Pathmaker,0.00001587
+WU,lost,"Alania, Divergent Storm",0.00019562
+WU,lost,Artist's Talent,0.00001017
+WU,lost,Azure Beastbinder,0.00597957
+WU,lost,Bakersbane Duo,0.00000529
+WU,lost,Bandit's Talent,0.00001017
+WU,lost,Banishing Light,0.02988063
+WU,lost,Barkform Harvester,0.00183623
+WU,lost,Bellowing Crier,0.01564880
+WU,lost,"Beza, the Bounding Spring",0.00231450
+WU,lost,Blacksmith's Talent,0.00010615
+WU,lost,Brambleguard Captain,0.00002742
+WU,lost,Brave-Kin Duo,0.00662425
+WU,lost,Brightblade Stoat,0.01186942
+WU,lost,Builder's Talent,0.00592084
+WU,lost,Bumbleflower's Sharepot,0.00274859
+WU,lost,Burrowguard Mentor,0.00006017
+WU,lost,Byway Barterer,0.00001526
+WU,lost,Cache Grab,0.00000529
+WU,lost,Calamitous Tide,0.00806187
+WU,lost,Caretaker's Talent,0.00193973
+WU,lost,Carrot Cake,0.02216284
+WU,lost,"Clement, the Worrywort",0.00010533
+WU,lost,Clifftop Lookout,0.00002138
+WU,lost,Conduct Electricity,0.00000551
+WU,lost,Crumb and Get It,0.01945578
+WU,lost,Curious Forager,0.00002943
+WU,lost,Daring Waverider,0.00541191
+WU,lost,Darkstar Augur,0.00013245
+WU,lost,Dawn's Truce,0.00109302
+WU,lost,Dazzling Denial,0.03191440
+WU,lost,Dewdrop Cure,0.00143186
+WU,lost,Dire Downdraft,0.02539570
+WU,lost,Diresight,0.00002585
+WU,lost,Dour Port-Mage,0.00453672
+WU,lost,Downwind Ambusher,0.00011877
+WU,lost,"Dragonhawk, Fate's Tempest",0.00006535
+WU,lost,Dreamdew Entrancer,0.00061928
+WU,lost,Driftgloom Coyote,0.01129803
+WU,lost,Early Winter,0.00007633
+WU,lost,Eddymurk Crab,0.00744892
+WU,lost,"Eluge, the Shoreless Sea",0.00088435
+WU,lost,Emberheart Challenger,0.00003174
+WU,lost,Essence Channeler,0.00308694
+WU,lost,Fabled Passage,0.00175253
+WU,lost,Feather of Flight,0.00605157
+WU,lost,Fecund Greenshell,0.00006983
+WU,lost,Feed the Cycle,0.00001587
+WU,lost,Fell,0.00030473
+WU,lost,Finch Formation,0.03140227
+WU,lost,"Finneas, Ace Archer",0.00011565
+WU,lost,Flowerfoot Swordmaster,0.00350660
+WU,lost,For the Common Good,0.00003835
+WU,lost,Fountainport,0.00195800
+WU,lost,Fountainport Bell,0.00691950
+WU,lost,Galewind Moose,0.00000529
+WU,lost,"Glarb, Calamity's Augur",0.00001469
+WU,lost,Glidedive Duo,0.00003390
+WU,lost,Gossip's Talent,0.00299745
+WU,lost,Harnesser of Storms,0.00004544
+WU,lost,Harvestrite Host,0.00726636
+WU,lost,Hazardroot Herbalist,0.00001469
+WU,lost,Hazel's Nocturne,0.00002670
+WU,lost,Head of the Homestead,0.00933250
+WU,lost,Heaped Harvest,0.00002254
+WU,lost,Heartfire Hero,0.00000551
+WU,lost,Heirloom Epic,0.00086434
+WU,lost,"Helga, Skittish Seer",0.00042537
+WU,lost,Hidden Grotto,0.00834654
+WU,lost,High Stride,0.00000529
+WU,lost,Hivespine Wolverine,0.00001058
+WU,lost,Hoarder's Overflow,0.00001150
+WU,lost,Hop to It,0.00719243
+WU,lost,Hunter's Talent,0.00042406
+WU,lost,Huskburster Swarm,0.00001653
+WU,lost,Innkeeper's Talent,0.00047860
+WU,lost,Into the Flood Maw,0.00812167
+WU,lost,Intrepid Rabbit,0.02578321
+WU,lost,Jackdaw Savior,0.00745477
+WU,lost,Jolly Gerbils,0.01001351
+WU,lost,"Kastral, the Windcrested",0.01697221
+WU,lost,Keen-Eyed Curator,0.00001587
+WU,lost,Kitnap,0.00703357
+WU,lost,"Kitsa, Otterball Elite",0.00232922
+WU,lost,Knightfisher,0.02165251
+WU,lost,Ledger Shredder,0.00049162
+WU,lost,Lifecreed Duo,0.02536680
+WU,lost,Lightshell Duo,0.00989968
+WU,lost,Lilypad Village,0.00659685
+WU,lost,Lilysplash Mentor,0.00044073
+WU,lost,Long River Lurker,0.00780203
+WU,lost,Long River's Pull,0.00551762
+WU,lost,Longstalk Brawl,0.00004679
+WU,lost,"Lumra, Bellow of the Woods",0.00003581
+WU,lost,Lunar Convocation,0.00004288
+WU,lost,Lupinflower Village,0.00675903
+WU,lost,Mabel's Mettle,0.00697585
+WU,lost,"Mabel, Heir to Cragflame",0.00043202
+WU,lost,"Maha, Its Feathers Night",0.00008059
+WU,lost,Manifold Mouse,0.00002604
+WU,lost,Mind Drill Assailant,0.00214896
+WU,lost,Mind Spiral,0.01040599
+WU,lost,Mindwhisker,0.00990558
+WU,lost,Mockingbird,0.00671877
+WU,lost,Moonrise Cleric,0.00826280
+WU,lost,Moonstone Harbinger,0.00001102
+WU,lost,Mouse Trapper,0.00562527
+WU,lost,Mudflat Village,0.00004788
+WU,lost,Nettle Guard,0.02032442
+WU,lost,Nightwhorl Hermit,0.00386292
+WU,lost,Nocturnal Hunger,0.00029114
+WU,lost,Oakhollow Village,0.00001587
+WU,lost,Osteomancer Adept,0.00001653
+WU,lost,Otterball Antics,0.00438685
+WU,lost,Overprotect,0.00004304
+WU,lost,Parting Gust,0.01026663
+WU,lost,Patchwork Banner,0.00448235
+WU,lost,Pawpatch Recruit,0.00001587
+WU,lost,Pearl of Wisdom,0.00919675
+WU,lost,Persistent Marshstalker,0.00001677
+WU,lost,Pileated Provisioner,0.01775367
+WU,lost,Plumecreed Escort,0.02080106
+WU,lost,Plumecreed Mentor,0.03704373
+WU,lost,Polliwallop,0.00010586
+WU,lost,Pond Prophet,0.00924756
+WU,lost,Portent of Calamity,0.00117222
+WU,lost,Rabbit Response,0.00707826
+WU,lost,Rabid Gnaw,0.00011676
+WU,lost,"Ral, Crackling Wit",0.00052551
+WU,lost,Repel Calamity,0.00978929
+WU,lost,Rockface Village,0.00001587
+WU,lost,Rottenmouth Viper,0.00030794
+WU,lost,Roughshod Duo,0.00000509
+WU,lost,Run Away Together,0.01016843
+WU,lost,Salvation Swan,0.00721795
+WU,lost,Savor,0.00018023
+WU,lost,Scales of Shale,0.00003056
+WU,lost,Scavenger's Talent,0.00003708
+WU,lost,Season of Gathering,0.00002689
+WU,lost,Season of Loss,0.00003004
+WU,lost,Season of Weaving,0.00276317
+WU,lost,Season of the Bold,0.00001526
+WU,lost,Season of the Burrow,0.00238105
+WU,lost,Seasoned Warrenguard,0.00298425
+WU,lost,Seedglaive Mentor,0.00008507
+WU,lost,Seedpod Squire,0.03105271
+WU,lost,Shore Up,0.02250900
+WU,lost,Shoreline Looter,0.01641672
+WU,lost,Short Bow,0.00218269
+WU,lost,Shrike Force,0.01345770
+WU,lost,Sinister Monolith,0.00001526
+WU,lost,Skyskipper Duo,0.01653824
+WU,lost,Sonar Strike,0.02363379
+WU,lost,Spellgyre,0.00791722
+WU,lost,Splash Lasher,0.01287268
+WU,lost,Splash Portal,0.00519918
+WU,lost,Star Charter,0.00505444
+WU,lost,Starfall Invocation,0.00534008
+WU,lost,Starforged Sword,0.00103137
+WU,lost,Stargaze,0.00001725
+WU,lost,Starlit Soothsayer,0.00003175
+WU,lost,Starscape Cleric,0.00001653
+WU,lost,Starseer Mentor,0.00022073
+WU,lost,Stickytongue Sentinel,0.00001038
+WU,lost,Stocking the Pantry,0.00001038
+WU,lost,Stormcatch Mentor,0.00001653
+WU,lost,Stormchaser's Talent,0.00361817
+WU,lost,Sugar Coat,0.01310029
+WU,lost,Sword of Fire and Ice,0.00013998
+WU,lost,Swords to Plowshares,0.00044178
+WU,lost,Take Out the Trash,0.00004140
+WU,lost,Tangle Tumbler,0.00082011
+WU,lost,Teapot Slinger,0.00001150
+WU,lost,Tempest Angler,0.00408403
+WU,lost,Tender Wildguide,0.00003769
+WU,lost,Thistledown Players,0.00901210
+WU,lost,Thornvault Forager,0.00001587
+WU,lost,Thought Shucker,0.00572352
+WU,lost,Thought-Stalker Warlock,0.00005334
+WU,lost,Three Tree City,0.00040979
+WU,lost,Three Tree Mascot,0.00585096
+WU,lost,Three Tree Rootweaver,0.00003240
+WU,lost,Three Tree Scribe,0.00001587
+WU,lost,Thundertrap Trainer,0.00451474
+WU,lost,Tidecaller Mentor,0.00005886
+WU,lost,Treeguard Duo,0.00006559
+WU,lost,Treetop Sentries,0.00000529
+WU,lost,Uncharted Haven,0.01086256
+WU,lost,Valley Floodcaller,0.00476220
+WU,lost,Valley Questcaller,0.00466633
+WU,lost,Valley Rally,0.00000509
+WU,lost,Veteran Guardmouse,0.00381805
+WU,lost,"Vren, the Relentless",0.00070600
+WU,lost,Warren Elder,0.02281575
+WU,lost,Warren Warleader,0.00211062
+WU,lost,Waterspout Warden,0.01224268
+WU,lost,Wax-Wane Witness,0.00804696
+WU,lost,Whiskervale Forerunner,0.00321222
+WU,lost,Wick's Patrol,0.00001526
+WU,lost,"Wick, the Whorled Mind",0.00006096
+WU,lost,Wishing Well,0.00023182
+WU,lost,"Ygra, Eater of All",0.00000575
+WU,lost,"Zoraline, Cosmos Caller",0.00066166
+WU,won,Agate Assault,0.00002440
+WU,won,Alania's Pathmaker,0.00000482
+WU,won,"Alania, Divergent Storm",0.00015840
+WU,won,Artist's Talent,0.00003246
+WU,won,Azure Beastbinder,0.00639404
+WU,won,Bakersbane Duo,0.00003376
+WU,won,Bandit's Talent,0.00000928
+WU,won,Banishing Light,0.03048652
+WU,won,Barkform Harvester,0.00151037
+WU,won,Bellowing Crier,0.01479577
+WU,won,"Beza, the Bounding Spring",0.00248514
+WU,won,Blacksmith's Talent,0.00007284
+WU,won,Brambleguard Captain,0.00004295
+WU,won,Brave-Kin Duo,0.00608935
+WU,won,Brightblade Stoat,0.01269109
+WU,won,Builder's Talent,0.00626579
+WU,won,Bumbleflower's Sharepot,0.00236654
+WU,won,Burrowguard Mentor,0.00004984
+WU,won,Cache Grab,0.00003376
+WU,won,Calamitous Tide,0.00792218
+WU,won,Caretaker's Talent,0.00223216
+WU,won,Carrot Cake,0.02395264
+WU,won,"Clement, the Worrywort",0.00006779
+WU,won,Clifftop Lookout,0.00000965
+WU,won,Crumb and Get It,0.01971004
+WU,won,Curious Forager,0.00002683
+WU,won,Daring Waverider,0.00545218
+WU,won,Darkstar Augur,0.00010415
+WU,won,Dawn's Truce,0.00115296
+WU,won,Dazzling Denial,0.03305128
+WU,won,Dewdrop Cure,0.00133780
+WU,won,Dire Downdraft,0.02639819
+WU,won,Dour Port-Mage,0.00428669
+WU,won,Downwind Ambusher,0.00004649
+WU,won,"Dragonhawk, Fate's Tempest",0.00003944
+WU,won,Dreamdew Entrancer,0.00067777
+WU,won,Driftgloom Coyote,0.01167562
+WU,won,Early Winter,0.00005974
+WU,won,Eddymurk Crab,0.00735634
+WU,won,"Eluge, the Shoreless Sea",0.00068807
+WU,won,Emberheart Challenger,0.00002412
+WU,won,Essence Channeler,0.00318447
+WU,won,Fabled Passage,0.00186829
+WU,won,Feather of Flight,0.00636831
+WU,won,Fecund Greenshell,0.00006279
+WU,won,Feed the Cycle,0.00000482
+WU,won,Fell,0.00017158
+WU,won,Finch Formation,0.02974969
+WU,won,"Finneas, Ace Archer",0.00011064
+WU,won,Flowerfoot Swordmaster,0.00343879
+WU,won,For the Common Good,0.00001005
+WU,won,Fountainport,0.00200650
+WU,won,Fountainport Bell,0.00653823
+WU,won,"Glarb, Calamity's Augur",0.00000893
+WU,won,Glidedive Duo,0.00001447
+WU,won,Gossip's Talent,0.00275722
+WU,won,Harnesser of Storms,0.00004088
+WU,won,Harvestrite Host,0.00811504
+WU,won,Hazardroot Herbalist,0.00000893
+WU,won,Hazel's Nocturne,0.00000482
+WU,won,Head of the Homestead,0.01017657
+WU,won,Heaped Harvest,0.00006522
+WU,won,Heirloom Epic,0.00103736
+WU,won,"Helga, Skittish Seer",0.00033662
+WU,won,Hidden Grotto,0.00841665
+WU,won,High Stride,0.00001447
+WU,won,Hivespine Wolverine,0.00000965
+WU,won,Hoarder's Overflow,0.00001049
+WU,won,Hop to It,0.00800068
+WU,won,Hunter's Talent,0.00044312
+WU,won,Huskburster Swarm,0.00000502
+WU,won,Innkeeper's Talent,0.00048970
+WU,won,Into the Flood Maw,0.00798196
+WU,won,Intrepid Rabbit,0.02714706
+WU,won,Jackdaw Savior,0.00744303
+WU,won,Jolly Gerbils,0.00983051
+WU,won,"Kastral, the Windcrested",0.01765939
+WU,won,Keen-Eyed Curator,0.00000965
+WU,won,Kitnap,0.00711757
+WU,won,"Kitsa, Otterball Elite",0.00269844
+WU,won,Knightfisher,0.02129149
+WU,won,Ledger Shredder,0.00054306
+WU,won,Lifecreed Duo,0.02459780
+WU,won,Lightshell Duo,0.01007934
+WU,won,Lilypad Village,0.00631094
+WU,won,Lilysplash Mentor,0.00035116
+WU,won,Long River Lurker,0.00714638
+WU,won,Long River's Pull,0.00501670
+WU,won,Longstalk Brawl,0.00008422
+WU,won,"Lumra, Bellow of the Woods",0.00001855
+WU,won,Lunar Convocation,0.00002458
+WU,won,Lupinflower Village,0.00749028
+WU,won,Mabel's Mettle,0.00677694
+WU,won,"Mabel, Heir to Cragflame",0.00030146
+WU,won,"Maha, Its Feathers Night",0.00005919
+WU,won,Manifold Mouse,0.00002875
+WU,won,Mind Drill Assailant,0.00187311
+WU,won,Mind Spiral,0.01016706
+WU,won,Mindwhisker,0.00984622
+WU,won,Mockingbird,0.00695902
+WU,won,Moonrise Cleric,0.00751717
+WU,won,Moonstone Harbinger,0.00002512
+WU,won,Mouse Trapper,0.00568496
+WU,won,Mudflat Village,0.00003826
+WU,won,Nettle Guard,0.02091473
+WU,won,Nightwhorl Hermit,0.00344544
+WU,won,Nocturnal Hunger,0.00024981
+WU,won,Oakhollow Village,0.00001447
+WU,won,Osteomancer Adept,0.00002010
+WU,won,Otterball Antics,0.00416588
+WU,won,Overprotect,0.00003892
+WU,won,Parting Gust,0.00971267
+WU,won,Patchwork Banner,0.00493440
+WU,won,Pearl of Wisdom,0.00871331
+WU,won,Persistent Marshstalker,0.00001551
+WU,won,Pileated Provisioner,0.01665897
+WU,won,Plumecreed Escort,0.02079899
+WU,won,Plumecreed Mentor,0.03882338
+WU,won,Polliwallop,0.00008163
+WU,won,Pond Prophet,0.00900504
+WU,won,Portent of Calamity,0.00102813
+WU,won,Rabbit Response,0.00746462
+WU,won,Rabid Gnaw,0.00016286
+WU,won,"Ral, Crackling Wit",0.00049371
+WU,won,Repel Calamity,0.00987193
+WU,won,Rockface Village,0.00000482
+WU,won,Rottenmouth Viper,0.00023940
+WU,won,Run Away Together,0.00919015
+WU,won,Salvation Swan,0.00753071
+WU,won,Savor,0.00019056
+WU,won,Scales of Shale,0.00002269
+WU,won,Scavenger's Talent,0.00001990
+WU,won,Season of Loss,0.00001774
+WU,won,Season of Weaving,0.00327413
+WU,won,Season of the Bold,0.00001855
+WU,won,Season of the Burrow,0.00260715
+WU,won,Seasoned Warrenguard,0.00322974
+WU,won,Seedglaive Mentor,0.00006351
+WU,won,Seedpod Squire,0.03028367
+WU,won,Shore Up,0.02150161
+WU,won,Shoreline Looter,0.01758395
+WU,won,Short Bow,0.00212039
+WU,won,Shrike Force,0.01334096
+WU,won,Sinister Monolith,0.00000928
+WU,won,Skyskipper Duo,0.01509133
+WU,won,Sonar Strike,0.02380819
+WU,won,Spellgyre,0.00749579
+WU,won,Splash Lasher,0.01299742
+WU,won,Splash Portal,0.00446569
+WU,won,Star Charter,0.00495911
+WU,won,Starfall Invocation,0.00545823
+WU,won,Starforged Sword,0.00073354
+WU,won,Starlit Soothsayer,0.00001931
+WU,won,Starscape Cleric,0.00002010
+WU,won,Starseer Mentor,0.00016250
+WU,won,Stickytongue Sentinel,0.00004768
+WU,won,Stocking the Pantry,0.00001447
+WU,won,Stormcatch Mentor,0.00002512
+WU,won,Stormchaser's Talent,0.00350700
+WU,won,Sugar Coat,0.01282098
+WU,won,Sword of Fire and Ice,0.00017064
+WU,won,Swords to Plowshares,0.00043204
+WU,won,Take Out the Trash,0.00006327
+WU,won,Tangle Tumbler,0.00090593
+WU,won,Teapot Slinger,0.00001049
+WU,won,Tempest Angler,0.00363217
+WU,won,Tender Wildguide,0.00005326
+WU,won,Thistledown Players,0.00855771
+WU,won,Thornvault Forager,0.00000965
+WU,won,Thought Shucker,0.00522335
+WU,won,Thought-Stalker Warlock,0.00004341
+WU,won,Three Tree City,0.00021510
+WU,won,Three Tree Mascot,0.00540652
+WU,won,Three Tree Rootweaver,0.00003457
+WU,won,Three Tree Scribe,0.00000965
+WU,won,Thundertrap Trainer,0.00499681
+WU,won,Tidecaller Mentor,0.00006798
+WU,won,Treeguard Duo,0.00004592
+WU,won,Uncharted Haven,0.01110459
+WU,won,Valley Floodcaller,0.00471102
+WU,won,Valley Questcaller,0.00569029
+WU,won,Valley Rally,0.00001855
+WU,won,Veteran Guardmouse,0.00377694
+WU,won,"Vren, the Relentless",0.00054795
+WU,won,Warren Elder,0.02340131
+WU,won,Warren Warleader,0.00223580
+WU,won,Waterspout Warden,0.01189272
+WU,won,Wax-Wane Witness,0.00737433
+WU,won,Whiskervale Forerunner,0.00344885
+WU,won,Wick's Patrol,0.00000928
+WU,won,"Wick, the Whorled Mind",0.00007820
+WU,won,Wishing Well,0.00024010
+WU,won,"Zoraline, Cosmos Caller",0.00069315

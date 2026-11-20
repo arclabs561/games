@@ -139,8 +139,10 @@ def from_long(long: dict[str, dict[Card, int]], meta: dict[str, dict] | None = N
         for c, k in long[d].items():
             counts[r, index[c]] = k
 
+    facts: dict[str, dict] = meta
+
     def col(key, default, dtype):
-        return np.array([meta.get(d, {}).get(key, default) for d in ids], dtype=dtype)
+        return np.array([facts.get(d, {}).get(key, default) for d in ids], dtype=dtype)
 
     return Decks(
         cards,
@@ -149,5 +151,5 @@ def from_long(long: dict[str, dict[Card, int]], meta: dict[str, dict] | None = N
         col("games", 0, np.int64),
         col("wins", 0, np.int64),
         col("skill", np.nan, np.float64),
-        np.array([meta.get(d, {}).get("draft", d) for d in ids], dtype=object),
+        np.array([facts.get(d, {}).get("draft", d) for d in ids], dtype=object),
     )

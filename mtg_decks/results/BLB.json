@@ -1,0 +1,2437 @@
+{
+ "fit_decks": 80079,
+ "mean_vocabulary_copies_per_deck": 24.2856,
+ "question1": {
+  "cards": 265,
+  "chance": {
+   "color": 0.21978758880672752,
+   "pair": 0.14748427672955977,
+   "pair_within_color": 0.40258695261079214,
+   "tribe_partner": 0.25,
+   "tribe_partner_offcolor": 0.25
+  },
+  "dim": 32,
+  "k": 10,
+  "null": {
+   "color": {
+    "max": 0.2363636363636364,
+    "mean": 0.22650717703349285,
+    "min": 0.2181818181818182
+   },
+   "pair": {
+    "max": 0.15962264150943398,
+    "mean": 0.15366037735849056,
+    "min": 0.14452830188679244
+   },
+   "tribe_partner": {
+    "max": 0.30402930402930406,
+    "mean": 0.24670329670329666,
+    "min": 0.19963369963369962
+   },
+   "tribe_partner_offcolor": {
+    "max": 0.2875457875457876,
+    "mean": 0.25897435897435894,
+    "min": 0.24084249084249082
+   }
+  },
+  "null_runs": [
+   {
+    "color": 0.2196172248803828,
+    "pair": 0.14943396226415093,
+    "tribe_cards": 91,
+    "tribe_partner": 0.30402930402930406,
+    "tribe_partner_offcolor": 0.2875457875457876
+   },
+   {
+    "color": 0.22344497607655503,
+    "pair": 0.15735849056603773,
+    "tribe_cards": 91,
+    "tribe_partner": 0.24908424908424906,
+    "tribe_partner_offcolor": 0.24175824175824176
+   },
+   {
+    "color": 0.23492822966507176,
+    "pair": 0.15735849056603773,
+    "tribe_cards": 91,
+    "tribe_partner": 0.26373626373626374,
+    "tribe_partner_offcolor": 0.24084249084249082
+   },
+   {
+    "color": 0.2363636363636364,
+    "pair": 0.15962264150943398,
+    "tribe_cards": 91,
+    "tribe_partner": 0.21703296703296704,
+    "tribe_partner_offcolor": 0.2783882783882784
+   },
+   {
+    "color": 0.2181818181818182,
+    "pair": 0.14452830188679244,
+    "tribe_cards": 91,
+    "tribe_partner": 0.19963369963369962,
+    "tribe_partner_offcolor": 0.24633699633699632
+   }
+  ],
+  "null_seeds": [
+   1,
+   2,
+   3,
+   4,
+   5
+  ],
+  "ppmi": {
+   "color": 0.9779904306220097,
+   "pair": 0.809433962264151,
+   "tribe_cards": 91,
+   "tribe_partner": 0.46153846153846156,
+   "tribe_partner_offcolor": 0.7802197802197802
+  },
+  "ppmi_intervals": {
+   "pair": [
+    0.7766037735849057,
+    0.8407547169811321
+   ],
+   "tribe_partner": [
+    0.3626373626373626,
+    0.5604395604395604
+   ],
+   "tribe_partner_offcolor": [
+    0.6978021978021978,
+    0.8571428571428571
+   ]
+  },
+  "ppmi_intervals_method": "bootstrap over cards, 10,000 resamples, seed 0",
+  "sgns": {
+   "color": {
+    "max": 0.9842105263157894,
+    "mean": 0.9821052631578947,
+    "min": 0.9803827751196171
+   },
+   "pair": {
+    "max": 0.801509433962264,
+    "mean": 0.7966792452830188,
+    "min": 0.7920754716981132
+   },
+   "tribe_partner": {
+    "max": 0.42857142857142855,
+    "mean": 0.4153846153846154,
+    "min": 0.4065934065934066
+   },
+   "tribe_partner_offcolor": {
+    "max": 0.782051282051282,
+    "mean": 0.7714285714285714,
+    "min": 0.7582417582417582
+   }
+  },
+  "sgns_runs": [
+   {
+    "color": 0.9803827751196171,
+    "pair": 0.801509433962264,
+    "tribe_cards": 91,
+    "tribe_partner": 0.4065934065934066,
+    "tribe_partner_offcolor": 0.782051282051282
+   },
+   {
+    "color": 0.9808612440191389,
+    "pair": 0.7943396226415095,
+    "tribe_cards": 91,
+    "tribe_partner": 0.42857142857142855,
+    "tribe_partner_offcolor": 0.7802197802197802
+   },
+   {
+    "color": 0.9832535885167464,
+    "pair": 0.799245283018868,
+    "tribe_cards": 91,
+    "tribe_partner": 0.4065934065934066,
+    "tribe_partner_offcolor": 0.7673992673992673
+   },
+   {
+    "color": 0.9818181818181818,
+    "pair": 0.7920754716981132,
+    "tribe_cards": 91,
+    "tribe_partner": 0.4175824175824176,
+    "tribe_partner_offcolor": 0.7692307692307693
+   },
+   {
+    "color": 0.9842105263157894,
+    "pair": 0.7962264150943397,
+    "tribe_cards": 91,
+    "tribe_partner": 0.4175824175824176,
+    "tribe_partner_offcolor": 0.7582417582417582
+   }
+  ],
+  "sgns_seeds": [
+   1,
+   2,
+   3,
+   4,
+   5
+  ]
+ },
+ "question2": {
+  "BG": {
+   "baseline": [
+    {
+     "add": "Vinereap Mentor",
+     "copies": 0.038,
+     "cut": "Heaped Harvest"
+    },
+    {
+     "add": "Cache Grab",
+     "copies": 0.026,
+     "cut": "Corpseberry Cultivator"
+    },
+    {
+     "add": "Vinereap Mentor",
+     "copies": 0.026,
+     "cut": "Early Winter"
+    },
+    {
+     "add": "Cache Grab",
+     "copies": 0.02,
+     "cut": "Bumbleflower's Sharepot"
+    },
+    {
+     "add": "Savor",
+     "copies": 0.017,
+     "cut": "Sunshower Druid"
+    }
+   ],
+   "cost": 0.015678,
+   "moved": 0.5416,
+   "pairing": {
+    "baseline": {
+     "mana_gap": 1.5088013123857082,
+     "same_kind": 0.2584746503743125
+    },
+    "random": {
+     "mana_gap": 1.4304259937792203,
+     "same_kind": 0.3711485574380557
+    },
+    "transport": {
+     "mana_gap": 1.6640710343746417,
+     "same_kind": 0.4812809367208798
+    }
+   },
+   "transport": [
+    {
+     "add": "Cache Grab",
+     "copies": 0.038,
+     "cut": "Heaped Harvest"
+    },
+    {
+     "add": "Vinereap Mentor",
+     "copies": 0.026,
+     "cut": "Corpseberry Cultivator"
+    },
+    {
+     "add": "Bakersbane Duo",
+     "copies": 0.016,
+     "cut": "Junkblade Bruiser"
+    },
+    {
+     "add": "Fell",
+     "copies": 0.016,
+     "cut": "Thornplate Intimidator"
+    },
+    {
+     "add": "Savor",
+     "copies": 0.012,
+     "cut": "Moonrise Cleric"
+    }
+   ]
+  },
+  "BR": {
+   "baseline": [
+    {
+     "add": "Scales of Shale",
+     "copies": 0.053,
+     "cut": "Kindlespark Duo"
+    },
+    {
+     "add": "Thought-Stalker Warlock",
+     "copies": 0.024,
+     "cut": "Whiskerquill Scribe"
+    },
+    {
+     "add": "Gev, Scaled Scorch",
+     "copies": 0.022,
+     "cut": "Sazacap's Brew"
+    },
+    {
+     "add": "Ravine Raider",
+     "copies": 0.021,
+     "cut": "Frilled Sparkshooter"
+    },
+    {
+     "add": "Fireglass Mentor",
+     "copies": 0.019,
+     "cut": "Might of the Meek"
+    }
+   ],
+   "cost": 0.018686,
+   "moved": 0.6095,
+   "pairing": {
+    "baseline": {
+     "mana_gap": 1.421948079031811,
+     "same_kind": 0.32635080353020507
+    },
+    "random": {
+     "mana_gap": 1.5242294148039557,
+     "same_kind": 0.30249808732532285
+    },
+    "transport": {
+     "mana_gap": 1.337844472188778,
+     "same_kind": 0.5636023621441092
+    }
+   },
+   "transport": [
+    {
+     "add": "Fireglass Mentor",
+     "copies": 0.025,
+     "cut": "Kindlespark Duo"
+    },
+    {
+     "add": "Ravine Raider",
+     "copies": 0.024,
+     "cut": "Kindlespark Duo"
+    },
+    {
+     "add": "Gev, Scaled Scorch",
+     "copies": 0.019,
+     "cut": "Frilled Sparkshooter"
+    },
+    {
+     "add": "Rabid Gnaw",
+     "copies": 0.018,
+     "cut": "Sazacap's Brew"
+    },
+    {
+     "add": "Savor",
+     "copies": 0.017,
+     "cut": "Daggerfang Duo"
+    }
+   ]
+  },
+  "RG": {
+   "baseline": [
+    {
+     "add": "Take Out the Trash",
+     "copies": 0.034,
+     "cut": "Heaped Harvest"
+    },
+    {
+     "add": "Take Out the Trash",
+     "copies": 0.028,
+     "cut": "Steampath Charger"
+    },
+    {
+     "add": "Wandertale Mentor",
+     "copies": 0.028,
+     "cut": "Raccoon Rallier"
+    },
+    {
+     "add": "Wandertale Mentor",
+     "copies": 0.027,
+     "cut": "Frilled Sparkshooter"
+    },
+    {
+     "add": "Hunter's Talent",
+     "copies": 0.018,
+     "cut": "Sazacap's Brew"
+    }
+   ],
+   "cost": 0.014583,
+   "moved": 0.5163,
+   "pairing": {
+    "baseline": {
+     "mana_gap": 1.264039725398206,
+     "same_kind": 0.39495761427912424
+    },
+    "random": {
+     "mana_gap": 1.4149324595181858,
+     "same_kind": 0.40028066982854676
+    },
+    "transport": {
+     "mana_gap": 1.2533573762075625,
+     "same_kind": 0.44077382558913525
+    }
+   },
+   "transport": [
+    {
+     "add": "Take Out the Trash",
+     "copies": 0.023,
+     "cut": "Sazacap's Brew"
+    },
+    {
+     "add": "Hunter's Talent",
+     "copies": 0.018,
+     "cut": "Pond Prophet"
+    },
+    {
+     "add": "Take Out the Trash",
+     "copies": 0.013,
+     "cut": "Conduct Electricity"
+    },
+    {
+     "add": "Rockface Village",
+     "copies": 0.012,
+     "cut": "Raccoon Rallier"
+    },
+    {
+     "add": "Hivespine Wolverine",
+     "copies": 0.012,
+     "cut": "Heaped Harvest"
+    }
+   ]
+  },
+  "UB": {
+   "baseline": [
+    {
+     "add": "Savor",
+     "copies": 0.073,
+     "cut": "Nightwhorl Hermit"
+    },
+    {
+     "add": "Shoreline Looter",
+     "copies": 0.045,
+     "cut": "Mind Drill Assailant"
+    },
+    {
+     "add": "Shoreline Looter",
+     "copies": 0.031,
+     "cut": "Thought Shucker"
+    },
+    {
+     "add": "Persistent Marshstalker",
+     "copies": 0.024,
+     "cut": "Gossip's Talent"
+    },
+    {
+     "add": "Thought-Stalker Warlock",
+     "copies": 0.024,
+     "cut": "Thornplate Intimidator"
+    }
+   ],
+   "cost": 0.019095,
+   "moved": 0.7451,
+   "pairing": {
+    "baseline": {
+     "mana_gap": 1.7680029675877897,
+     "same_kind": 0.38056992428041964
+    },
+    "random": {
+     "mana_gap": 1.4306057695247911,
+     "same_kind": 0.3739907708490162
+    },
+    "transport": {
+     "mana_gap": 1.461156693677837,
+     "same_kind": 0.5354367674105295
+    }
+   },
+   "transport": [
+    {
+     "add": "Mindwhisker",
+     "copies": 0.041,
+     "cut": "Thought Shucker"
+    },
+    {
+     "add": "Savor",
+     "copies": 0.037,
+     "cut": "Nightwhorl Hermit"
+    },
+    {
+     "add": "Wick's Patrol",
+     "copies": 0.033,
+     "cut": "Mind Drill Assailant"
+    },
+    {
+     "add": "Shoreline Looter",
+     "copies": 0.026,
+     "cut": "Gossip's Talent"
+    },
+    {
+     "add": "Shoreline Looter",
+     "copies": 0.022,
+     "cut": "Bellowing Crier"
+    }
+   ]
+  },
+  "UG": {
+   "baseline": [
+    {
+     "add": "Pond Prophet",
+     "copies": 0.037,
+     "cut": "Bellowing Crier"
+    },
+    {
+     "add": "Pond Prophet",
+     "copies": 0.036,
+     "cut": "Finch Formation"
+    },
+    {
+     "add": "Pond Prophet",
+     "copies": 0.028,
+     "cut": "Waterspout Warden"
+    },
+    {
+     "add": "Dreamdew Entrancer",
+     "copies": 0.027,
+     "cut": "Skyskipper Duo"
+    },
+    {
+     "add": "Polliwallop",
+     "copies": 0.023,
+     "cut": "Run Away Together"
+    }
+   ],
+   "cost": 0.018059,
+   "moved": 0.5848,
+   "pairing": {
+    "baseline": {
+     "mana_gap": 1.4621346722464763,
+     "same_kind": 0.6452132145744227
+    },
+    "random": {
+     "mana_gap": 1.308304328589665,
+     "same_kind": 0.43998432302480944
+    },
+    "transport": {
+     "mana_gap": 1.2428623561170578,
+     "same_kind": 0.4905786786187277
+    }
+   },
+   "transport": [
+    {
+     "add": "Pond Prophet",
+     "copies": 0.032,
+     "cut": "Finch Formation"
+    },
+    {
+     "add": "Pond Prophet",
+     "copies": 0.028,
+     "cut": "Waterspout Warden"
+    },
+    {
+     "add": "Long River Lurker",
+     "copies": 0.025,
+     "cut": "Bellowing Crier"
+    },
+    {
+     "add": "Lilysplash Mentor",
+     "copies": 0.024,
+     "cut": "Skyskipper Duo"
+    },
+    {
+     "add": "Dreamdew Entrancer",
+     "copies": 0.018,
+     "cut": "Shore Up"
+    }
+   ]
+  },
+  "UR": {
+   "baseline": [
+    {
+     "add": "Take Out the Trash",
+     "copies": 0.083,
+     "cut": "Kindlespark Duo"
+    },
+    {
+     "add": "Pearl of Wisdom",
+     "copies": 0.047,
+     "cut": "Run Away Together"
+    },
+    {
+     "add": "Shoreline Looter",
+     "copies": 0.031,
+     "cut": "Tempest Angler"
+    },
+    {
+     "add": "Pearl of Wisdom",
+     "copies": 0.023,
+     "cut": "Bellowing Crier"
+    },
+    {
+     "add": "Dire Downdraft",
+     "copies": 0.022,
+     "cut": "Finch Formation"
+    }
+   ],
+   "cost": 0.017376,
+   "moved": 0.7496,
+   "pairing": {
+    "baseline": {
+     "mana_gap": 1.5704345803506758,
+     "same_kind": 0.25118589607676073
+    },
+    "random": {
+     "mana_gap": 1.4944640553296518,
+     "same_kind": 0.3229025069091804
+    },
+    "transport": {
+     "mana_gap": 1.4114560629458117,
+     "same_kind": 0.3552750942318644
+    }
+   },
+   "transport": [
+    {
+     "add": "Dire Downdraft",
+     "copies": 0.037,
+     "cut": "Run Away Together"
+    },
+    {
+     "add": "Shoreline Looter",
+     "copies": 0.031,
+     "cut": "Bellowing Crier"
+    },
+    {
+     "add": "Playful Shove",
+     "copies": 0.028,
+     "cut": "Kindlespark Duo"
+    },
+    {
+     "add": "Otterball Antics",
+     "copies": 0.025,
+     "cut": "Tempest Angler"
+    },
+    {
+     "add": "Mindwhisker",
+     "copies": 0.019,
+     "cut": "Thought Shucker"
+    }
+   ]
+  },
+  "WB": {
+   "baseline": [
+    {
+     "add": "Moonrise Cleric",
+     "copies": 0.04,
+     "cut": "Starlit Soothsayer"
+    },
+    {
+     "add": "Carrot Cake",
+     "copies": 0.023,
+     "cut": "Wax-Wane Witness"
+    },
+    {
+     "add": "Thought-Stalker Warlock",
+     "copies": 0.02,
+     "cut": "Sinister Monolith"
+    },
+    {
+     "add": "Zoraline, Cosmos Caller",
+     "copies": 0.018,
+     "cut": "Early Winter"
+    },
+    {
+     "add": "Savor",
+     "copies": 0.016,
+     "cut": "Thornplate Intimidator"
+    }
+   ],
+   "cost": 0.013831,
+   "moved": 0.4964,
+   "pairing": {
+    "baseline": {
+     "mana_gap": 1.3512502914640272,
+     "same_kind": 0.41001152754426556
+    },
+    "random": {
+     "mana_gap": 1.255951743113485,
+     "same_kind": 0.44125516591264663
+    },
+    "transport": {
+     "mana_gap": 1.2467292215290384,
+     "same_kind": 0.4975236508646588
+    }
+   },
+   "transport": [
+    {
+     "add": "Moonrise Cleric",
+     "copies": 0.032,
+     "cut": "Starlit Soothsayer"
+    },
+    {
+     "add": "Lifecreed Duo",
+     "copies": 0.023,
+     "cut": "Wax-Wane Witness"
+    },
+    {
+     "add": "Zoraline, Cosmos Caller",
+     "copies": 0.014,
+     "cut": "Starlit Soothsayer"
+    },
+    {
+     "add": "Thought-Stalker Warlock",
+     "copies": 0.013,
+     "cut": "Thornplate Intimidator"
+    },
+    {
+     "add": "Intrepid Rabbit",
+     "copies": 0.013,
+     "cut": "Brave-Kin Duo"
+    }
+   ]
+  },
+  "WG": {
+   "baseline": [
+    {
+     "add": "Carrot Cake",
+     "copies": 0.026,
+     "cut": "Heaped Harvest"
+    },
+    {
+     "add": "Carrot Cake",
+     "copies": 0.025,
+     "cut": "Thistledown Players"
+    },
+    {
+     "add": "Carrot Cake",
+     "copies": 0.024,
+     "cut": "Brave-Kin Duo"
+    },
+    {
+     "add": "Intrepid Rabbit",
+     "copies": 0.018,
+     "cut": "Polliwallop"
+    },
+    {
+     "add": "Intrepid Rabbit",
+     "copies": 0.018,
+     "cut": "Sunshower Druid"
+    }
+   ],
+   "cost": 0.021966,
+   "moved": 0.5711,
+   "pairing": {
+    "baseline": {
+     "mana_gap": 1.3122506475179656,
+     "same_kind": 0.4285350401303508
+    },
+    "random": {
+     "mana_gap": 1.2262720458692318,
+     "same_kind": 0.3996558762739553
+    },
+    "transport": {
+     "mana_gap": 1.2282513992975486,
+     "same_kind": 0.4970565055892899
+    }
+   },
+   "transport": [
+    {
+     "add": "Carrot Cake",
+     "copies": 0.025,
+     "cut": "Heaped Harvest"
+    },
+    {
+     "add": "Intrepid Rabbit",
+     "copies": 0.024,
+     "cut": "Brave-Kin Duo"
+    },
+    {
+     "add": "Treeguard Duo",
+     "copies": 0.018,
+     "cut": "Polliwallop"
+    },
+    {
+     "add": "Hop to It",
+     "copies": 0.016,
+     "cut": "Pond Prophet"
+    },
+    {
+     "add": "Carrot Cake",
+     "copies": 0.016,
+     "cut": "Junkblade Bruiser"
+    }
+   ]
+  },
+  "WR": {
+   "baseline": [
+    {
+     "add": "Manifold Mouse",
+     "copies": 0.035,
+     "cut": "War Squeak"
+    },
+    {
+     "add": "Mabel, Heir to Cragflame",
+     "copies": 0.019,
+     "cut": "Steampath Charger"
+    },
+    {
+     "add": "Heartfire Hero",
+     "copies": 0.015,
+     "cut": "Conduct Electricity"
+    },
+    {
+     "add": "Heartfire Hero",
+     "copies": 0.015,
+     "cut": "Alania's Pathmaker"
+    },
+    {
+     "add": "Intrepid Rabbit",
+     "copies": 0.014,
+     "cut": "Frilled Sparkshooter"
+    }
+   ],
+   "cost": 0.011027,
+   "moved": 0.4392,
+   "pairing": {
+    "baseline": {
+     "mana_gap": 1.324155142332727,
+     "same_kind": 0.37849711099610844
+    },
+    "random": {
+     "mana_gap": 1.2893437865543498,
+     "same_kind": 0.3934367285979163
+    },
+    "transport": {
+     "mana_gap": 1.014908739868313,
+     "same_kind": 0.492944581522444
+    }
+   },
+   "transport": [
+    {
+     "add": "Heartfire Hero",
+     "copies": 0.035,
+     "cut": "War Squeak"
+    },
+    {
+     "add": "Take Out the Trash",
+     "copies": 0.015,
+     "cut": "Conduct Electricity"
+    },
+    {
+     "add": "Take Out the Trash",
+     "copies": 0.015,
+     "cut": "Alania's Pathmaker"
+    },
+    {
+     "add": "Mabel, Heir to Cragflame",
+     "copies": 0.015,
+     "cut": "Veteran Guardmouse"
+    },
+    {
+     "add": "Valley Questcaller",
+     "copies": 0.014,
+     "cut": "Lifecreed Duo"
+    }
+   ]
+  },
+  "WU": {
+   "baseline": [
+    {
+     "add": "Carrot Cake",
+     "copies": 0.04,
+     "cut": "Finch Formation"
+    },
+    {
+     "add": "Plumecreed Mentor",
+     "copies": 0.032,
+     "cut": "Skyskipper Duo"
+    },
+    {
+     "add": "Shoreline Looter",
+     "copies": 0.022,
+     "cut": "Run Away Together"
+    },
+    {
+     "add": "Dazzling Denial",
+     "copies": 0.021,
+     "cut": "Bellowing Crier"
+    },
+    {
+     "add": "Intrepid Rabbit",
+     "copies": 0.018,
+     "cut": "Shore Up"
+    }
+   ],
+   "cost": 0.018512,
+   "moved": 0.5806,
+   "pairing": {
+    "baseline": {
+     "mana_gap": 1.414393282568681,
+     "same_kind": 0.3288354438672656
+    },
+    "random": {
+     "mana_gap": 1.4238621094371997,
+     "same_kind": 0.5003003783579832
+    },
+    "transport": {
+     "mana_gap": 1.369391445406965,
+     "same_kind": 0.5047922013721428
+    }
+   },
+   "transport": [
+    {
+     "add": "Plumecreed Mentor",
+     "copies": 0.032,
+     "cut": "Finch Formation"
+    },
+    {
+     "add": "Valley Questcaller",
+     "copies": 0.023,
+     "cut": "Pileated Provisioner"
+    },
+    {
+     "add": "Intrepid Rabbit",
+     "copies": 0.022,
+     "cut": "Skyskipper Duo"
+    },
+    {
+     "add": "Dire Downdraft",
+     "copies": 0.021,
+     "cut": "Shore Up"
+    },
+    {
+     "add": "Shoreline Looter",
+     "copies": 0.021,
+     "cut": "Bellowing Crier"
+    }
+   ]
+  },
+  "mean_over_pairs": {
+   "baseline": {
+    "mana_gap": 1.4397410700884066,
+    "same_kind": 0.3802631225653236
+   },
+   "random": {
+    "mana_gap": 1.3798391706519735,
+    "same_kind": 0.39454530645174324
+   },
+   "transport": {
+    "mana_gap": 1.3230028801613554,
+    "same_kind": 0.4859264604063781
+   }
+  }
+ },
+ "question3": {
+  "greedy_gap": {
+   "cases": 30,
+   "exact_ties": 11,
+   "max": 0.06496996840768274,
+   "mean": 0.018738815173942235
+  },
+  "k": 5,
+  "mean": [
+   {
+    "lambda": 1.0,
+    "redundancy": 0.5739869758168841,
+    "relevance_kept": 1.0,
+    "roles": 3.9
+   },
+   {
+    "lambda": 0.9,
+    "redundancy": 0.5765702599736378,
+    "relevance_kept": 0.9994977050158038,
+    "roles": 3.8
+   },
+   {
+    "lambda": 0.8,
+    "redundancy": 0.5228172227455311,
+    "relevance_kept": 0.9861345254352761,
+    "roles": 4.1
+   },
+   {
+    "lambda": 0.7,
+    "redundancy": 0.41375180917753945,
+    "relevance_kept": 0.9422329257598792,
+    "roles": 4.3
+   },
+   {
+    "lambda": 0.6,
+    "redundancy": 0.2576194185639896,
+    "relevance_kept": 0.8243676808777167,
+    "roles": 4.1
+   },
+   {
+    "lambda": 0.5,
+    "redundancy": 0.0876406838788824,
+    "relevance_kept": 0.6258819447779155,
+    "roles": 4.4
+   },
+   {
+    "lambda": 0.4,
+    "redundancy": 0.039453287846968964,
+    "relevance_kept": 0.5182138180571971,
+    "roles": 4.2
+   },
+   {
+    "lambda": 0.3,
+    "redundancy": 0.014301846080189376,
+    "relevance_kept": 0.4210695292183185,
+    "roles": 4.5
+   },
+   {
+    "lambda": 0.2,
+    "redundancy": 0.01270223499880474,
+    "relevance_kept": 0.39008667284579346,
+    "roles": 4.6
+   },
+   {
+    "lambda": 0.1,
+    "redundancy": 0.012205923409914771,
+    "relevance_kept": 0.3728232163035574,
+    "roles": 4.6
+   },
+   {
+    "lambda": 0.0,
+    "redundancy": 0.009623246172823858,
+    "relevance_kept": 0.0679540538878571,
+    "roles": 4.4
+   }
+  ],
+  "per_pair": {
+   "BG": [
+    {
+     "lambda": 1.0,
+     "picked": [
+      "Vinereap Mentor",
+      "Cache Grab",
+      "Savor",
+      "Bakersbane Duo",
+      "Hunter's Talent"
+     ],
+     "redundancy": 0.5563154771322751,
+     "relevance_kept": 1.0,
+     "roles": 3
+    },
+    {
+     "lambda": 0.9,
+     "picked": [
+      "Vinereap Mentor",
+      "Cache Grab",
+      "Savor",
+      "Bakersbane Duo",
+      "Hunter's Talent"
+     ],
+     "redundancy": 0.5563154771322751,
+     "relevance_kept": 1.0,
+     "roles": 3
+    },
+    {
+     "lambda": 0.8,
+     "picked": [
+      "Vinereap Mentor",
+      "Cache Grab",
+      "Savor",
+      "Bakersbane Duo",
+      "Hunter's Talent"
+     ],
+     "redundancy": 0.5563154771322751,
+     "relevance_kept": 1.0,
+     "roles": 3
+    },
+    {
+     "lambda": 0.7,
+     "picked": [
+      "Vinereap Mentor",
+      "Cache Grab",
+      "Savor",
+      "Bakersbane Duo",
+      "Hunter's Talent"
+     ],
+     "redundancy": 0.5563154771322751,
+     "relevance_kept": 1.0,
+     "roles": 3
+    },
+    {
+     "lambda": 0.6,
+     "picked": [
+      "Vinereap Mentor",
+      "Savor",
+      "Cache Grab",
+      "Hunter's Talent",
+      "Fabled Passage"
+     ],
+     "redundancy": 0.33372503318978197,
+     "relevance_kept": 0.8557118772779121,
+     "roles": 4
+    },
+    {
+     "lambda": 0.5,
+     "picked": [
+      "Vinereap Mentor",
+      "Starfall Invocation",
+      "Savor",
+      "Hunter's Talent",
+      "Coruscation Mage"
+     ],
+     "redundancy": 0.11287748368290403,
+     "relevance_kept": 0.6033466322993869,
+     "roles": 4
+    },
+    {
+     "lambda": 0.4,
+     "picked": [
+      "Vinereap Mentor",
+      "Starfall Invocation",
+      "Rabid Gnaw",
+      "Run Away Together",
+      "Sword of Fire and Ice"
+     ],
+     "redundancy": 0.011651054516672395,
+     "relevance_kept": 0.2842164740847296,
+     "roles": 4
+    },
+    {
+     "lambda": 0.3,
+     "picked": [
+      "Vinereap Mentor",
+      "Starfall Invocation",
+      "Rabid Gnaw",
+      "Run Away Together",
+      "Sword of Fire and Ice"
+     ],
+     "redundancy": 0.011651054516672395,
+     "relevance_kept": 0.2842164740847296,
+     "roles": 4
+    },
+    {
+     "lambda": 0.2,
+     "picked": [
+      "Vinereap Mentor",
+      "Starfall Invocation",
+      "Rabid Gnaw",
+      "Run Away Together",
+      "Sword of Fire and Ice"
+     ],
+     "redundancy": 0.011651054516672395,
+     "relevance_kept": 0.2842164740847296,
+     "roles": 4
+    },
+    {
+     "lambda": 0.1,
+     "picked": [
+      "Vinereap Mentor",
+      "Starfall Invocation",
+      "Rabid Gnaw",
+      "Run Away Together",
+      "Sword of Fire and Ice"
+     ],
+     "redundancy": 0.011651054516672395,
+     "relevance_kept": 0.2842164740847296,
+     "roles": 4
+    },
+    {
+     "lambda": 0.0,
+     "picked": [
+      "Agate Assault",
+      "Vren, the Relentless",
+      "Starfall Invocation",
+      "Bushy Bodyguard",
+      "Sword of Fire and Ice"
+     ],
+     "redundancy": 0.00603626984206978,
+     "relevance_kept": 0.06492725884669616,
+     "roles": 5
+    }
+   ],
+   "BR": [
+    {
+     "lambda": 1.0,
+     "picked": [
+      "Scales of Shale",
+      "Thought-Stalker Warlock",
+      "Gev, Scaled Scorch",
+      "Ravine Raider",
+      "Fireglass Mentor"
+     ],
+     "redundancy": 0.8288123840779379,
+     "relevance_kept": 1.0,
+     "roles": 4
+    },
+    {
+     "lambda": 0.9,
+     "picked": [
+      "Scales of Shale",
+      "Thought-Stalker Warlock",
+      "Gev, Scaled Scorch",
+      "Ravine Raider",
+      "Fireglass Mentor"
+     ],
+     "redundancy": 0.8288123840779379,
+     "relevance_kept": 1.0,
+     "roles": 4
+    },
+    {
+     "lambda": 0.8,
+     "picked": [
+      "Scales of Shale",
+      "Thought-Stalker Warlock",
+      "Take Out the Trash",
+      "Gev, Scaled Scorch",
+      "Ravine Raider"
+     ],
+     "redundancy": 0.6070818760928741,
+     "relevance_kept": 0.9771112567508569,
+     "roles": 5
+    },
+    {
+     "lambda": 0.7,
+     "picked": [
+      "Scales of Shale",
+      "Take Out the Trash",
+      "Thought-Stalker Warlock",
+      "Gev, Scaled Scorch",
+      "Patchwork Banner"
+     ],
+     "redundancy": 0.3032177610611252,
+     "relevance_kept": 0.873187427619749,
+     "roles": 5
+    },
+    {
+     "lambda": 0.6,
+     "picked": [
+      "Scales of Shale",
+      "Take Out the Trash",
+      "Patchwork Banner",
+      "Thought-Stalker Warlock",
+      "Gev, Scaled Scorch"
+     ],
+     "redundancy": 0.3032177610611252,
+     "relevance_kept": 0.873187427619749,
+     "roles": 5
+    },
+    {
+     "lambda": 0.5,
+     "picked": [
+      "Scales of Shale",
+      "Take Out the Trash",
+      "Patchwork Banner",
+      "Mistbreath Elder",
+      "Fountainport"
+     ],
+     "redundancy": 0.0333652215195238,
+     "relevance_kept": 0.49830715958823024,
+     "roles": 5
+    },
+    {
+     "lambda": 0.4,
+     "picked": [
+      "Scales of Shale",
+      "Patchwork Banner",
+      "Take Out the Trash",
+      "Mistbreath Elder",
+      "Fountainport"
+     ],
+     "redundancy": 0.0333652215195238,
+     "relevance_kept": 0.49830715958823024,
+     "roles": 5
+    },
+    {
+     "lambda": 0.3,
+     "picked": [
+      "Scales of Shale",
+      "Patchwork Banner",
+      "Take Out the Trash",
+      "Mistbreath Elder",
+      "Fountainport"
+     ],
+     "redundancy": 0.0333652215195238,
+     "relevance_kept": 0.49830715958823024,
+     "roles": 5
+    },
+    {
+     "lambda": 0.2,
+     "picked": [
+      "Scales of Shale",
+      "Patchwork Banner",
+      "Mistbreath Elder",
+      "Ral, Crackling Wit",
+      "Manifold Mouse"
+     ],
+     "redundancy": 0.014504383836020387,
+     "relevance_kept": 0.3813062233892015,
+     "roles": 5
+    },
+    {
+     "lambda": 0.1,
+     "picked": [
+      "Scales of Shale",
+      "Patchwork Banner",
+      "Mistbreath Elder",
+      "Ral, Crackling Wit",
+      "Manifold Mouse"
+     ],
+     "redundancy": 0.014504383836020387,
+     "relevance_kept": 0.3813062233892015,
+     "roles": 5
+    },
+    {
+     "lambda": 0.0,
+     "picked": [
+      "Agate-Blade Assassin",
+      "Stocking the Pantry",
+      "Mabel's Mettle",
+      "Ral, Crackling Wit",
+      "Patchwork Banner"
+     ],
+     "redundancy": -0.002005160138410576,
+     "relevance_kept": 0.11795948109487926,
+     "roles": 5
+    }
+   ],
+   "RG": [
+    {
+     "lambda": 1.0,
+     "picked": [
+      "Take Out the Trash",
+      "Wandertale Mentor",
+      "Hunter's Talent",
+      "Bark-Knuckle Boxer",
+      "Brambleguard Veteran"
+     ],
+     "redundancy": 0.523138124954956,
+     "relevance_kept": 1.0,
+     "roles": 4
+    },
+    {
+     "lambda": 0.9,
+     "picked": [
+      "Take Out the Trash",
+      "Wandertale Mentor",
+      "Hunter's Talent",
+      "Bark-Knuckle Boxer",
+      "Brambleguard Veteran"
+     ],
+     "redundancy": 0.523138124954956,
+     "relevance_kept": 1.0,
+     "roles": 4
+    },
+    {
+     "lambda": 0.8,
+     "picked": [
+      "Take Out the Trash",
+      "Wandertale Mentor",
+      "Hunter's Talent",
+      "Bark-Knuckle Boxer",
+      "Brambleguard Veteran"
+     ],
+     "redundancy": 0.523138124954956,
+     "relevance_kept": 1.0,
+     "roles": 4
+    },
+    {
+     "lambda": 0.7,
+     "picked": [
+      "Take Out the Trash",
+      "Wandertale Mentor",
+      "Hunter's Talent",
+      "Fabled Passage",
+      "Patchwork Banner"
+     ],
+     "redundancy": 0.15163137938986976,
+     "relevance_kept": 0.8355170318673846,
+     "roles": 5
+    },
+    {
+     "lambda": 0.6,
+     "picked": [
+      "Take Out the Trash",
+      "Wandertale Mentor",
+      "Hunter's Talent",
+      "Fabled Passage",
+      "Valley Questcaller"
+     ],
+     "redundancy": 0.11559533129704827,
+     "relevance_kept": 0.8128533117101634,
+     "roles": 4
+    },
+    {
+     "lambda": 0.5,
+     "picked": [
+      "Take Out the Trash",
+      "Hunter's Talent",
+      "Wandertale Mentor",
+      "Jackdaw Savior",
+      "Fabled Passage"
+     ],
+     "redundancy": 0.11940651635043528,
+     "relevance_kept": 0.8134986366232443,
+     "roles": 5
+    },
+    {
+     "lambda": 0.4,
+     "picked": [
+      "Take Out the Trash",
+      "Hunter's Talent",
+      "Wandertale Mentor",
+      "Jackdaw Savior",
+      "Consumed by Greed"
+     ],
+     "redundancy": 0.10535841272249206,
+     "relevance_kept": 0.8015045337469182,
+     "roles": 5
+    },
+    {
+     "lambda": 0.3,
+     "picked": [
+      "Take Out the Trash",
+      "Hunter's Talent",
+      "Jackdaw Savior",
+      "Consumed by Greed",
+      "Azure Beastbinder"
+     ],
+     "redundancy": 0.01792141111415772,
+     "relevance_kept": 0.49407484256605727,
+     "roles": 5
+    },
+    {
+     "lambda": 0.2,
+     "picked": [
+      "Take Out the Trash",
+      "Hunter's Talent",
+      "Jackdaw Savior",
+      "Consumed by Greed",
+      "Azure Beastbinder"
+     ],
+     "redundancy": 0.01792141111415772,
+     "relevance_kept": 0.49407484256605727,
+     "roles": 5
+    },
+    {
+     "lambda": 0.1,
+     "picked": [
+      "Take Out the Trash",
+      "Skyskipper Duo",
+      "Camellia, the Seedmiser",
+      "Carrot Cake",
+      "Sword of Fire and Ice"
+     ],
+     "redundancy": 0.0005519277441137766,
+     "relevance_kept": 0.32323774326168,
+     "roles": 5
+    },
+    {
+     "lambda": 0.0,
+     "picked": [
+      "Agate Assault",
+      "Skyskipper Duo",
+      "Bonecache Overseer",
+      "Carrot Cake",
+      "Sword of Fire and Ice"
+     ],
+     "redundancy": 0.005954005211418062,
+     "relevance_kept": 0.01624917186762332,
+     "roles": 5
+    }
+   ],
+   "UB": [
+    {
+     "lambda": 1.0,
+     "picked": [
+      "Savor",
+      "Shoreline Looter",
+      "Mindwhisker",
+      "Wick's Patrol",
+      "Consumed by Greed"
+     ],
+     "redundancy": 0.4371965715538827,
+     "relevance_kept": 1.0,
+     "roles": 5
+    },
+    {
+     "lambda": 0.9,
+     "picked": [
+      "Savor",
+      "Shoreline Looter",
+      "Mindwhisker",
+      "Persistent Marshstalker",
+      "Wick's Patrol"
+     ],
+     "redundancy": 0.46302941312142,
+     "relevance_kept": 0.9949770501580391,
+     "roles": 4
+    },
+    {
+     "lambda": 0.8,
+     "picked": [
+      "Savor",
+      "Shoreline Looter",
+      "Mindwhisker",
+      "Persistent Marshstalker",
+      "Wick's Patrol"
+     ],
+     "redundancy": 0.46302941312142,
+     "relevance_kept": 0.9949770501580391,
+     "roles": 4
+    },
+    {
+     "lambda": 0.7,
+     "picked": [
+      "Savor",
+      "Shoreline Looter",
+      "Persistent Marshstalker",
+      "Mindwhisker",
+      "Patchwork Banner"
+     ],
+     "redundancy": 0.26131276925680347,
+     "relevance_kept": 0.883725516222634,
+     "roles": 4
+    },
+    {
+     "lambda": 0.6,
+     "picked": [
+      "Savor",
+      "Shoreline Looter",
+      "Patchwork Banner",
+      "Rabid Gnaw",
+      "Swords to Plowshares"
+     ],
+     "redundancy": 0.012340411244457913,
+     "relevance_kept": 0.6191761991485812,
+     "roles": 4
+    },
+    {
+     "lambda": 0.5,
+     "picked": [
+      "Savor",
+      "Shoreline Looter",
+      "Patchwork Banner",
+      "Rabid Gnaw",
+      "Swords to Plowshares"
+     ],
+     "redundancy": 0.012340411244457913,
+     "relevance_kept": 0.6191761991485812,
+     "roles": 4
+    },
+    {
+     "lambda": 0.4,
+     "picked": [
+      "Savor",
+      "Shoreline Looter",
+      "Patchwork Banner",
+      "Rabid Gnaw",
+      "Swords to Plowshares"
+     ],
+     "redundancy": 0.012340411244457913,
+     "relevance_kept": 0.6191761991485812,
+     "roles": 4
+    },
+    {
+     "lambda": 0.3,
+     "picked": [
+      "Savor",
+      "Shoreline Looter",
+      "Patchwork Banner",
+      "Rabid Gnaw",
+      "Swords to Plowshares"
+     ],
+     "redundancy": 0.012340411244457913,
+     "relevance_kept": 0.6191761991485812,
+     "roles": 4
+    },
+    {
+     "lambda": 0.2,
+     "picked": [
+      "Savor",
+      "Shoreline Looter",
+      "Whiskervale Forerunner",
+      "Pawpatch Recruit",
+      "Byway Barterer"
+     ],
+     "redundancy": 0.02033759790576895,
+     "relevance_kept": 0.6054525669464864,
+     "roles": 5
+    },
+    {
+     "lambda": 0.1,
+     "picked": [
+      "Savor",
+      "Shoreline Looter",
+      "Whiskervale Forerunner",
+      "Pawpatch Recruit",
+      "Byway Barterer"
+     ],
+     "redundancy": 0.02033759790576895,
+     "relevance_kept": 0.6054525669464864,
+     "roles": 5
+    },
+    {
+     "lambda": 0.0,
+     "picked": [
+      "Artist's Talent",
+      "Feather of Flight",
+      "Season of Loss",
+      "Dreamdew Entrancer",
+      "Sword of Fire and Ice"
+     ],
+     "redundancy": 0.013130036397815185,
+     "relevance_kept": 0.05960421132547523,
+     "roles": 4
+    }
+   ],
+   "UG": [
+    {
+     "lambda": 1.0,
+     "picked": [
+      "Pond Prophet",
+      "Dreamdew Entrancer",
+      "Polliwallop",
+      "Hunter's Talent",
+      "Lilysplash Mentor"
+     ],
+     "redundancy": 0.7422508222766508,
+     "relevance_kept": 1.0,
+     "roles": 4
+    },
+    {
+     "lambda": 0.9,
+     "picked": [
+      "Pond Prophet",
+      "Dreamdew Entrancer",
+      "Polliwallop",
+      "Hunter's Talent",
+      "Lilysplash Mentor"
+     ],
+     "redundancy": 0.7422508222766508,
+     "relevance_kept": 1.0,
+     "roles": 4
+    },
+    {
+     "lambda": 0.8,
+     "picked": [
+      "Pond Prophet",
+      "Polliwallop",
+      "Dreamdew Entrancer",
+      "Hunter's Talent",
+      "Patchwork Banner"
+     ],
+     "redundancy": 0.4780651673525204,
+     "relevance_kept": 0.9387807985248595,
+     "roles": 5
+    },
+    {
+     "lambda": 0.7,
+     "picked": [
+      "Pond Prophet",
+      "Hunter's Talent",
+      "Patchwork Banner",
+      "Polliwallop",
+      "Dreamdew Entrancer"
+     ],
+     "redundancy": 0.4780651673525205,
+     "relevance_kept": 0.9387807985248595,
+     "roles": 5
+    },
+    {
+     "lambda": 0.6,
+     "picked": [
+      "Pond Prophet",
+      "Patchwork Banner",
+      "Hunter's Talent",
+      "Persistent Marshstalker",
+      "Dragonhawk, Fate's Tempest"
+     ],
+     "redundancy": 0.06528428224788776,
+     "relevance_kept": 0.5861926050679358,
+     "roles": 4
+    },
+    {
+     "lambda": 0.5,
+     "picked": [
+      "Pond Prophet",
+      "Patchwork Banner",
+      "Thornplate Intimidator",
+      "Swords to Plowshares",
+      "Dragonhawk, Fate's Tempest"
+     ],
+     "redundancy": 0.004571226977949856,
+     "relevance_kept": 0.4557804629327466,
+     "roles": 5
+    },
+    {
+     "lambda": 0.4,
+     "picked": [
+      "Pond Prophet",
+      "Agate Assault",
+      "Swords to Plowshares",
+      "Patchwork Banner",
+      "Persistent Marshstalker"
+     ],
+     "redundancy": -0.0023858309136320743,
+     "relevance_kept": 0.45454526316610994,
+     "roles": 4
+    },
+    {
+     "lambda": 0.3,
+     "picked": [
+      "Pond Prophet",
+      "Agate Assault",
+      "Swords to Plowshares",
+      "Persistent Marshstalker",
+      "Patchwork Banner"
+     ],
+     "redundancy": -0.002385830913632074,
+     "relevance_kept": 0.45454526316610994,
+     "roles": 4
+    },
+    {
+     "lambda": 0.2,
+     "picked": [
+      "Pond Prophet",
+      "Agate Assault",
+      "Swords to Plowshares",
+      "Persistent Marshstalker",
+      "Patchwork Banner"
+     ],
+     "redundancy": -0.002385830913632074,
+     "relevance_kept": 0.45454526316610994,
+     "roles": 4
+    },
+    {
+     "lambda": 0.1,
+     "picked": [
+      "Pond Prophet",
+      "Agate Assault",
+      "Swords to Plowshares",
+      "Persistent Marshstalker",
+      "Patchwork Banner"
+     ],
+     "redundancy": -0.002385830913632074,
+     "relevance_kept": 0.45454526316610994,
+     "roles": 4
+    },
+    {
+     "lambda": 0.0,
+     "picked": [
+      "Agate Assault",
+      "Long River Lurker",
+      "Vinereap Mentor",
+      "Warren Warleader",
+      "Sword of Fire and Ice"
+     ],
+     "redundancy": 0.011488076160680363,
+     "relevance_kept": 0.11613918976207684,
+     "roles": 5
+    }
+   ],
+   "UR": [
+    {
+     "lambda": 1.0,
+     "picked": [
+      "Take Out the Trash",
+      "Pearl of Wisdom",
+      "Shoreline Looter",
+      "Dire Downdraft",
+      "Rabid Gnaw"
+     ],
+     "redundancy": 0.3984942704597425,
+     "relevance_kept": 1.0,
+     "roles": 4
+    },
+    {
+     "lambda": 0.9,
+     "picked": [
+      "Take Out the Trash",
+      "Pearl of Wisdom",
+      "Shoreline Looter",
+      "Dire Downdraft",
+      "Rabid Gnaw"
+     ],
+     "redundancy": 0.3984942704597425,
+     "relevance_kept": 1.0,
+     "roles": 4
+    },
+    {
+     "lambda": 0.8,
+     "picked": [
+      "Take Out the Trash",
+      "Pearl of Wisdom",
+      "Shoreline Looter",
+      "Dire Downdraft",
+      "Fountainport Bell"
+     ],
+     "redundancy": 0.34688006108787106,
+     "relevance_kept": 0.950476148919005,
+     "roles": 5
+    },
+    {
+     "lambda": 0.7,
+     "picked": [
+      "Take Out the Trash",
+      "Pearl of Wisdom",
+      "Shoreline Looter",
+      "Fountainport Bell",
+      "Dire Downdraft"
+     ],
+     "redundancy": 0.34688006108787106,
+     "relevance_kept": 0.950476148919005,
+     "roles": 5
+    },
+    {
+     "lambda": 0.6,
+     "picked": [
+      "Take Out the Trash",
+      "Pearl of Wisdom",
+      "Fountainport Bell",
+      "Shoreline Looter",
+      "Warren Warleader"
+     ],
+     "redundancy": 0.14495363830947533,
+     "relevance_kept": 0.7896109657087957,
+     "roles": 5
+    },
+    {
+     "lambda": 0.5,
+     "picked": [
+      "Take Out the Trash",
+      "Pearl of Wisdom",
+      "Fountainport Bell",
+      "Warren Warleader",
+      "Longstalk Brawl"
+     ],
+     "redundancy": 0.05067913147447715,
+     "relevance_kept": 0.6240730697164127,
+     "roles": 5
+    },
+    {
+     "lambda": 0.4,
+     "picked": [
+      "Take Out the Trash",
+      "Shoreline Looter",
+      "Warren Warleader",
+      "Hazel's Nocturne",
+      "Hunter's Talent"
+     ],
+     "redundancy": 0.013391278596000816,
+     "relevance_kept": 0.46433187723991226,
+     "roles": 5
+    },
+    {
+     "lambda": 0.3,
+     "picked": [
+      "Take Out the Trash",
+      "Shoreline Looter",
+      "Warren Warleader",
+      "Hazel's Nocturne",
+      "Hunter's Talent"
+     ],
+     "redundancy": 0.013391278596000816,
+     "relevance_kept": 0.46433187723991226,
+     "roles": 5
+    },
+    {
+     "lambda": 0.2,
+     "picked": [
+      "Take Out the Trash",
+      "Shoreline Looter",
+      "Warren Warleader",
+      "Hazel's Nocturne",
+      "Hunter's Talent"
+     ],
+     "redundancy": 0.013391278596000816,
+     "relevance_kept": 0.46433187723991226,
+     "roles": 5
+    },
+    {
+     "lambda": 0.1,
+     "picked": [
+      "Take Out the Trash",
+      "Shoreline Looter",
+      "Warren Warleader",
+      "Hazel's Nocturne",
+      "Hunter's Talent"
+     ],
+     "redundancy": 0.013391278596000816,
+     "relevance_kept": 0.46433187723991226,
+     "roles": 5
+    },
+    {
+     "lambda": 0.0,
+     "picked": [
+      "Agate Assault",
+      "Tidecaller Mentor",
+      "Sonar Strike",
+      "Innkeeper's Talent",
+      "Glidedive Duo"
+     ],
+     "redundancy": 0.03396693617616132,
+     "relevance_kept": 0.08552095501542928,
+     "roles": 5
+    }
+   ],
+   "WB": [
+    {
+     "lambda": 1.0,
+     "picked": [
+      "Moonrise Cleric",
+      "Carrot Cake",
+      "Zoraline, Cosmos Caller",
+      "Thought-Stalker Warlock",
+      "Savor"
+     ],
+     "redundancy": 0.44401589484254256,
+     "relevance_kept": 1.0,
+     "roles": 3
+    },
+    {
+     "lambda": 0.9,
+     "picked": [
+      "Moonrise Cleric",
+      "Carrot Cake",
+      "Zoraline, Cosmos Caller",
+      "Thought-Stalker Warlock",
+      "Savor"
+     ],
+     "redundancy": 0.44401589484254256,
+     "relevance_kept": 1.0,
+     "roles": 3
+    },
+    {
+     "lambda": 0.8,
+     "picked": [
+      "Moonrise Cleric",
+      "Carrot Cake",
+      "Thought-Stalker Warlock",
+      "Zoraline, Cosmos Caller",
+      "Savor"
+     ],
+     "redundancy": 0.44401589484254256,
+     "relevance_kept": 1.0,
+     "roles": 3
+    },
+    {
+     "lambda": 0.7,
+     "picked": [
+      "Moonrise Cleric",
+      "Carrot Cake",
+      "Thought-Stalker Warlock",
+      "Zoraline, Cosmos Caller",
+      "Savor"
+     ],
+     "redundancy": 0.44401589484254256,
+     "relevance_kept": 1.0,
+     "roles": 3
+    },
+    {
+     "lambda": 0.6,
+     "picked": [
+      "Moonrise Cleric",
+      "Carrot Cake",
+      "Thought-Stalker Warlock",
+      "Zoraline, Cosmos Caller",
+      "Savor"
+     ],
+     "redundancy": 0.44401589484254256,
+     "relevance_kept": 1.0,
+     "roles": 3
+    },
+    {
+     "lambda": 0.5,
+     "picked": [
+      "Moonrise Cleric",
+      "Carrot Cake",
+      "Thought-Stalker Warlock",
+      "Waterspout Warden",
+      "Sazacap's Brew"
+     ],
+     "redundancy": 0.06946205334752394,
+     "relevance_kept": 0.6415879317211424,
+     "roles": 3
+    },
+    {
+     "lambda": 0.4,
+     "picked": [
+      "Moonrise Cleric",
+      "Carrot Cake",
+      "Thought-Stalker Warlock",
+      "Waterspout Warden",
+      "Sazacap's Brew"
+     ],
+     "redundancy": 0.06946205334752394,
+     "relevance_kept": 0.6415879317211424,
+     "roles": 3
+    },
+    {
+     "lambda": 0.3,
+     "picked": [
+      "Moonrise Cleric",
+      "Patchwork Banner",
+      "Sazacap's Brew",
+      "Treetop Sentries",
+      "Finch Formation"
+     ],
+     "redundancy": -0.013215151749806388,
+     "relevance_kept": 0.2761758021399378,
+     "roles": 4
+    },
+    {
+     "lambda": 0.2,
+     "picked": [
+      "Moonrise Cleric",
+      "High Stride",
+      "Thundertrap Trainer",
+      "Reptilian Recruiter",
+      "Sword of Fire and Ice"
+     ],
+     "redundancy": 0.01237941884234404,
+     "relevance_kept": 0.2530819541174283,
+     "roles": 5
+    },
+    {
+     "lambda": 0.1,
+     "picked": [
+      "Moonrise Cleric",
+      "High Stride",
+      "Thundertrap Trainer",
+      "Reptilian Recruiter",
+      "Sword of Fire and Ice"
+     ],
+     "redundancy": 0.01237941884234404,
+     "relevance_kept": 0.2530819541174283,
+     "roles": 5
+    },
+    {
+     "lambda": 0.0,
+     "picked": [
+      "Agate Assault",
+      "Waterspout Warden",
+      "Starseer Mentor",
+      "Tangle Tumbler",
+      "Ygra, Eater of All"
+     ],
+     "redundancy": 0.00865202078034184,
+     "relevance_kept": 0.03700344492504545,
+     "roles": 4
+    }
+   ],
+   "WG": [
+    {
+     "lambda": 1.0,
+     "picked": [
+      "Carrot Cake",
+      "Intrepid Rabbit",
+      "Burrowguard Mentor",
+      "Hop to It",
+      "Harvestrite Host"
+     ],
+     "redundancy": 0.8865279558850648,
+     "relevance_kept": 1.0,
+     "roles": 4
+    },
+    {
+     "lambda": 0.9,
+     "picked": [
+      "Carrot Cake",
+      "Intrepid Rabbit",
+      "Burrowguard Mentor",
+      "Hop to It",
+      "Harvestrite Host"
+     ],
+     "redundancy": 0.8865279558850648,
+     "relevance_kept": 1.0,
+     "roles": 4
+    },
+    {
+     "lambda": 0.8,
+     "picked": [
+      "Carrot Cake",
+      "Intrepid Rabbit",
+      "Burrowguard Mentor",
+      "Hop to It",
+      "Harvestrite Host"
+     ],
+     "redundancy": 0.8865279558850648,
+     "relevance_kept": 1.0,
+     "roles": 4
+    },
+    {
+     "lambda": 0.7,
+     "picked": [
+      "Carrot Cake",
+      "Intrepid Rabbit",
+      "Burrowguard Mentor",
+      "Hop to It",
+      "Patchwork Banner"
+     ],
+     "redundancy": 0.6729613246665991,
+     "relevance_kept": 0.9406423344451588,
+     "roles": 5
+    },
+    {
+     "lambda": 0.6,
+     "picked": [
+      "Carrot Cake",
+      "Intrepid Rabbit",
+      "Burrowguard Mentor",
+      "Skyskipper Duo",
+      "Daggerfang Duo"
+     ],
+     "redundancy": 0.23394357646179,
+     "relevance_kept": 0.7069444222440304,
+     "roles": 4
+    },
+    {
+     "lambda": 0.5,
+     "picked": [
+      "Carrot Cake",
+      "Hunter's Talent",
+      "Vren, the Relentless",
+      "Hired Claw",
+      "Burrowguard Mentor"
+     ],
+     "redundancy": 0.11261090928242186,
+     "relevance_kept": 0.5274984817077847,
+     "roles": 5
+    },
+    {
+     "lambda": 0.4,
+     "picked": [
+      "Carrot Cake",
+      "Hunter's Talent",
+      "Vren, the Relentless",
+      "Hired Claw",
+      "Sinister Monolith"
+     ],
+     "redundancy": 0.03689285421516284,
+     "relevance_kept": 0.33091053363313966,
+     "roles": 5
+    },
+    {
+     "lambda": 0.3,
+     "picked": [
+      "Carrot Cake",
+      "Ygra, Eater of All",
+      "Portent of Calamity",
+      "Hired Claw",
+      "Bandit's Talent"
+     ],
+     "redundancy": 0.02860596392159953,
+     "relevance_kept": 0.2842990015197481,
+     "roles": 5
+    },
+    {
+     "lambda": 0.2,
+     "picked": [
+      "Carrot Cake",
+      "Ygra, Eater of All",
+      "Portent of Calamity",
+      "Hired Claw",
+      "Bandit's Talent"
+     ],
+     "redundancy": 0.02860596392159953,
+     "relevance_kept": 0.2842990015197481,
+     "roles": 5
+    },
+    {
+     "lambda": 0.1,
+     "picked": [
+      "Carrot Cake",
+      "Ygra, Eater of All",
+      "Portent of Calamity",
+      "Hired Claw",
+      "Bandit's Talent"
+     ],
+     "redundancy": 0.02860596392159953,
+     "relevance_kept": 0.2842990015197481,
+     "roles": 5
+    },
+    {
+     "lambda": 0.0,
+     "picked": [
+      "Alania's Pathmaker",
+      "Skyskipper Duo",
+      "Rabbit Response",
+      "Bandit's Talent",
+      "Bakersbane Duo"
+     ],
+     "redundancy": 0.0017236826483842556,
+     "relevance_kept": 0.031525044469902376,
+     "roles": 5
+    }
+   ],
+   "WR": [
+    {
+     "lambda": 1.0,
+     "picked": [
+      "Manifold Mouse",
+      "Mabel, Heir to Cragflame",
+      "Heartfire Hero",
+      "Intrepid Rabbit",
+      "Take Out the Trash"
+     ],
+     "redundancy": 0.5742570190917838,
+     "relevance_kept": 1.0,
+     "roles": 4
+    },
+    {
+     "lambda": 0.9,
+     "picked": [
+      "Manifold Mouse",
+      "Intrepid Rabbit",
+      "Mabel, Heir to Cragflame",
+      "Heartfire Hero",
+      "Take Out the Trash"
+     ],
+     "redundancy": 0.574257019091784,
+     "relevance_kept": 1.0,
+     "roles": 4
+    },
+    {
+     "lambda": 0.8,
+     "picked": [
+      "Manifold Mouse",
+      "Intrepid Rabbit",
+      "Mabel, Heir to Cragflame",
+      "Take Out the Trash",
+      "Heartfire Hero"
+     ],
+     "redundancy": 0.5742570190917838,
+     "relevance_kept": 1.0,
+     "roles": 4
+    },
+    {
+     "lambda": 0.7,
+     "picked": [
+      "Manifold Mouse",
+      "Intrepid Rabbit",
+      "Mabel, Heir to Cragflame",
+      "Take Out the Trash",
+      "Heartfire Hero"
+     ],
+     "redundancy": 0.5742570190917838,
+     "relevance_kept": 1.0,
+     "roles": 4
+    },
+    {
+     "lambda": 0.6,
+     "picked": [
+      "Manifold Mouse",
+      "Intrepid Rabbit",
+      "Take Out the Trash",
+      "Mabel, Heir to Cragflame",
+      "Heartfire Hero"
+     ],
+     "redundancy": 0.5742570190917838,
+     "relevance_kept": 1.0,
+     "roles": 4
+    },
+    {
+     "lambda": 0.5,
+     "picked": [
+      "Manifold Mouse",
+      "Intrepid Rabbit",
+      "Take Out the Trash",
+      "Mabel, Heir to Cragflame",
+      "Fabled Passage"
+     ],
+     "redundancy": 0.296976822985005,
+     "relevance_kept": 0.8107756790265068,
+     "roles": 4
+    },
+    {
+     "lambda": 0.4,
+     "picked": [
+      "Manifold Mouse",
+      "Intrepid Rabbit",
+      "Fabled Passage",
+      "Bark-Knuckle Boxer",
+      "Scales of Shale"
+     ],
+     "redundancy": 0.034017722979416826,
+     "relevance_kept": 0.4269766132643904,
+     "roles": 4
+    },
+    {
+     "lambda": 0.3,
+     "picked": [
+      "Manifold Mouse",
+      "Intrepid Rabbit",
+      "Heaped Harvest",
+      "Mind Spiral",
+      "Scales of Shale"
+     ],
+     "redundancy": 0.02614035932033487,
+     "relevance_kept": 0.4191931926430535,
+     "roles": 5
+    },
+    {
+     "lambda": 0.2,
+     "picked": [
+      "Manifold Mouse",
+      "Patchwork Banner",
+      "Valley Rotcaller",
+      "Plumecreed Mentor",
+      "Mistbreath Elder"
+     ],
+     "redundancy": -0.0045866710634695365,
+     "relevance_kept": 0.2631830453414372,
+     "roles": 4
+    },
+    {
+     "lambda": 0.1,
+     "picked": [
+      "Manifold Mouse",
+      "Bark-Knuckle Boxer",
+      "Zoraline, Cosmos Caller",
+      "Mockingbird",
+      "Patchwork Banner"
+     ],
+     "redundancy": 0.007819696417674712,
+     "relevance_kept": 0.26138557922345357,
+     "roles": 4
+    },
+    {
+     "lambda": 0.0,
+     "picked": [
+      "Agate Assault",
+      "Long River Lurker",
+      "Zoraline, Cosmos Caller",
+      "Bushy Bodyguard",
+      "Harvestrite Host"
+     ],
+     "redundancy": 0.005101895547477947,
+     "relevance_kept": 0.09873824763336128,
+     "roles": 3
+    }
+   ],
+   "WU": [
+    {
+     "lambda": 1.0,
+     "picked": [
+      "Carrot Cake",
+      "Plumecreed Mentor",
+      "Intrepid Rabbit",
+      "Shoreline Looter",
+      "Dazzling Denial"
+     ],
+     "redundancy": 0.34886123789400353,
+     "relevance_kept": 1.0,
+     "roles": 4
+    },
+    {
+     "lambda": 0.9,
+     "picked": [
+      "Carrot Cake",
+      "Plumecreed Mentor",
+      "Intrepid Rabbit",
+      "Shoreline Looter",
+      "Dazzling Denial"
+     ],
+     "redundancy": 0.34886123789400353,
+     "relevance_kept": 1.0,
+     "roles": 4
+    },
+    {
+     "lambda": 0.8,
+     "picked": [
+      "Carrot Cake",
+      "Plumecreed Mentor",
+      "Shoreline Looter",
+      "Intrepid Rabbit",
+      "Dazzling Denial"
+     ],
+     "redundancy": 0.34886123789400353,
+     "relevance_kept": 1.0,
+     "roles": 4
+    },
+    {
+     "lambda": 0.7,
+     "picked": [
+      "Carrot Cake",
+      "Plumecreed Mentor",
+      "Shoreline Looter",
+      "Intrepid Rabbit",
+      "Dazzling Denial"
+     ],
+     "redundancy": 0.34886123789400353,
+     "relevance_kept": 1.0,
+     "roles": 4
+    },
+    {
+     "lambda": 0.6,
+     "picked": [
+      "Carrot Cake",
+      "Plumecreed Mentor",
+      "Shoreline Looter",
+      "Intrepid Rabbit",
+      "Dazzling Denial"
+     ],
+     "redundancy": 0.34886123789400353,
+     "relevance_kept": 1.0,
+     "roles": 4
+    },
+    {
+     "lambda": 0.5,
+     "picked": [
+      "Carrot Cake",
+      "Plumecreed Mentor",
+      "Shoreline Looter",
+      "Rabid Gnaw",
+      "Cache Grab"
+     ],
+     "redundancy": 0.06411706192412513,
+     "relevance_kept": 0.6647751950151191,
+     "roles": 4
+    },
+    {
+     "lambda": 0.4,
+     "picked": [
+      "Carrot Cake",
+      "Dazzling Denial",
+      "Plumecreed Mentor",
+      "Cache Grab",
+      "Rabid Gnaw"
+     ],
+     "redundancy": 0.08043970024207117,
+     "relevance_kept": 0.6605815949788167,
+     "roles": 3
+    },
+    {
+     "lambda": 0.3,
+     "picked": [
+      "Carrot Cake",
+      "Dazzling Denial",
+      "Heaped Harvest",
+      "Valley Rally",
+      "Sword of Fire and Ice"
+     ],
+     "redundancy": 0.015203743232585179,
+     "relevance_kept": 0.41637548008682485,
+     "roles": 4
+    },
+    {
+     "lambda": 0.2,
+     "picked": [
+      "Carrot Cake",
+      "Dazzling Denial",
+      "Heaped Harvest",
+      "Valley Rally",
+      "Sword of Fire and Ice"
+     ],
+     "redundancy": 0.015203743232585179,
+     "relevance_kept": 0.41637548008682485,
+     "roles": 4
+    },
+    {
+     "lambda": 0.1,
+     "picked": [
+      "Carrot Cake",
+      "Dazzling Denial",
+      "Heaped Harvest",
+      "Valley Rally",
+      "Sword of Fire and Ice"
+     ],
+     "redundancy": 0.015203743232585179,
+     "relevance_kept": 0.41637548008682485,
+     "roles": 4
+    },
+    {
+     "lambda": 0.0,
+     "picked": [
+      "Artist's Talent",
+      "Feather of Flight",
+      "Three Tree Rootweaver",
+      "Starscape Cleric",
+      "Sword of Fire and Ice"
+     ],
+     "redundancy": 0.012184699102300417,
+     "relevance_kept": 0.0518735339380817,
+     "roles": 3
+    }
+   ]
+  },
+  "rankops_disagreements": 0
+ },
+ "set": "BLB"
+}

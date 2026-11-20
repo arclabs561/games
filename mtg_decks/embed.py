@@ -19,6 +19,8 @@ the committed results can be compared byte for byte.
   `tests/test_mtg_decks.py` checks that on a small case. Learned: seeded.
 """
 
+from collections.abc import Sequence
+
 import numpy as np
 
 from maps.portable import dot_rows, exp, log, symmetric_eigen
@@ -182,7 +184,7 @@ def neighbors(x: np.ndarray, k: int) -> np.ndarray:
     return np.argsort(-sim, axis=1, kind="stable")[:, :k]
 
 
-def agreement(nbrs: np.ndarray, labels: list[str | None]) -> float:
+def agreement(nbrs: np.ndarray, labels: Sequence[str | None]) -> float:
     """Mean share of a card's neighbors with the card's label, over labeled cards.
 
     Neighbors without a label count as disagreeing; cards without one are skipped.
@@ -195,7 +197,7 @@ def agreement(nbrs: np.ndarray, labels: list[str | None]) -> float:
     return float(np.mean(shares))
 
 
-def chance_agreement(labels: list[str | None]) -> float:
+def chance_agreement(labels: Sequence[str | None]) -> float:
     """Expected `agreement` if each card's neighbors were drawn at random from the rest."""
     n = len(labels)
     shares = []

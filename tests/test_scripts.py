@@ -57,7 +57,7 @@ def test_every_script_block_parses():
 
 
 # Import names that differ from the distribution names in pyproject.toml.
-DISTRIBUTION = {"sklearn": "scikit-learn", "z3": "z3-solver"}
+DISTRIBUTION = {"ot": "pot", "sklearn": "scikit-learn", "z3": "z3-solver"}
 
 
 def normalize(name):
