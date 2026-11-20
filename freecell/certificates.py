@@ -92,8 +92,12 @@ def explain(deal: int, cells: int) -> str:
     if blocked_at_start(layout, cells):
         return f"deal {deal}, {cells} cells: lost, no card can move at the start"
     if cells == 0 and (stuck := static_stuck(layout)):
-        cards = " ".join(name(c) for c in sorted(stuck))
-        return f"deal {deal}, 0 cells: lost, these cards can never move: {cards}"
+        aces = " ".join(name(c) for c in sorted(stuck) if c < 4)
+        some = " ".join(name(c) for c in sorted(stuck)[:8]) + (" ..." if len(stuck) > 8 else "")
+        return (
+            f"deal {deal}, 0 cells: lost, {len(stuck)} cards can never move ({some}); "
+            f"aces among them: {aces}"
+        )
     res = solve(Rules(cells=cells), layout, use_supermoves=False)
     if res.verdict == "won":
         return f"deal {deal}, {cells} cells: won in {len(res.line)} moves"

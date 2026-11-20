@@ -19,7 +19,7 @@ from collections import Counter
 from pathlib import Path
 
 from freecell.certificates import blocked_at_start, static_stuck
-from freecell.deals import ms_deal
+from freecell.deals import ms_deal, name
 
 HERE = Path(__file__).parent
 DEALS = range(1, 32001)
@@ -59,14 +59,15 @@ def load(folders: list[Path] | None, solver: str) -> list[dict]:
     """Every record of one solver ('a' or 'b') below the folders, each deal and level once.
 
     A later run of the same deal and level replaces an earlier one only if the earlier one
-    was left undecided. Runs of a single level (`--levels`) are left out."""
+    was left undecided. Records from runs of chosen levels only (`--levels`) are marked
+    `partial`: they give verdicts at those levels but not the least number of free cells."""
     out: dict[tuple[int, int], dict] = {}
     for folder in folders or []:
         for p in sorted(folder.rglob(f"survey-{solver}-*.jsonl")):
-            if "-cells" in p.name:
-                continue
             for x in p.open():
                 r = json.loads(x)
+                r["autoplay"] = "-auto" in p.name
+                r["partial"] = "-cells" in p.name
                 k = r["deal"], r["cells"]
                 if k not in out or out[k]["verdict"] == "unknown":
                     out[k] = r
@@ -78,6 +79,8 @@ def least(records: list[dict]) -> dict[int, int | None]:
     a level was left open before a win."""
     out: dict[int, int | None] = {}
     for r in sorted(records, key=lambda r: (r["deal"], r["cells"])):
+        if r["partial"]:
+            continue
         if r["verdict"] == "won":
             out.setdefault(r["deal"], r["cells"])
         elif r["verdict"] == "unknown":
@@ -85,6 +88,27 @@ def least(records: list[dict]) -> dict[int, int | None]:
         elif r["cells"] == 4:
             out.setdefault(r["deal"], 5)
     return out
+
+
+def by_level(records: list[dict], deals=DEALS) -> dict[int, dict[str, int]]:
+    """For each number of free cells: deals won, lost and left undecided. A deal won with
+    fewer free cells is won; a deal left undecided with fewer is undecided."""
+    won_at: dict[int, int] = {}
+    lost = {(r["deal"], r["cells"]) for r in records if r["verdict"] == "lost"}
+    for r in records:
+        if r["verdict"] == "won":
+            won_at[r["deal"]] = min(r["cells"], won_at.get(r["deal"], 9))
+    out = {}
+    for k in range(5):
+        row = Counter(
+            "won" if won_at.get(d, 9) <= k else "lost" if (d, k) in lost else "undecided"
+            for d in deals
+        )
+        out[k] = {v: row[v] for v in ("won", "lost", "undecided")}
+    return out
+
+
+FENCE_BANDS = (100, 10_000, 1_000_000)
 
 
 def quantiles(xs: list[int]) -> dict:
@@ -108,8 +132,11 @@ def certificates(records: list[dict], least_cells: dict) -> dict:
             lost_by_level[r["cells"]].append(r)
     for cells, rows in lost_by_level.items():
         frozen = [r for r in rows if r["frozen"]]
+        sizes = [r["states"] for r in rows]
         row = {
             "lost": len(rows),
+            "fence at most": {n: sum(1 for x in sizes if x <= n) for n in FENCE_BANDS},
+            "fences counted with autoplay": sum(1 for r in rows if r.get("autoplay")),
             "fence size": quantiles([r["states"] for r in rows]),
             "largest fence": max(rows, key=lambda r: r["states"])["deal"] if rows else None,
             "with a frozen card": len(frozen),
@@ -119,11 +146,16 @@ def certificates(records: list[dict], least_cells: dict) -> dict:
         }
         if cells == 0:
             blocked = [r["deal"] for r in rows if blocked_at_start(ms_deal(r["deal"]), 0)]
-            stuck = [r["deal"] for r in rows if static_stuck(ms_deal(r["deal"]))]
+            stuck = {r["deal"]: static_stuck(ms_deal(r["deal"])) for r in rows}
+            names = {r["deal"]: set(r["frozen"]) for r in rows}
             row["blocked at the start"] = len(blocked)
             row["first blocked"] = blocked[:6]
-            row["with stuck cards"] = len(stuck)
-            row["stuck or blocked"] = len(set(stuck) | set(blocked))
+            row["with stuck cards"] = sum(1 for v in stuck.values() if v)
+            row["stuck or blocked"] = len({d for d, v in stuck.items() if v} | set(blocked))
+            row["stuck cards that the solver moves"] = sorted(
+                d for d, v in stuck.items() if not {name(c) for c in v} <= names[d]
+            )
+            row["stuck cards per deal"] = quantiles([len(v) for v in stuck.values() if v])
         row["without a frozen card"] = row["without a frozen card"][:50]
         out[cells] = row
     return out
@@ -146,7 +178,7 @@ def main() -> None:
             "decided": len(decided),
             "undecided": sorted(d for d, c in lc.items() if c is None),
             "least cells": dict(sorted(Counter(decided.values()).items())),
-            "lost by level": {k: sum(1 for c in decided.values() if c > k) for k in range(5)},
+            "by level": by_level(recs),
             "differ from the published list": sorted(d for d, c in decided.items() if pub[d] != c),
             "lines that fail replay": sorted(
                 r["deal"] for r in recs if r["verdict"] == "won" and not r["replay"]
@@ -154,17 +186,22 @@ def main() -> None:
             "positions searched": sum(r["states"] for r in recs),
         }
     both = [d for d in DEALS if la.get(d) is not None and lb.get(d) is not None]
+    fa = {(r["deal"], r["cells"]): r["frozen"] for r in rec_a if r["verdict"] == "lost"}
+    fb = {(r["deal"], r["cells"]): r["frozen"] for r in rec_b if r["verdict"] == "lost"}
     summary["A and B"] = {
         "deals both decide": len(both),
         "disagree": sorted(d for d in both if la[d] != lb[d]),
+        "lost levels both decide": len(fa.keys() & fb.keys()),
+        "frozen cards differ": sorted(k for k in fa.keys() & fb.keys() if fa[k] != fb[k]),
     }
+    summary["either solver"] = by_level(rec_a + rec_b)
     summary["published"] = {
         "least cells": dict(sorted(Counter(pub.values()).items())),
         "lost by level": {k: sum(1 for c in pub.values() if c > k) for k in range(5)},
         "counts": {k: {"lost": v[0], "source": v[1]} for k, v in PUBLISHED_LOST.items()},
     }
-    best = lb if len(lb) >= len(la) else la
-    summary["FAQ checks"] = {
+    best = lb
+    summary["FAQ checks (Solver B)"] = {
         "zero-cell wins equal the FAQ's 69": sorted(d for d, c in best.items() if c == 0)
         == FAQ_ZERO_CELLS,
         "four-cell deals below 1000 equal the FAQ's 11": sorted(
