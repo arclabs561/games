@@ -112,7 +112,7 @@ def run_curves(args) -> None:
         if k in wanted:
             part = sets[k][args.offset :]
             rows += [{**r, "set": k} for r in (part[: args.limit] if args.limit else part)]
-    i, n = map(int, args.shard.split("/"))
+    i, n = map(int, args.shard.split("/")) if "/" in args.shard else (int(args.shard), args.shards)
     mine = rows[i - 1 :: n]
     install_maia()
     maia, info = load_maia()

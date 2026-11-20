@@ -336,7 +336,8 @@ def paired_mse(
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("what", choices=["split", "curves", "fit"])
-    parser.add_argument("--shard", default="1/1")
+    parser.add_argument("--shard", default="1/1", help="i/n, or i with --shards n")
+    parser.add_argument("--shards", type=int, default=1)
     parser.add_argument("--sets", default="train,val,test,few")
     parser.add_argument("--limit", type=int, help="curves: first N puzzles of each set (pilot)")
     parser.add_argument("--offset", type=int, default=0)
