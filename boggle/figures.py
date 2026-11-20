@@ -27,8 +27,9 @@ def draw_board(
     """The board as a grid of letter squares, with each word in `words` traced through the
     squares of one path that spells it (the first word in the darkest line)."""
     n = len(board)
+    width = max(size * n + 0.6, 0.085 * len(title) + 0.3)  # wide enough for the title
     fig, ax = plt.subplots(
-        figsize=(size * n + 0.6, size * n + (0.8 if title else 0.3) + (0.3 if words else 0))
+        figsize=(width, size * n + (0.8 if title else 0.3) + (0.3 if words else 0))
     )
     for i, row in enumerate(board):
         for j, face in enumerate(row):
