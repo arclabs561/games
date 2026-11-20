@@ -35,8 +35,10 @@ import hashlib
 import importlib
 import json
 import random
+import sys
 import time
 from collections import Counter
+from functools import cache
 from pathlib import Path
 
 import numpy as np
@@ -207,6 +209,7 @@ class PolicyGiver:
         return Clue(*clues[i])
 
 
+@cache
 def c3_policies() -> dict:
     """Refit the self-play and population policies of one C3 task, as codenames.rl.run
     does (same boards, data and seed), and check theta against results/c3.json."""
@@ -308,13 +311,16 @@ def make_giver(name: str, tabs, pool_ours: tuple[str, ...], fw_givers, info: dic
     return PolicyGiver(np.array(c3["params"][kind]), sp, tau, pool)
 
 
-def crossplay(giver: str, guessers, n_boards: int = N_BOARDS, lora_dir: Path | None = None) -> dict:
+def crossplay_many(
+    givers, guessers, n_boards: int = N_BOARDS, lora_dir: Path | None = None
+) -> list[dict]:
+    """Every giver with every guesser on the same boards; one result per giver."""
     t0 = time.perf_counter()
     tabs = bench_data.tables()
     fw_givers, fw_guessers = framework_players()
     boards, pool = our_boards(tabs, n_boards)
     pool_ours = tuple(c for c in clue_words() if readable(c, tabs))
-    info: dict = {
+    common: dict = {
         "board_words": len(pool),
         "board_words_dropped": sorted(set(board_words()) - set(pool)),
         "our_clue_pool": len(pool_ours),
@@ -322,26 +328,83 @@ def crossplay(giver: str, guessers, n_boards: int = N_BOARDS, lora_dir: Path | N
     }
     ours = [g for g in guessers if g not in FRAMEWORK]
     spaces, sinfo = our_guesser_spaces(ours, list(bench_data.cm_words()), lora_dir)
-    info |= sinfo
+    common |= sinfo
     players = {g: fw_guessers[g] for g in guessers if g in FRAMEWORK}
     players |= {g: embedding_guesser(sp) for g, sp in spaces.items()}
-    give = make_giver(giver, tabs, pool_ours, fw_givers, info)
-    games = []
-    for gname, guess in players.items():
-        for seed, b in enumerate(boards):
-            board = Board(b.words, b.kinds)
-            try:
-                rec = game_record(board, play(board, give, guess))
-            except RuntimeError as e:  # a framework codemaster with no clue
-                rec = {"error": str(e), "score": bench.LOSS_SCORE, "won": False}
-            games.append({"giver": giver, "guesser": gname, "seed": seed} | rec)
-        print(giver, gname, f"{time.perf_counter() - t0:.0f} s", flush=True)
-    return {
-        "giver": giver,
-        "info": info,
-        "games": games,
-        "seconds": round(time.perf_counter() - t0),
-    }
+    out = []
+    for giver in givers:
+        t1 = time.perf_counter()
+        info = dict(common)
+        give = make_giver(giver, tabs, pool_ours, fw_givers, info)
+        games = []
+        for gname, guess in players.items():
+            for seed, b in enumerate(boards):
+                board = Board(b.words, b.kinds)
+                try:
+                    rec = game_record(board, play(board, give, guess))
+                except RuntimeError as e:  # a framework codemaster with no clue
+                    rec = {"error": str(e), "score": bench.LOSS_SCORE, "won": False}
+                games.append({"giver": giver, "guesser": gname, "seed": seed} | rec)
+            print(giver, gname, f"{time.perf_counter() - t0:.0f} s", flush=True)
+        out.append(
+            {
+                "giver": giver,
+                "info": info,
+                "games": games,
+                "seconds": round(time.perf_counter() - t1),
+            }
+        )
+    return out
+
+
+def crossplay(giver: str, guessers, n_boards: int = N_BOARDS, lora_dir: Path | None = None) -> dict:
+    return crossplay_many([giver], guessers, n_boards, lora_dir)[0]
+
+
+def lora_run(out: Path, n_boards: int = N_BOARDS) -> None:
+    """The column of the C8 encoder, inside a Hugging Face Job (its weights are in the
+    private dataset). Builds the same inputs as the workflow's data job, from the same
+    sources, and records their digests so that the two can be compared."""
+    import shutil
+    import subprocess
+    import urllib.request
+
+    from codenames import embed
+
+    hub = importlib.import_module("huggingface_hub")
+    tmp = Path("/tmp/bench")
+    tmp.mkdir(parents=True, exist_ok=True)
+    subprocess.run(
+        ["git", "clone", "-q", "--depth", "1", "--branch", "compute/codenames-embed",
+         "https://github.com/arclabs561/games.git", str(tmp / "embed")],
+        check=True,
+    )  # fmt: skip
+    embed.COMPUTED.mkdir(parents=True, exist_ok=True)
+    for f in (tmp / "embed" / "codenames" / "vectors").glob("*.npz"):
+        shutil.copy(f, embed.COMPUTED / f.name)
+    for name in bench_data.FILES:
+        bench_data.fetch_file(name)
+    glove = Path(hub.hf_hub_download("stanfordnlp/glove", "glove.6B.zip", cache_dir=str(tmp)))
+    w2v = tmp / "w2v.gz"
+    with urllib.request.urlopen(bench_data.W2V_URL) as r, open(w2v, "wb") as fh:
+        shutil.copyfileobj(r, fh, 1 << 22)
+    info = bench_data.extract(glove, w2v)
+    subprocess.run(
+        ["uv", "pip", "install", "-q", "--python", sys.executable, "nltk==3.10.4"], check=True
+    )
+    forms = bench_data.compute_forms(list(bench_data.cm_words()))
+    text = json.dumps(forms, sort_keys=True) + "\n"
+    (bench_data.BENCH / "forms.json").write_text(text)
+    info["forms_sha256"] = bench_data.sha256(text.encode())
+    info["nltk"] = forms["nltk"]
+    c8 = hub.snapshot_download(
+        "arclabs561/games-runs", repo_type="dataset", allow_patterns=[f"{LORA_RUN}/*"],
+        local_dir=str(tmp / "c8"),
+    )  # fmt: skip
+    out.mkdir(parents=True, exist_ok=True)
+    (out / "data.json").write_text(json.dumps(info, indent=1) + "\n")
+    for res in crossplay_many(GIVERS, ["lora-c8"], n_boards, Path(c8) / LORA_RUN):
+        (out / f"crossplay-lora-{res['giver']}.json").write_text(json.dumps(res) + "\n")
 
 
 # Part 3: analysis.
@@ -508,6 +571,9 @@ def main() -> None:
     c.add_argument("--boards", type=int, default=N_BOARDS)
     c.add_argument("--lora", type=Path, default=None, help="folder of the C8 run (private)")
     c.add_argument("--out", type=Path, required=True)
+    lr = sub.add_parser("lora-run", help="the C8 column, inside a Hugging Face Job")
+    lr.add_argument("--boards", type=int, default=N_BOARDS)
+    lr.add_argument("--out", type=Path, required=True)
     a = sub.add_parser("analyze")
     a.add_argument("--runs", type=Path, required=True)
     args = parser.parse_args()
@@ -522,6 +588,8 @@ def main() -> None:
     elif args.cmd == "crossplay":
         res = crossplay(args.giver, args.guessers, args.boards, args.lora)
         args.out.write_text(json.dumps(res) + "\n")
+    elif args.cmd == "lora-run":
+        lora_run(args.out, args.boards)
     else:
         write_results(args.runs)
 
