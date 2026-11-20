@@ -1,6 +1,6 @@
 # Yu-Gi-Oh! opening hands
 
-The question at the table is how often the opening hand has what the deck needs. In a 40-card deck, at least one starter turns up going first with chance 90.00% when the deck has 14 starters, and 87.73% with 13; going second, 12 starters reach 90.18%. Each card past 40 lowers that chance by about 0.9 points (12 starters: 85.06% in 40 cards, 80.57% in 45, 68.65% in 60). A starter and an extender together are much rarer than a starter: 61.01% going first with 12 and 9 of them. All of these are exact, as fractions. They are checked by brute force over every hand of small decks, by closed forms and by a seeded simulation of 1,000,000 hands. Three of four public calculators agree with every value in their tables; the fourth is off by up to 3.6 points in 10 of 13 values.
+The question at the table is how often the opening hand has what the deck needs. In a 40-card deck, at least one starter turns up going first with chance 90.00% when the deck has 14 starters, and 87.73% with 13; going second, 12 starters reach 90.18%. Each of the first few cards past 40 lowers that chance by about 0.9 points (12 starters: 85.06% in 40 cards, 80.57% in 45), and the 20 cards out to 60 cost 0.82 points each on average (68.65% in 60). A starter and an extender together are much rarer than a starter: 61.01% going first with 12 and 9 of them. All of these are exact, as fractions. They are checked by brute force over every hand of small decks, by closed forms and by a seeded simulation of 1,000,000 hands. Of five public calculators that print values, four agree with the exact values to the precision they print; the fifth is off by up to 3.6 points in 10 of 13 values.
 
 ![Six hands of five cards dealt from a 40-card deck of 12 starters, 9 extenders, 3 bricks and 16 other cards, each card drawn as a blank rectangle with its role's initial, and for each hand whether it has a starter, a starter and an extender, and no brick](figures/hands.svg)
 
@@ -11,6 +11,7 @@ The question at the table is how often the opening hand has what the deck needs.
 - **The deck.** A main deck has 40 to 60 cards and at most 3 copies of a card, fewer for cards on the Forbidden and Limited list ([Official Rulebook, version 10](https://img.yugioh-card.com/en/downloads/rulebook/SD_RuleBook_EN_10.pdf), "Getting Started" and "Forbidden & Limited Cards").
 - **The hand.** Each player draws 5 cards, and the player who goes first does not draw on the first turn (same rulebook, "Let the Duel Begin!" and "Draw Phase"). So the first turn is played with 5 cards going first and 6 going second, before any card effect.
 - **Roles.** Which card is a starter depends on the deck, and the player decides it. The model only counts. A **starter** begins the deck's main play by itself, and a card that searches a starter counts as one. An **extender** adds to a play after a starter but cannot begin one. A **brick** is dead in the opening hand. **Other** is everything else: playable cards that neither start nor extend, such as cards used on the opponent's turn.
+- **Needs.** A **need** is a condition on the opening hand, such as "at least one starter" or "a starter and an extender". Each card has exactly one role, so a card that is both a starter and an extender, or a hand trap, is counted under one of them.
 - **"A starter and an extender"** is read in two ways. Strictly, the hand needs at least one of each. More loosely, a second starter can take the extender's place ("a starter and another engine card"). Both are reported; the loose reading gives 78.00% for the example deck going first, against 61.01% for the strict one.
 - Nothing about the opponent is modeled: no interruptions, no hand traps, no choice of going first.
 
@@ -32,7 +33,7 @@ Exact unless marked. Percentages are rounded; the exact fractions are in [`resul
 | Pot of Prosperity, the one copy allowed, revealing 6 / 3, example deck, going first | a starter 87.57% / 87.01%, worth 0.94 / 0.73 starters | exact; checked against every order of small decks |
 | Pot of Prosperity with 3 draw-2 cards, against the generic model that plays both | a starter 90.90% against 91.15%; a starter and an extender 73.18% against 73.98% | exact; simulated, 200,000 decks, seed 1, each within its 95% interval |
 | c draw-1 cards added to a deck of N | the same hands as the N cards without them | proved below, and checked exactly |
-| Public calculators | three agree with every value in their tables; one disagrees in 10 of 13 | exact values against values read on 2026-11-19 |
+| Public calculators | of five that print values, four agree to the precision they print; one disagrees in 10 of 13 | exact values against values read on 2026-11-19 |
 
 ## How the results are checked
 
@@ -129,14 +130,15 @@ The card's text, as Yugipedia gives it from Konami's card database (entry 15756)
 | Pot of Prosperity, revealing 6 | 87.57% | 66.25% | 92.17% | 0.94 |
 | Pot of Prosperity, revealing 3 | 87.01% | 64.85% | 91.75% | 0.73 |
 | Pot of Prosperity (6) and 3 draw-2, best choice | 90.90% | 73.18% | 94.65% | 2.47 |
+| the same, always Prosperity first | 90.90% | 73.13% | 94.65% | 2.47 |
 | the same, always the draw-2 first | 90.52% | 72.39% | 94.29% | 2.27 |
 | one generic look-at-6 and 3 draw-2 (model above) | 91.15% | 73.98% | 94.83% | 2.60 |
 
-Alone, the card gives exactly what one generic looker gives, since nothing in the opening hand conflicts with it. Always playing it before a draw-2 is as good as the best choice for a starter, and 0.05 points short of it for a starter and an extender. The exact sum is checked against a listing of every order of decks of six to eight cards. A seeded simulation of 200,000 decks for each fixed choice (seed 1) puts both exact values inside their 95% intervals: 90.87% to 91.12% around 90.90%, and 90.47% to 90.73% around 90.52%.
+Alone, the card gives exactly what one generic looker gives, since nothing in the opening hand conflicts with it. Always playing Prosperity before a draw-2 is as good as the best choice for a starter, and 0.05 points short of it for a starter and an extender; always playing the draw-2 first is 0.38 points short for a starter. The exact sum is checked against a listing of every order of decks of six to eight cards. A seeded simulation of 200,000 decks for each fixed choice (seed 1) puts both exact values inside their 95% intervals: 90.87% to 91.12% around 90.90%, and 90.47% to 90.73% around 90.52%.
 
 ## Public calculators
 
-The values that four public calculators print were read on 2026-11-19 and compared with the exact values ([table](results/tables.md#public-calculators-read-on-2026-11-19)).
+The values that five public calculators print were read on 2026-11-19 and compared with the exact values ([table](results/tables.md#public-calculators-read-on-2026-11-19)).
 
 - [ygo-decklab.com](https://ygo-decklab.com/en/guide/deck-probabilities) prints "at least 1" for 1 to 15 copies in 40 cards; all 15 values match to the digit shown. The same page's text says that 9 starters give "around 79%"; its own table and the exact value give 74.2%.
 - [codingace.net](https://codingace.net/general/yugioh_hand.html) prints four decimals for 3, 6 and 9 copies; all agree.
@@ -147,6 +149,10 @@ The values that four public calculators print were read on 2026-11-19 and compar
 ## Deck lists
 
 Typical ratios from public deck lists were not collected. The [YGOPRODeck API guide](https://ygoprodeck.com/api-guide/) documents only card information, with a rate limit of 20 requests a second and rules for images. It states no license for its data and offers no endpoint for deck lists. No terms of use covering the deck pages were found on the site. The terms do not clearly allow collecting deck lists, so none were collected.
+
+## Related work
+
+The same counting is standard in deck building for Magic: The Gathering, for example in F. Karsten's articles on how many lands a deck needs. This folder checks its values against Yu-Gi-Oh! calculators only.
 
 ## Data
 
@@ -160,10 +166,11 @@ No card images are used, and the figures draw blank cards labeled by role. One c
 
 ## Open questions
 
-- Pot of Prosperity is modeled above with its costs. Some cards banish cards from the deck, such as Pot of Desires (10 face-down). That changes nothing in the opening hand, because the banished cards are random. It matters when a starter searches a card that the banish removes. That needs a model of search targets, which roles do not have.
-- A starter that needs the turn's one Normal Summon competes with another such starter. A need that counts Normal Summons would separate those hands.
-- "Worth in starters" is measured on one need. For "a starter and an extender" a looker could be worth more, since it can take whichever card is missing.
-- Ratios in real tournament decks, if a source with clear terms is found.
+- What does a card that banishes from the deck cost a deck that searches? Pot of Desires banishes 10 cards face-down. That changes nothing in the opening hand, because the banished cards are random, but it matters when a starter searches a card that the banish removes. That needs a model of search targets, which roles do not have.
+- How often does a hand hold two starters that both need the turn's one Normal Summon? A need that counts Normal Summons would separate those hands.
+- Is a looker worth more for "a starter and an extender" than for one starter, since it can take whichever card is missing? "Worth in starters" is measured on one need.
+- What ratios do real tournament decks use? That needs deck lists from a source with clear terms.
+- Going second, how often does the hand hold a starter or a card used on the opponent's turn, such as a hand trap? Roles are exclusive here, so the model would need a card to carry two roles.
 
 ## Usage
 
