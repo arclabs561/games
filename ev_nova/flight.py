@@ -256,6 +256,21 @@ def _multicore(text: str) -> dict[str, float]:
     return out
 
 
+def _get(e: ET.Element | None, key: str) -> str:
+    """An attribute that must be present."""
+    assert e is not None and e.get(key) is not None, key
+    return str(e.get(key))
+
+
+def _xy(e: ET.Element | None) -> tuple[float, float]:
+    return float(_get(e, "x")), float(_get(e, "y"))
+
+
+def _children(root: ET.Element, tag: str) -> list[ET.Element]:
+    found = root.find(tag)
+    return list(found) if found is not None else []
+
+
 def read_ship(naev_dir: Path, name: str) -> tuple[Ship, dict]:
     """A ship with its default outfits, for ships with one engine and no stat that changes
     speed or thrust. Returns the ship and the numbers it was built from."""
@@ -266,15 +281,15 @@ def read_ship(naev_dir: Path, name: str) -> tuple[Ship, dict]:
     root = ET.parse(path).getroot()
     mass = float(root.findtext("characteristics/mass", "0"))
     cargo = float(root.findtext("characteristics/cargo", "0"))
-    found = root.find("stats")
-    stats = {e.tag: float(e.text or 0) for e in (found if found is not None else [])}
+    stats = {e.tag: float(e.text or 0) for e in _children(root, "stats")}
     assert not {"speed_mod", "accel_mod", "turn_mod", "speed", "accel"} & set(stats), stats
     outfits = {ET.parse(p).getroot().get("name"): p for p in (dat / "outfits").rglob("*.xml")}
-    engines = [s for s in root.find("slots") if s.get("prop", "").startswith("engines") and s.text]
+    slots = _children(root, "slots")
+    engines = [s for s in slots if s.get("prop", "").startswith("engines") and s.text]
     assert len(engines) == 1, "only ships with one engine are read"
     speed = accel = turn = limit = 0.0
     used = {"ship": str(path.relative_to(naev_dir))}
-    for slot in root.find("slots"):
+    for slot in slots:
         if not slot.text:
             continue
         o = outfits[slot.text.strip()]
@@ -314,15 +329,15 @@ def export(naev_dir: Path, ships=("Llama",)) -> dict:
     pos = {n: tuple(s["pos"]) for n, s in data["systems"].items()}
     for path in sorted((naev_dir / "dat" / "ssys").glob("*.xml")):
         root = ET.parse(path).getroot()
-        name = root.get("name")
+        name = _get(root, "name")
         r = float(root.findtext("general/radius", "0"))
         radius[name] = r
         jumps[name] = {}
         for j in root.iter("jump"):
-            target = j.get("target")
+            target = _get(j, "target")
             p = j.find("pos")
             if p is not None:
-                xy = (float(p.get("x")), float(p.get("y")))
+                xy = _xy(p)
             else:
                 assert j.find("autopos") is not None
                 dx, dy = pos[target][0] - pos[name][0], pos[target][1] - pos[name][1]
@@ -333,8 +348,8 @@ def export(naev_dir: Path, ships=("Llama",)) -> dict:
     for path in sorted((naev_dir / "dat" / "spob").glob("*.xml")):
         root = ET.parse(path).getroot()
         if root.get("name") in stops:
-            p = root.find("pos")
-            spobs[root.get("name")] = [round(float(p.get("x")), 6), round(float(p.get("y")), 6)]
+            x, y = _xy(root.find("pos"))
+            spobs[_get(root, "name")] = [round(x, 6), round(y, 6)]
     commit = subprocess.run(
         ["git", "-C", str(naev_dir), "rev-parse", "HEAD"], capture_output=True, text=True
     ).stdout.strip()

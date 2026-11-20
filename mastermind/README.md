@@ -41,6 +41,8 @@ On this screen it is sure to crack the password within four attempts, whichever 
 | Same, random consistent guessing | 67.8% ± 0.4 | same |
 | From Average level up: minimax and expected size against the best possible | within 0.05 points | same |
 | Three published Fallout 4 screens | expected size and "closest word" reproduce Math Goes Pop's table exactly | exact |
+| Fallout 3 with exit and retry, 20-word Very Easy screens: expected guesses, same password on reentry | 3.290 ± 0.009 guesses, 1.151 entries | simulated, the same 1,000 screens; exact on each screen ([retry](#what-does-exit-and-retry-change)) |
+| Same, new password on reentry | 3.550 ± 0.021 guesses, 1.167 entries | same |
 
 ## How the results are checked
 
@@ -125,6 +127,47 @@ Intervals under 0.1 points are left out. "100" means every password on every sam
 
 **The first guess matters less than the later ones.** Take a player who uses a rule for the first guess and then makes the best guess every time. On the screens with the most words at each level (5,000 screens), the minimax rule keeps 99.41% ± 0.05 of the best possible chance on average, and its first guess is an optimal one on 90.5% of screens. Expected size keeps 99.31% and common keeps 99.11%. A uniformly random first word keeps 96.91%.
 
+## What does exit and retry change?
+
+A player who leaves the terminal before a fourth wrong guess is never locked out. On 20-word Very Easy screens, the fewest expected guesses are 3.29 if the password stays the same on reentry and 3.55 if it changes. One entry is enough for 88.4% of passwords at best, against 92.5% within four attempts and 57.4% within three. From Average level up, one entry is always enough and both readings give the same answer.
+
+The Fallout 3 manual ([PlayStation 3 edition](https://assets.ctfassets.net/rporu91m20dc/16sCYME1HgWc4eyg8m8ce2/1e76a6433e52dfcb5ad566ead3604d46/manual_f3goty_ps3_en-int.pdf), section "Hacking"; the PC edition has the same text) says the player can leave the hacking screen at any time. On reentry "the password will reset as will your number of tries". That sentence has two readings, and `retry.py` models both:
+
+- **Same password.** Only the count of tries resets. The player keeps what the likenesses told her, so the attempt limit never binds.
+- **New password.** The words stay on the screen, but the password is drawn again from them. Each entry is then a fresh game.
+
+In both, the player makes at most three uncertain guesses per entry. She makes a fourth guess only when a single candidate remains. She leaves at any time, and leaving costs no guess. Under the first reading the best strategy is the one with the fewest expected guesses and no limit; among those, `retry.py` takes the one with the fewest entries. Under the second, take a strategy with chance q of cracking the password in one entry, and c guesses per entry on average. It needs c / q guesses and 1 / q entries in all. The least c / q comes from Dinkelbach's iteration. Each step prices a fresh start at the current ratio and takes the best strategy for that price; the steps stop when the ratio no longer falls. The manual does not say whether the words also change on reentry; that third reading is not modeled.
+
+Mean over the same 1,000 screens per row as the table above (seed 3), exact on each screen; ± is a normal 95% interval. "One entry, at best" is the most passwords any strategy cracks or pins down within one entry:
+
+| Level | Words | Within 4 | Within 3 | One entry, at best | Same password: guesses | entries | New password: guesses | entries |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| Very Easy | 10 | 98.92% | 82.75% | 97.97% | 2.708 ± 0.009 | 1.023 | 2.742 ± 0.014 | 1.035 |
+| Very Easy | 20 | 92.52% | 57.37% | 88.42% | 3.290 ± 0.009 | 1.151 | 3.550 ± 0.021 | 1.167 |
+| Easy | 20 | 99.78% | 73.24% | 99.57% | 2.988 ± 0.006 | 1.014 | 3.004 ± 0.008 | 1.006 |
+| Average | 20 | 100 | 84.40% | 100 | 2.832 ± 0.005 | 1.000 | 2.832 ± 0.005 | 1 |
+| Hard | 20 | 100 | 91.13% | 100 | 2.737 ± 0.004 | 1 | 2.737 ± 0.004 | 1 |
+
+Means are rounded half up from the exact sums. "100" and "1" mean every screen of the row; 1.000 is rounded.
+
+- **A new password costs guesses.** On 801 of the 1,000 Very Easy 20-word screens it needs more guesses than the same password, and on no sampled screen fewer.
+- **Leaving early can pay.** With a new password, the best strategy sometimes accepts a lower chance per entry to save guesses. It does so on 114 of the Very Easy 20-word screens. On the seven-word screen BOOT MALL SITS GRAY COLT EMIC TANG, one entry can pin down 5 of 7 passwords. The fewest guesses, 3 on average, come from a strategy that succeeds in 3 of 7 entries and leaves early otherwise.
+- **The entries can disagree with the guesses.** On Easy screens the same password needs more entries than a new one, 1.014 against 1.006. Its strategy minimizes guesses first, and the fewest guesses sometimes need a second entry.
+
+The search is checked against brute force: plain recursion over every guess for the first reading, and bisection on the value of a fresh start for the second, on 16 small screens. A test recomputes the first two screens of each row and compares them with `results/retry.json`. The rows ran on GitHub Actions at commit b945370, about 20 minutes each.
+
+```
+$ uv run python -m mastermind.retry boot mall sits gray colt emic tang
+within four attempts         6/7  = 0.8571
+within three attempts        5/7  = 0.7143
+one entry                    5/7  = 0.7143
+A guesses                   19/7  = 2.7143
+A entries                    9/7  = 1.2857
+B guesses                      3  = 3.0000
+B entries                    7/3  = 2.3333
+B one entry                  3/7  = 0.4286
+```
+
 ## Data
 
 | Source | What | License | Committed |
@@ -132,6 +175,7 @@ Intervals under 0.1 points are left out. "100" means every password on every sam
 | ENABLE (`boggle/enable1.txt`) | the word list the screens are drawn from | public domain | yes, in `boggle/` |
 | Math Goes Pop (2016) | three Fallout 4 screens and their results | not stated | the screens' words, in `fallout3.py` (`FALLOUT4_SCREENS`) |
 | Fallout wiki and GECK wiki | word lengths, word counts, the four-attempt rule | read, not copied | no |
+| Fallout 3 manual (Bethesda Softworks) | the exit-and-retry rule | Bethesda's copyright; read, quoted in one phrase | no |
 
 ## Open questions
 
@@ -150,6 +194,9 @@ uv run python -m mastermind.fallout3 --best doctrines=3 batteries scorpions gene
 uv run python -m mastermind.fallout3 --study       # the Fallout table, about 4 minutes
 uv run python -m mastermind.fallout3 --published   # the Fallout 4 screens, about half a minute
 uv run python -m mastermind.figures                # the figures in figures/
+uv run python -m mastermind.retry boot mall sits gray colt emic tang   # exit and retry on one screen
+uv run python -m mastermind.retry --row 1 --out DIR   # one row of the retry table, about 20 minutes
+uv run python -m mastermind.retry --merge DIR         # writes DIR/retry.json from the row files
 ```
 
 ## Files
@@ -161,4 +208,5 @@ uv run python -m mastermind.figures                # the figures in figures/
 | `optimal.py` | The best strategies, by exhaustive search |
 | `results/optimal.json` | The two optimal trees and their totals, as `optimal.py` writes them |
 | `fallout3.py` | The same strategies on Fallout 3 terminals, the helper, and the study |
+| `retry.py`, `results/retry.json` | Exit and retry under both readings of the manual, and the exact values on every screen of its table |
 | `figures.py`, `figures/` | This README's figures, as SVG; a test checks they are current |

@@ -146,3 +146,18 @@ def test_committed_results_match_a_recomputation():
     assert fl.report(ships["Llama"], galaxy, geo) == committed["llama"]
     grid = committed["speed sweep"]["grid"]
     assert [g["scale"] for g in grid][:-1] == list(fl.SPEEDS[:-1])
+
+
+def test_readme_numbers_are_the_committed_results():
+    readme = (Path(fl.__file__).parent / "README.md").read_text()
+    r = json.loads(RESULTS.read_text())
+    trips = r["llama"]["round trips"]
+    for t in trips[:2]:
+        assert f"| {t['gain']:,} | {t['periods']:.4f} | {t['rate']:.2f} |" in readme
+    timed = r["best per jump, timed"]
+    assert f"| 788 | {timed['periods per pass']:.4f} | {timed['rate per period']:.2f} |" in readme
+    assert f"{r['llama']['best']['rate per period']:.2f} per period" in readme
+    grid = r["speed sweep"]["grid"]
+    assert f"{grid[-1]['rate per period']:.2f} per period when flight takes no time" in readme
+    lo, hi = (c["between"] for c in r["speed sweep"]["changes"])
+    assert round(lo[0], 2) == round(lo[1], 2) == 0.36 and 16.7 < hi[0] < 16.8 < hi[1] < 16.9

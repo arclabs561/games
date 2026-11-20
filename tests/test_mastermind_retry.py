@@ -163,3 +163,23 @@ def test_committed_study_matches_a_recomputation():
             for name, value in rt.score_screen(screen).items():
                 assert row["values"][name][i] == str(value), (k, i, name)
     assert data["summary"] == rt.summarize(data["rows"])
+
+
+def test_readme_transcript(capsys):
+    readme = (Path(__file__).parent.parent / "mastermind" / "README.md").read_text()
+    command = "$ uv run python -m mastermind.retry boot mall sits gray colt emic tang\n"
+    block = readme.split(command, 1)[1].split("```", 1)[0]
+    rt.main("boot mall sits gray colt emic tang".split())
+    assert capsys.readouterr().out == block
+
+
+def test_readme_table_is_the_committed_study():
+    readme = (Path(__file__).parent.parent / "mastermind" / "README.md").read_text()
+    for line in rt.readme_rows(json.loads(RESULTS.read_text())):
+        assert line in readme, line
+
+
+def test_half_up():
+    assert rt._half_up(Fraction(8275, 100), 1) == "82.8"
+    assert rt._half_up(Fraction(1, 8), 2) == "0.13"
+    assert rt._half_up(Fraction(1, 3), 3) == "0.333"

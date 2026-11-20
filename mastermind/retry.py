@@ -244,6 +244,51 @@ def summarize(rows: list[dict]) -> dict:
     return {"screens per row": rows[0]["screens"], "seed": rows[0]["seed"], "rows": out}
 
 
+def _half_up(x: Fraction, places: int) -> str:
+    """x rounded half up to `places` decimals."""
+    q = round(x * 10**places)
+    if (x * 10**places - q) == Fraction(1, 2):  # round() goes to even; go up instead
+        q += 1
+    text = f"{abs(q) // 10**places}.{abs(q) % 10**places:0{places}d}" if places else str(q)
+    return text
+
+
+def _cells(v: dict[str, list[Fraction]]) -> list[str]:
+    """One row of the README's retry table, from the exact values on each screen."""
+    n = len(v["one entry"])
+
+    def mean(k: str) -> Fraction:
+        return sum(v[k], Fraction(0)) / n
+
+    def half(k: str) -> str:
+        return f"{1.96 * statistics.stdev(map(float, v[k])) / n**0.5:.3f}"
+
+    def share(k: str) -> str:
+        return "100" if min(v[k]) == 1 else _half_up(100 * mean(k), 2) + "%"
+
+    def count(k: str) -> str:
+        return "1" if max(v[k]) == 1 else _half_up(mean(k), 3)
+
+    return [
+        share("within four attempts"),
+        share("within three attempts"),
+        share("one entry"),
+        f"{_half_up(mean('A guesses'), 3)} ± {half('A guesses')}",
+        count("A entries"),
+        f"{_half_up(mean('B guesses'), 3)} ± {half('B guesses')}",
+        count("B entries"),
+    ]
+
+
+def readme_rows(data: dict) -> list[str]:
+    """The rows of the README's retry table, from `results/retry.json`."""
+    lines = []
+    for row in data["rows"]:
+        v = {k: [Fraction(x) for x in xs] for k, xs in row["values"].items()}
+        lines.append(f"| {row['level']} | {row['words']} | " + " | ".join(_cells(v)) + " |")
+    return lines
+
+
 EXAMPLE = (
     "brain chair drink flame ghost heart knife light money night plant queen river sheep "
     "stone train water youth"
