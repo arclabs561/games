@@ -106,7 +106,9 @@ def game_record(board: Board, result) -> dict:
         "loss": bench.loss_kind(result, board),
         "mean_count": float(np.mean(counts)) if counts else 0.0,
         "empty_turns": sum(1 for _, made in result.clues if not made),
-        "flagged_turns": bench.flagged_turns(result, board),
+        **dict(
+            zip(("flagged_turns", "illegal_turns"), bench.flagged_turns(result, board), strict=True)
+        ),
     }
 
 
@@ -115,10 +117,11 @@ def digest(obj) -> str:
 
 
 def published_flags(board: Board, published) -> int:
-    """Turns of a published game whose clue shares a form with an unrevealed word."""
+    """Turns of a published game whose clue codenames.legality flags against an
+    unrevealed word."""
     left, n = set(board.words), 0
     for clue, _, picks in published:
-        n += bench.flagged(clue, left)
+        n += bench.flagged(clue, sorted(left))
         left -= {p.lower() for p in picks}
     return n
 
@@ -217,10 +220,20 @@ def our_boards(tabs: dict[str, Vectors], n: int = N_BOARDS) -> tuple[list[Board]
     return [framework_deal(pool, s) for s in range(n)], pool
 
 
+_RELATED: dict = {}
+
+
 def strict_pool(pool: tuple[str, ...], board: Board) -> tuple[str, ...]:
-    """The clues that share no form with an unrevealed word (bench.shares_form)."""
-    left = board.unrevealed()
-    return tuple(c for c in pool if not bench.flagged(c, left))
+    """The clues that codenames.legality does not flag against any unrevealed word. The
+    relation of every clue to every board word is computed once per board."""
+    key = (id(pool), board.words)
+    if key not in _RELATED:
+        if len(_RELATED) > 400:
+            _RELATED.clear()
+        _RELATED[key] = np.array([[bench.related(c, w) for w in board.words] for c in pool])
+    live = [i for i, w in enumerate(board.words) if w not in board.revealed]
+    keep = ~_RELATED[key][:, live].any(axis=1)
+    return tuple(c for c, k in zip(pool, keep, strict=True) if k)
 
 
 class StrictGiver:
@@ -588,9 +601,9 @@ def read_latest(runs: list[Path], name: str):
     return json.loads(path.read_text())
 
 
-def collect(runs: list[Path], lora: list[Path]) -> dict:
+def collect(runs: list[Path], lora_compact: Path | None = None) -> dict:
     """Compact the raw outputs of the workflow runs (later runs replace earlier ones) and
-    of the C8 job into one file."""
+    the C8 column (compact_lora's file) into one file."""
     rep = read_latest(runs, "reproduce.json")["games"]
     out: dict = {
         "status": "exploratory: no plan was written before these runs",
@@ -634,49 +647,114 @@ def collect(runs: list[Path], lora: list[Path]) -> dict:
         versions = sorted(orig.parent.glob("original/*/versions.txt"))
         if versions:
             out["data"]["original_versions"] = versions[0].read_text().split()
-    slices: dict[tuple[bool, str, str], dict] = {}
+    slices: dict[tuple[bool, str], dict] = {}
     for r in runs:
         for p in sorted(r.glob("crossplay-*.json")):
             sl = json.loads(p.read_text())
             strict = sl.get("strict", p.name.startswith("crossplay-strict-"))
-            slices[(strict, sl["giver"], "games")] = sl  # later runs replace
-    for folder in lora:
-        for p in sorted(folder.glob("crossplay-lora-*.json")):
-            sl = json.loads(p.read_text())
-            strict = sl.get("strict", p.name.startswith("crossplay-lora-strict-"))
-            slices[(strict, sl["giver"], "lora")] = sl
-        out["data"].setdefault("lora_jobs", []).append(
-            json.loads((folder / "data.json").read_text())
-        )
-        if (folder / "manifest.json").exists():
-            out["source"].setdefault("lora_jobs", []).append(
-                json.loads((folder / "manifest.json").read_text())
-            )
+            slices[(strict, sl["giver"])] = sl  # later runs replace
+    cells, info = slice_cells(slices.values(), [p for (p, _) in slices])
+    if lora_compact:
+        extra = json.loads(lora_compact.read_text())
+        for variant, more in extra["cells"].items():
+            cells[variant] |= decode_cells(more)
+        for giver, i in extra["info"].items():
+            info.setdefault(giver, {}).update(i)
+        out["data"]["lora_jobs"] = extra["data"]
+        out["source"]["lora_jobs"] = extra["source"]
+    out["crossplay"] = {"info": info}
+    for variant in ("all", "strict"):
+        out["crossplay"][variant] = encode_cells(dict(sorted(cells[variant].items())))
+    return out
+
+
+def slice_cells(slices, stricts) -> tuple[dict[str, dict], dict[str, dict]]:
+    """Per variant, per "giver/guesser": every game's score, loss, mean count, turns and
+    flagged turns, in board order."""
     variants: dict[str, dict] = {"all": {}, "strict": {}}
     info: dict[str, dict] = {}
-    for (strict, giver, kind), sl in sorted(slices.items()):
-        if kind == "info":
-            continue
-        info.setdefault(giver, {}).update(sl["info"])
+    for sl, strict in zip(slices, stricts, strict=True):
+        info.setdefault(sl["giver"], {}).update(sl["info"])
         cells = variants["strict" if strict else "all"]
         for g in sl["games"]:
             c = cells.setdefault(
                 f"{g['giver']}/{g['guesser']}",
-                {"seeds": [], "score": [], "loss": "", "count": [], "turns": [], "flagged": []},
+                {
+                    "seeds": [],
+                    "score": [],
+                    "loss": "",
+                    "count": [],
+                    "turns": [],
+                    "flagged": [],
+                    "illegal": [],
+                },
             )
             c["seeds"].append(g["seed"])
             c["score"].append(g["score"])
             c["loss"] += LOSS_CODE[g.get("loss")] if "error" not in g else "E"
-            c["count"].append(round(g.get("mean_count", 0.0), 3))
+            c["count"].append(round(g.get("mean_count", 0.0), 2))
             c["turns"].append(g.get("turns", 0))
-            c["flagged"].append(g.get("flagged_turns"))
+            c["flagged"].append(g.get("flagged_turns") or 0)
+            c["illegal"].append(g.get("illegal_turns") or 0)
     for cells in variants.values():
         for c in cells.values():
             assert c["seeds"] == list(range(len(c["seeds"])))
             del c["seeds"]
-    out["crossplay"] = {"info": info, "all": dict(sorted(variants["all"].items()))}
-    out["crossplay"]["strict"] = dict(sorted(variants["strict"].items()))
-    return out
+    return variants, info
+
+
+# Small whole numbers (0 to 51) as one letter each, so a cell of 200 games is short.
+LETTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+
+def encode_cells(cells: dict) -> dict:
+    return {
+        k: {
+            "score": "".join(LETTERS[x] for x in c["score"]),
+            "turns": "".join(LETTERS[x] for x in c["turns"]),
+            "flagged": "".join(LETTERS[x] for x in c["flagged"]),
+            "illegal": "".join(LETTERS[x] for x in c["illegal"]),
+            "loss": c["loss"],
+            "count": c["count"],
+        }
+        for k, c in cells.items()
+    }
+
+
+def decode_cells(cells: dict) -> dict:
+    return {
+        k: {
+            "score": [LETTERS.index(x) for x in c["score"]],
+            "turns": [LETTERS.index(x) for x in c["turns"]],
+            "flagged": [LETTERS.index(x) for x in c["flagged"]],
+            "illegal": [LETTERS.index(x) for x in c["illegal"]],
+            "loss": c["loss"],
+            "count": c["count"],
+        }
+        for k, c in cells.items()
+    }
+
+
+def compact_lora(folders: list[Path]) -> dict:
+    """The C8 jobs' outputs in the encoding of bench-runs.json, to copy out of the
+    private dataset (the games' outcomes only)."""
+    slices, stricts = [], []
+    data, source = [], []
+    for folder in folders:
+        for p in sorted(folder.glob("crossplay-lora-*.json")):
+            sl = json.loads(p.read_text())
+            slices.append(sl)
+            stricts.append(sl.get("strict", p.name.startswith("crossplay-lora-strict-")))
+        data.append(json.loads((folder / "data.json").read_text()))
+        if (folder / "manifest.json").exists():
+            source.append(json.loads((folder / "manifest.json").read_text()))
+    cells, info = slice_cells(slices, stricts)
+    return {
+        "cells": {v: encode_cells(c) for v, c in cells.items()},
+        "info": info,
+        "data": data,
+        "source": source,
+    }
 
 
 def vectors_of(player: str) -> set[str]:
@@ -723,13 +801,12 @@ def analyze(runs: dict) -> dict:
         }
     # Cross-play, with every clue and with flagged clues replaced by the next choice.
     out["crossplay"] = {"info": runs["crossplay"]["info"]}
+    cells = {v: decode_cells(runs["crossplay"].get(v, {})) for v in ("all", "strict")}
     for variant in ("all", "strict"):
-        if runs["crossplay"].get(variant):
-            out["crossplay"][variant] = crossplay_summary(runs["crossplay"][variant])
-    if runs["crossplay"].get("strict"):
-        out["crossplay"]["strict_minus_all"] = strict_effect(
-            runs["crossplay"]["all"], runs["crossplay"]["strict"]
-        )
+        if cells[variant]:
+            out["crossplay"][variant] = crossplay_summary(cells[variant])
+    if cells["strict"]:
+        out["crossplay"]["strict_minus_all"] = strict_effect(cells["all"], cells["strict"])
     flags = [r[10] for r in runs["reproduce"] if r[10] is not None]
     if flags:
         turns = [r[7] for r in runs["reproduce"] if r[10] is not None]
@@ -758,7 +835,7 @@ def crossplay_summary(cells: dict) -> dict:
                 ),
                 2,
             ),
-            "flagged_turns": sum(x or 0 for x in v["flagged"]),
+            "flagged_turns": sum(v["flagged"]),
             "turns": sum(v["turns"]),
         }
         for k, v in cells.items()
@@ -797,14 +874,15 @@ def crossplay_summary(cells: dict) -> dict:
 
 def strict_effect(all_cells: dict, strict_cells: dict) -> dict:
     """Per giver: the share of its turns with a flagged clue (every guesser pooled), and
-    the change in its mean score over the guessers that are not its own model when
+    the change in its mean score over the guessers that share no vectors with it when
     flagged clues are replaced, paired by board."""
     out = {}
     for gv in GIVERS:
         keys = [k for k in all_cells if k.startswith(gv + "/") and k in strict_cells]
         if not keys:
             continue
-        flagged = sum(x or 0 for k in keys for x in all_cells[k]["flagged"])
+        flagged = sum(x for k in keys for x in all_cells[k]["flagged"])
+        illegal = sum(x for k in keys for x in all_cells[k]["illegal"])
         turns = sum(t for k in keys for t in all_cells[k]["turns"])
         others = [k for k in keys if stranger(gv, k.split("/")[1])]
         d = np.mean(
@@ -816,9 +894,10 @@ def strict_effect(all_cells: dict, strict_cells: dict) -> dict:
         )
         out[gv] = {
             "flagged_turns": flagged,
+            "illegal_turns": illegal,
             "turns": turns,
             "share": round(flagged / turns, 4) if turns else None,
-            "strict_flagged_turns": sum(x or 0 for k in keys for x in strict_cells[k]["flagged"]),
+            "strict_flagged_turns": sum(x for k in keys for x in strict_cells[k]["flagged"]),
             "score_change": summarize(d.tolist()) | {"guessers": [k.split("/")[1] for k in others]},
         }
     return out
@@ -929,18 +1008,36 @@ def findings(summary: dict) -> list[str]:
     )
     key = "potion-c3-population minus potion-c3-self / framework guessers"
     if key in a["paired"]:
+        cells = a["cells"]
+
+        def pooled(gv: str, field: str) -> float:
+            return float(np.mean([cells[f"{gv}/{gu}"][field] for gu in FRAMEWORK]))
+
+        wins = {
+            g: sum(cells[f"{g}/{gu}"]["wins"] for gu in FRAMEWORK)
+            for g in ("potion-c3-population", "potion-c3-self")
+        }
         lines.append(
-            "- **Population training, with guessers it never met.** The C3 population giver minus"
-            f" the C3 self-play giver, averaged over the framework's guessers: {fmt(a['paired'][key])}"
-            " turns (negative is better for the population giver)."
+            "- **Population training does not carry over to this score.** With the framework's"
+            f" three guessers, the C3 population giver wins {wins['potion-c3-population']} of 600"
+            f" games against {wins['potion-c3-self']} for the C3 self-play giver, but it asks for"
+            f" {pooled('potion-c3-population', 'mean_count'):.2f} words per clue against"
+            f" {pooled('potion-c3-self', 'mean_count'):.2f}, so its wins take"
+            f" {pooled('potion-c3-population', 'turns_in_wins'):.1f} turns against"
+            f" {pooled('potion-c3-self', 'turns_in_wins'):.1f}. Its mean score is worse by"
+            f" {fmt(a['paired'][key])} turns. C3 ranked the two the other way by expected words"
+            " per turn; the single-team score charges for every extra turn."
         )
     if "strict_minus_all" in cp:
         e = cp["strict_minus_all"]
         shares = ", ".join(f"{NAMES[g]} {100 * v['share']:.1f}%" for g, v in e.items())
         lines.append(
-            "- **Clues that share a form with a board word.** Share of turns flagged"
-            f" (`bench.shares_form`): {shares}. Replacing them with each giver's next choice"
-            " changes the scores in the second set of tables below."
+            "- **Clues that share a form with a board word are rare, and replacing them changes little.**"
+            f" Share of turns flagged by `codenames.legality` (illegal or borderline): {shares}. Replacing them with each"
+            " giver's next legal choice changes no giver's mean score over its strangers by more"
+            f" than {max(abs(v['score_change']['mean']) for v in e.values()):.2f} turns; the widest"
+            f" interval reaches {max(abs(x) for v in e.values() for x in v['score_change']['ci']):.2f}"
+            " (table at the end of section 2)."
         )
     return lines
 
@@ -1011,17 +1108,18 @@ def report(summary: dict) -> str:
             "",
             "### Clues that share a form with a board word",
             "",
-            "A clue is flagged when it and an unrevealed board word share their first five letters,"
-            " or one contains the other (`bench.shares_form`). Turns flagged with every clue"
+            "A clue is flagged when `codenames.legality` finds an illegal or borderline relation"
+            " between it and an unrevealed board word (a form of the word, a part of a compound,"
+            " a shared stem; see that module). Turns flagged with every clue"
             " allowed, pooled over guessers, and the change in mean score over the guessers that"
             " share no vectors with the giver when flagged clues are replaced (paired by board):",
             "",
-            "| Giver | Flagged turns | Share | Flagged after replacing | Change in mean score (95% interval) |",
-            "|---|---|---|---|---|",
+            "| Giver | Flagged turns | Of them illegal | Share | Flagged after replacing | Change in mean score (95% interval) |",
+            "|---|---|---|---|---|---|",
         ]
         for gv, e in cp["strict_minus_all"].items():
             lines.append(
-                f"| {NAMES[gv]} | {e['flagged_turns']} of {e['turns']} | {100 * e['share']:.1f}%"
+                f"| {NAMES[gv]} | {e['flagged_turns']} of {e['turns']} | {e['illegal_turns']} | {100 * e['share']:.1f}%"
                 f" | {e['strict_flagged_turns']} | {fmt(e['score_change'])} |"
             )
     flags = summary.get("reproduction_flags")
@@ -1053,9 +1151,11 @@ def static_sections(summary: dict) -> list[str]:
         " board word, not a part of one, and does not contain one. Clues come from the"
         f" {info['our_clue_pool']} of the 12,000 clue words that both GloVe and word2vec have, so"
         f" that the framework's guessers can read them ({info['clue_words_dropped']} dropped).",
-        "- **The flag** (`bench.shares_form`, for the second set of tables): a shared prefix of"
-        " five or more letters, or containment. It is stricter than both rules and catches"
-        " residency/residence and teaching/teacher; it also catches some unrelated pairs.",
+        "- **The flag** (`codenames.legality`, for the second set of tables): any relation that"
+        " module calls illegal (a form of the word, a part of a compound, a spelling variant)"
+        " or borderline (a shared stem, affix stem, three-letter compound part or long prefix)."
+        " It is stricter than both rules: it catches broken for BREAK and teaching for TEACHER,"
+        " which both rules allow.",
         "",
         "## How each number is known",
         "",
@@ -1215,7 +1315,10 @@ def main() -> None:
     co.add_argument(
         "--runs", type=Path, nargs="+", required=True, help="later runs replace earlier"
     )
-    co.add_argument("--lora", type=Path, nargs="*", default=[], help="outputs of the C8 jobs")
+    co.add_argument("--lora", type=Path, default=None, help="compact_lora's file for the C8 column")
+    cl = sub.add_parser("compact-lora", help="the C8 jobs' outputs, compacted (in a job)")
+    cl.add_argument("--from-dataset", nargs="+", required=True, help="runs/bench/<run> folders")
+    cl.add_argument("--out", type=Path, required=True)
     sub.add_parser("analyze", help="results/bench.json and bench.md from bench-runs.json")
     args = parser.parse_args()
     if args.cmd == "reproduce":
@@ -1231,6 +1334,18 @@ def main() -> None:
         args.out.write_text(json.dumps(res) + "\n")
     elif args.cmd == "lora-run":
         lora_run(args.out, args.boards, args.variants)
+    elif args.cmd == "compact-lora":
+        hub = importlib.import_module("huggingface_hub")
+        local = Path(
+            hub.snapshot_download(
+                "arclabs561/games-runs", repo_type="dataset",
+                allow_patterns=[f"{f}/*" for f in args.from_dataset],
+            )
+        )  # fmt: skip
+        text = json.dumps(compact_lora([local / f for f in args.from_dataset]), sort_keys=True)
+        args.out.mkdir(parents=True, exist_ok=True)
+        (args.out / "lora-compact.json").write_text(text + "\n")
+        print("lora-compact.json sha256", bench_data.sha256((text + "\n").encode()), flush=True)
     elif args.cmd == "collect":
         RUNS_FILE.write_text(json.dumps(collect(args.runs, args.lora), sort_keys=True) + "\n")
     else:

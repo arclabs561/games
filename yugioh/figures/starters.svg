@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="430" viewBox="0 0 760 430" font-family="Helvetica, Arial, sans-serif" role="img">
+<title>Chance of at least one starter against the number of starters</title>
+<rect width="760" height="430" fill="#fff"/>
+<line x1="64" x2="704" y1="370.0" y2="370.0" stroke="#e4e3df" stroke-width="1"/>
+<text x="56.0" y="374.0" font-size="12" fill="#52514e" text-anchor="end" font-weight="normal">0</text>
+<line x1="64" x2="704" y1="310.0" y2="310.0" stroke="#e4e3df" stroke-width="1"/>
+<text x="56.0" y="314.0" font-size="12" fill="#52514e" text-anchor="end" font-weight="normal">20</text>
+<line x1="64" x2="704" y1="250.0" y2="250.0" stroke="#e4e3df" stroke-width="1"/>
+<text x="56.0" y="254.0" font-size="12" fill="#52514e" text-anchor="end" font-weight="normal">40</text>
+<line x1="64" x2="704" y1="190.0" y2="190.0" stroke="#e4e3df" stroke-width="1"/>
+<text x="56.0" y="194.0" font-size="12" fill="#52514e" text-anchor="end" font-weight="normal">60</text>
+<line x1="64" x2="704" y1="130.0" y2="130.0" stroke="#e4e3df" stroke-width="1"/>
+<text x="56.0" y="134.0" font-size="12" fill="#52514e" text-anchor="end" font-weight="normal">80</text>
+<line x1="64" x2="704" y1="70.0" y2="70.0" stroke="#e4e3df" stroke-width="1"/>
+<text x="56.0" y="74.0" font-size="12" fill="#52514e" text-anchor="end" font-weight="normal">100</text>
+<line x1="64" x2="704" y1="370" y2="370" stroke="#52514e" stroke-width="1"/>
+<text x="64.0" y="388.0" font-size="12" fill="#52514e" text-anchor="middle" font-weight="normal">0</text>
+<text x="128.0" y="388.0" font-size="12" fill="#52514e" text-anchor="middle" font-weight="normal">2</text>
+<text x="192.0" y="388.0" font-size="12" fill="#52514e" text-anchor="middle" font-weight="normal">4</text>
+<text x="256.0" y="388.0" font-size="12" fill="#52514e" text-anchor="middle" font-weight="normal">6</text>
+<text x="320.0" y="388.0" font-size="12" fill="#52514e" text-anchor="middle" font-weight="normal">8</text>
+<text x="384.0" y="388.0" font-size="12" fill="#52514e" text-anchor="middle" font-weight="normal">10</text>
+<text x="448.0" y="388.0" font-size="12" fill="#52514e" text-anchor="middle" font-weight="normal">12</text>
+<text x="512.0" y="388.0" font-size="12" fill="#52514e" text-anchor="middle" font-weight="normal">14</text>
+<text x="576.0" y="388.0" font-size="12" fill="#52514e" text-anchor="middle" font-weight="normal">16</text>
+<text x="640.0" y="388.0" font-size="12" fill="#52514e" text-anchor="middle" font-weight="normal">18</text>
+<text x="704.0" y="388.0" font-size="12" fill="#52514e" text-anchor="middle" font-weight="normal">20</text>
+<text x="384.0" y="410.0" font-size="13" fill="#0b0b0b" text-anchor="middle" font-weight="normal">Starters in the deck</text>
+<text x="64.0" y="56.0" font-size="13" fill="#0b0b0b" text-anchor="start" font-weight="normal">Chance of at least one starter in hand (%)</text>
+<line x1="64" x2="704" y1="100.0" y2="100.0" stroke="#52514e" stroke-width="1" stroke-dasharray="2 3"/>
+<polyline points="64.0,370.0 96.0,332.5 128.0,298.8 160.0,268.7 192.0,241.9 224.0,218.0 256.0,196.9 288.0,178.2 320.0,161.8 352.0,147.5 384.0,135.0 416.0,124.1 448.0,114.8 480.0,106.8 512.0,100.0 544.0,94.2 576.0,89.4 608.0,85.3 640.0,82.0 672.0,79.3 704.0,77.1" fill="none" stroke="#2a78d6" stroke-width="2"/>
+<circle cx="64.0" cy="370.0" r="3.5" fill="#2a78d6" stroke="#fff" stroke-width="1.5"><title>0: 0.00</title></circle>
+<circle cx="96.0" cy="332.5" r="3.5" fill="#2a78d6" stroke="#fff" stroke-width="1.5"><title>1: 12.50</title></circle>
+<circle cx="128.0" cy="298.8" r="3.5" fill="#2a78d6" stroke="#fff" stroke-width="1.5"><title>2: 23.72</title></circle>
+<circle cx="160.0" cy="268.7" r="3.5" fill="#2a78d6" stroke="#fff" stroke-width="1.5"><title>3: 33.76</title></circle>
+<circle cx="192.0" cy="241.9" r="3.5" fill="#2a78d6" stroke="#fff" stroke-width="1.5"><title>4: 42.71</title></circle>
+<circle cx="224.0" cy="218.0" r="3.5" fill="#2a78d6" stroke="#fff" stroke-width="1.5"><title>5: 50.66</title></circle>
+<circle cx="256.0" cy="196.9" r="3.5" fill="#2a78d6" stroke="#fff" stroke-width="1.5"><title>6: 57.71</title></circle>
+<circle cx="288.0" cy="178.2" r="3.5" fill="#2a78d6" stroke="#fff" stroke-width="1.5"><title>7: 63.93</title></circle>
+<circle cx="320.0" cy="161.8" r="3.5" fill="#2a78d6" stroke="#fff" stroke-width="1.5"><title>8: 69.40</title></circle>
+<circle cx="352.0" cy="147.5" r="3.5" fill="#2a78d6" stroke="#fff" stroke-width="1.5"><title>9: 74.18</title></circle>
+<circle cx="384.0" cy="135.0" r="3.5" fill="#2a78d6" stroke="#fff" stroke-width="1.5"><title>10: 78.34</title></circle>
+<circle cx="416.0" cy="124.1" r="3.5" fill="#2a78d6" stroke="#fff" stroke-width="1.5"><title>11: 81.95</title></circle>
+<circle cx="448.0" cy="114.8" r="3.5" fill="#2a78d6" stroke="#fff" stroke-width="1.5"><title>12: 85.06</title></circle>
+<circle cx="480.0" cy="106.8" r="3.5" fill="#2a78d6" stroke="#fff" stroke-width="1.5"><title>13: 87.73</title></circle>
+<circle cx="512.0" cy="100.0" r="3.5" fill="#2a78d6" stroke="#fff" stroke-width="1.5"><title>14: 90.00</title></circle>
+<circle cx="544.0" cy="94.2" r="3.5" fill="#2a78d6" stroke="#fff" stroke-width="1.5"><title>15: 91.93</title></circle>
+<circle cx="576.0" cy="89.4" r="3.5" fill="#2a78d6" stroke="#fff" stroke-width="1.5"><title>16: 93.54</title></circle>
+<circle cx="608.0" cy="85.3" r="3.5" fill="#2a78d6" stroke="#fff" stroke-width="1.5"><title>17: 94.89</title></circle>
+<circle cx="640.0" cy="82.0" r="3.5" fill="#2a78d6" stroke="#fff" stroke-width="1.5"><title>18: 96.00</title></circle>
+<circle cx="672.0" cy="79.3" r="3.5" fill="#2a78d6" stroke="#fff" stroke-width="1.5"><title>19: 96.91</title></circle>
+<circle cx="704.0" cy="77.1" r="3.5" fill="#2a78d6" stroke="#fff" stroke-width="1.5"><title>20: 97.64</title></circle>
+<polyline points="64.0,370.0 96.0,325.0 128.0,285.8 160.0,251.7 192.0,222.2 224.0,196.9 256.0,175.1 288.0,156.6 320.0,140.8 352.0,127.5 384.0,116.4 416.0,107.1 448.0,99.4 480.0,93.1 512.0,88.0 544.0,83.8 576.0,80.5 608.0,77.9 640.0,75.8 672.0,74.2 704.0,73.0" fill="none" stroke="#eb6834" stroke-width="2"/>
+<circle cx="64.0" cy="370.0" r="3.5" fill="#eb6834" stroke="#fff" stroke-width="1.5"><title>0: 0.00</title></circle>
+<circle cx="96.0" cy="325.0" r="3.5" fill="#eb6834" stroke="#fff" stroke-width="1.5"><title>1: 15.00</title></circle>
+<circle cx="128.0" cy="285.8" r="3.5" fill="#eb6834" stroke="#fff" stroke-width="1.5"><title>2: 28.08</title></circle>
+<circle cx="160.0" cy="251.7" r="3.5" fill="#eb6834" stroke="#fff" stroke-width="1.5"><title>3: 39.43</title></circle>
+<circle cx="192.0" cy="222.2" r="3.5" fill="#eb6834" stroke="#fff" stroke-width="1.5"><title>4: 49.25</title></circle>
+<circle cx="224.0" cy="196.9" r="3.5" fill="#eb6834" stroke="#fff" stroke-width="1.5"><title>5: 57.71</title></circle>
+<circle cx="256.0" cy="175.1" r="3.5" fill="#eb6834" stroke="#fff" stroke-width="1.5"><title>6: 64.96</title></circle>
+<circle cx="288.0" cy="156.6" r="3.5" fill="#eb6834" stroke="#fff" stroke-width="1.5"><title>7: 71.14</title></circle>
+<circle cx="320.0" cy="140.8" r="3.5" fill="#eb6834" stroke="#fff" stroke-width="1.5"><title>8: 76.39</title></circle>
+<circle cx="352.0" cy="127.5" r="3.5" fill="#eb6834" stroke="#fff" stroke-width="1.5"><title>9: 80.82</title></circle>
+<circle cx="384.0" cy="116.4" r="3.5" fill="#eb6834" stroke="#fff" stroke-width="1.5"><title>10: 84.53</title></circle>
+<circle cx="416.0" cy="107.1" r="3.5" fill="#eb6834" stroke="#fff" stroke-width="1.5"><title>11: 87.62</title></circle>
+<circle cx="448.0" cy="99.4" r="3.5" fill="#eb6834" stroke="#fff" stroke-width="1.5"><title>12: 90.18</title></circle>
+<circle cx="480.0" cy="93.1" r="3.5" fill="#eb6834" stroke="#fff" stroke-width="1.5"><title>13: 92.29</title></circle>
+<circle cx="512.0" cy="88.0" r="3.5" fill="#eb6834" stroke="#fff" stroke-width="1.5"><title>14: 94.00</title></circle>
+<circle cx="544.0" cy="83.8" r="3.5" fill="#eb6834" stroke="#fff" stroke-width="1.5"><title>15: 95.39</title></circle>
+<circle cx="576.0" cy="80.5" r="3.5" fill="#eb6834" stroke="#fff" stroke-width="1.5"><title>16: 96.49</title></circle>
+<circle cx="608.0" cy="77.9" r="3.5" fill="#eb6834" stroke="#fff" stroke-width="1.5"><title>17: 97.37</title></circle>
+<circle cx="640.0" cy="75.8" r="3.5" fill="#eb6834" stroke="#fff" stroke-width="1.5"><title>18: 98.06</title></circle>
+<circle cx="672.0" cy="74.2" r="3.5" fill="#eb6834" stroke="#fff" stroke-width="1.5"><title>19: 98.59</title></circle>
+<circle cx="704.0" cy="73.0" r="3.5" fill="#eb6834" stroke="#fff" stroke-width="1.5"><title>20: 98.99</title></circle>
+<polyline points="64.0,370.0 96.0,345.0 128.0,321.7 160.0,300.0 192.0,279.8 224.0,261.1 256.0,243.7 288.0,227.6 320.0,212.8 352.0,199.0 384.0,186.4 416.0,174.7 448.0,164.1 480.0,154.3 512.0,145.3 544.0,137.1 576.0,129.7 608.0,122.9 640.0,116.7 672.0,111.2 704.0,106.1" fill="none" stroke="#1baf7a" stroke-width="2" stroke-dasharray="6 4"/>
+<circle cx="64.0" cy="370.0" r="3.5" fill="#1baf7a" stroke="#fff" stroke-width="1.5"><title>0: 0.00</title></circle>
+<circle cx="96.0" cy="345.0" r="3.5" fill="#1baf7a" stroke="#fff" stroke-width="1.5"><title>1: 8.33</title></circle>
+<circle cx="128.0" cy="321.7" r="3.5" fill="#1baf7a" stroke="#fff" stroke-width="1.5"><title>2: 16.10</title></circle>
+<circle cx="160.0" cy="300.0" r="3.5" fill="#1baf7a" stroke="#fff" stroke-width="1.5"><title>3: 23.33</title></circle>
+<circle cx="192.0" cy="279.8" r="3.5" fill="#1baf7a" stroke="#fff" stroke-width="1.5"><title>4: 30.06</title></circle>
+<circle cx="224.0" cy="261.1" r="3.5" fill="#1baf7a" stroke="#fff" stroke-width="1.5"><title>5: 36.30</title></circle>
+<circle cx="256.0" cy="243.7" r="3.5" fill="#1baf7a" stroke="#fff" stroke-width="1.5"><title>6: 42.09</title></circle>
+<circle cx="288.0" cy="227.6" r="3.5" fill="#1baf7a" stroke="#fff" stroke-width="1.5"><title>7: 47.46</title></circle>
+<circle cx="320.0" cy="212.8" r="3.5" fill="#1baf7a" stroke="#fff" stroke-width="1.5"><title>8: 52.41</title></circle>
+<circle cx="352.0" cy="199.0" r="3.5" fill="#1baf7a" stroke="#fff" stroke-width="1.5"><title>9: 56.99</title></circle>
+<circle cx="384.0" cy="186.4" r="3.5" fill="#1baf7a" stroke="#fff" stroke-width="1.5"><title>10: 61.21</title></circle>
+<circle cx="416.0" cy="174.7" r="3.5" fill="#1baf7a" stroke="#fff" stroke-width="1.5"><title>11: 65.09</title></circle>
+<circle cx="448.0" cy="164.1" r="3.5" fill="#1baf7a" stroke="#fff" stroke-width="1.5"><title>12: 68.65</title></circle>
+<circle cx="480.0" cy="154.3" r="3.5" fill="#1baf7a" stroke="#fff" stroke-width="1.5"><title>13: 71.91</title></circle>
+<circle cx="512.0" cy="145.3" r="3.5" fill="#1baf7a" stroke="#fff" stroke-width="1.5"><title>14: 74.90</title></circle>
+<circle cx="544.0" cy="137.1" r="3.5" fill="#1baf7a" stroke="#fff" stroke-width="1.5"><title>15: 77.63</title></circle>
+<circle cx="576.0" cy="129.7" r="3.5" fill="#1baf7a" stroke="#fff" stroke-width="1.5"><title>16: 80.12</title></circle>
+<circle cx="608.0" cy="122.9" r="3.5" fill="#1baf7a" stroke="#fff" stroke-width="1.5"><title>17: 82.37</title></circle>
+<circle cx="640.0" cy="116.7" r="3.5" fill="#1baf7a" stroke="#fff" stroke-width="1.5"><title>18: 84.42</title></circle>
+<circle cx="672.0" cy="111.2" r="3.5" fill="#1baf7a" stroke="#fff" stroke-width="1.5"><title>19: 86.28</title></circle>
+<circle cx="704.0" cy="106.1" r="3.5" fill="#1baf7a" stroke="#fff" stroke-width="1.5"><title>20: 87.95</title></circle>
+<line x1="512.0" y1="105.0" x2="548.0" y2="170.0" stroke="#52514e" stroke-width="1"/>
+<text x="544.0" y="184.0" font-size="12" fill="#0b0b0b" text-anchor="start" font-weight="normal">14 starters give 90.00% going first</text>
+<text x="544.0" y="200.0" font-size="12" fill="#52514e" text-anchor="start" font-weight="normal">(dotted line: 90%)</text>
+<line x1="64" x2="86" y1="32" y2="32" stroke="#2a78d6" stroke-width="2"/>
+<text x="92.0" y="36.0" font-size="12" fill="#0b0b0b" text-anchor="start" font-weight="normal">40 cards, going first</text>
+<line x1="247" x2="269" y1="32" y2="32" stroke="#eb6834" stroke-width="2"/>
+<text x="275.0" y="36.0" font-size="12" fill="#0b0b0b" text-anchor="start" font-weight="normal">40 cards, going second</text>
+<line x1="437" x2="459" y1="32" y2="32" stroke="#1baf7a" stroke-width="2" stroke-dasharray="6 4"/>
+<text x="465.0" y="36.0" font-size="12" fill="#0b0b0b" text-anchor="start" font-weight="normal">60 cards, going first</text>
+</svg>

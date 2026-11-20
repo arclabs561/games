@@ -39,6 +39,7 @@ from functools import cached_property
 
 import numpy as np
 
+from codenames import legality
 from codenames.game import Board, Clue, Result
 from codenames.luce import ASSASSIN, NEUTRAL, OPPONENT, TEAM
 
@@ -119,32 +120,36 @@ def framework_legal(clue: str, forms: tuple[str, str], board: Sequence[str]) -> 
     return not any(w in (lemma, stem) or clue in w or w in clue for w in board)
 
 
-# A stricter check than either rule: does a clue share a word form with a board word?
+# A stricter check than either rule: codenames.legality, which follows the rulebook's
+# "any form of a visible word" and "part of a compound word".
 
-FORM_PREFIX = 5
+
+def related(clue: str, word: str) -> bool:
+    """True when legality finds an illegal or borderline relation (broken and break,
+    teaching and teacher, snowshoe and horseshoe; see codenames/legality.py)."""
+    return legality.relation(clue, word) is not None
 
 
-def shares_form(clue: str, word: str, k: int = FORM_PREFIX) -> bool:
-    """A rough flag for a clue that is a form of a board word (residency and residence,
-    governing and governor): one contains the other, or they share a prefix of k or more
-    letters. It flags some unrelated pairs too (carpet and carpenter)."""
-    return (
-        clue in word or word in clue or (len(clue) >= k and len(word) >= k and clue[:k] == word[:k])
-    )
+def flag_level(clue: str, words) -> str:
+    """'illegal', 'borderline' or 'legal': the clue's worst relation to these words."""
+    return legality.worst(clue, list(words))
 
 
 def flagged(clue: str, words) -> bool:
-    return any(shares_form(clue, w) for w in words)
+    return flag_level(clue, words) != "legal"
 
 
-def flagged_turns(result: Result, board: Board) -> int:
-    """Turns whose clue shares a form with a word still unrevealed when it was given."""
+def flagged_turns(result: Result, board: Board) -> tuple[int, int]:
+    """Turns whose clue legality flags against the words still unrevealed when it was
+    given: (flagged at all, flagged as illegal)."""
     left = set(board.words)
-    n = 0
+    any_, illegal = 0, 0
     for clue, made in result.clues:
-        n += flagged(clue.word, left)
+        lv = flag_level(clue.word, sorted(left))
+        any_ += lv != "legal"
+        illegal += lv == "illegal"
         left -= set(made)
-    return n
+    return any_, illegal
 
 
 # The bots.
@@ -164,7 +169,7 @@ class FrameworkCodemaster:
     clues: list[str]
     forms: dict[str, tuple[str, str]]
     threshold: float = THRESHOLD
-    strict: bool = False  # also skip clues that share a form with a board word
+    strict: bool = False  # also skip clues that codenames.legality flags
     _boards: dict = field(default_factory=dict, repr=False)
 
     def __post_init__(self):
@@ -186,7 +191,7 @@ class FrameworkCodemaster:
                 [
                     [
                         not framework_legal(c, self.forms[c], (w,))
-                        or (self.strict and shares_form(c, w))
+                        or (self.strict and related(c, w))
                         for w in board.words
                     ]
                     for c in self.clues

@@ -10,10 +10,30 @@ How likely is a challenge to be answered, how long does a game last, does it alw
 - Misslaps, with a one-card penalty as in the [Bicycle rules](https://bicyclecards.com/how-to-play/egyptian-rat-screw), shift the win curve to the right; its slope on the logit scale falls only from 5.5 to 5.0. A fast player who misslaps after 1% of the cards that cannot be slapped needs 51.2% of the slaps to win half the games against a careful one; at 5% they need 56.1%, and at 10%, 61.7%. Simulated, 20,000 games per point; the break-even shares are read off fitted lines.
 - For three and four players, give each player the strength exp(2.75 n s), where s is their slap share and n the number of players, and a player's chance of winning is their share of the total strength. The constant comes from the two-player games alone. It predicts win chances on 120 random share vectors with a root mean square error of 0.017 (three players) and 0.022 (four), against 0.005 from sampling alone. A power law refitted for each number of players does better (0.010 and 0.009). The entropy and the sum of squares of the shares rank the favorite's chances poorly. Simulated, 4,000 games per vector.
 
+![Three piles of cards, bottom card on the left: 5 K 7 7 (a pair, slappable), 9 7 K 7 (a sandwich, slappable) and 9 7 K 8 (not slappable).](figures/slaps.svg)
+
+*Piles that can and cannot be slapped, drawn by `figures.py`. Royals are shaded; the matching cards of a pair or sandwich are outlined.*
+
+## Results
+
+| Result | How it is known |
+|---|---|
+| The challenger keeps the pile with chance 0.811 after a jack, 0.674 after a queen, 0.574 after a king and 0.503 after an ace. | Exact, by recursion on counts of unseen cards; checked by brute force on small decks and by simulation (20,000 exchanges per royal, seed 1) |
+| Counting only the first answer, as simple arithmetic does, gives 0.706 to 0.236: 13% below the exact answer for a jack and under half of it for an ace. | Exact |
+| Two players with equal shares take a median of 289 cards, four take 1,051. Long two-player games end at a steady 0.0031 per card (0.0030 to 0.0032 after 300 cards). | Simulated, 10,000 games each, seeds 2 and 4 |
+| Six cards, 2 2 3 3 J J, can loop forever with no slappable pile: 16 of the 720 orders deal into such a trap. | Exact, every position |
+| Without a reachable trap the tail is geometric. On 2 2 3 3 J Q the exact rate is 0.891 per card and the mean 7.78 cards; 20,000 simulated games give 7.69 to 7.80. | Proved by hand; exact for small decks; simulated check, seed 5 |
+| Whether some deal of the full deck reaches a trap. | Not known |
+| Winning 55% of the slaps wins 64% of the games, 70% wins 90%; the scaled logistic strength predicts three- and four-player win chances with root mean square errors of 0.017 and 0.022. | Simulated, with seeds and intervals in `runs.json` |
+| The first of two players wins 49.77% (49.67% to 49.86%); with slaps off, 49.87%, in line with Andorno et al. (2026) and Collins. | Simulated, 1,000,000 games each |
+
+The notebook works through these in the order of Peter Norvig's [War notebook](https://github.com/norvig/pytudes/blob/main/ipynb/war.ipynb): simple arithmetic, brute force, simulation, and an exact method on an abstract deck, and it ends with a comparison of the two games. In War the arithmetic estimate of a sweep is within 1.7% of the exact answer; in Ratscrew the arithmetic misses the counter-challenges, which matter most after an ace. A game of War, in Norvig's simulation, has a median of 224 plays of at least two cards each, longer than a two-player game of Ratscrew.
+
 `game.py` holds the rules and the exact recursion, `termination.py` the game as a Markov chain on positions, and `egyptian_ratscrew.ipynb` works through the questions. `study.py` plays the large runs in seeded chunks and records them in `runs.json`; the notebook reads that record, and the tests replay parts of it. Reaction times are not modeled: each slap goes to a player with a fixed chance. With slapping turned off the game is Beggar-my-neighbour, so the tests check the rules against record deals from [Richard Mann's list](https://richardpmann.com/beggar-my-neighbour-records.html), which end after exactly the published 8,344 and 7,225 cards, and against the first deal known never to end ([Casella et al., 2024](https://arxiv.org/abs/2403.13855)). For two older records the tricks and cards counted here, 712 and 6,913, agree with the BeggarMyPython checker that Mann's list links to, and differ by one from the list itself.
 
 ```bash
 uv run python -m egyptian_ratscrew.game
+uv run --group egyptian_ratscrew python -m egyptian_ratscrew.figures  # the SVGs in figures/
 uv run --group egyptian_ratscrew --with jupyter jupyter lab egyptian_ratscrew/egyptian_ratscrew.ipynb
 uv run python -m egyptian_ratscrew.study  # plays any run missing from runs.json; under an hour on two cores
 uv run python -m egyptian_ratscrew.termination  # small decks, loops and tail rates; about five minutes
@@ -44,6 +64,10 @@ The second part is the standard fact that a finite absorbing Markov chain is abs
 *Proof.* Without a slappable pile there is no chance, so play is fixed, and a fixed play that returns to a position repeats forever. ∎
 
 A trap needs at least six cards: no deck of five or fewer cards has a trapped position, for two or three players. Among decks of six cards, exactly those made of two jacks and four number cards, with no rank three or four times, have one. Both are computed by `decks_with_traps`. One example is the deck 2 2 3 3 J J, dealt as J 2 3 to player 0 and 2 J 3 to player 1, with player 0 laying first. Player 0 lays the J, player 1 pays the 2, and player 0 takes the trick J 2. The hands are now 2 3 J 2 and J 3. Player 0 leads the 2, player 1 answers with the J, player 0 pays the 3, and player 1 takes 2 J 3. Player 1 leads the 3, player 0 answers with the J, player 1 pays the 2, and player 0 takes 3 J 2. The hands are 2 3 J 2 and J 3 again, with player 0 to lead. No trick ever holds a pair or a sandwich. In the usual notation this is the deal J - - against - J -, the looping game of Beggar-my-neighbour with which [Casella et al. (2024)](https://arxiv.org/abs/2403.13855) begin their construction. With a 2 in place of the second 3, the trick 2 J 2 would be a sandwich and offer a slap.
+
+![The deal J 2 3 against 2 J 3: the hands after each trick, and the trick picked up. After the third trick the hands are those after the first, so play loops with no pair or sandwich.](figures/trap.svg)
+
+*The six-card trap. Each row shows both hands, top card on the left, and the trick just picked up; the second and fourth rows are the same position.*
 
 ### Small decks, every position
 
