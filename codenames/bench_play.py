@@ -106,7 +106,9 @@ def game_record(board: Board, result) -> dict:
         "loss": bench.loss_kind(result, board),
         "mean_count": float(np.mean(counts)) if counts else 0.0,
         "empty_turns": sum(1 for _, made in result.clues if not made),
-        "flagged_turns": bench.flagged_turns(result, board),
+        **dict(
+            zip(("flagged_turns", "illegal_turns"), bench.flagged_turns(result, board), strict=True)
+        ),
     }
 
 
@@ -115,10 +117,11 @@ def digest(obj) -> str:
 
 
 def published_flags(board: Board, published) -> int:
-    """Turns of a published game whose clue shares a form with an unrevealed word."""
+    """Turns of a published game whose clue codenames.legality flags against an
+    unrevealed word."""
     left, n = set(board.words), 0
     for clue, _, picks in published:
-        n += bench.flagged(clue, left)
+        n += bench.flagged(clue, sorted(left))
         left -= {p.lower() for p in picks}
     return n
 
@@ -217,10 +220,20 @@ def our_boards(tabs: dict[str, Vectors], n: int = N_BOARDS) -> tuple[list[Board]
     return [framework_deal(pool, s) for s in range(n)], pool
 
 
+_RELATED: dict = {}
+
+
 def strict_pool(pool: tuple[str, ...], board: Board) -> tuple[str, ...]:
-    """The clues that share no form with an unrevealed word (bench.shares_form)."""
-    left = board.unrevealed()
-    return tuple(c for c in pool if not bench.flagged(c, left))
+    """The clues that codenames.legality does not flag against any unrevealed word. The
+    relation of every clue to every board word is computed once per board."""
+    key = (id(pool), board.words)
+    if key not in _RELATED:
+        if len(_RELATED) > 400:
+            _RELATED.clear()
+        _RELATED[key] = np.array([[bench.related(c, w) for w in board.words] for c in pool])
+    live = [i for i, w in enumerate(board.words) if w not in board.revealed]
+    keep = ~_RELATED[key][:, live].any(axis=1)
+    return tuple(c for c, k in zip(pool, keep, strict=True) if k)
 
 
 class StrictGiver:
@@ -666,7 +679,15 @@ def slice_cells(slices, stricts) -> tuple[dict[str, dict], dict[str, dict]]:
         for g in sl["games"]:
             c = cells.setdefault(
                 f"{g['giver']}/{g['guesser']}",
-                {"seeds": [], "score": [], "loss": "", "count": [], "turns": [], "flagged": []},
+                {
+                    "seeds": [],
+                    "score": [],
+                    "loss": "",
+                    "count": [],
+                    "turns": [],
+                    "flagged": [],
+                    "illegal": [],
+                },
             )
             c["seeds"].append(g["seed"])
             c["score"].append(g["score"])
@@ -674,6 +695,7 @@ def slice_cells(slices, stricts) -> tuple[dict[str, dict], dict[str, dict]]:
             c["count"].append(round(g.get("mean_count", 0.0), 2))
             c["turns"].append(g.get("turns", 0))
             c["flagged"].append(g.get("flagged_turns") or 0)
+            c["illegal"].append(g.get("illegal_turns") or 0)
     for cells in variants.values():
         for c in cells.values():
             assert c["seeds"] == list(range(len(c["seeds"])))
@@ -691,6 +713,7 @@ def encode_cells(cells: dict) -> dict:
             "score": "".join(LETTERS[x] for x in c["score"]),
             "turns": "".join(LETTERS[x] for x in c["turns"]),
             "flagged": "".join(LETTERS[x] for x in c["flagged"]),
+            "illegal": "".join(LETTERS[x] for x in c["illegal"]),
             "loss": c["loss"],
             "count": c["count"],
         }
@@ -704,6 +727,7 @@ def decode_cells(cells: dict) -> dict:
             "score": [LETTERS.index(x) for x in c["score"]],
             "turns": [LETTERS.index(x) for x in c["turns"]],
             "flagged": [LETTERS.index(x) for x in c["flagged"]],
+            "illegal": [LETTERS.index(x) for x in c["illegal"]],
             "loss": c["loss"],
             "count": c["count"],
         }
@@ -858,6 +882,7 @@ def strict_effect(all_cells: dict, strict_cells: dict) -> dict:
         if not keys:
             continue
         flagged = sum(x for k in keys for x in all_cells[k]["flagged"])
+        illegal = sum(x for k in keys for x in all_cells[k]["illegal"])
         turns = sum(t for k in keys for t in all_cells[k]["turns"])
         others = [k for k in keys if stranger(gv, k.split("/")[1])]
         d = np.mean(
@@ -869,6 +894,7 @@ def strict_effect(all_cells: dict, strict_cells: dict) -> dict:
         )
         out[gv] = {
             "flagged_turns": flagged,
+            "illegal_turns": illegal,
             "turns": turns,
             "share": round(flagged / turns, 4) if turns else None,
             "strict_flagged_turns": sum(x for k in keys for x in strict_cells[k]["flagged"]),
@@ -1007,7 +1033,7 @@ def findings(summary: dict) -> list[str]:
         shares = ", ".join(f"{NAMES[g]} {100 * v['share']:.1f}%" for g, v in e.items())
         lines.append(
             "- **Clues that share a form with a board word are rare, and replacing them changes little.**"
-            f" Share of turns flagged (`bench.shares_form`): {shares}. Replacing them with each"
+            f" Share of turns flagged by `codenames.legality` (illegal or borderline): {shares}. Replacing them with each"
             " giver's next legal choice changes no giver's mean score over its strangers by more"
             f" than {max(abs(v['score_change']['mean']) for v in e.values()):.2f} turns; the widest"
             f" interval reaches {max(abs(x) for v in e.values() for x in v['score_change']['ci']):.2f}"
@@ -1082,17 +1108,18 @@ def report(summary: dict) -> str:
             "",
             "### Clues that share a form with a board word",
             "",
-            "A clue is flagged when it and an unrevealed board word share their first five letters,"
-            " or one contains the other (`bench.shares_form`). Turns flagged with every clue"
+            "A clue is flagged when `codenames.legality` finds an illegal or borderline relation"
+            " between it and an unrevealed board word (a form of the word, a part of a compound,"
+            " a shared stem; see that module). Turns flagged with every clue"
             " allowed, pooled over guessers, and the change in mean score over the guessers that"
             " share no vectors with the giver when flagged clues are replaced (paired by board):",
             "",
-            "| Giver | Flagged turns | Share | Flagged after replacing | Change in mean score (95% interval) |",
-            "|---|---|---|---|---|",
+            "| Giver | Flagged turns | Of them illegal | Share | Flagged after replacing | Change in mean score (95% interval) |",
+            "|---|---|---|---|---|---|",
         ]
         for gv, e in cp["strict_minus_all"].items():
             lines.append(
-                f"| {NAMES[gv]} | {e['flagged_turns']} of {e['turns']} | {100 * e['share']:.1f}%"
+                f"| {NAMES[gv]} | {e['flagged_turns']} of {e['turns']} | {e['illegal_turns']} | {100 * e['share']:.1f}%"
                 f" | {e['strict_flagged_turns']} | {fmt(e['score_change'])} |"
             )
     flags = summary.get("reproduction_flags")
@@ -1124,9 +1151,11 @@ def static_sections(summary: dict) -> list[str]:
         " board word, not a part of one, and does not contain one. Clues come from the"
         f" {info['our_clue_pool']} of the 12,000 clue words that both GloVe and word2vec have, so"
         f" that the framework's guessers can read them ({info['clue_words_dropped']} dropped).",
-        "- **The flag** (`bench.shares_form`, for the second set of tables): a shared prefix of"
-        " five or more letters, or containment. It is stricter than both rules and catches"
-        " residency/residence and teaching/teacher; it also catches some unrelated pairs.",
+        "- **The flag** (`codenames.legality`, for the second set of tables): any relation that"
+        " module calls illegal (a form of the word, a part of a compound, a spelling variant)"
+        " or borderline (a shared stem, affix stem, three-letter compound part or long prefix)."
+        " It is stricter than both rules: it catches broken for BREAK and teaching for TEACHER,"
+        " which both rules allow.",
         "",
         "## How each number is known",
         "",

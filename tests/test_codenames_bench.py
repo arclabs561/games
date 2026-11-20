@@ -333,37 +333,37 @@ def test_bootstrap_interval_and_summary():
     assert lo < 5.0 < hi and hi - lo == pytest.approx(2 * 1.96 * 1.0 / 10, abs=0.06)
 
 
-def test_shares_form():
-    assert bench.shares_form("residency", "residence")
-    assert bench.shares_form("governing", "governor")
-    assert bench.shares_form("teaching", "teacher")
-    assert bench.shares_form("fire", "firefly")  # containment, at any length
-    assert not bench.shares_form("tiger", "tight")  # four letters in common
-    assert not bench.shares_form("ocean", "water")
-    assert bench.flagged("teaching", ["dog", "teacher"]) and not bench.flagged("teaching", ["dog"])
+def test_flag_follows_legality():
+    assert bench.related("broken", "break") and bench.related("teaching", "teacher")
+    assert bench.related("snowshoe", "horseshoe")
+    assert not bench.related("tree", "nut") and not bench.related("island", "england")
+    assert bench.flag_level("broken", ["dog", "break"]) == "illegal"
+    assert bench.flagged("broken", ["dog", "break"]) and not bench.flagged("broken", ["dog"])
 
 
 def test_strict_codemaster_skips_flagged_clues():
-    pool, clues, vecs, forms = world(2, n_clues=300)
-    board = bench.framework_deal(pool, 2)
-    loose = bench.FrameworkCodemaster("glove", as_vectors(vecs), clues, forms)
-    first = loose(board).word
-    # A copy of the board where one non-team word shares the chosen clue's first five
-    # letters without containing it: the loose rule allows the clue, the strict one not.
-    target = next(i for i, k in enumerate(board.kinds) if k == NEUTRAL)
-    twin = first[:5] + "qq"
-    words = list(board.words)
-    vecs[twin] = vecs[words[target]]
-    words[target] = twin
-    board2 = Board(tuple(words), board.kinds)
-    clues2 = [c for c in clues if c != twin]
-    loose = bench.FrameworkCodemaster("glove", as_vectors(vecs), clues2, forms)
-    strict = bench.FrameworkCodemaster("glove", as_vectors(vecs), clues2, forms, strict=True)
-    assert bench.framework_legal(first, forms[first], [twin]) and bench.shares_form(first, twin)
-    assert bench.flagged(strict(board2).word, board2.unrevealed()) is False
-    _, illegal_loose = loose.board_tables(board2)
-    _, illegal_strict = strict.board_tables(board2)
-    assert (illegal_strict >= illegal_loose).all() and (illegal_strict > illegal_loose).any()
+    from codenames.words import board_words
+
+    rng = np.random.default_rng(5)
+    board = bench.framework_deal(list(board_words()[:40]), 2)
+    vecs = {w: rng.standard_normal(8) for w in board.words}
+    red = [w for w in board.words if board.kind(w) == TEAM]
+    vecs["teaching"] = vecs[red[0]]  # a perfect clue for the first red word
+    vecs["ocean"] = vecs[red[1]] + 0.01  # and a nearly perfect one for the second
+    neutral = next(i for i, k in enumerate(board.kinds) if k == NEUTRAL)
+    vecs["teacher"] = vecs[board.words[neutral]]
+    board = Board(
+        tuple("teacher" if i == neutral else w for i, w in enumerate(board.words)), board.kinds
+    )
+    clues = ["teaching", "ocean"]
+    forms = {c: (c, c) for c in clues}
+    kw = {"threshold": 0.01}  # count 1 only
+    loose = bench.FrameworkCodemaster("glove", as_vectors(vecs), clues, forms, **kw)
+    strict = bench.FrameworkCodemaster("glove", as_vectors(vecs), clues, forms, strict=True, **kw)
+    assert bench.framework_legal("teaching", forms["teaching"], board.words)
+    assert bench.related("teaching", "teacher")
+    assert loose(board) == bench.Clue("teaching", 1)
+    assert strict(board) == bench.Clue("ocean", 1)
 
 
 def test_committed_results_are_what_the_script_writes():
@@ -377,3 +377,14 @@ def test_committed_results_are_what_the_script_writes():
     summary = bench_play.analyze(runs)
     assert json.loads(bench_play.SUMMARY_FILE.read_text()) == json.loads(json.dumps(summary))
     assert bench_play.REPORT_FILE.read_text() == bench_play.report(summary)
+
+
+def test_strict_pool_drops_flagged_clues_while_their_word_is_unrevealed():
+    from codenames import bench_play
+
+    words = tuple(f"w{i:02d}" for i in range(24)) + ("teacher",)
+    board = Board(words, tiny_board().kinds)
+    pool = ("teaching", "ocean", "broken")
+    assert bench_play.strict_pool(pool, board) == ("ocean", "broken")
+    board.revealed.add("teacher")
+    assert bench_play.strict_pool(pool, board) == pool
