@@ -1,0 +1,4 @@
+- Every game is won by one of the two players, and the first player wins each game with the same chance p, independently of the others. Chances that change from game to game are treated separately<!--raw-typst  in @sec-model-->.
+- "The better player" means p > 1/2. The prior on p is uniform unless stated; the Jeffreys prior Beta(1/2, 1/2) and a skeptical prior Beta(12, 12) are compared.
+- A **stopping rule** says, after each game, whether to stop and declare someone better. A **cap** N is the most games that the friends will play.
+- The duel rules come from the Peggle Deluxe readme (PopCap, 2008, archived), which does not say who shoots first. The first-shooter edges are assumed values, not measurements.
