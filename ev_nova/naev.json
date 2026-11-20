@@ -22,7 +22,8 @@
     "Sikh": "",
     "Terminus": "hidden"
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-764.331159, 311.155523]
   },
   "Adraia": {
    "jumps": {
@@ -30,20 +31,23 @@
     "Ulysses": "",
     "Vanir": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [600.025028, -649.567135]
   },
   "Adran": {
    "jumps": {
     "Metsys": "",
     "Rauthia": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [32.30467, 72.465092]
   },
   "Aesir": {
    "jumps": {
     "Vanir": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [660.951103, -496.19377]
   },
   "Aesria": {
    "jumps": {
@@ -51,27 +55,31 @@
     "Tempus": "",
     "Vean": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-6.765221, 393.48694]
   },
   "Aet": {
    "jumps": {
     "Seport": "",
     "South Bell": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [198.130026, 144.016375]
   },
   "Akodu": {
    "jumps": {
     "Santoros": "",
     "Vega": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-304.129829, 74.803326]
   },
   "Akra": {
    "jumps": {
     "Mida": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [518.377101, 40.883786]
   },
   "Allous": {
    "jumps": {
@@ -79,7 +87,8 @@
     "Palin": "",
     "Suk": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-268.444189, -998.840797]
   },
   "Alpha Centauri": {
    "jumps": {
@@ -87,14 +96,16 @@
     "Padonia": "",
     "Veses": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [67.197854, 608.459033]
   },
   "Alsafi": {
    "jumps": {
     "Eisenhorn": "",
     "Lalande": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-223.422459, 319.4364]
   },
   "Altair": {
    "jumps": {
@@ -102,7 +113,8 @@
     "Qellan": "",
     "Vega": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-219.426805, 141.662795]
   },
   "Alteris": {
    "jumps": {
@@ -111,7 +123,8 @@
     "Eridani": "",
     "Sikh": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-595.677914, 298.915531]
   },
   "Amaroq": {
    "jumps": {
@@ -119,14 +132,16 @@
     "NGC-14549": "exitonly",
     "PSO": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-568.079398, -1110.82253]
   },
   "Amatiri": {
    "jumps": {
     "Ariadus": "",
     "Sleuth": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-770.230326, 1269.237652]
   },
   "Amlet": {
    "jumps": {
@@ -134,7 +149,8 @@
     "Sheffield": "",
     "Yetmer-O'rez Highspace": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-730.176758, -827.433055]
   },
   "An'ku": {
    "jumps": {
@@ -142,7 +158,8 @@
     "NGC-10284": "",
     "Tarmak": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [453.733898, -1148.134328]
   },
   "Anarbalis": {
    "jumps": {
@@ -150,13 +167,15 @@
     "Lapis": "hidden",
     "Niger": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [281.927358, -1096.703887]
   },
   "Andee": {
    "jumps": {
     "Brimstone": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [96.463493, -552.456015]
   },
   "Andres": {
    "jumps": {
@@ -164,7 +183,8 @@
     "Kelvos": "",
     "Mason": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-814.134306, 679.090878]
   },
   "Aneel Azi": {
    "jumps": {
@@ -172,7 +192,8 @@
     "Hephaestus": "",
     "Tormulex": "exitonly"
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [60.433913, -415.736885]
   },
   "Anger": {
    "jumps": {
@@ -180,13 +201,15 @@
     "Sten": "",
     "Tormulex": "hidden"
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [113.332631, -278.926038]
   },
   "Anrique": {
    "jumps": {
     "Herakin": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [495.517448, -619.571875]
   },
   "Antares": {
    "jumps": {
@@ -195,7 +218,8 @@
     "Seport": "",
     "Tide": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [169.969486, 45.76169]
   },
   "Antlejos": {
    "jumps": {
@@ -204,13 +228,15 @@
     "Knave": "",
     "NGC-4087": "hidden"
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1209.340241, 76.808236]
   },
   "Anubis Black Hole": {
    "jumps": {
     "NGC-1562": "hidden"
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1524.669281, -383.25363]
   },
   "Apez": {
    "jumps": {
@@ -218,14 +244,16 @@
     "Hekaras": "",
     "Mural": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-687.224519, 65.20408]
   },
   "Apik": {
    "jumps": {
     "Leporis": "",
     "Mida": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [441.120411, 193.185975]
   },
   "Arandon": {
    "jumps": {
@@ -233,7 +261,8 @@
     "Nasona": "",
     "Zerantix": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-26.00284, -226.387278]
   },
   "Arcanis": {
    "jumps": {
@@ -242,7 +271,8 @@
     "Sonas": "",
     "Surano": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-300.590507, -173.135163]
   },
   "Arcturus": {
    "jumps": {
@@ -250,21 +280,24 @@
     "Holly": "",
     "Mural": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-526.011564, 129.331482]
   },
   "Ariadus": {
    "jumps": {
     "Amatiri": "",
     "Tandar": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-773.89566, 1165.329487]
   },
   "Arietis": {
    "jumps": {
     "Ryder": "",
     "Seifer": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [194.006224, -236.815763]
   },
   "Armorhead": {
    "jumps": {
@@ -273,7 +306,8 @@
     "Hideyoshi's Star": "",
     "Reptile": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-1326.409994, -888.529847]
   },
   "Astana": {
    "jumps": {
@@ -281,7 +315,8 @@
     "Severus": "",
     "Stone Table": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-980.673959, -886.127853]
   },
   "Atlantis": {
    "jumps": {
@@ -289,7 +324,8 @@
     "Ryder": "",
     "Shickhaw": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [201.279614, -410.077937]
   },
   "Attaria": {
    "jumps": {
@@ -298,14 +334,16 @@
     "Ganth": "",
     "Regulus": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1006.653803, -430.08396]
   },
   "Auger": {
    "jumps": {
     "Astana": "",
     "Xavier": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-900.418391, -935.060441]
   },
   "Awowa": {
    "jumps": {
@@ -313,14 +351,16 @@
     "Ginger": "",
     "Maus": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-312.043312, -725.757723]
   },
   "Babylon": {
    "jumps": {
     "Diadem": "",
     "Elza": "hidden"
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-516.299129, 835.31878]
   },
   "Baf": {
    "jumps": {
@@ -328,27 +368,31 @@
     "Palin": "",
     "Peter": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-180.657341, -1004.188355]
   },
   "Baitas": {
    "jumps": {
     "Alpha Centauri": "",
     "Protera": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [135.895556, 669.149798]
   },
   "Barnard's Star": {
    "jumps": {
     "Carrza": "hidden",
     "Tau Ceti": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-232.677729, -20.63226]
   },
   "Basel": {
    "jumps": {
     "Percival": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-36.970922, 599.995957]
   },
   "Bastion": {
    "jumps": {
@@ -358,7 +402,8 @@
     "Halo": "hidden",
     "Taiomi": "hidden"
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-504.545253, 500.537226]
   },
   "Bedimann": {
    "jumps": {
@@ -367,7 +412,8 @@
     "Orion": "",
     "Urdads": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-1438.376721, -742.734046]
   },
   "Beeklo": {
    "jumps": {
@@ -376,7 +422,8 @@
     "Dvaer": "",
     "Vandal": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-377.635815, -690.34554]
   },
   "Behar": {
    "jumps": {
@@ -385,7 +432,8 @@
     "Iris": "",
     "Sigur": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-156.968515, -214.297027]
   },
   "Blacin": {
    "jumps": {
@@ -393,21 +441,24 @@
     "Trohem": "",
     "Wochii": "hidden"
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-565.288689, -551.901387]
   },
   "Blackwell": {
    "jumps": {
     "Jade": "",
     "Pastor": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-1039.585542, -97.49445]
   },
   "Blunderbuss": {
    "jumps": {
     "Ogat": "",
     "Verex": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-347.818184, -556.684532]
   },
   "Bonanza": {
    "jumps": {
@@ -415,14 +466,16 @@
     "Norn": "",
     "Sylph": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-347.890427, 1288.137708]
   },
   "Booster": {
    "jumps": {
     "Katami": "",
     "Metsys": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-65.56547, 181.00818]
   },
   "Borla": {
    "jumps": {
@@ -431,7 +484,8 @@
     "Mural": "",
     "Shakar": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-644.941846, 169.661846]
   },
   "Botarn": {
    "jumps": {
@@ -439,14 +493,16 @@
     "Vanir": "",
     "Voproid": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [567.825424, -462.233602]
   },
   "Brendon": {
    "jumps": {
     "Gilligan's Tomb": "",
     "Toxin": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [636.762561, -765.015573]
   },
   "Brimstone": {
    "jumps": {
@@ -456,34 +512,39 @@
     "Shickhaw": "",
     "Triap": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [39.033249, -494.648656]
   },
   "Brumerebus": {
    "jumps": {
     "Knave": "",
     "NGC-7786": "hidden"
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1255.344211, 181.937598]
   },
   "Brumeria": {
    "jumps": {
     "Teller": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [337.84426, -92.428998]
   },
   "C-00": {
    "jumps": {
     "C-14": "",
     "C-28": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1033.101126, 657.670305]
   },
   "C-14": {
    "jumps": {
     "C-00": "",
     "C-43": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1092.746187, 589.622495]
   },
   "C-28": {
    "jumps": {
@@ -491,7 +552,8 @@
     "C-59": "",
     "Mason": "exitonly"
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-938.955014, 630.930546]
   },
   "C-43": {
    "jumps": {
@@ -499,7 +561,8 @@
     "C-59": "",
     "Hades": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1032.208964, 504.802325]
   },
   "C-59": {
    "jumps": {
@@ -509,14 +572,16 @@
     "Mason": "hidden",
     "SW-1": "exitonly"
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-937.840431, 532.61143]
   },
   "Capella": {
    "jumps": {
     "NGC-15670": "",
     "Penn": "hidden"
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [444.488476, -249.81598]
   },
   "Capricorn": {
    "jumps": {
@@ -525,21 +590,24 @@
     "Pontus": "",
     "Rockbed": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-759.97982, 508.721811]
   },
   "Carnis Major": {
    "jumps": {
     "Carnis Minor": "",
     "Tau Ceti": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-377.076374, -63.77394]
   },
   "Carnis Minor": {
    "jumps": {
     "Carnis Major": "",
     "Cebus": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-371.490074, -92.017873]
   },
   "Carrza": {
    "jumps": {
@@ -547,7 +615,8 @@
     "Midoros": "hidden",
     "Vega": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-157.906424, 6.566415]
   },
   "Castellan": {
    "jumps": {
@@ -555,7 +624,8 @@
     "Maus": "hidden",
     "Sarrii": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-306.065101, -815.051552]
   },
   "Cebus": {
    "jumps": {
@@ -563,7 +633,8 @@
     "Kruger's Pocket": "hidden",
     "Ross": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-458.86062, -99.847482]
   },
   "Cerberus": {
    "jumps": {
@@ -571,7 +642,8 @@
     "Jervis": "",
     "Sergio Vix": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-402.865374, 987.779905]
   },
   "Chloe": {
    "jumps": {
@@ -579,7 +651,8 @@
     "SW-3": "exitonly",
     "Wolf": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1038.711271, 322.354341]
   },
   "Chraan": {
    "jumps": {
@@ -587,7 +660,8 @@
     "Nougat": "",
     "Triap": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [104.462363, -628.859787]
   },
   "Churchill": {
    "jumps": {
@@ -596,14 +670,16 @@
     "Porro": "",
     "Willow": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [468.595263, -851.045188]
   },
   "Cleai": {
    "jumps": {
     "Haered": "",
     "Maron": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [217.055649, 242.539318]
   },
   "Copernicus": {
    "jumps": {
@@ -611,7 +687,8 @@
     "Octavian": "",
     "Procyon": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-1361.778741, -492.239017]
   },
   "Corinth": {
    "jumps": {
@@ -619,7 +696,8 @@
     "Orion": "",
     "Procyon": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-1332.003316, -587.755216]
   },
   "Coriolis": {
    "jumps": {
@@ -628,7 +706,8 @@
     "Gamel": "",
     "Rockbed": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-603.266059, 386.43344]
   },
   "Corvus": {
    "jumps": {
@@ -636,24 +715,28 @@
     "NGC-3371": "",
     "Tandar": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-742.573319, 975.412786]
   },
   "Crimson Gauntlet": {
    "jumps": {},
-   "refuel": false
+   "refuel": false,
+   "pos": [-395.906644, -658.699536]
   },
   "Cygni": {
    "jumps": {
     "Lalande": "",
     "Struve": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-233.239251, 441.011262]
   },
   "Cygnus": {
    "jumps": {
     "Delta Pavonis": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-572.765623, 212.497826]
   },
   "Daan": {
    "jumps": {
@@ -662,14 +745,16 @@
     "Gammacron": "",
     "Goddard": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-730.490153, -535.950245]
   },
   "Dakron": {
    "jumps": {
     "Doranthex": "",
     "Theras": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-120.101805, -484.538477]
   },
   "Daled": {
    "jumps": {
@@ -678,7 +763,8 @@
     "Mason": "hidden",
     "New Haven": "hidden"
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-759.22535, 604.312132]
   },
   "Damien": {
    "jumps": {
@@ -686,7 +772,8 @@
     "Ruadan": "",
     "Za'lek": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-1125.782658, -952.142256]
   },
   "Daravon": {
    "jumps": {
@@ -696,14 +783,16 @@
     "Perhelion": "",
     "Pudas": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-635.70895, -591.298345]
   },
   "Darkstone": {
    "jumps": {
     "Beeklo": "",
     "Verex": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-330.395434, -639.841805]
   },
   "Defa": {
    "jumps": {
@@ -711,7 +800,8 @@
     "Pilatis": "",
     "Vedalus": "hidden"
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-350.343567, 443.78258]
   },
   "Delta Pavonis": {
    "jumps": {
@@ -719,7 +809,8 @@
     "Cygnus": "",
     "Holly": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-500.576675, 228.219713]
   },
   "Delta Polaris": {
    "jumps": {
@@ -729,21 +820,24 @@
     "SW-7": "exitonly",
     "Zemur": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-1088.272126, 80.968436]
   },
   "Dendria": {
    "jumps": {
     "Attaria": "",
     "Ux": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1081.123901, -380.525072]
   },
   "Deneb": {
    "jumps": {
     "Altair": "",
     "Vega": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-142.451484, 100.87281]
   },
   "Diadem": {
    "jumps": {
@@ -753,7 +847,8 @@
     "Solene": "",
     "Wahri": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-537.635871, 733.33768]
   },
   "Doeston": {
    "jumps": {
@@ -763,21 +858,24 @@
     "Toros": "",
     "Zylex": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-104.057536, -290.851352]
   },
   "Dohriabi": {
    "jumps": {
     "Attaria": "",
     "Overture": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-949.533677, -350.37195]
   },
   "Doowa": {
    "jumps": {
     "Firk": "",
     "Qorel": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-770.694035, -54.343552]
   },
   "Doranthex": {
    "jumps": {
@@ -786,7 +884,8 @@
     "Tarsus": "",
     "Torg": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-193.258445, -454.039182]
   },
   "Draconis": {
    "jumps": {
@@ -794,14 +893,16 @@
     "Pilatis": "",
     "Tau Prime": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-399.149303, 285.082783]
   },
   "Draygar": {
    "jumps": {
     "Ogat": "",
     "Wochii": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-424.877281, -435.178355]
   },
   "Druid": {
    "jumps": {
@@ -810,7 +911,8 @@
     "Peter": "hidden",
     "Valur Gem": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-5.172041, -974.637267]
   },
   "Druss": {
    "jumps": {
@@ -819,7 +921,8 @@
     "Ruttwi": "",
     "Scarlet": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [111.991494, -916.735196]
   },
   "Dune": {
    "jumps": {
@@ -829,7 +932,8 @@
     "Halo": "",
     "Pilatis": "hidden"
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-519.76714, 380.864112]
   },
   "Duros": {
    "jumps": {
@@ -837,14 +941,16 @@
     "Jackson": "",
     "Palovi": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [310.418815, -699.189732]
   },
   "Dust": {
    "jumps": {
     "Forlat": "",
     "Moordra": "hidden"
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-711.468354, 830.035376]
   },
   "Dvaer": {
    "jumps": {
@@ -853,7 +959,8 @@
     "Radix": "",
     "Urbanus": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-459.467741, -680.893486]
   },
   "Effetey": {
    "jumps": {
@@ -862,7 +969,8 @@
     "Pas": "hidden",
     "Trohem": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-659.298798, -444.956097]
   },
   "Eiderdown": {
    "jumps": {
@@ -872,7 +980,8 @@
     "Margarita": "",
     "Palovi": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [448.741319, -762.144865]
   },
   "Eiger": {
    "jumps": {
@@ -881,34 +990,39 @@
     "Gorman": "",
     "Qulam": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-1334.074768, -780.505635]
   },
   "Eisenhorn": {
    "jumps": {
     "Alsafi": "",
     "Qellan": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-187.730337, 242.14087]
   },
   "Ekkodu": {
    "jumps": {
     "Torg": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-276.0132, -520.270002]
   },
   "Ekta": {
    "jumps": {
     "Mida": "",
     "Telika": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [390.020551, 99.073207]
   },
   "Elixir": {
    "jumps": {
     "Bastion": "",
     "Titus": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-510.838801, 547.58464]
   },
   "Elza": {
    "jumps": {
@@ -916,7 +1030,8 @@
     "Moordra": "",
     "Sergio Vix": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-529.54476, 935.480898]
   },
   "Eneguoz": {
    "jumps": {
@@ -925,7 +1040,8 @@
     "Qorel": "hidden",
     "Teegarden": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-686.948439, -81.411737]
   },
   "Eridani": {
    "jumps": {
@@ -933,7 +1049,8 @@
     "Draconis": "hidden",
     "Dune": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-506.161098, 304.100063]
   },
   "Esker": {
    "jumps": {
@@ -941,14 +1058,16 @@
     "Nougat": "",
     "Scarlet": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [175.480505, -773.836578]
   },
   "Euler": {
    "jumps": {
     "NGC-14337": "hidden",
     "Narousse": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [880.093954, -882.63239]
   },
   "Eye of Night": {
    "jumps": {
@@ -957,7 +1076,8 @@
     "Fidelis": "",
     "Lynx": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [23.763889, -883.438145]
   },
   "Farizel": {
    "jumps": {
@@ -966,7 +1086,8 @@
     "Radix": "",
     "Sarrii": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-401.453314, -838.475681]
   },
   "Father's Pride": {
    "jumps": {
@@ -974,7 +1095,8 @@
     "Point Zero": "",
     "Shikima": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-309.970279, 728.183113]
   },
   "Faust": {
    "jumps": {
@@ -983,7 +1105,8 @@
     "Sagittarius Prime": "",
     "Sultan": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-336.341887, -1066.469907]
   },
   "Felzen": {
    "jumps": {
@@ -991,21 +1114,24 @@
     "Peter": "hidden",
     "Sagittarius Prime": "hidden"
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-146.664114, -1100.661316]
   },
   "Fern": {
    "jumps": {
     "NGC-9607": "",
     "Teller": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [441.146109, -160.238408]
   },
   "Fertile Crescent": {
    "jumps": {
     "NGC-13322": "",
     "NGC-14479": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-585.532077, 1601.771188]
   },
   "Feye": {
    "jumps": {
@@ -1013,7 +1139,8 @@
     "Pisces Prime": "",
     "Uridhrion": "hidden"
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-331.976796, 1039.068593]
   },
   "Fidelis": {
    "jumps": {
@@ -1022,14 +1149,16 @@
     "Millstone": "",
     "Valur Gem": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-58.929004, -833.412351]
   },
   "Firk": {
    "jumps": {
     "Doowa": "",
     "Flok": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-755.339049, 73.379416]
   },
   "Flok": {
    "jumps": {
@@ -1037,14 +1166,16 @@
     "SW-5": "exitonly",
     "Terminus": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-851.904958, 136.851978]
   },
   "Flow": {
    "jumps": {
     "Aesria": "",
     "Vean": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-94.110184, 386.783802]
   },
   "Forlat": {
    "jumps": {
@@ -1053,7 +1184,8 @@
     "Muran": "",
     "New Haven": "hidden"
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-722.51271, 710.796117]
   },
   "Fortitude": {
    "jumps": {
@@ -1062,7 +1194,8 @@
     "Polack": "",
     "Pontus": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-852.982924, 364.740681]
   },
   "Fried": {
    "jumps": {
@@ -1070,14 +1203,16 @@
     "Limbo": "",
     "Sollav": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-872.959529, -709.955788]
   },
   "Frolina": {
    "jumps": {
     "Effetey": "",
     "Trask": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-673.636053, -307.331482]
   },
   "Fulcrum": {
    "jumps": {
@@ -1085,14 +1220,16 @@
     "Gyrios": "exitonly",
     "Jackson": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [256.654738, -604.32779]
   },
   "Fury": {
    "jumps": {
     "Bastion": "",
     "New Haven": "hidden"
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-586.729095, 548.505078]
   },
   "Gamel": {
    "jumps": {
@@ -1101,7 +1238,8 @@
     "Dune": "",
     "Haven": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-578.797908, 467.314108]
   },
   "Gamma Polaris": {
    "jumps": {
@@ -1111,14 +1249,16 @@
     "Shakar": "",
     "Sirou": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-803.447184, 20.667395]
   },
   "Gammacron": {
    "jumps": {
     "Daan": "",
     "Limbo": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-798.78927, -597.092316]
   },
   "Ganth": {
    "jumps": {
@@ -1126,7 +1266,8 @@
     "Hargen": "",
     "Olympus": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-1059.494799, -509.184023]
   },
   "Garten": {
    "jumps": {
@@ -1134,7 +1275,8 @@
     "Stelman": "",
     "Tomas": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-1149.567206, -1078.427032]
   },
   "Gewirn": {
    "jumps": {
@@ -1143,7 +1285,8 @@
     "Sarcophagus": "",
     "Uridhrion": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-117.155977, 867.720933]
   },
   "Gilligan's Light": {
    "jumps": {
@@ -1152,14 +1295,16 @@
     "Myad": "hidden",
     "Theras": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-27.300631, -448.534883]
   },
   "Gilligan's Memory": {
    "jumps": {
     "Muirat": "",
     "Tarmak": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [535.644103, -1016.3362]
   },
   "Gilligan's Tomb": {
    "jumps": {
@@ -1167,27 +1312,31 @@
     "Brendon": "",
     "Eiderdown": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [541.179943, -719.556856]
   },
   "Ginger": {
    "jumps": {
     "Awowa": "",
     "Verex": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-250.506726, -670.608405]
   },
   "Gliese": {
    "jumps": {
     "Behar": "exitonly",
     "Gliese Minor": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-85.114876, -180.009201]
   },
   "Gliese Minor": {
    "jumps": {
     "Gliese": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-61.852547, -155.792473]
   },
   "Goddard": {
    "jumps": {
@@ -1195,7 +1344,8 @@
     "Provectus Nova": "",
     "Waterhole": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-808.383534, -501.893287]
   },
   "Gold": {
    "jumps": {
@@ -1203,7 +1353,8 @@
     "Fried": "",
     "Perhelion": "hidden"
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-789.622134, -753.149285]
   },
   "Gorman": {
    "jumps": {
@@ -1212,7 +1363,8 @@
     "Stained Soul": "",
     "Urdads": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1410.283668, -850.4214]
   },
   "Gremlin": {
    "jumps": {
@@ -1221,13 +1373,15 @@
     "Dvaer": "",
     "Vlexon": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-538.994196, -639.404698]
   },
   "Griffin": {
    "jumps": {
     "Yarn": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-952.254734, -27.748172]
   },
   "Groombridge": {
    "jumps": {
@@ -1235,7 +1389,8 @@
     "Uhriabi": "",
     "Wunomi": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-744.811171, -262.074351]
   },
   "Gruz": {
    "jumps": {
@@ -1243,21 +1398,24 @@
     "Palin": "",
     "Valur Gem": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-157.987071, -914.048728]
   },
   "Guntesh": {
    "jumps": {
     "Kruger": "",
     "Scorpius": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-447.057644, -229.551875]
   },
   "Gutter": {
    "jumps": {
     "Esker": "",
     "Tartan": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [260.825915, -772.785515]
   },
   "Gyrios": {
    "jumps": {
@@ -1265,7 +1423,8 @@
     "Karman": "",
     "Shickhaw": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [177.030919, -550.598667]
   },
   "Hades": {
    "jumps": {
@@ -1273,7 +1432,8 @@
     "C-59": "",
     "Fortitude": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-940.513339, 434.460145]
   },
   "Hadosh": {
    "jumps": {
@@ -1281,7 +1441,8 @@
     "Ram": "",
     "Symm": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-581.785135, 1147.638216]
   },
   "Haered": {
    "jumps": {
@@ -1289,7 +1450,8 @@
     "Leporis": "",
     "Scholz's Star": "hidden"
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [267.047919, 327.555558]
   },
   "Hakoi": {
    "jumps": {
@@ -1297,7 +1459,8 @@
     "Ross": "",
     "Salvador": "hidden"
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-605.72137, 5.123645]
   },
   "Haleb": {
    "jumps": {
@@ -1305,7 +1468,8 @@
     "Theras": "",
     "Triap": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-36.324601, -621.955175]
   },
   "Halo": {
    "jumps": {
@@ -1313,7 +1477,8 @@
     "Dune": "",
     "Pilatis": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-454.248418, 421.348581]
   },
   "Hargen": {
    "jumps": {
@@ -1321,14 +1486,16 @@
     "Pultatis": "",
     "Regas": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1053.613663, -599.019371]
   },
   "Hasselt": {
    "jumps": {
     "Bonanza": "",
     "Klunzar": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-346.92547, 1376.700742]
   },
   "Hatter": {
    "jumps": {
@@ -1337,7 +1504,8 @@
     "Mizar": "",
     "Sergio Vix": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-361.664924, 828.434691]
   },
   "Haven": {
    "jumps": {
@@ -1346,20 +1514,23 @@
     "New Haven": "exitonly",
     "Rockbed": "hidden"
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-669.896379, 532.458373]
   },
   "Hekaras": {
    "jumps": {
     "Apez": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-711.09895, -3.127269]
   },
   "Hephaestus": {
    "jumps": {
     "Aneel Azi": "",
     "Ryder": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [124.735673, -362.474302]
   },
   "Herakin": {
    "jumps": {
@@ -1367,13 +1538,15 @@
     "Eiderdown": "",
     "Suna": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [417.768678, -667.855668]
   },
   "Herculis": {
    "jumps": {
     "Longbow": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [158.38829, 998.699495]
   },
   "Hideyoshi's Star": {
    "jumps": {
@@ -1381,7 +1554,8 @@
     "Vauban": "",
     "Za'lek": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-1233.420296, -882.88828]
   },
   "Holly": {
    "jumps": {
@@ -1390,14 +1564,16 @@
     "Santoros": "",
     "Tau Prime": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-458.559298, 149.519875]
   },
   "Hopa": {
    "jumps": {
     "Sagittarius": "",
     "Urillian": "exitonly"
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [209.751725, 514.27492]
   },
   "Hubfar": {
    "jumps": {
@@ -1405,7 +1581,8 @@
     "Majesteka": "",
     "Vadornla": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-644.599475, -515.035853]
   },
   "Humdrum": {
    "jumps": {
@@ -1413,21 +1590,24 @@
     "Anarbalis": "",
     "Modus Manis": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [368.716543, -1070.326276]
   },
   "Hystera": {
    "jumps": {
     "Korifa": "",
     "Leporis": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [492.554199, 274.094875]
   },
   "Ianella": {
    "jumps": {
     "Tepdania": "",
     "Wochii": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-497.434153, -408.309883]
   },
   "Infinity": {
    "jumps": {
@@ -1435,14 +1615,16 @@
     "Maus": "",
     "Millstone": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-201.400767, -839.464722]
   },
   "Ingot": {
    "jumps": {
     "Gilligan's Light": "hidden",
     "Toaxis": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-100.36259, -414.187301]
   },
   "Iris": {
    "jumps": {
@@ -1450,13 +1632,15 @@
     "Ophiuchi": "",
     "Oriantis": "hidden"
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-142.076175, -128.060102]
   },
   "Ivella": {
    "jumps": {
     "Point Zero": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-111.98174, 778.573227]
   },
   "Jackson": {
    "jumps": {
@@ -1465,7 +1649,8 @@
     "Pellmell": "",
     "Suna": "hidden"
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [338.869788, -619.551651]
   },
   "Jade": {
    "jumps": {
@@ -1473,14 +1658,16 @@
     "Delta Polaris": "",
     "Kobopos": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-1100.163732, -14.981905]
   },
   "Jervis": {
    "jumps": {
     "Cerberus": "",
     "Symm": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-498.394098, 1030.42559]
   },
   "Jommel": {
    "jumps": {
@@ -1488,7 +1675,8 @@
     "Stint": "",
     "Syndania": "hidden"
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [14.345746, 810.813147]
   },
   "K'tos": {
    "jumps": {
@@ -1496,13 +1684,15 @@
     "Radix": "",
     "Yetmer-O'rez Highspace": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-562.946923, -826.38355]
   },
   "Kansas": {
    "jumps": {
     "Sylph": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-236.074151, 1444.189453]
   },
   "Karman": {
    "jumps": {
@@ -1510,34 +1700,39 @@
     "Gyrios": "",
     "Nougat": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [184.46565, -635.613731]
   },
   "Katami": {
    "jumps": {
     "Booster": "",
     "Tempus": "hidden"
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-105.820314, 252.444643]
   },
   "Kelvos": {
    "jumps": {
     "Andres": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-894.762665, 719.473436]
   },
   "Kenvis": {
    "jumps": {
     "Qellan": "",
     "Tau Prime": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-346.042449, 192.477003]
   },
   "Khaas": {
    "jumps": {
     "Diadem": "",
     "Hatter": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-446.270675, 768.051701]
   },
   "Kiwi": {
    "jumps": {
@@ -1545,7 +1740,8 @@
     "Neon": "",
     "Pellmell": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [407.19475, -469.915041]
   },
   "Klantar": {
    "jumps": {
@@ -1553,7 +1749,8 @@
     "Tarsus": "",
     "Theras": "hidden"
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-131.297236, -557.215131]
   },
   "Klintus": {
    "jumps": {
@@ -1562,14 +1759,16 @@
     "NGC-3219": "",
     "Senara": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1288.073781, 31.197262]
   },
   "Klunzar": {
    "jumps": {
     "Hasselt": "",
     "NGC-12882": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-346.450592, 1478.159141]
   },
   "Knave": {
    "jumps": {
@@ -1578,7 +1777,8 @@
     "Delta Polaris": "",
     "Paradox": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1158.874321, 147.688016]
   },
   "Kobopos": {
    "jumps": {
@@ -1587,21 +1787,24 @@
     "Logania": "",
     "Senara": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-1203.060091, -31.305869]
   },
   "Kohler": {
    "jumps": {
     "Corinth": "hidden",
     "Qulam": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-1271.697259, -671.279812]
   },
   "Koit": {
    "jumps": {
     "Lynx": "",
     "Triap": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [29.597239, -689.976222]
   },
   "Koralis": {
    "jumps": {
@@ -1609,13 +1812,15 @@
     "Pastor": "",
     "Qex": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-883.95004, -33.708938]
   },
   "Korifa": {
    "jumps": {
     "Hystera": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [553.660051, 201.472698]
   },
   "Korma": {
    "jumps": {
@@ -1623,7 +1828,8 @@
     "NGC-12108": "",
     "Narousse": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [653.833793, -910.335623]
   },
   "Kraft": {
    "jumps": {
@@ -1631,7 +1837,8 @@
     "Neon": "",
     "Sorrow": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [382.811686, -381.431458]
   },
   "Kretogg": {
    "jumps": {
@@ -1639,7 +1846,8 @@
     "NGC-14549": "hidden",
     "Unicorn": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-720.51731, -1301.205278]
   },
   "Kruger": {
    "jumps": {
@@ -1648,7 +1856,8 @@
     "Kruger's Pocket": "",
     "Van Maanen": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-371.587026, -200.226891]
   },
   "Kruger's Pocket": {
    "jumps": {
@@ -1656,7 +1865,8 @@
     "Kruger": "",
     "Scorpius": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-395.851623, -167.431608]
   },
   "Ksher": {
    "jumps": {
@@ -1665,14 +1875,16 @@
     "Oxuram": "",
     "Radix": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-484.13151, -869.51771]
   },
   "Kyo": {
    "jumps": {
     "Druss": "",
     "Tartan": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [204.212529, -904.559771]
   },
   "Lalande": {
    "jumps": {
@@ -1680,7 +1892,8 @@
     "Cygni": "",
     "Pilatis": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-295.392247, 374.551568]
   },
   "Lapis": {
    "jumps": {
@@ -1688,7 +1901,8 @@
     "Lazuli": "",
     "Quai": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [214.807848, -1169.104782]
   },
   "Lazuli": {
    "jumps": {
@@ -1696,7 +1910,8 @@
     "NGC-127": "",
     "NGC-13564": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [283.117281, -1264.014632]
   },
   "Leporis": {
    "jumps": {
@@ -1705,13 +1920,15 @@
     "Hystera": "",
     "Telika": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [384.832849, 278.993112]
   },
   "Levo": {
    "jumps": {
     "Pilatis": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-319.369541, 302.732205]
   },
   "Limbo": {
    "jumps": {
@@ -1720,7 +1937,8 @@
     "Provectus Nova": "",
     "Sollav": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-886.473058, -630.636646]
   },
   "Logania": {
    "jumps": {
@@ -1728,14 +1946,16 @@
     "Palejos": "",
     "SW-9": "exitonly"
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1164.831873, -119.400977]
   },
   "Longbow": {
    "jumps": {
     "Herculis": "",
     "Moor": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [52.468771, 1036.92696]
   },
   "Lynx": {
    "jumps": {
@@ -1744,13 +1964,15 @@
     "Koit": "",
     "Norpin": "hidden"
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [6.748593, -786.036822]
   },
   "Machea": {
    "jumps": {
     "Maron": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [57.932589, 305.038338]
   },
   "Majesteka": {
    "jumps": {
@@ -1758,7 +1980,8 @@
     "Poltergeist": "",
     "Waterhole": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-739.417821, -445.120873]
   },
   "Malebolge": {
    "jumps": {
@@ -1767,7 +1990,8 @@
     "Norn": "",
     "Zintar": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-467.653661, 1239.234867]
   },
   "Marat": {
    "jumps": {
@@ -1775,13 +1999,15 @@
     "NGC-8338": "",
     "Unicorn": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-655.891735, -1089.836212]
   },
   "Margarita": {
    "jumps": {
     "Eiderdown": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [523.354056, -802.192076]
   },
   "Maron": {
    "jumps": {
@@ -1789,7 +2015,8 @@
     "Machea": "",
     "South Bell": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [130.9611, 260.721606]
   },
   "Mason": {
    "jumps": {
@@ -1799,13 +2026,15 @@
     "Capricorn": "",
     "Daled": "hidden"
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-851.457278, 576.090813]
   },
   "Massia": {
    "jumps": {
     "Klantar": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-111.728722, -630.085257]
   },
   "Maus": {
    "jumps": {
@@ -1814,7 +2043,8 @@
     "Infinity": "",
     "Millstone": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-230.67775, -754.649658]
   },
   "Mayla": {
    "jumps": {
@@ -1822,14 +2052,16 @@
     "Ksher": "",
     "Yetmer-O'rez Highspace": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-563.425288, -917.967275]
   },
   "Merisi": {
    "jumps": {
     "Acheron": "",
     "Borla": "hidden"
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-709.010083, 232.372138]
   },
   "Metsys": {
    "jumps": {
@@ -1838,7 +2070,8 @@
     "Midoros": "",
     "Seran": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-35.712531, 108.331983]
   },
   "Mida": {
    "jumps": {
@@ -1846,7 +2079,8 @@
     "Apik": "",
     "Ekta": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [475.845974, 113.199561]
   },
   "Midoros": {
    "jumps": {
@@ -1855,7 +2089,8 @@
     "Oriantis": "",
     "Sol": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-78.46819, 28.235665]
   },
   "Millstone": {
    "jumps": {
@@ -1864,21 +2099,24 @@
     "Maus": "",
     "Slaccid": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-141.186565, -783.712727]
   },
   "Mirror": {
    "jumps": {
     "NGC-12261": "",
     "Ulysses": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [761.067479, -512.62924]
   },
   "Mizar": {
    "jumps": {
     "Hatter": "",
     "Possum": "hidden"
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-300.111647, 941.510208]
   },
   "Modus Manis": {
    "jumps": {
@@ -1887,7 +2125,8 @@
     "Tartan": "hidden",
     "Willow": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [347.091248, -963.443866]
   },
   "Monogram": {
    "jumps": {
@@ -1897,7 +2136,8 @@
     "NGC-15670": "hidden",
     "Su'nir": "exitonly"
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [486.721556, -397.167113]
   },
   "Moor": {
    "jumps": {
@@ -1906,7 +2146,8 @@
     "Stint": "",
     "Taxumi": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-68.13071, 1000.836397]
   },
   "Moordra": {
    "jumps": {
@@ -1916,7 +2157,8 @@
     "Symm": "",
     "Wahri": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-646.131708, 924.937937]
   },
   "Muirat": {
    "jumps": {
@@ -1925,7 +2167,8 @@
     "Korma": "",
     "NGC-12108": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [553.589889, -920.789728]
   },
   "Mural": {
    "jumps": {
@@ -1934,7 +2177,8 @@
     "Borla": "",
     "Salvador": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-596.172264, 94.933475]
   },
   "Muran": {
    "jumps": {
@@ -1943,7 +2187,8 @@
     "New Haven": "hidden",
     "Wahri": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-631.055638, 719.493378]
   },
   "Myad": {
    "jumps": {
@@ -1951,7 +2196,8 @@
     "Gilligan's Light": "hidden",
     "Tormulex": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-38.884567, -372.368906]
   },
   "NGC-1001": {
    "jumps": {
@@ -1959,7 +2205,8 @@
     "NGC-23": "",
     "NGC-2954": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1520.323096, -673.562113]
   },
   "NGC-10081": {
    "jumps": {
@@ -1967,7 +2214,8 @@
     "NGC-11050": "",
     "Peogas": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [904.781509, -563.348756]
   },
   "NGC-10180": {
    "jumps": {
@@ -1975,20 +2223,23 @@
     "NGC-9017": "",
     "Sinensis": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-885.581326, -1477.506701]
   },
   "NGC-10284": {
    "jumps": {
     "An'ku": "",
     "NGC-13747": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [495.314318, -1253.615533]
   },
   "NGC-10452": {
    "jumps": {
     "NGC-3371": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-934.848639, 1062.265168]
   },
   "NGC-10653": {
    "jumps": {
@@ -1996,7 +2247,8 @@
     "NGC-12261": "",
     "NGC-18269": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [894.756741, -434.117267]
   },
   "NGC-10789": {
    "jumps": {
@@ -2004,66 +2256,76 @@
     "NGC-6057": "",
     "Woreck": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1254.877223, -1305.373235]
   },
   "NGC-10907": {
    "jumps": {
     "NGC-1317": "",
     "Sinensis": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1110.586097, -1449.372661]
   },
   "NGC-1098": {
    "jumps": {
     "Kretogg": "",
     "NGC-9017": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-832.961149, -1268.763236]
   },
   "NGC-11050": {
    "jumps": {
     "NGC-10081": "",
     "NGC-14337": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [951.430893, -684.569841]
   },
   "NGC-11231": {
    "jumps": {
     "NGC-9897": "",
     "Poller": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1394.141188, -1130.131012]
   },
   "NGC-11444": {
    "jumps": {
     "NGC-9897": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1583.633476, -1176.917342]
   },
   "NGC-11718": {
    "jumps": {
     "Paradox": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-1145.263591, 237.659188]
   },
   "NGC-11935": {
    "jumps": {
     "NGC-5483": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1610.656484, -207.324425]
   },
   "NGC-12056": {
    "jumps": {
     "NGC-5362": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1640.738883, -1057.76924]
   },
   "NGC-12108": {
    "jumps": {
     "Korma": "",
     "Muirat": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [616.40038, -992.05924]
   },
   "NGC-12261": {
    "jumps": {
@@ -2072,20 +2334,23 @@
     "NGC-14430": "",
     "NGC-7319": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [773.793866, -397.894973]
   },
   "NGC-12654": {
    "jumps": {
     "NGC-10789": "",
     "NGC-1317": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1174.902724, -1354.139578]
   },
   "NGC-127": {
    "jumps": {
     "Lazuli": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [215.270713, -1336.123275]
   },
   "NGC-12882": {
    "jumps": {
@@ -2093,7 +2358,8 @@
     "NGC-13322": "",
     "NGC-7061": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-371.277254, 1580.114911]
   },
   "NGC-1292": {
    "jumps": {
@@ -2101,7 +2367,8 @@
     "NGC-7078": "",
     "Senara": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1394.148251, -135.094719]
   },
   "NGC-1317": {
    "jumps": {
@@ -2109,7 +2376,8 @@
     "NGC-12654": "",
     "Stelman": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1091.724498, -1312.869133]
   },
   "NGC-13322": {
    "jumps": {
@@ -2117,14 +2385,16 @@
     "NGC-12882": "",
     "NGC-4771": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-468.616315, 1573.086926]
   },
   "NGC-13522": {
    "jumps": {
     "Druid": "",
     "NGC-6610": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [15.714433, -1064.311862]
   },
   "NGC-13564": {
    "jumps": {
@@ -2132,14 +2402,16 @@
     "NGC-13747": "",
     "NGC-344": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [375.276915, -1342.924876]
   },
   "NGC-13674": {
    "jumps": {
     "Copernicus": "hidden",
     "NGC-1562": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1523.106978, -578.891582]
   },
   "NGC-13747": {
    "jumps": {
@@ -2147,28 +2419,32 @@
     "NGC-13564": "",
     "NGC-4363": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [488.717053, -1366.487481]
   },
   "NGC-13798": {
    "jumps": {
     "NGC-3371": "",
     "NGC-9654": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-877.402926, 1165.81231]
   },
   "NGC-14337": {
    "jumps": {
     "Euler": "",
     "NGC-11050": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [965.660066, -804.608856]
   },
   "NGC-14430": {
    "jumps": {
     "NGC-12261": "",
     "NGC-14676": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [758.646543, -294.035216]
   },
   "NGC-14479": {
    "jumps": {
@@ -2176,14 +2452,16 @@
     "NGC-4131": "",
     "NGC-4771": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-591.17377, 1475.960062]
   },
   "NGC-14549": {
    "jumps": {
     "Amaroq": "",
     "Kretogg": "hidden"
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-603.777205, -1243.024586]
   },
   "NGC-14676": {
    "jumps": {
@@ -2191,7 +2469,8 @@
     "NGC-7319": "",
     "NGC-9607": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [654.940663, -241.685062]
   },
   "NGC-1562": {
    "jumps": {
@@ -2200,7 +2479,8 @@
     "NGC-23": "",
     "NGC-2601": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1623.204386, -553.044991]
   },
   "NGC-15670": {
    "jumps": {
@@ -2209,76 +2489,88 @@
     "NGC-9607": "",
     "Sorrow": "hidden"
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [494.381059, -315.694467]
   },
   "NGC-18269": {
    "jumps": {
     "NGC-10653": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [1026.774009, -411.662348]
   },
   "NGC-18451": {
    "jumps": {
     "NGC-6610": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-99.441201, -1206.4653]
   },
   "NGC-1872": {
    "jumps": {
     "Senara": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1424.743934, -38.569754]
   },
   "NGC-1931": {
    "jumps": {
     "Malebolge": "hidden",
     "NGC-4771": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-438.935491, 1356.977922]
   },
   "NGC-20489": {
    "jumps": {
     "NGC-7319": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [573.911765, -296.042917]
   },
   "NGC-2175": {
    "jumps": {
     "NGC-8468": "",
     "NGC-9654": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-866.733173, 1390.905376]
   },
   "NGC-2232": {
    "jumps": {
     "PSO": "hidden"
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-485.694863, -1140.160368]
   },
   "NGC-22375": {
    "jumps": {
     "Toxin": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [856.61669, -786.321601]
   },
   "NGC-23": {
    "jumps": {
     "NGC-1001": "",
     "NGC-1562": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1604.348149, -633.159011]
   },
   "NGC-2601": {
    "jumps": {
     "NGC-1562": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1701.351284, -471.375407]
   },
   "NGC-2948": {
    "jumps": {
     "NGC-10180": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-774.046227, -1510.606129]
   },
   "NGC-2954": {
    "jumps": {
@@ -2286,7 +2578,8 @@
     "NGC-5882": "",
     "NGC-7784": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1615.617509, -717.590406]
   },
   "NGC-3219": {
    "jumps": {
@@ -2294,7 +2587,8 @@
     "NGC-728": "",
     "NGC-902": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1398.357743, 54.014435]
   },
   "NGC-3371": {
    "jumps": {
@@ -2302,53 +2596,61 @@
     "NGC-10452": "",
     "NGC-13798": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-829.414311, 1051.057598]
   },
   "NGC-344": {
    "jumps": {
     "NGC-13564": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [384.626181, -1465.172881]
   },
   "NGC-3858": {
    "jumps": {
     "NGC-902": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1559.629636, 216.403962]
   },
   "NGC-4087": {
    "jumps": {
     "Antlejos": "hidden",
     "NGC-7786": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1327.181258, 118.544103]
   },
   "NGC-4131": {
    "jumps": {
     "NGC-14479": "",
     "NGC-8468": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-692.236125, 1458.110508]
   },
   "NGC-4363": {
    "jumps": {
     "NGC-13747": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [562.160209, -1468.726347]
   },
   "NGC-4746": {
    "jumps": {
     "NGC-7078": "",
     "SW-9": "exitonly"
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1281.158728, -200.969752]
   },
   "NGC-4766": {
    "jumps": {
     "NGC-8040": "",
     "Quai": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [109.958356, -1195.964756]
   },
   "NGC-4771": {
    "jumps": {
@@ -2356,13 +2658,15 @@
     "NGC-14479": "",
     "NGC-1931": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-482.092821, 1466.681167]
   },
   "NGC-5240": {
    "jumps": {
     "NGC-8468": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-881.420199, 1554.343262]
   },
   "NGC-5362": {
    "jumps": {
@@ -2370,7 +2674,8 @@
     "NGC-9897": "",
     "Stained Soul": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1539.805872, -1008.978765]
   },
   "NGC-5483": {
    "jumps": {
@@ -2378,25 +2683,29 @@
     "NGC-1292": "",
     "NGC-7078": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1494.638414, -189.85305]
   },
   "NGC-5838": {
    "jumps": {
     "NGC-7402": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1724.754921, -917.139815]
   },
   "NGC-5882": {
    "jumps": {
     "NGC-2954": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1726.983237, -743.900602]
   },
   "NGC-6057": {
    "jumps": {
     "NGC-10789": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1351.515212, -1375.475538]
   },
   "NGC-6610": {
    "jumps": {
@@ -2404,19 +2713,22 @@
     "NGC-18451": "",
     "NGC-8040": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-31.776877, -1143.088197]
   },
   "NGC-6901": {
    "jumps": {
     "NGC-9607": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [625.16146, -148.909958]
   },
   "NGC-7061": {
    "jumps": {
     "NGC-12882": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-264.122274, 1632.845147]
   },
   "NGC-7078": {
    "jumps": {
@@ -2425,13 +2737,15 @@
     "NGC-5483": "",
     "NGC-7533": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1382.473577, -247.657146]
   },
   "NGC-728": {
    "jumps": {
     "NGC-3219": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1510.757317, 36.29387]
   },
   "NGC-7319": {
    "jumps": {
@@ -2440,7 +2754,8 @@
     "NGC-20489": "",
     "Voproid": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [670.763264, -345.088465]
   },
   "NGC-7402": {
    "jumps": {
@@ -2448,21 +2763,24 @@
     "Stained Soul": "",
     "Urdads": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1600.138786, -895.258796]
   },
   "NGC-7533": {
    "jumps": {
     "NGC-7078": "",
     "Octavian": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1342.589982, -308.534747]
   },
   "NGC-7784": {
    "jumps": {
     "NGC-2954": "",
     "Urdads": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1588.827242, -801.703933]
   },
   "NGC-7786": {
    "jumps": {
@@ -2470,20 +2788,23 @@
     "NGC-4087": "",
     "NGC-902": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1360.908987, 215.224282]
   },
   "NGC-8040": {
    "jumps": {
     "NGC-4766": "",
     "NGC-6610": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [21.740584, -1218.770606]
   },
   "NGC-8338": {
    "jumps": {
     "Marat": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-646.562886, -1172.121391]
   },
   "NGC-8468": {
    "jumps": {
@@ -2492,14 +2813,16 @@
     "NGC-5240": "",
     "Sleuth": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-790.934906, 1445.433643]
   },
   "NGC-9017": {
    "jumps": {
     "NGC-10180": "",
     "NGC-1098": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-803.816303, -1375.357986]
   },
   "NGC-902": {
    "jumps": {
@@ -2507,13 +2830,15 @@
     "NGC-3858": "",
     "NGC-7786": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1445.986242, 159.355502]
   },
   "NGC-9415": {
    "jumps": {
     "Westhaven": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-928.469091, -1384.033812]
   },
   "NGC-9607": {
    "jumps": {
@@ -2522,14 +2847,16 @@
     "NGC-15670": "",
     "NGC-6901": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [536.316309, -211.703887]
   },
   "NGC-9654": {
    "jumps": {
     "NGC-13798": "",
     "NGC-2175": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-886.610174, 1288.863067]
   },
   "NGC-9897": {
    "jumps": {
@@ -2537,7 +2864,8 @@
     "NGC-11444": "",
     "NGC-5362": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1494.491928, -1104.817861]
   },
   "Narousse": {
    "jumps": {
@@ -2545,34 +2873,39 @@
     "Korma": "",
     "Toxin": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [761.661854, -892.987218]
   },
   "Nartur": {
    "jumps": {
     "Overture": "",
     "Shinnok": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-896.284093, -258.381436]
   },
   "Nasona": {
    "jumps": {
     "Arandon": "",
     "Polaris": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [1.180895, -119.78723]
   },
   "Nava": {
    "jumps": {
     "Vean": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-125.456604, 466.910553]
   },
   "Neexi": {
    "jumps": {
     "Malebolge": "",
     "Sleuth": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-593.642786, 1275.242627]
   },
   "Neon": {
    "jumps": {
@@ -2581,7 +2914,8 @@
     "Nixon": "",
     "Pike": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [320.167649, -473.443663]
   },
   "New Haven": {
    "jumps": {
@@ -2592,7 +2926,8 @@
     "Muran": "hidden",
     "Titus": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-637.249781, 621.811891]
   },
   "Newmarch": {
    "jumps": {
@@ -2600,27 +2935,31 @@
     "Reptile": "",
     "Vauban": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-1300.779218, -1057.530221]
   },
   "Niger": {
    "jumps": {
     "Anarbalis": "",
     "Rhu": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [262.634895, -1006.193125]
   },
   "Nirtos": {
    "jumps": {
     "Sagittarius": "",
     "Syndania": "hidden"
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [319.186036, 691.074923]
   },
   "Nixon": {
    "jumps": {
     "Neon": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [240.050376, -498.236998]
   },
   "Norn": {
    "jumps": {
@@ -2629,14 +2968,16 @@
     "Pisces Prime": "",
     "Ram": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-354.192418, 1192.403393]
   },
   "Norpin": {
    "jumps": {
     "Lynx": "hidden",
     "Nougat": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [87.516974, -771.08896]
   },
   "Nougat": {
    "jumps": {
@@ -2645,14 +2986,16 @@
     "Karman": "",
     "Norpin": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [134.350839, -702.764578]
   },
   "Nunavut": {
    "jumps": {
     "Straight Row": "",
     "Unicorn": "hidden"
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-828.586681, -1167.045612]
   },
   "Oberon": {
    "jumps": {
@@ -2660,14 +3003,16 @@
     "Shikima": "",
     "Struve": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-311.274926, 525.623157]
   },
   "Octantis": {
    "jumps": {
     "Struve": "",
     "Thirty Stars": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-135.257845, 593.56773]
   },
   "Octavian": {
    "jumps": {
@@ -2676,7 +3021,8 @@
     "Procyon": "",
     "SW-11": "exitonly"
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-1328.385864, -395.241106]
   },
   "Ogat": {
    "jumps": {
@@ -2686,7 +3032,8 @@
     "Tuoladis": "",
     "Vlexon": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-358.484276, -474.472146]
   },
   "Olympus": {
    "jumps": {
@@ -2694,35 +3041,40 @@
     "SW-13": "exitonly",
     "Vost": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1152.499634, -518.196587]
   },
   "Opal": {
    "jumps": {
     "Hadosh": "",
     "Sleuth": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-679.123486, 1215.087705]
   },
   "Ophiuchi": {
    "jumps": {
     "Iris": "",
     "Tau Ceti": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-217.307419, -99.532344]
   },
   "Oriantis": {
    "jumps": {
     "Iris": "",
     "Midoros": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-79.240424, -62.868617]
   },
   "Orion": {
    "jumps": {
     "Bedimann": "",
     "Corinth": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-1407.730368, -653.339205]
   },
   "Overture": {
    "jumps": {
@@ -2733,14 +3085,16 @@
     "Uhriabi": "",
     "Waterhole": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-846.548389, -333.387091]
   },
   "Oxuram": {
    "jumps": {
     "Ksher": "",
     "PSO": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-469.0376, -957.443007]
   },
   "PSO": {
    "jumps": {
@@ -2750,14 +3104,16 @@
     "Oxuram": "",
     "Sultan": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-455.506281, -1046.136795]
   },
   "Padonia": {
    "jumps": {
     "Alpha Centauri": "exitonly",
     "Syndania": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [220.420441, 652.300738]
   },
   "Palejos": {
    "jumps": {
@@ -2765,7 +3121,8 @@
     "SW-9": "exitonly",
     "Valerie": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1091.723848, -175.246036]
   },
   "Palin": {
    "jumps": {
@@ -2774,7 +3131,8 @@
     "Gruz": "",
     "Sarrii": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-242.426719, -912.80684]
   },
   "Palovi": {
    "jumps": {
@@ -2782,7 +3140,8 @@
     "Eiderdown": "",
     "Tartan": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [369.728603, -794.519745]
   },
   "Paradox": {
    "jumps": {
@@ -2790,7 +3149,8 @@
     "NGC-11718": "",
     "Zemur": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-1075.886454, 175.152313]
   },
   "Pas": {
    "jumps": {
@@ -2798,7 +3158,8 @@
     "Overture": "",
     "Poltergeist": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-733.993075, -363.19781]
   },
   "Pastor": {
    "jumps": {
@@ -2806,14 +3167,16 @@
     "Koralis": "",
     "Shinnok": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-938.910751, -104.731237]
   },
   "Pellmell": {
    "jumps": {
     "Jackson": "",
     "Kiwi": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [332.281831, -543.022063]
   },
   "Penn": {
    "jumps": {
@@ -2823,21 +3186,24 @@
     "Sorrow": "",
     "Teller": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [357.496051, -254.910495]
   },
   "Peogas": {
    "jumps": {
     "NGC-10081": "",
     "Ulysses": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [806.06854, -604.643555]
   },
   "Percival": {
    "jumps": {
     "Basel": "",
     "Thirty Stars": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-36.420921, 693.078122]
   },
   "Perhelion": {
    "jumps": {
@@ -2845,7 +3211,8 @@
     "Gold": "hidden",
     "Urbanus": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-658.058506, -710.193096]
   },
   "Peter": {
    "jumps": {
@@ -2853,7 +3220,8 @@
     "Druid": "hidden",
     "Felzen": "hidden"
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-84.554952, -1027.564917]
   },
   "Pike": {
    "jumps": {
@@ -2861,7 +3229,8 @@
     "Neon": "",
     "Rei": "hidden"
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [288.201421, -408.825182]
   },
   "Pilatis": {
    "jumps": {
@@ -2872,7 +3241,8 @@
     "Lalande": "",
     "Levo": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-386.134108, 356.763885]
   },
   "Pisces Prime": {
    "jumps": {
@@ -2880,7 +3250,8 @@
     "Norn": "",
     "Treacle": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-325.320579, 1109.897151]
   },
   "Point Zero": {
    "jumps": {
@@ -2889,14 +3260,16 @@
     "Ivella": "",
     "Thirty Stars": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-204.258584, 781.118351]
   },
   "Polack": {
    "jumps": {
     "Chloe": "",
     "Fortitude": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-945.508889, 336.902325]
   },
   "Polaris": {
    "jumps": {
@@ -2904,7 +3277,8 @@
     "Proxima Centauri": "",
     "Sol": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [50.94965, -62.944134]
   },
   "Poller": {
    "jumps": {
@@ -2913,7 +3287,8 @@
     "Woreck": "",
     "Xeric": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1298.492949, -1156.695528]
   },
   "Poltergeist": {
    "jumps": {
@@ -2922,7 +3297,8 @@
     "Tepdania": "",
     "Virgo": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-614.741855, -364.798761]
   },
   "Pontus": {
    "jumps": {
@@ -2930,13 +3306,15 @@
     "Fortitude": "",
     "Rockbed": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-772.922825, 415.5008]
   },
   "Porro": {
    "jumps": {
     "Churchill": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [459.048026, -925.949782]
   },
   "Possum": {
    "jumps": {
@@ -2944,7 +3322,8 @@
     "Moor": "",
     "Treacle": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-200.544549, 1049.838691]
   },
   "Procyon": {
    "jumps": {
@@ -2953,7 +3332,8 @@
     "Octavian": "",
     "Vost": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-1268.943906, -495.08893]
   },
   "Protera": {
    "jumps": {
@@ -2961,7 +3341,8 @@
     "Tasopa": "",
     "Urillian": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [194.285251, 575.378511]
   },
   "Provectus Nova": {
    "jumps": {
@@ -2969,20 +3350,23 @@
     "Limbo": "",
     "Pultatis": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-880.321739, -546.469826]
   },
   "Proxima Centauri": {
    "jumps": {
     "Polaris": "",
     "Sten": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [114.012798, -114.297339]
   },
   "Pudas": {
    "jumps": {
     "Daravon": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-711.081234, -634.914816]
   },
   "Pultatis": {
    "jumps": {
@@ -2990,7 +3374,8 @@
     "Provectus Nova": "",
     "Sollav": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-965.431071, -583.959438]
   },
   "Qellan": {
    "jumps": {
@@ -2998,7 +3383,8 @@
     "Eisenhorn": "",
     "Kenvis": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-264.124557, 211.913611]
   },
   "Qex": {
    "jumps": {
@@ -3007,7 +3393,8 @@
     "Koralis": "",
     "Uhriabi": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-834.393949, -116.741808]
   },
   "Qorel": {
    "jumps": {
@@ -3016,7 +3403,8 @@
     "Trask": "",
     "Uhriabi": "hidden"
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-750.26931, -149.739575]
   },
   "Quai": {
    "jumps": {
@@ -3024,7 +3412,8 @@
     "NGC-4766": "",
     "Ruttwi": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [125.34918, -1105.838661]
   },
   "Qulam": {
    "jumps": {
@@ -3032,7 +3421,8 @@
     "Kohler": "",
     "Za'lek": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-1232.763403, -767.790218]
   },
   "Radix": {
    "jumps": {
@@ -3041,28 +3431,32 @@
     "K'tos": "",
     "Ksher": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-489.374765, -782.635573]
   },
   "Raelid": {
    "jumps": {
     "Doranthex": "",
     "Zacron": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-234.944839, -393.792583]
   },
   "Ram": {
    "jumps": {
     "Hadosh": "",
     "Norn": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-460.547424, 1140.252188]
   },
   "Rauthia": {
    "jumps": {
     "Adran": "",
     "Antares": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [107.129333, 94.964325]
   },
   "Regas": {
    "jumps": {
@@ -3070,35 +3464,40 @@
     "Seiben": "",
     "Vost": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-1128.818497, -635.475766]
   },
   "Regulus": {
    "jumps": {
     "Attaria": "",
     "Waterhole": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-914.542461, -438.953197]
   },
   "Rei": {
    "jumps": {
     "Penn": "",
     "Pike": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [311.949303, -327.976222]
   },
   "Reptile": {
    "jumps": {
     "Armorhead": "",
     "Newmarch": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1361.889093, -984.355558]
   },
   "Rhu": {
    "jumps": {
     "Niger": "",
     "Ruttwi": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [176.01189, -1031.085508]
   },
   "Rockbed": {
    "jumps": {
@@ -3108,21 +3507,24 @@
     "Pontus": "",
     "Sikh": "hidden"
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-682.106084, 436.170872]
   },
   "Ross": {
    "jumps": {
     "Cebus": "",
     "Hakoi": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-533.491598, -51.151565]
   },
   "Rotide": {
    "jumps": {
     "Antares": "",
     "Tobanna": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [172.019475, -39.135179]
   },
   "Ruadan": {
    "jumps": {
@@ -3130,7 +3532,8 @@
     "Severus": "",
     "Tomas": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-1065.626837, -1020.86952]
   },
   "Ruttwi": {
    "jumps": {
@@ -3138,7 +3541,8 @@
     "Quai": "",
     "Rhu": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [88.51735, -1008.771106]
   },
   "Ryder": {
    "jumps": {
@@ -3148,21 +3552,24 @@
     "Hephaestus": "",
     "Seifer": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [200.624673, -321.478951]
   },
   "SW-1": {
    "jumps": {
     "C-59": "",
     "SW-2": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-992.660756, 437.958542]
   },
   "SW-10": {
    "jumps": {
     "SW-11": "",
     "SW-9": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1226.188018, -297.787107]
   },
   "SW-11": {
    "jumps": {
@@ -3170,14 +3577,16 @@
     "SW-10": "",
     "SW-12": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1244.201301, -403.247966]
   },
   "SW-12": {
    "jumps": {
     "SW-11": "",
     "SW-13": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1207.749996, -502.33417]
   },
   "SW-13": {
    "jumps": {
@@ -3185,21 +3594,24 @@
     "SW-12": "",
     "SW-14": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1127.188919, -584.41901]
   },
   "SW-14": {
    "jumps": {
     "SW-13": "",
     "Sollav": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1041.693033, -646.511992]
   },
   "SW-2": {
    "jumps": {
     "SW-1": "",
     "SW-3": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-999.705509, 373.665587]
   },
   "SW-3": {
    "jumps": {
@@ -3207,14 +3619,16 @@
     "SW-2": "",
     "SW-4": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-974.882766, 289.811162]
   },
   "SW-4": {
    "jumps": {
     "SW-3": "",
     "SW-5": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-933.394611, 205.400502]
   },
   "SW-5": {
    "jumps": {
@@ -3222,14 +3636,16 @@
     "SW-4": "",
     "SW-6": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-920.698048, 115.941586]
   },
   "SW-6": {
    "jumps": {
     "SW-5": "",
     "SW-7": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-958.459386, 40.534796]
   },
   "SW-7": {
    "jumps": {
@@ -3238,14 +3654,16 @@
     "SW-8": "",
     "Yarn": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1020.818716, -27.544985]
   },
   "SW-8": {
    "jumps": {
     "SW-7": "",
     "SW-9": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1099.292057, -104.147665]
   },
   "SW-9": {
    "jumps": {
@@ -3255,7 +3673,8 @@
     "SW-10": "",
     "SW-8": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1167.469534, -192.162643]
   },
   "Sagittarius": {
    "jumps": {
@@ -3263,14 +3682,16 @@
     "Nirtos": "",
     "Urillian": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [284.837059, 576.37102]
   },
   "Sagittarius Prime": {
    "jumps": {
     "Faust": "",
     "Felzen": "hidden"
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-239.695336, -1130.70938]
   },
   "Salvador": {
    "jumps": {
@@ -3278,7 +3699,8 @@
     "Mural": "",
     "Tepvin": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-496.868289, 31.901592]
   },
   "Santoros": {
    "jumps": {
@@ -3286,13 +3708,15 @@
     "Holly": "",
     "Tepvin": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-383.045563, 111.851712]
   },
   "Sarcophagus": {
    "jumps": {
     "Gewirn": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-38.514245, 902.386933]
   },
   "Sarrii": {
    "jumps": {
@@ -3300,21 +3724,24 @@
     "Farizel": "",
     "Palin": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-333.928302, -899.038065]
   },
   "Scarlet": {
    "jumps": {
     "Druss": "",
     "Esker": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [132.343168, -840.584521]
   },
   "Scholz's Star": {
    "jumps": {
     "Haered": "",
     "Veses": "hidden"
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [111.069192, 402.421625]
   },
   "Scorpius": {
    "jumps": {
@@ -3322,21 +3749,24 @@
     "Kruger's Pocket": "",
     "Wunomi": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-518.420521, -175.604217]
   },
   "Seelie": {
    "jumps": {
     "Stone Table": "",
     "Za'lek": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-1068.377157, -785.779216]
   },
   "Seiben": {
    "jumps": {
     "Regas": "",
     "Za'lek": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-1155.122502, -719.327853]
   },
   "Seifer": {
    "jumps": {
@@ -3345,7 +3775,8 @@
     "Ryder": "",
     "Teller": "hidden"
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [275.122464, -254.68036]
   },
   "Senara": {
    "jumps": {
@@ -3354,21 +3785,24 @@
     "NGC-1292": "",
     "NGC-1872": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1310.759313, -61.907443]
   },
   "Seport": {
    "jumps": {
     "Aet": "",
     "Antares": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [253.315098, 76.699126]
   },
   "Seran": {
    "jumps": {
     "Metsys": "",
     "South Bell": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [30.216001, 171.539316]
   },
   "Sergio Vix": {
    "jumps": {
@@ -3376,7 +3810,8 @@
     "Elza": "",
     "Hatter": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-418.80203, 909.039271]
   },
   "Severus": {
    "jumps": {
@@ -3384,14 +3819,16 @@
     "Ruadan": "",
     "Tomas": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-977.216044, -992.120737]
   },
   "Shakar": {
    "jumps": {
     "Borla": "",
     "Gamma Polaris": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-771.293748, 159.536378]
   },
   "Sheffield": {
    "jumps": {
@@ -3399,7 +3836,8 @@
     "Volus": "",
     "Xavier": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-726.534609, -940.605102]
   },
   "Shickhaw": {
    "jumps": {
@@ -3407,7 +3845,8 @@
     "Brimstone": "",
     "Gyrios": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [131.482556, -470.279157]
   },
   "Shikima": {
    "jumps": {
@@ -3415,7 +3854,8 @@
     "Oberon": "",
     "Thorndyke": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-295.702896, 622.44088]
   },
   "Shinnok": {
    "jumps": {
@@ -3423,14 +3863,16 @@
     "Pastor": "",
     "Valerie": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-937.058978, -183.95124]
   },
   "Sigur": {
    "jumps": {
     "Arcanis": "hidden",
     "Behar": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-224.384461, -175.36347]
   },
   "Sikh": {
    "jumps": {
@@ -3438,7 +3880,8 @@
     "Alteris": "",
     "Rockbed": "hidden"
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-678.43364, 339.127716]
   },
   "Sinensis": {
    "jumps": {
@@ -3446,21 +3889,24 @@
     "NGC-10907": "",
     "Zurai": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-993.483436, -1487.863738]
   },
   "Sirou": {
    "jumps": {
     "Gamma Polaris": "",
     "Zemur": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-902.216265, 65.832206]
   },
   "Slaccid": {
    "jumps": {
     "Haleb": "",
     "Millstone": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-70.457504, -715.041413]
   },
   "Sleuth": {
    "jumps": {
@@ -3469,7 +3915,8 @@
     "Neexi": "",
     "Opal": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-706.456384, 1338.15599]
   },
   "Sol": {
    "jumps": {
@@ -3477,14 +3924,16 @@
     "Polaris": "",
     "Tide": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [0.0, 0.0]
   },
   "Solene": {
    "jumps": {
     "Diadem": "",
     "Vedalus": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-439.262856, 662.463293]
   },
   "Sollav": {
    "jumps": {
@@ -3494,14 +3943,16 @@
     "SW-14": "exitonly",
     "Stone Table": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-961.134007, -686.711693]
   },
   "Somard": {
    "jumps": {
     "Stelman": "",
     "Straight Row": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1013.378412, -1197.201986]
   },
   "Sonas": {
    "jumps": {
@@ -3509,7 +3960,8 @@
     "Zacron": "",
     "Zylex": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-250.141665, -245.98012]
   },
   "Sorrow": {
    "jumps": {
@@ -3517,7 +3969,8 @@
     "NGC-15670": "hidden",
     "Penn": "hidden"
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [408.15696, -316.822002]
   },
   "South Bell": {
    "jumps": {
@@ -3525,7 +3978,8 @@
     "Maron": "",
     "Seran": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [118.817286, 176.109485]
   },
   "Stained Soul": {
    "jumps": {
@@ -3534,14 +3988,16 @@
     "NGC-7402": "",
     "Urdads": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-1496.940927, -914.941146]
   },
   "Starlight End": {
    "jumps": {
     "Taxumi": "",
     "Treacle": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-149.586086, 1174.895748]
   },
   "Stelman": {
    "jumps": {
@@ -3550,21 +4006,24 @@
     "Somard": "",
     "Woreck": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-1109.452688, -1190.372748]
   },
   "Sten": {
    "jumps": {
     "Anger": "",
     "Proxima Centauri": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [120.878305, -196.31602]
   },
   "Stint": {
    "jumps": {
     "Jommel": "",
     "Moor": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [49.968561, 934.176872]
   },
   "Stone Table": {
    "jumps": {
@@ -3572,7 +4031,8 @@
     "Seelie": "",
     "Sollav": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-975.665174, -789.193375]
   },
   "Straight Row": {
    "jumps": {
@@ -3581,7 +4041,8 @@
     "Tomas": "",
     "Westhaven": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-924.875073, -1161.301228]
   },
   "Struve": {
    "jumps": {
@@ -3589,7 +4050,8 @@
     "Oberon": "",
     "Octantis": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-210.804147, 534.533135]
   },
   "Su'nir": {
    "jumps": {
@@ -3597,20 +4059,23 @@
     "Suna": "",
     "Vanir": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [480.502799, -522.186201]
   },
   "Suk": {
    "jumps": {
     "Allous": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-353.007713, -983.157881]
   },
   "Sultan": {
    "jumps": {
     "Faust": "",
     "PSO": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-404.581345, -1116.844593]
   },
   "Suna": {
    "jumps": {
@@ -3618,7 +4083,8 @@
     "Jackson": "hidden",
     "Su'nir": "exitonly"
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [410.607581, -570.163731]
   },
   "Surano": {
    "jumps": {
@@ -3626,14 +4092,16 @@
     "Tuoladis": "",
     "Van Maanen": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-322.319445, -273.646548]
   },
   "Sylph": {
    "jumps": {
     "Bonanza": "",
     "Kansas": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-256.256826, 1328.650303]
   },
   "Symm": {
    "jumps": {
@@ -3642,7 +4110,8 @@
     "Moordra": "",
     "Tandar": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-608.919983, 1033.840648]
   },
   "Syndania": {
    "jumps": {
@@ -3650,13 +4119,15 @@
     "Nirtos": "",
     "Padonia": "hidden"
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [191.843584, 787.738131]
   },
   "Taiomi": {
    "jumps": {
     "Bastion": "hidden"
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-462.506863, 495.825577]
   },
   "Tandar": {
    "jumps": {
@@ -3664,7 +4135,8 @@
     "Corvus": "",
     "Symm": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-707.196356, 1074.049847]
   },
   "Tarmak": {
    "jumps": {
@@ -3672,7 +4144,8 @@
     "Gilligan's Memory": "",
     "Modus Manis": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [448.164303, -1030.561107]
   },
   "Tarsus": {
    "jumps": {
@@ -3680,7 +4153,8 @@
     "Klantar": "",
     "Verex": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-213.292639, -524.499312]
   },
   "Tartan": {
    "jumps": {
@@ -3689,14 +4163,16 @@
     "Modus Manis": "hidden",
     "Palovi": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [289.208403, -859.684053]
   },
   "Tasopa": {
    "jumps": {
     "Protera": "exitonly",
     "Urillian": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [151.479371, 607.069568]
   },
   "Tau Ceti": {
    "jumps": {
@@ -3705,7 +4181,8 @@
     "Ophiuchi": "",
     "Tepvin": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-296.764399, -63.462497]
   },
   "Tau Prime": {
    "jumps": {
@@ -3713,28 +4190,32 @@
     "Holly": "",
     "Kenvis": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-425.293731, 206.556446]
   },
   "Taxumi": {
    "jumps": {
     "Moor": "",
     "Starlight End": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-74.445715, 1112.10148]
   },
   "Teegarden": {
    "jumps": {
     "Eneguoz": "",
     "Wunomi": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-609.46891, -140.349178]
   },
   "Telika": {
    "jumps": {
     "Ekta": "",
     "Leporis": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [349.557535, 180.420255]
   },
   "Teller": {
    "jumps": {
@@ -3743,14 +4224,16 @@
     "Penn": "",
     "Seifer": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [337.275151, -176.026836]
   },
   "Tempus": {
    "jumps": {
     "Aesria": "",
     "Katami": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-38.58598, 308.335936]
   },
   "Tepdania": {
    "jumps": {
@@ -3759,7 +4242,8 @@
     "Van Maanen": "",
     "Virgo": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-487.308413, -329.661148]
   },
   "Tepvin": {
    "jumps": {
@@ -3767,34 +4251,41 @@
     "Santoros": "",
     "Tau Ceti": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-376.669874, 22.788945]
   },
   "Terminus": {
    "jumps": {
     "Acheron": "hidden",
     "Flok": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-829.053655, 240.713241]
   },
   "Test of Alacrity": {
    "jumps": {},
-   "refuel": false
+   "refuel": false,
+   "pos": [505.13692, -851.045188]
   },
   "Test of Devotion": {
    "jumps": {},
-   "refuel": false
+   "refuel": false,
+   "pos": [635.112249, -470.354916]
   },
   "Test of Enlightenment": {
    "jumps": {},
-   "refuel": false
+   "refuel": false,
+   "pos": [670.55347, -576.249733]
   },
   "Test of Purification": {
    "jumps": {},
-   "refuel": false
+   "refuel": false,
+   "pos": [300.198186, -1128.349891]
   },
   "Test of Renewal": {
    "jumps": {},
-   "refuel": false
+   "refuel": false,
+   "pos": [495.517448, -583.030217]
   },
   "Theras": {
    "jumps": {
@@ -3803,7 +4294,8 @@
     "Haleb": "",
     "Klantar": "hidden"
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-45.331341, -529.556753]
   },
   "Thirty Stars": {
    "jumps": {
@@ -3811,20 +4303,23 @@
     "Percival": "",
     "Point Zero": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-130.56153, 692.983393]
   },
   "Thorndyke": {
    "jumps": {
     "Shikima": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-210.739279, 667.972107]
   },
   "Tide": {
    "jumps": {
     "Antares": "",
     "Sol": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [88.562908, 8.572812]
   },
   "Titus": {
    "jumps": {
@@ -3832,20 +4327,23 @@
     "New Haven": "",
     "Vedalus": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-508.473074, 605.877307]
   },
   "Toaxis": {
    "jumps": {
     "Ingot": "",
     "Zacron": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-162.937562, -366.122116]
   },
   "Tobanna": {
    "jumps": {
     "Rotide": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [260.508064, -34.0635]
   },
   "Tomas": {
    "jumps": {
@@ -3854,7 +4352,8 @@
     "Severus": "",
     "Straight Row": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-1024.188036, -1102.40246]
   },
   "Torg": {
    "jumps": {
@@ -3862,7 +4361,8 @@
     "Ekkodu": "",
     "Ogat": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-285.20691, -448.296173]
   },
   "Tormulex": {
    "jumps": {
@@ -3870,13 +4370,15 @@
     "Anger": "hidden",
     "Myad": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [42.918193, -335.934183]
   },
   "Toros": {
    "jumps": {
     "Doeston": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-30.031716, -299.578732]
   },
   "Toxin": {
    "jumps": {
@@ -3885,14 +4387,16 @@
     "Narousse": "",
     "Undergate": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [742.188926, -790.795027]
   },
   "Trask": {
    "jumps": {
     "Frolina": "",
     "Qorel": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-681.60909, -194.80431]
   },
   "Treacle": {
    "jumps": {
@@ -3900,7 +4404,8 @@
     "Possum": "",
     "Starlight End": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-240.946546, 1147.390402]
   },
   "Triap": {
    "jumps": {
@@ -3909,14 +4414,16 @@
     "Haleb": "",
     "Koit": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [32.519406, -591.717018]
   },
   "Trohem": {
    "jumps": {
     "Blacin": "",
     "Effetey": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-589.613085, -442.717583]
   },
   "Tuoladis": {
    "jumps": {
@@ -3924,7 +4431,8 @@
     "Surano": "",
     "Zacron": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-330.43314, -371.773587]
   },
   "Uhriabi": {
    "jumps": {
@@ -3933,7 +4441,8 @@
     "Qex": "",
     "Qorel": "hidden"
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-818.594205, -223.837438]
   },
   "Ulysses": {
    "jumps": {
@@ -3941,13 +4450,15 @@
     "Mirror": "",
     "Peogas": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [696.392324, -602.088587]
   },
   "Undergate": {
    "jumps": {
     "Toxin": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [750.96453, -699.314993]
   },
   "Unicorn": {
    "jumps": {
@@ -3956,14 +4467,16 @@
     "Nunavut": "hidden",
     "Volus": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-735.517343, -1199.571607]
   },
   "Urbanus": {
    "jumps": {
     "Dvaer": "",
     "Perhelion": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-550.27231, -726.223371]
   },
   "Urdads": {
    "jumps": {
@@ -3973,14 +4486,16 @@
     "NGC-7784": "",
     "Stained Soul": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-1501.601596, -822.732981]
   },
   "Uridhrion": {
    "jumps": {
     "Feye": "hidden",
     "Gewirn": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-204.595891, 953.836483]
   },
   "Urillian": {
    "jumps": {
@@ -3989,21 +4504,24 @@
     "Sagittarius": "",
     "Tasopa": "exitonly"
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [128.408662, 532.05263]
   },
   "Ux": {
    "jumps": {
     "Dendria": "",
     "Valerie": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-1073.596209, -291.030765]
   },
   "Vadornla": {
    "jumps": {
     "Hubfar": "",
     "Wochii": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-530.90119, -476.896406]
   },
   "Valerie": {
    "jumps": {
@@ -4011,7 +4529,8 @@
     "Shinnok": "",
     "Ux": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-1015.119839, -222.44243]
   },
   "Valur Gem": {
    "jumps": {
@@ -4019,7 +4538,8 @@
     "Fidelis": "",
     "Gruz": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-73.269331, -916.512395]
   },
   "Van Maanen": {
    "jumps": {
@@ -4027,13 +4547,15 @@
     "Surano": "",
     "Tepdania": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-400.758773, -300.419292]
   },
   "Vandal": {
    "jumps": {
     "Beeklo": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-412.684875, -754.922178]
   },
   "Vanir": {
    "jumps": {
@@ -4042,14 +4564,16 @@
     "Botarn": "",
     "Su'nir": "exitonly"
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [598.081658, -554.694088]
   },
   "Vauban": {
    "jumps": {
     "Hideyoshi's Star": "",
     "Newmarch": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-1252.063916, -975.045366]
   },
   "Vean": {
    "jumps": {
@@ -4057,7 +4581,8 @@
     "Flow": "",
     "Nava": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-47.140379, 467.760553]
   },
   "Vedalus": {
    "jumps": {
@@ -4065,7 +4590,8 @@
     "Solene": "",
     "Titus": "hidden"
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-402.474184, 541.653618]
   },
   "Vega": {
    "jumps": {
@@ -4074,7 +4600,8 @@
     "Carrza": "",
     "Deneb": "hidden"
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-219.920811, 59.021991]
   },
   "Verex": {
    "jumps": {
@@ -4083,14 +4610,16 @@
     "Ginger": "",
     "Tarsus": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-266.861487, -589.98834]
   },
   "Veses": {
    "jumps": {
     "Alpha Centauri": "",
     "Scholz's Star": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [46.252279, 500.892275]
   },
   "Virgo": {
    "jumps": {
@@ -4098,28 +4627,32 @@
     "Tepdania": "",
     "Wunomi": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-556.465234, -290.454272]
   },
   "Vlexon": {
    "jumps": {
     "Gremlin": "",
     "Ogat": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-431.323574, -576.489777]
   },
   "Volus": {
    "jumps": {
     "Sheffield": "",
     "Unicorn": "hidden"
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-731.971951, -1064.860635]
   },
   "Voproid": {
    "jumps": {
     "Botarn": "",
     "NGC-7319": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [585.935214, -380.865662]
   },
   "Vost": {
    "jumps": {
@@ -4127,7 +4660,8 @@
     "Procyon": "",
     "Regas": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-1219.344402, -586.169142]
   },
   "Wahri": {
    "jumps": {
@@ -4135,7 +4669,8 @@
     "Moordra": "",
     "Muran": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-611.968826, 818.560058]
   },
   "Waterhole": {
    "jumps": {
@@ -4144,7 +4679,8 @@
     "Overture": "",
     "Regulus": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-822.357715, -420.084676]
   },
   "Westhaven": {
    "jumps": {
@@ -4152,14 +4688,16 @@
     "Straight Row": "",
     "Zurai": "hidden"
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-948.338004, -1276.505376]
   },
   "Willow": {
    "jumps": {
     "Churchill": "",
     "Modus Manis": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [383.512925, -881.796157]
   },
   "Wochii": {
    "jumps": {
@@ -4168,14 +4706,16 @@
     "Ianella": "",
     "Vadornla": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-466.853538, -504.782898]
   },
   "Wolf": {
    "jumps": {
     "Chloe": "",
     "Zemur": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-1020.606453, 231.317622]
   },
   "Woreck": {
    "jumps": {
@@ -4183,7 +4723,8 @@
     "Poller": "",
     "Stelman": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1208.751224, -1204.774715]
   },
   "Wunomi": {
    "jumps": {
@@ -4192,20 +4733,23 @@
     "Teegarden": "",
     "Virgo": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-620.364944, -244.48541]
   },
   "Xavier": {
    "jumps": {
     "Auger": "",
     "Sheffield": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-811.034578, -952.071208]
   },
   "Xeric": {
    "jumps": {
     "Poller": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-1337.597556, -1254.463957]
   },
   "Yarn": {
    "jumps": {
@@ -4213,7 +4757,8 @@
     "SW-7": "exitonly",
     "Zemur": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-1023.109868, 61.573142]
   },
   "Yetmer-O'rez Highspace": {
    "jumps": {
@@ -4221,7 +4766,8 @@
     "K'tos": "",
     "Mayla": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-644.403831, -868.36818]
   },
   "Za'lek": {
    "jumps": {
@@ -4231,7 +4777,8 @@
     "Seelie": "",
     "Seiben": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-1150.155319, -836.271432]
   },
   "Zacron": {
    "jumps": {
@@ -4240,7 +4787,8 @@
     "Toaxis": "",
     "Tuoladis": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-245.85661, -320.711695]
   },
   "Zemur": {
    "jumps": {
@@ -4250,37 +4798,43 @@
     "Wolf": "",
     "Yarn": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-989.001108, 144.523052]
   },
   "Zerantix": {
    "jumps": {
     "Arandon": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [36.43679, -187.249347]
   },
   "Zied": {
    "jumps": {},
-   "refuel": true
+   "refuel": true,
+   "pos": [-1718.121848, -307.032478]
   },
   "Zintar": {
    "jumps": {
     "Malebolge": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-530.962723, 1351.88492]
   },
   "Zurai": {
    "jumps": {
     "Sinensis": "",
     "Westhaven": ""
    },
-   "refuel": true
+   "refuel": true,
+   "pos": [-1020.468314, -1373.558896]
   },
   "Zylex": {
    "jumps": {
     "Doeston": "",
     "Sonas": ""
    },
-   "refuel": false
+   "refuel": false,
+   "pos": [-179.132716, -287.404802]
   }
  },
  "price_fields": ["price", "sys_variation", "sys_period", "spob_variation", "spob_period"],

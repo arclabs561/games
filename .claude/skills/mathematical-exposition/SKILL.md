@@ -170,6 +170,64 @@ Keep all of the formal mathematics. Add a way in, at the point each idea first a
   family both needed a picture.
 - Diagrams small, next to their text; one deliberately bad example is fine to make a point.
 
+## Knuth's books, Lamport and Tao
+
+From Knuth's *Two Notes on Notation* (Amer. Math. Monthly 99, 1992), the prefaces of *Concrete
+Mathematics* (Graham, Knuth and Patashnik) and *The Art of Computer Programming* ("Notes on the
+Exercises"), Lamport's *How to Write a 21st Century Proof* (2011) and Tao's pages on writing.
+
+**Exercises and puzzles, Knuth's way**
+- Rate every Try-it puzzle and exercise on Knuth's scale, so a reader knows what they are
+  attempting. 00 is immediate, 10 takes a minute, 20 a quarter hour, 30 a few hours, 40 is a
+  project, 50 is unsolved. The scale is logarithmic. The last digit shows how much routine work
+  a problem takes, so a 25 needs more insight than a 24. Add M where a puzzle needs more
+  mathematics than the story does, and a ▶ for the few most worth doing.
+- Sort exercises by purpose as *Concrete Mathematics* does: warmups for every reader, basics
+  best learned by deriving them, homework that deepens a section, and exam problems that join
+  two sections. Bonus problems go past the text, and research problems may be open. Give an
+  answer for every one, with hints or partial results for the open ones.
+- Credit the source of each puzzle, the way chess problems name their composers. Say "folklore"
+  when the source cannot be found.
+- Rate an open problem by how many attacks it has resisted. When one is solved, lower its
+  rating and say who solved it.
+
+**Notation**
+- Choose notation that makes the identities hold for every integer, with no exceptional cases.
+  Then a formula can be used in the middle of any calculation without stopping to check its
+  edge cases. This is Knuth's argument for the Stirling-number brackets.
+- Iverson's bracket [P] is 1 when P is true and 0 otherwise. It turns case analysis into
+  algebra, and it lets a sum run over all k with the condition inside: write the sum of f(k)[P(k)]
+  over all k. Treat a false bracket as a strong zero that cancels even an undefined factor, and
+  say so once.
+- Prefer mnemonic notation: braces for set partitions, as Knuth argues.
+- Introduce notation for an expression used three or more times, and not for one used once
+  (Tao). Peripheral ideas get bland names (Type I, good); colorful names are for the few central
+  ideas. Repeat the type with the symbol ("the deck D") so that a reader who forgot can carry on.
+- Match the literature's notation. When citing a result written in other notation, restate it in
+  ours.
+
+**Proofs that cannot hide a gap (Lamport)**
+- Write long proofs, and every proof that rests on a computer check, as numbered steps, each
+  with its own short proof.
+- Go one level deeper wherever a curious reader would ask "why?". The last step of every proof
+  and subproof restates the goal ("Q.E.D."), so a proof cannot end on a statement that is not
+  what was to be shown.
+- A step may cite only earlier steps at its own level or above, and the hypotheses in scope.
+- Lamport reports that restructuring published proofs this way often exposes omissions. Use the
+  structure to check our certificates, even when the printed proof is prose.
+
+**Structure (Tao, Knuth)**
+- The introduction states the results accurately. It gives a special case before the general
+  theorem, says what is new against earlier work, and shows sharpness with a counterexample when
+  one exists.
+- Each section should be summarizable in one result the reader may keep and forget the rest.
+- Don't overcompress. A text shortened by removing examples, motivation and English is harder
+  to read, not easier.
+- Write a rough complete draft first, then revise. Write for your past self, who knew the
+  background but not this result.
+- End each major section with a short historical note on who found what and when, as *The Art of
+  Computer Programming* does, rather than scattering history through the proofs.
+
 ## Review checklist (run before every version)
 
     grep -n -i -w 'obviously\|clearly\|trivially\|easily\|just' body.typ

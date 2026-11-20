@@ -4,8 +4,9 @@
 
 `terminal` draws a Fallout 3 style screen and the session that `fallout3.py` plays on it,
 the same session as the transcript in the README. `guesses` draws how many guesses two of
-the strategies in `strategies.py` need, over all 1,296 codes. A test compares both with the
-committed files.
+the strategies in `strategies.py` and the two optimal trees in `results/optimal.json` (written
+by `optimal.py`, a ten-minute search) need, over all 1,296 codes. A test compares both
+figures with the committed files.
 """
 
 from collections import Counter
@@ -116,18 +117,38 @@ def terminal() -> str:
     return svg.render()
 
 
-# Guesses per code for two strategies
+# Guesses per code for two heuristics and the two optimal trees
+
+OPTIMAL = HERE / "results" / "optimal.json"
+
+
+def optimal_counts() -> list[tuple[str, Counter]]:
+    """The two optimal trees of `optimal.py`, played against every code by `optimal.play`."""
+    import json
+
+    from mastermind.optimal import Game, play, tree_from_json
+
+    record = json.loads(OPTIMAL.read_text())
+    codes = Game.codes_of(record["colors"], record["holes"])
+    out = []
+    for row in record["trees"]:
+        name = "best" if row["limit"] >= 12 else f"best within {row['limit']}"
+        out.append((name, Counter(play(tree_from_json(row["tree"], codes), codes))))
+    return out
 
 
 def guesses() -> str:
     arms = [
-        ("most parts", strategies.most_parts, "#2a78d6"),
-        ("minimax", strategies.minimax, "#d95926"),
+        ("most parts", Counter(strategies.guess_counts(strategies.most_parts)), "#2a78d6"),
+        ("minimax", Counter(strategies.guess_counts(strategies.minimax)), "#d95926"),
     ]
-    counts = {name: Counter(strategies.guess_counts(f)) for name, f, _ in arms}
-    left, top, width, height, top_value = 60, 50, 520, 240, 700
+    arms += [
+        (name, c, color)
+        for (name, c), color in zip(optimal_counts(), ("#1baf7a", "#7b5cc4"), strict=True)
+    ]
+    left, top, width, height, top_value = 60, 70, 640, 240, 700
     group = width / 6
-    bw = (group - 16) / len(arms)
+    bw = (group - 12) / len(arms)
 
     def sy(v: float) -> float:
         return top + height - v / top_value * height
@@ -135,25 +156,26 @@ def guesses() -> str:
     svg = Svg(
         left + width + 20,
         top + height + 56,
-        "Codes solved in each number of guesses, for two strategies",
-        "Grouped bars over 1 to 6 guesses for the 1,296 codes. Most parts solves more codes in "
-        "four guesses but needs six for 7 codes; minimax never needs a sixth guess and solves "
-        "more codes in five.",
+        "Codes solved in each number of guesses, for two heuristics and two optimal strategies",
+        "Grouped bars over 1 to 6 guesses for the 1,296 codes. Most parts solves 635 codes in "
+        "four guesses but needs six for 7 codes; minimax never needs a sixth guess. The optimal "
+        "tree solves 663 in four and needs six for 2 codes; the optimal tree within five "
+        "guesses solves 660 in four and none in six.",
     )
     for v in range(0, top_value + 1, 100):
         svg.add("line", x1=left, y1=sy(v), x2=left + width, y2=sy(v), stroke=GRID)
         svg.text(left - 8, sy(v) + 4, str(v), 11, fill=MUTED, text_anchor="end")
     for g in range(1, 7):
-        x0 = left + (g - 1) * group + 8
-        for a, (name, _, color) in enumerate(arms):
-            n = counts[name][g]
+        x0 = left + (g - 1) * group + 6
+        for a, (_, counts, color) in enumerate(arms):
+            n = counts[g]
             x = x0 + a * bw
             if n:
                 svg.add(
                     "rect", x=x + 1, y=sy(n), width=bw - 2, height=top + height - sy(n), fill=color
                 )
-            svg.text(x + bw / 2, sy(n) - 5, str(n), 11, text_anchor="middle")
-        svg.text(x0 + bw, top + height + 16, str(g), 12, fill=MUTED, text_anchor="middle")
+            svg.text(x + bw / 2, sy(n) - 5, str(n), 10, text_anchor="middle")
+        svg.text(x0 + 2 * bw, top + height + 16, str(g), 12, fill=MUTED, text_anchor="middle")
     svg.text(
         left + width / 2,
         top + height + 38,
@@ -163,12 +185,11 @@ def guesses() -> str:
         text_anchor="middle",
     )
     svg.text(10, 20, "codes", 12, fill=MUTED)
-    x = left + 20
-    for name, f, color in arms:
-        total = sum(strategies.guess_counts(f))
-        svg.add("rect", x=x, y=26, width=12, height=12, fill=color)
-        svg.text(x + 18, 37, f"{name}: {total:,} guesses in all", 12, fill=MUTED)
-        x += 230
+    for i, (name, counts, color) in enumerate(arms):
+        x, y = left + 20 + (i % 2) * 300, 26 + (i // 2) * 20
+        total = sum(k * v for k, v in counts.items())
+        svg.add("rect", x=x, y=y, width=12, height=12, fill=color)
+        svg.text(x + 18, y + 11, f"{name}: {total:,} guesses in all", 12, fill=MUTED)
     return svg.render()
 
 

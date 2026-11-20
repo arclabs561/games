@@ -18,9 +18,10 @@ def ways(cards, avail):
     return n
 
 
-def main():
+def stuck(zero=True):
+    """(stuck deals, all deals) for the deck of 0 to 10, or of 1 to 10 without zero."""
     deck = [4] * 11
-    if "--no-zero" in sys.argv:
+    if not zero:
         deck[0] = 0
     dead = 0
     for hand in multisets(7, deck[:]):
@@ -31,7 +32,11 @@ def main():
             if solve(hand, center) is None:
                 dead += ways(hand, deck) * ways(center, left)
     n = sum(deck)
-    total = comb(n, 7) * comb(n - 7, 4)
+    return dead, comb(n, 7) * comb(n - 7, 4)
+
+
+def main():
+    dead, total = stuck(zero="--no-zero" not in sys.argv)
     print(dead, total, f"1 in {total / dead:,.0f}")
 
 

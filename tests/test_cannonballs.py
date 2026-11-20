@@ -210,14 +210,14 @@ def note() -> str:
 
 
 def test_readme_quotes_the_results():
+    """The README's numbers come from results.json through tools/sync_docs.py
+    (tests/test_shared_docs.py checks that); these are the ones it must still quote."""
     r, c = readme(), COMMITTED
     assert f"{c['pile24']['balls']:,} balls" in r and f"{c['pile24']['touching_pairs']:,}" in r
-    assert f"{c['tetrahedral48']:,} = 140²" in r and "208,335" in r
     assert f"10<sup>{report.FULL['digits']:,}</sup>" in r
     assert (
         f"up to {report.FULL['brute']:,}" in r and f"up to {report.FULL['coincide']:,} layers" in r
     )
-    assert f"{sum(c['pell_walked'].values()):,} candidates" in r
     assert f"({c['pile24']['balls_by_neighbors']['12']:,} of the 4,900)" in r
     assert "7 in 12" in r and "10<sup>18</sup>" in r and report.FULL["cubes"] ** 3 == 10**18
     assert "1, 2, 11, 23, 24 and 26 layers" in r

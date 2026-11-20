@@ -1,6 +1,6 @@
 # Drive Ya Nuts
 
-Do the seven nuts fit together in only one way, and was the designer lucky to get a set like that? The original nuts have exactly one solution. Of all 59,487,568,920 sets of seven distinct nuts, 6.805% can be solved, and 78.56% of those have exactly one solution, so a single solution is the usual case once a set can be solved at all. Up to renaming the numbers there are 82,628,379 different sets. Every count is exact, by counting every arrangement and by Burnside's lemma, and checked against brute force.
+Do the seven nuts fit together in only one way, and was the designer lucky to get a set like that? The original nuts have exactly one solution. Of all 59,487,568,920 sets of seven distinct nuts, 6.805% can be solved, and 78.56% of those have exactly one solution, so a single solution is the usual case once a set can be solved at all. Up to renaming the numbers there are 82,628,379 different sets. If a nut may appear twice, 6,901,100 classes can be solved, as a comment on Mathematics Stack Exchange reports. Every count is exact, by counting every arrangement and by Burnside's lemma, and checked against brute force.
 
 ![Seven hexagons, one in the center and six around it, each with the numbers 1 to 6 on its sides; every pair of touching sides shows the same number, drawn in the same color.](figures/puzzle.svg)
 
@@ -28,6 +28,8 @@ All results are exact.
 | Mean solutions per set | 2,558,824 / 29,160,573 = 0.0877 | same |
 | Classes of sets up to renaming | 82,628,379 | Burnside's lemma (`classes.py`) |
 | Classes with exactly one solution | 4,417,343 of the 5,623,238 solvable (78.56%) | Burnside's lemma, per number of solutions |
+| Solvable multisets of seven nuts, a nut allowed more than once | 4,967,864,520, of which 919,853,040 repeat a nut | exact (`multisets.py`) |
+| Classes of those up to renaming | 6,901,100, as the Stack Exchange comment reports | two methods that agree: a direct listing and Burnside's lemma |
 
 ## How the results are checked
 
@@ -36,6 +38,7 @@ All results are exact.
 - **Set by set.** With `--check 3000`, 3,000 sets that contain C0 were solved one at a time with `solver.py`. Half were drawn uniformly and half from the solvable sets. All 3,000 counts matched. The tests run the same check for five sides.
 - **Sampling.** The exact shares fall inside the 95% Wilson intervals of random samples. With `--distribution --trials 5000 --seed 0`, 6.84% of sets were solvable (interval 6.17% to 7.57%) and 5.42% had one solution (4.83% to 6.08%). An earlier sample of 5,000 sets gave 7.5% and 5.8%, whose intervals are 6.80% to 8.26% and 5.19% to 6.48%. With `--trials 100000 --seed 0`, the shares were 6.825% solvable (interval 6.670% to 6.983%), 5.393% with one solution (5.255% to 5.535%) and 1.081% with two (1.019% to 1.147%). The exact shares, 6.805%, 5.346% and 1.114%, fall inside all three.
 - **Classes.** For four and five sides, the tests list every class directly by renaming each set in all n! ways. They compare three things with `classes.py`: the number of classes (1 and 1,176), the classes with each number of solutions, and the classes of each size. For six sides, 720 divides each weighted count, as Burnside's lemma requires. With `--direct 4`, the 89,853 classes with four or more solutions were also found directly, by taking the least renaming of each set from the exact table, and agreed in every row.
+- **Multisets.** The two methods of `multisets.py` agree for six sides (6,901,100) and for five (276). For four and five sides, the tests compare them with a brute force over every multiset. For five sides, 3,000 random multisets are each solved and looked up among the listed classes, and every one is found exactly when it can be solved. The direct listing also finds 5,623,238 classes with seven different nuts, the count of `classes.py`.
 - **The figures.** A test checks that the committed SVGs are what `figures.py` draws. Its search for the original solution shares no code with `solver.py` and also finds exactly one.
 
 CI runs the tests. The full counts take minutes and 2 GB, so CI checks them through the smaller cases and the committed tables.
@@ -107,7 +110,38 @@ Counting only the sets with k solutions gives the classes with k solutions. The 
 
 The full table is in [`class_counts.csv`](class_counts.csv). Of the 5,623,238 classes that can be solved, 4,417,343 (78.56%) have exactly one solution. The shares match those for sets to three decimals because nearly every class holds 720 sets. Only 13,365 classes have a set that some renaming other than the identity leaves unchanged: 12,953 classes of 360 sets, 386 of 240 and 26 of 120. The original nuts are not among them, so their class holds 720 sets. The one class with 20 solutions holds 360 sets.
 
-This answers the Mathematics Stack Exchange question [How many essentially different Drive Ya Nuts puzzles exist?](https://math.stackexchange.com/questions/3306917/how-many-essentially-different-drive-ya-nuts-puzzles-exist) (2019), which had no answer when checked in November 2026. It asks for the number of sets of seven different nuts up to renaming, and for how many of them have a unique solution. It reads nuts clockwise, which turns every set into its mirror image, with the same number of solutions, so the counts are the same. The question expects only renamings that are 6-cycles or 5-cycles to keep a set, and its edit proves that 5-cycles keep none. The counts above show that 6-cycles and renamings of types (3, 3) and (2, 2, 2) do. A comment there reports 6,901,100 classes of solvable sets in which a nut may appear twice; that is a different count, and it was not checked here.
+This answers the Mathematics Stack Exchange question [How many essentially different Drive Ya Nuts puzzles exist?](https://math.stackexchange.com/questions/3306917/how-many-essentially-different-drive-ya-nuts-puzzles-exist) (2019), which had no answer when checked in November 2026. It asks for the number of sets of seven different nuts up to renaming, and for how many of them have a unique solution. It reads nuts clockwise, which turns every set into its mirror image, with the same number of solutions, so the counts are the same. The question expects only renamings that are 6-cycles or 5-cycles to keep a set, and its edit proves that 5-cycles keep none. The counts above show that 6-cycles and renamings of types (3, 3) and (2, 2, 2) do. A comment there reports 6,901,100 classes of solvable sets in which a nut may appear twice; the next section defines that count and confirms it.
+
+## When a nut may appear twice
+
+There are 6,901,100 classes of solvable multisets, the number the Stack Exchange comment reports. Exact, by two methods that agree.
+
+- A **multiset** is seven nuts, where a nut may appear more than once. It is **solvable** when some ring is made of exactly those seven nuts.
+- Two multisets are equivalent when renaming the numbers turns one into the other, as for sets.
+- The comment's method is to take every ring around C0 (1,144 · 6<sup>6</sup> = 53,374,464 of them, repeated nuts included) and rename it each of the 42 ways that turn one of its nuts into C0. The least result, sorted, is the same for every multiset of a class, so distinct least results are classes.
+
+Two methods count them. The **direct listing** follows the comment and finds 6,901,100 least results. The comment also says that four classes have one ring around C0 and two have 120, with an example of each, and the listing agrees on all four. **Burnside's lemma** averages, over the 720 renamings, the number of solvable multisets each one fixes:
+
+| Renamings | Cycle type | Solvable multisets each fixes |
+|---:|---|---:|
+| 1 | identity | 4,967,864,520 |
+| 15 | (2, 2, 2) | 57,192 |
+| 40 | (3, 3) | 1,650 |
+| 120 | (6) | 30 |
+| 544 | any other | 0 |
+
+The identity's count is the 4,048,011,480 solvable sets of distinct nuts plus 919,853,040 multisets with a repeated nut. The second number comes from every ring whose multiset contains C0, weighted by the number of different nuts, as in step 4 of the method above. A multiset fixed by another renaming has the same number of copies of every nut in a cycle, and each one is solved by search. The weighted sum is 4,968,792,000, which is 720 × 6,901,100.
+
+| Different nuts in the multiset | Classes |
+|---:|---:|
+| 7 | 5,623,238 |
+| 6 | 1,181,281 |
+| 5 | 93,345 |
+| 4 | 3,170 |
+| 3 | 64 |
+| 2 | 2 |
+
+The 5,623,238 classes of seven different nuts are the solvable classes of the section above. The two classes with only two different nuts each hold three copies of one nut and four of the other. The counts are in [`multiset_counts.json`](multiset_counts.json).
 
 ## Data
 
@@ -125,7 +159,7 @@ This answers the Mathematics Stack Exchange question [How many essentially diffe
 
 ## Open questions
 
-- How many classes of solvable sets are there when a nut may appear twice? A comment on the Stack Exchange question reports 6,901,100; it was not checked here.
+- How many solutions do the 6,901,100 classes of multisets have? The listing counts rings around C0 for each class, which is not the number of solutions of one multiset. Counting those would need the listing of every ring that contains C0, as `exact.py` does for sets.
 - How were the original nuts chosen? A designer who kept drawing until a set had one solution would find one after about 18.7 draws on average.
 
 ## Usage
@@ -138,6 +172,7 @@ uv run python -m drive_ya_nuts.solver --no-original --distribution --trials 5000
 uv run python -m drive_ya_nuts.solver --no-original --find-k 1 --seed 0 --max-tries 100000 --print-found 1   # a set with one solution
 uv run --group drive_ya_nuts python -m drive_ya_nuts.exact     # every set exactly: about 3 min of CPU and 2 GB
 uv run --group drive_ya_nuts python -m drive_ya_nuts.classes   # classes up to renaming: about 30 s
+uv run --group drive_ya_nuts python -m drive_ya_nuts.multisets # multisets, both methods: about 15 min and 3 GB
 uv run python -m drive_ya_nuts.figures              # the figures in figures/
 ```
 
@@ -150,4 +185,5 @@ uv run python -m drive_ya_nuts.figures              # the figures in figures/
 | `solver.py` | The original nuts, a solver, and sampling of random sets |
 | `exact.py`, `exact_counts.csv` | The exact count of solutions for every set |
 | `classes.py`, `class_counts.csv` | Burnside's lemma and the classes up to renaming |
+| `multisets.py`, `multiset_counts.json` | Classes of solvable multisets, by the direct listing and by Burnside's lemma |
 | `figures.py`, `figures/` | This README's figures, as SVG; a test checks they are current |

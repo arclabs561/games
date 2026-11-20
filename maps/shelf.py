@@ -50,17 +50,28 @@ def tsne_line(hexes: list[str], seed: int = 0, learning_rate: float = 10.0) -> l
     The paper's learning rate of 100 throws the points of a ten-book shelf hundreds of
     units apart, where the order stops improving; 10 works for 10 to 139 books.
     """
+    return tsne_lines(hexes, [seed], learning_rate)[0]
+
+
+def tsne_lines(hexes: list[str], seeds: list[int], learning_rate: float = 10.0) -> list[list[int]]:
+    """tsne_line for each seed, with the data's probabilities computed once."""
     lab = colors.oklab(hexes)
+    d2 = sne.sq_distances(lab)
     perplexity = min(10.0, (len(hexes) - 1) / 3)
-    run = sne.embed(
-        sne.sq_distances(lab),
-        "tsne",
-        dims=1,
-        perplexity=perplexity,
-        seed=seed,
-        learning_rate=learning_rate,
-    )
-    return paths.sort_by([(float(v),) for v in run.y[:, 0]])
+    p_cond, _ = sne.conditional_p(d2, perplexity)
+    orders = []
+    for seed in seeds:
+        run = sne.embed(
+            d2,
+            "tsne",
+            dims=1,
+            perplexity=perplexity,
+            seed=seed,
+            learning_rate=learning_rate,
+            p_cond=p_cond,
+        )
+        orders.append(paths.sort_by([(float(v),) for v in run.y[:, 0]]))
+    return orders
 
 
 def exact(hexes: list[str]) -> list[int]:

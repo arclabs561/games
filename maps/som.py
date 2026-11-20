@@ -15,6 +15,8 @@ from dataclasses import dataclass, field
 
 import numpy as np
 
+from maps import portable
+
 
 @dataclass
 class SOM:
@@ -32,16 +34,13 @@ def grid_coords(shape: tuple[int, ...]) -> np.ndarray:
 
 def pca_init(x: np.ndarray, grid: np.ndarray) -> np.ndarray:
     """Weights on the plane (or line) of the leading principal components, spanning +-2 sd."""
-    mean = x.mean(axis=0)
-    _, s, vt = np.linalg.svd(x - mean, full_matrices=False)
-    vt = vt * np.sign(vt[np.arange(len(vt)), np.abs(vt).argmax(axis=1)])[:, None]
-    sd = s / np.sqrt(len(x))
+    dims = grid.shape[1]
+    sd, axes = portable.principal_axes(x, dims)
     span = grid.max(axis=0)
     span[span == 0] = 1
     unit = grid / span * 2 - 1  # each grid axis scaled to [-1, 1]
-    dims = grid.shape[1]
-    coef = unit * 2 * sd[:dims]
-    return mean + (coef[:, :, None] * vt[None, :dims, :]).sum(axis=1)
+    coef = unit * 2 * sd
+    return x.mean(axis=0) + (coef[:, :, None] * axes[None, :, :]).sum(axis=1)
 
 
 def train(
@@ -70,13 +69,14 @@ def train(
         w = x[rng.integers(0, len(x), size=len(grid))].astype(float)
     grid_d2 = ((grid[:, None, :] - grid[None, :, :]) ** 2).sum(axis=-1)
     picks = rng.integers(0, len(x), size=steps)
+    frac = np.arange(steps) / max(steps - 1, 1)
+    rates = alpha[0] * portable.exp(frac * portable.log(alpha[1] / alpha[0]))
+    widths = sigma[0] * portable.exp(frac * portable.log(sigma[1] / sigma[0]))
     history = {0: w.copy()} if 0 in snapshots else {}
     for t, i in enumerate(picks):
-        frac = t / max(steps - 1, 1)
-        a = alpha[0] * (alpha[1] / alpha[0]) ** frac
-        s = sigma[0] * (sigma[1] / sigma[0]) ** frac
+        a, s = rates[t], widths[t]
         b = best_unit(w, x[i])
-        h = np.exp(-grid_d2[b] / (2 * s * s))
+        h = portable.exp(-grid_d2[b] / (2 * s * s))
         w += (a * h)[:, None] * (x[i] - w)
         if t + 1 in snapshots:
             history[t + 1] = w.copy()
@@ -123,7 +123,7 @@ def u_matrix(som: SOM, shape: tuple[int, int]) -> np.ndarray:
                 for dr, dc in ((-1, 0), (1, 0), (0, -1), (0, 1))
                 if 0 <= r + dr < shape[0] and 0 <= c + dc < shape[1]
             ]
-            out[r, c] = np.mean([np.linalg.norm(w[r, c] - v) for v in near])
+            out[r, c] = np.mean([np.sqrt(((w[r, c] - v) ** 2).sum()) for v in near])
     return out
 
 
@@ -144,6 +144,6 @@ def line_order(som: SOM, x: np.ndarray) -> list[int]:
     def lean(i: int) -> float:
         prev = som.weights[max(b[i] - 1, 0)]
         nxt = som.weights[min(b[i] + 1, m - 1)]
-        return float(np.linalg.norm(x[i] - prev) - np.linalg.norm(x[i] - nxt))
+        return float(np.sqrt(((x[i] - prev) ** 2).sum()) - np.sqrt(((x[i] - nxt) ** 2).sum()))
 
     return sorted(range(len(x)), key=lambda i: (b[i], lean(i), i))
