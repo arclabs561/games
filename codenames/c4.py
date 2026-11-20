@@ -444,7 +444,7 @@ def model_list(arg: str) -> list[str]:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument(
-        "what", choices=["pilot", "give", "guess", "crossguess", "newwords", "score"]
+        "what", choices=["pilot", "give", "guess", "crossguess", "newwords", "score", "strict"]
     )
     parser.add_argument("--workers", type=int, default=8, help="calls in flight per model")
     parser.add_argument("--repeat", type=int, default=20, help="boards sent three times")
@@ -459,7 +459,13 @@ def main() -> None:
     parser.add_argument("--clues", type=Path, help="clues.txt from a give job")
     parser.add_argument("--guesses", type=Path, help="guesses.txt from a guess job")
     parser.add_argument("--crossguess", type=Path, help="crossguess.txt lines, all guessers")
+    parser.add_argument("--runs", help="strict: a folder of give-<model>-<seed>.json, or hf")
     args = parser.parse_args()
+    if args.what == "strict":
+        from codenames import c4strict
+
+        c4strict.run(args.runs, args.out)
+        return
     if args.what in ("newwords", "score"):
         from codenames import c4score
 
