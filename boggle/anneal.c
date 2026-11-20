@@ -7,6 +7,11 @@
    Commands, on the command line:
      score <words> <n> <letters>          the points and the number of words on one board
      climb <words> <n> <letters>          climb from one board (below) and print the top
+     exhaust <words> <n> <alphabet> <threshold>
+                                          score every board whose letters come from the
+                                          alphabet; print each that reaches the threshold
+                                          as "board <letters> <points>", then the count of
+                                          boards and the best score
      anneal <words> <n> <seed> <runs> <steps> <t0> <t1>
                                           `runs` searches from random boards. Each search
                                           makes `steps` changes at temperatures falling
@@ -207,6 +212,24 @@ int main(int argc, char **argv) {
             printf("run %llu %d %d %d %s\n", (unsigned long long)seed, run, s, w, text);
             fflush(stdout);
         }
+        return 0;
+    }
+    if (!strcmp(argv[1], "exhaust") && argc == 6) {
+        const char *alphabet = argv[4];
+        int size = (int)strlen(alphabet), threshold = atoi(argv[5]), best = 0, digit[64] = {0};
+        long boards = 0;
+        for (;;) {
+            for (int k = 0; k < cells; k++) b[k] = alphabet[digit[k]] - 'a';
+            int s = score(b, 0);
+            boards++;
+            if (s > best) best = s;
+            if (s >= threshold) { show(b, text); printf("board %s %d\n", text, s); }
+            int k = cells - 1;
+            while (k >= 0 && digit[k] == size - 1) digit[k--] = 0;
+            if (k < 0) break;
+            digit[k]++;
+        }
+        printf("boards %ld best %d\n", boards, best);
         return 0;
     }
     fprintf(stderr, "unknown command\n");
