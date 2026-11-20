@@ -10,7 +10,9 @@ table filled a 16 GB runner on eight levels. Two searches are run on them here:
   time, written in Solver B's own code, with its own positions, moves and safe-card rule. On
   a lost level it must count the same positions as Solver C, layer by layer.
 - **Solver C hunting a win** ("win="): the layer with most cards home first, and a line of
-  moves rebuilt at the end; every line is replayed by `rules.replay`.
+  moves rebuilt at the end; every line is replayed by `rules.replay`. As `wc`, it takes
+  sublayers in increasing order instead, each once, so it ends with a win or with every
+  position searched.
 - **Solver B** with a larger budget and another seed for the order of its moves, to find a
   line that wins.
 
@@ -19,7 +21,7 @@ Solvers `ch` and `blh` are Solver C and Solver B by layers with Horne's rule for
 other foundation of its color at r - 3 or more), the rule of the solvers in Fish's reports,
 so that their counts of positions can be compared with his.
 
-A job is named `<solver>-<deal>-<cells>`, with solver c, bl, ch, blh or w, or
+A job is named `<solver>-<deal>-<cells>`, with solver c, bl, ch, blh, w or wc, or
 `b-<deal>-<cells>-<seed>`
 (':' also separates). Each writes `<out>/open-<job>.json`; the layered searches also write
 the positions of each layer to `<out>/layers-<solver>-<deal>-<cells>.tsv`, and Solver C its
@@ -149,9 +151,13 @@ def solve_b_layers(problems: list[str], horne: bool = False, fine: bool = False)
     return out
 
 
-def hunt_c(problem: str, folder: Path, budget: int, log: Path | None = None) -> native.Answer:
-    """Solver C's search for a win, as a Solver B answer (won, unknown or exhausted)."""
+def hunt_c(
+    problem: str, folder: Path, budget: int, log: Path | None = None, complete: bool = False
+) -> native.Answer:
+    """Solver C's search for a win, as a Solver B answer (won, unknown or exhausted). With
+    `complete`, sublayers are visited in increasing order, each once, as in a decision."""
     args = [str(native.binary(SOLVER_C)), str(folder), "0", str(1 << 30), f"win={budget}"]
+    args += ["fine", "complete"] if complete else []
     env = dict(os.environ, SOLVER_C_PROGRESS="1") if log else None
     with open(log or os.devnull, "w") as err:
         proc = subprocess.run(
@@ -187,10 +193,14 @@ def run_job(job: str, out: Path, budget: int, cap: int) -> dict:
         rec |= ans | {"layer_count": len(layers), "largest_layer": max(r[4] for r in layers)}
         if "frozen" in rec:
             rec["frozen"] = [name(c) for c in rec["frozen"]]
-    elif solver == "w":
+    elif solver in ("w", "wc"):
         with tempfile.TemporaryDirectory(dir=out) as tmp:
             ans = hunt_c(
-                native.ms_problem(deal_n, cells_n), Path(tmp), budget, out / f"progress-{tag}.log"
+                native.ms_problem(deal_n, cells_n),
+                Path(tmp),
+                budget,
+                out / f"progress-{tag}.log",
+                complete=solver == "wc",
             )
         rec |= {"budget": budget, "verdict": ans.verdict, "states": ans.states}
         if ans.verdict == "won":

@@ -229,8 +229,18 @@ def test_solver_c_hunt_gives_lines_that_replay(tmp_path):
     for deal, cells in ((164, 0), (2, 1)):
         ans = hunt_c(native.ms_problem(deal, cells), tmp_path, 50_000_000)
         assert ans.verdict == "won" and replay(Rules(cells=cells), ms_deal(deal), ans.line)
-    # On a lost level the hunt runs out of positions.
+    # On a lost level the hunt runs out of positions; in increasing order of sublayers it
+    # searches each position once.
     assert hunt_c(native.ms_problem(11982, 4), tmp_path, 0).verdict == "exhausted"
+    full = hunt_c(native.ms_problem(11982, 4), tmp_path, 0, complete=True)
+    assert (full.verdict, full.states) == ("exhausted", 61643)
+    # On small decks, the complete hunt wins exactly the deals the brute force wins.
+    rules = Rules(cells=1, columns=2, ranks=4, suits=(0, 1))
+    for order in list(orders(rules, None, step=97))[:200]:
+        lay = deal_columns(list(order), 2)
+        ans = hunt_c(native.deck_problem(rules, lay), tmp_path, 0, complete=True)
+        assert (ans.verdict == "won") == brute_winnable(lay, 1), lay
+        assert ans.verdict != "won" or replay(rules, lay, ans.line)
 
 
 def test_blocked_at_the_start_matches_the_faq():

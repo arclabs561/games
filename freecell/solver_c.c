@@ -254,10 +254,9 @@ static void layer_home(int id, uint8_t *h) { for (int s = 0; s < 4; s++) { h[s] 
    and the number of cards home minus the sum of the K grows at each change of sublayer.
    Sublayers are searched in order of that number; each is complete when its turn comes.
    Without the word "fine", the K are left out and a sublayer is a whole layer. */
-static int fine;
+static int fine, complete;
 static char folder[512] = "/tmp";
 static uint64_t waiting_bytes, memory_limit = 1ULL << 30;
-static uint8_t pending[NLAYER]; /* used by the hunt for a win */
 
 typedef struct {
     uint64_t key, *buf16, *buf32, n16, n32, cap16, cap32;
@@ -377,7 +376,6 @@ static void wait_clear_all(void) {
     if (wmap) memset(wmap, 0, wmapsize * 8);
     for (int p = 0; p < NPRIO; p++) nbucket[p] = 0;
     waiting_bytes = 0;
-    memset(pending, 0, sizeof pending);
 }
 
 /* ---- moves ---- */
@@ -613,27 +611,70 @@ static void decide(Pos *start) {
 
 typedef struct { uint64_t code[4]; uint32_t pvisit, pindex; } Seed;
 #define NOPARENT 0xFFFFFFFFu
-static Seed *wseed[NLAYER];
-static uint64_t wseedn[NLAYER], wseedcap[NLAYER];
-static int *visit_layer; static uint64_t nvisit, visitcap;
+/* Waiting positions by sublayer (see "fine"), with a stack of sublayers for each value of
+   cards home minus the sum of the K; the hunt visits the highest first. */
+typedef struct { uint64_t key; Seed *s; uint64_t n, cap; int queued; } SeedList;
+static SeedList *slists; static uint64_t nslists, capslists;
+static uint64_t *smap, smapsize;
+static uint64_t *sstack[NPRIO], nsstack[NPRIO], capsstack[NPRIO];
+static uint64_t *visit_key; static uint64_t nvisit, visitcap;
+
+static SeedList *seed_list(uint64_t key) {
+    if (2 * (nslists + 1) > smapsize) {
+        uint64_t n2 = smapsize ? 2 * smapsize : 1 << 12;
+        uint64_t *m2 = calloc(n2, 8);
+        for (uint64_t i = 0; i < nslists; i++) {
+            uint64_t j = mixkey(slists[i].key) & (n2 - 1);
+            while (m2[j]) j = (j + 1) & (n2 - 1);
+            m2[j] = i + 1;
+        }
+        free(smap); smap = m2; smapsize = n2;
+    }
+    uint64_t j = mixkey(key) & (smapsize - 1);
+    while (smap[j]) {
+        if (slists[smap[j] - 1].key == key) return &slists[smap[j] - 1];
+        j = (j + 1) & (smapsize - 1);
+    }
+    if (nslists == capslists) {
+        capslists = capslists ? 2 * capslists : 1024;
+        slists = realloc(slists, capslists * sizeof *slists);
+        if (!slists) { fprintf(stderr, "out of memory\n"); exit(2); }
+    }
+    memset(&slists[nslists], 0, sizeof *slists);
+    slists[nslists].key = key;
+    smap[j] = ++nslists;
+    return &slists[nslists - 1];
+}
 static uint32_t *parent_of; static uint64_t parent_reserved;
 
-static void seed_path(char *buf, uint64_t v) {
-    snprintf(buf, 600, "%s/fc-c-%d-visit-%llu.bin", folder, (int)getpid(), (unsigned long long)v);
+/* The starting positions of every visit go to one file, visit after visit. */
+static FILE *seed_file;
+static uint64_t *visit_off, *visit_len;
+static void seed_path(char *buf) {
+    snprintf(buf, 600, "%s/fc-c-%d-visits.bin", folder, (int)getpid());
 }
-static void seed_push(int id, const Code *k, uint32_t pv, uint32_t pi) {
-    if (wseedn[id] == wseedcap[id]) {
-        wseedcap[id] = wseedcap[id] ? 2 * wseedcap[id] : 64;
-        wseed[id] = realloc(wseed[id], wseedcap[id] * sizeof(Seed));
-        if (!wseed[id]) { fprintf(stderr, "out of memory\n"); exit(2); }
+static void seed_push(uint64_t key, const Code *k, uint32_t pv, uint32_t pi) {
+    SeedList *l = seed_list(key);
+    if (l->n == l->cap) {
+        l->cap = l->cap ? 2 * l->cap : 16;
+        l->s = realloc(l->s, l->cap * sizeof(Seed));
+        if (!l->s) { fprintf(stderr, "out of memory\n"); exit(2); }
     }
-    Seed *s = &wseed[id][wseedn[id]++];
+    Seed *s = &l->s[l->n++];
     memcpy(s->code, k->w, 32);
     s->pvisit = pv; s->pindex = pi;
-    pending[id] = 1;
+    if (!l->queued) {
+        int pr = sub_prio(key);
+        l->queued = 1;
+        if (nsstack[pr] == capsstack[pr]) {
+            capsstack[pr] = capsstack[pr] ? 2 * capsstack[pr] : 64;
+            sstack[pr] = realloc(sstack[pr], capsstack[pr] * 8);
+        }
+        sstack[pr][nsstack[pr]++] = (uint64_t)(l - slists);
+    }
 }
 
-typedef struct { int cur, won, full; uint32_t visit, index; int card, dest; } Hunt;
+typedef struct { uint64_t cur; int won, full; uint32_t visit, index; int card, dest; } Hunt;
 
 static int hunt_visit(void *ctx, Pos *q, int card, int dest, const uint8_t *played, int n) {
     Hunt *h = ctx;
@@ -641,8 +682,8 @@ static int hunt_visit(void *ctx, Pos *q, int card, int dest, const uint8_t *play
     if (home_total(q->home) == decksize) { h->won = 1; h->card = card; h->dest = dest; return 1; }
     Code k;
     encode(q, &k);
-    int id = layer_id(q->home);
-    if (id != h->cur) { seed_push(id, &k, h->visit, h->index); return 0; }
+    uint64_t key = sub_key(q);
+    if (key != h->cur) { seed_push(key, &k, h->visit, h->index); return 0; }
     if (table_add(&t32, k.w) < 0) h->full = 1;
     return 0;
 }
@@ -651,33 +692,29 @@ static int hunt_visit(void *ctx, Pos *q, int card, int dest, const uint8_t *play
    Returns how many codes the path holds (written to `path`, starting position first) and
    sets *seed to the starting position's place in the visit's file. */
 static uint64_t retrace_from;
-static int retrace_cur;
+static uint64_t retrace_cur;
 static int retrace_visit(void *ctx, Pos *q, int card, int dest, const uint8_t *played, int n) {
     (void)ctx; (void)card; (void)dest; (void)played; (void)n;
-    if (layer_id(q->home) != retrace_cur || home_total(q->home) == decksize) return 0;
+    if (home_total(q->home) == decksize || sub_key(q) != retrace_cur) return 0;
     Code k;
     encode(q, &k);
     if (table_add(&t32, k.w) == 1) parent_of[t32.n - 1] = (uint32_t)retrace_from;
     return 0;
 }
 static uint64_t retrace(uint64_t v, uint32_t target, uint64_t **path, Seed *seed) {
-    char fp[600];
-    seed_path(fp, v);
-    FILE *f = fopen(fp, "rb");
-    if (!f) { fprintf(stderr, "cannot read %s\n", fp); exit(2); }
     table_clear(&t32);
-    Seed s;
-    uint64_t nseeds = 0;
-    Seed *seeds = 0;
-    while (fread(&s, sizeof s, 1, f) == 1) {
-        seeds = realloc(seeds, (nseeds + 1) * sizeof s);
-        seeds[nseeds++] = s;
-        if (table_add(&t32, s.code) == 1) parent_of[t32.n - 1] = NOPARENT;
+    uint64_t nseeds = visit_len[v];
+    Seed *seeds = malloc((nseeds + 1) * sizeof(Seed));
+    fflush(seed_file);
+    if (fseeko(seed_file, (off_t)(visit_off[v] * sizeof(Seed)), SEEK_SET) ||
+        fread(seeds, sizeof(Seed), nseeds, seed_file) != nseeds) {
+        fprintf(stderr, "cannot read the visits\n"); exit(2);
     }
-    fclose(f);
-    retrace_cur = visit_layer[v];
+    for (uint64_t i = 0; i < nseeds; i++)
+        if (table_add(&t32, seeds[i].code) == 1) parent_of[t32.n - 1] = NOPARENT;
+    retrace_cur = visit_key[v];
     uint8_t home[4];
-    layer_home(retrace_cur, home);
+    layer_home((int)(retrace_cur >> 24), home);
     Pos p;
     for (uint64_t i = 0; t32.n <= target && i < t32.n; i++) {
         decode(t32.keys + 4 * i, home, &p);
@@ -733,35 +770,49 @@ static void hunt(Pos *start) {
     }
     Code k;
     encode(start, &k);
-    seed_push(layer_id(start->home), &k, NOPARENT, NOPARENT);
+    char sp[600];
+    seed_path(sp);
+    seed_file = fopen(sp, "w+b");
+    if (!seed_file) { fprintf(stderr, "cannot write %s\n", sp); exit(2); }
+    unlink(sp); /* the file goes when it is closed */
+    seed_push(sub_key(start), &k, NOPARENT, NOPARENT);
     time_t t0 = time(0);
     while (!h.won && !h.full && (!budget || total < budget)) {
-        int cur = -1, best = -1;
-        for (int id = 0; id < NLAYER; id++)
-            if (pending[id]) {
-                uint8_t hh[4]; layer_home(id, hh);
-                if (home_total(hh) > best) { best = home_total(hh); cur = id; }
-            }
-        if (cur < 0) break;
+        int pr;
+        if (complete) { /* fewest cards home first: each sublayer is visited once */
+            pr = 0;
+            while (pr < NPRIO && !nsstack[pr]) pr++;
+            if (pr == NPRIO) break;
+        } else {
+            pr = NPRIO - 1;
+            while (pr >= 0 && !nsstack[pr]) pr--;
+            if (pr < 0) break;
+        }
+        SeedList *l = &slists[sstack[pr][--nsstack[pr]]];
+        l->queued = 0;
+        uint64_t cur = l->key;
         if (nvisit == visitcap) {
             visitcap = visitcap ? 2 * visitcap : 1024;
-            visit_layer = realloc(visit_layer, visitcap * sizeof *visit_layer);
+            visit_key = realloc(visit_key, visitcap * sizeof *visit_key);
+            visit_off = realloc(visit_off, visitcap * sizeof *visit_off);
+            visit_len = realloc(visit_len, visitcap * sizeof *visit_len);
         }
         uint64_t v = nvisit++;
-        visit_layer[v] = cur;
+        visit_key[v] = cur;
         table_clear(&t32);
-        char fp[600];
-        seed_path(fp, v);
-        FILE *f = fopen(fp, "wb");
-        if (!f) { fprintf(stderr, "cannot write %s\n", fp); exit(2); }
-        for (uint64_t i = 0; i < wseedn[cur]; i++)
-            if (table_add(&t32, wseed[cur][i].code) == 1)
-                fwrite(&wseed[cur][i], sizeof(Seed), 1, f);
-        fclose(f);
-        free(wseed[cur]); wseed[cur] = 0; wseedn[cur] = wseedcap[cur] = 0;
-        pending[cur] = 0;
+        visit_off[v] = v ? visit_off[v - 1] + visit_len[v - 1] : 0;
+        visit_len[v] = 0;
+        for (uint64_t i = 0; i < l->n; i++)
+            if (table_add(&t32, l->s[i].code) == 1) {
+                if (fwrite(&l->s[i], sizeof(Seed), 1, seed_file) != 1) {
+                    fprintf(stderr, "cannot write the visits\n"); exit(2);
+                }
+                visit_len[v]++;
+            }
+        free(l->s); l->s = 0; l->n = l->cap = 0;
+        l = 0; /* the lists may move while the visit runs */
         uint8_t home[4];
-        layer_home(cur, home);
+        layer_home((int)(cur >> 24), home);
         h.cur = cur;
         h.visit = (uint32_t)v;
         Pos p;
@@ -798,12 +849,17 @@ static void hunt(Pos *start) {
         Pos p;
         for (uint64_t sgi = nseg; sgi-- > 0;) {
             uint8_t home[4];
-            layer_home(visit_layer[segv[sgi]], home);
+            layer_home((int)(visit_key[segv[sgi]] >> 24), home);
             for (uint64_t j = 0; j < lens[sgi]; j++) {
                 decode(paths[sgi] + 4 * j, home, &p);
                 Step st = {0, 0, 0};
-                if (j + 1 < lens[sgi]) { st.to = paths[sgi] + 4 * (j + 1); st.to_layer = visit_layer[segv[sgi]]; }
-                else if (sgi > 0) { st.to = paths[sgi - 1]; st.to_layer = visit_layer[segv[sgi - 1]]; }
+                if (j + 1 < lens[sgi]) {
+                    st.to = paths[sgi] + 4 * (j + 1);
+                    st.to_layer = (int)(visit_key[segv[sgi]] >> 24);
+                } else if (sgi > 0) {
+                    st.to = paths[sgi - 1];
+                    st.to_layer = (int)(visit_key[segv[sgi - 1]] >> 24);
+                }
                 successors(&p, step_visit, &st);
                 if (!st.found) { fprintf(stderr, "no move found\n"); exit(2); }
             }
@@ -813,10 +869,12 @@ static void hunt(Pos *start) {
         free(paths); free(lens); free(segv);
     } else if (h.full || (budget && total >= budget)) printf("unknown %llu\n", (unsigned long long)total);
     else printf("exhausted %llu\n", (unsigned long long)total);
-    for (uint64_t v = 0; v < nvisit; v++) { char fp[600]; seed_path(fp, v); unlink(fp); }
-    for (int id = 0; id < NLAYER; id++) {
-        free(wseed[id]); wseed[id] = 0; wseedn[id] = wseedcap[id] = 0; pending[id] = 0;
-    }
+    fclose(seed_file);
+    seed_file = 0;
+    for (uint64_t i = 0; i < nslists; i++) free(slists[i].s);
+    nslists = 0;
+    if (smap) memset(smap, 0, smapsize * 8);
+    for (int q = 0; q < NPRIO; q++) nsstack[q] = 0;
     table_clear(&t32);
 }
 
@@ -842,6 +900,7 @@ int main(int argc, char **argv) {
         if (!strcmp(argv[i], "layers")) want_layers = 1;
         else if (!strcmp(argv[i], "horne")) horne = 1;
         else if (!strcmp(argv[i], "fine")) fine = 1;
+        else if (!strcmp(argv[i], "complete")) complete = 1;
         else if (!strncmp(argv[i], "win=", 4)) { win_mode = 1; budget = strtoull(argv[i] + 4, 0, 10); }
     }
     /* address space for each table: as many codes as physical memory could hold */
