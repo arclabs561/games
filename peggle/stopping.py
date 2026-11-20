@@ -321,6 +321,29 @@ assert lead_exact(Fraction(55, 100), 1) == (Fraction(45, 100), Fraction(1))
 assert all(sum(s.paths * 2 ** (10 - s.n) for s in stops(m)) == 2**10 for m in (1, 5, 10))
 
 
+# Armitage, McPherson and Rowe (1969), Table 1: the chance that repeated two-sided binomial
+# tests at level 2 alpha, one after each game, reject p = 1/2 by game n. Columns 2 alpha = 0.01
+# and 0.05, as printed (five decimals).
+ARMITAGE_N = (10, 15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 90, 100, 120, 140, 150)
+ARMITAGE = {
+    "0.01": (0.00781, 0.01538, 0.01840, 0.02266, 0.02746, 0.03087, 0.03406, 0.03687, 0.03931,
+             0.04319, 0.04679, 0.05090, 0.05345, 0.05586, 0.06085, 0.06462, 0.06619),
+    "0.05": (0.05469, 0.08191, 0.10662, 0.12140, 0.13355, 0.14328, 0.15351, 0.16399, 0.17117,
+             0.18583, 0.19973, 0.20889, 0.21941, 0.22731, 0.24187, 0.25503, 0.26108),
+}  # fmt: skip
+
+
+def armitage_comparison() -> list[tuple[str, int, float, float]]:
+    """Each entry of the published table: (2 alpha, n, published, computed here)."""
+    rows = []
+    for two_alpha, published in ARMITAGE.items():
+        rule = binomial_test(Fraction(two_alpha) / 2)
+        for n, value in zip(ARMITAGE_N, published, strict=True):
+            o = outcome(Fraction(1, 2), n, rule)
+            rows.append((two_alpha, n, value, float(o.first + o.second)))
+    return rows
+
+
 @cache
 def posterior_rule(sure: Fraction) -> Rule:
     """The posterior rule with threshold `sure` in place of 95%."""

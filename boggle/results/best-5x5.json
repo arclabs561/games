@@ -1,0 +1,139 @@
+{
+ "word_list": "enable1.txt",
+ "settings": {
+  "steps": 300000,
+  "t0": 300.0,
+  "t1": 5.0
+ },
+ "searches": 1920,
+ "seeds": [
+  10,
+  11,
+  12,
+  13,
+  20,
+  21,
+  22,
+  23,
+  30,
+  31,
+  32,
+  33,
+  40,
+  41,
+  42,
+  43,
+  50,
+  51,
+  52,
+  53,
+  60,
+  61,
+  62,
+  63,
+  70,
+  71,
+  72,
+  73,
+  80,
+  81,
+  82,
+  83,
+  90,
+  91,
+  92,
+  93,
+  100,
+  101,
+  102,
+  103,
+  110,
+  111,
+  112,
+  113,
+  120,
+  121,
+  122,
+  123
+ ],
+ "best": {
+  "board": "ligdrmanesietildsracsepes",
+  "points": 10397,
+  "words": 2338,
+  "searches": 269
+ },
+ "share of searches ending on the best": [
+  0.1401,
+  0.1253,
+  0.1563
+ ],
+ "searches above Boyan's 10,112": 638,
+ "points quartiles": [
+  9537,
+  9944,
+  10291
+ ],
+ "distinct final boards": 648,
+ "top boards": [
+  {
+   "board": "ligdrmanesietildsracsepes",
+   "points": 10397,
+   "words": 2338,
+   "searches": 269
+  },
+  {
+   "board": "rdgassentmliteicarsdseper",
+   "points": 10383,
+   "words": 2285,
+   "searches": 49
+  },
+  {
+   "board": "ligdrmanesieticdsralnopes",
+   "points": 10369,
+   "words": 2427,
+   "searches": 10
+  },
+  {
+   "board": "dplcsseaietrtndsaiesgnmpr",
+   "points": 10357,
+   "words": 2371,
+   "searches": 48
+  },
+  {
+   "board": "lctsreaiedprtngeseaisdiml",
+   "points": 10349,
+   "words": 2181,
+   "searches": 2
+  },
+  {
+   "board": "rdimsesetaprtngeaiessclpr",
+   "points": 10342,
+   "words": 2331,
+   "searches": 5
+  },
+  {
+   "board": "destsrilermanagpetindsros",
+   "points": 10310,
+   "words": 2335,
+   "searches": 7
+  },
+  {
+   "board": "dplcsreaiesrtndetiesgnamr",
+   "points": 10292,
+   "words": 2223,
+   "searches": 53
+  },
+  {
+   "board": "bllsroaiegcrtndseasidlpme",
+   "points": 10291,
+   "words": 2478,
+   "searches": 49
+  },
+  {
+   "board": "cllsroaiedprtngeseairdiml",
+   "points": 10247,
+   "words": 2288,
+   "searches": 8
+  }
+ ]
+}

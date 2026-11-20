@@ -155,35 +155,16 @@ def test_simulation_agrees_with_the_exact_chances():
             assert abs(got - q) <= 4 * sqrt(q * (1 - q) / trials)
 
 
-def test_readme_numbers_are_current():
-    readme = (Path(stopping.__file__).parent / "README.md").read_text()
-    o = stopping.outcome(HALF, 100)
-    assert f"{float(o.first + o.second):.3f}" in readme
-    assert f"{float(stopping.bayes(1000).wrong_given_declared):.1%}" in readme
-
-
-# Armitage, McPherson and Rowe (1969), Table 1, columns 2 alpha = 0.01 and 0.05 (five decimals).
-ARMITAGE_N = (10, 15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 90, 100, 120, 140, 150)
-ARMITAGE = {
-    "0.01": (0.00781, 0.01538, 0.01840, 0.02266, 0.02746, 0.03087, 0.03406, 0.03687, 0.03931,
-             0.04319, 0.04679, 0.05090, 0.05345, 0.05586, 0.06085, 0.06462, 0.06619),
-    "0.05": (0.05469, 0.08191, 0.10662, 0.12140, 0.13355, 0.14328, 0.15351, 0.16399, 0.17117,
-             0.18583, 0.19973, 0.20889, 0.21941, 0.22731, 0.24187, 0.25503, 0.26108),
-}  # fmt: skip
-
-
 def test_repeated_binomial_tests_match_armitage_mcpherson_rowe():
     off = []
-    for two_alpha, published in ARMITAGE.items():
-        rule = stopping.binomial_test(Fraction(two_alpha) / 2)
-        for n, value in zip(ARMITAGE_N, published, strict=True):
-            o = stopping.outcome(HALF, n, rule)
-            error = abs(float(o.first + o.second) - value)
-            assert error < 2e-5
-            if error > 6e-6:
-                off.append((two_alpha, n))
-    # The other 32 entries agree to the five printed decimals.
-    assert off == [("0.01", 30), ("0.05", 140)]
+    for two_alpha, n, published, computed in stopping.armitage_comparison():
+        error = abs(computed - published)
+        assert error < 2e-5
+        if f"{computed:.5f}" != f"{published:.5f}":
+            off.append((two_alpha, n))
+    # The other 31 entries agree to the five printed decimals. At n = 150 the exact 0.2610858
+    # rounds to 0.26109, one unit in the last place above the published 0.26108.
+    assert off == [("0.01", 30), ("0.05", 140), ("0.05", 150)]
 
 
 def test_stopped_posterior_averages_to_the_prior():
@@ -194,64 +175,15 @@ def test_stopped_posterior_averages_to_the_prior():
         ) == Fraction(1, 2)
 
 
-def test_note_numbers_are_current():
-    note = (Path(stopping.__file__).parent / "peggle.typ").read_text()
-    for p, cap in ((HALF, 100), (HALF, 1000), (Fraction(55, 100), 1000), (Fraction(7, 10), 1000)):
-        o = stopping.outcome(p, cap)
-        first = o.first + o.second if p == HALF else o.first
-        assert f"[{float(first):.3f}]" in note
-        assert f"[{float(o.games):.1f}]" in note
-    for cap in (100, 1000):
-        assert f"{float(stopping.bayes(cap).wrong_given_declared):.1%}" in note
-
-
-def test_new_rules_in_the_note_and_readme():
-    folder = Path(stopping.__file__).parent
-    note = " ".join((folder / "peggle.typ").read_text().split())
-    readme = (folder / "README.md").read_text()
+def test_new_rules():
     bf = {cap: stopping.outcome(HALF, cap, stopping.bayes_factor_rule) for cap in (100, 1000)}
-    for cap, o in bf.items():
-        assert f"{float(o.first + o.second):.4f} for $N = {cap}$" in note
-        assert f"{float(o.first + o.second):.4f} (N = {cap:,})" in readme
-    far = f"{stopping.verdict_chance_float(stopping.bayes_factor_bounds(10_000)):.4f}"
-    assert f"to {far} at $N = 10000$" in note and f"{far} at N = 10,000" in readme
-    assert (
-        f"It takes {stopping.bounds_hi(100)} wins in 100 games, or {stopping.bounds_hi(1000)}"
-        in note
-    )
-    assert f"$B_10 = 1024 slash 2310 approx {float(stopping.bayes_factor(6, 10)):.2f}$" in note
-    assert f"$B_1000 approx {float(stopping.bayes_factor(527, 1000)):.2f}$" in note
+    assert [f"{float(o.first + o.second):.4f}" for o in bf.values()] == ["0.0276", "0.0357"]
     assert stopping.bayes_factor(8, 8) == Fraction(256, 9) and stopping.bounds_hi(8) == 8
     p55 = Fraction(55, 100)
     o = stopping.outcome(p55, 1000, stopping.bayes_factor_rule)
     assert f"{float(o.second):.1%}" == "0.4%" and f"{float(o.first):.0%}" == "51%"
-    assert f"after {float(o.games):.0f} games on average" in note
-    worse, games = stopping.lead_exact(p55, 15)
-    assert f"= {float(worse):.4f}$, after {float(games):.1f} games" in note
-    assert f"= {float(worse):.4f}, after {float(games):.1f} games" in readme
-    assert f"lead of 14 would err {float(stopping.lead_exact(p55, 14)[0]):.1%}" in note
-    # Every row of the table of rules.
-    rows = [
-        ("posterior 95%", 100, stopping.verdict),
-        ("posterior 95%", 1000, stopping.verdict),
-        ("Bayes factor 20", 100, stopping.bayes_factor_rule),
-        ("Bayes factor 20", 1000, stopping.bayes_factor_rule),
-        ("lead of 15", 1000, stopping.lead_rule(15)),
-    ]
-    for name, cap, rule in rows:
-        equal, edge = stopping.outcome(HALF, cap, rule), stopping.outcome(p55, cap, rule)
-        cells = [
-            name,
-            f"{cap:,}",
-            f"{float(equal.first + equal.second):.3f}",
-            f"{float(equal.games):.1f}",
-            f"{float(edge.first):.3f}",
-            f"{float(edge.second):.3f}",
-            f"{float(edge.games):.1f}",
-        ]
-        assert "[" + "], [".join(cells) + "]" in note, cells
-    cells = ["lead of 15", "none", "1", "225", f"{1 - float(worse):.3f}", f"{float(worse):.3f}"]
-    assert "[" + "], [".join(cells) + f"], [{float(games):.1f}]" in note
+    worse, _ = stopping.lead_exact(p55, 15)
+    assert f"{float(stopping.lead_exact(p55, 14)[0]):.1%}" == "5.7%" and worse < Fraction(1, 20)
 
 
 def test_safe_threshold_matches_a_search_over_every_threshold():
@@ -266,7 +198,7 @@ def test_safe_threshold_matches_a_search_over_every_threshold():
         assert stopping.safe_threshold(cap, alpha) == (posteriors[i - 1], posteriors[i])
 
 
-def test_stricter_thresholds_in_the_note_and_readme():
+def test_stricter_thresholds():
     alpha = Fraction(5, 100)
     w, t = stopping.safe_threshold(100)
     assert w < stopping.STRICT[100] <= t
@@ -282,26 +214,6 @@ def test_stricter_thresholds_in_the_note_and_readme():
         chance = stopping.equal_verdict_chance(cap, stopping.posterior_rule(shown))
         assert chance <= alpha < stopping.equal_verdict_chance(cap, stopping.posterior_rule(below))
         assert f"{float(chance):.4f}" == "0.0497"
+    # the note types the two lower thresholds by hand; the rest it reads from results.json
     note = " ".join((Path(stopping.__file__).parent / "peggle.typ").read_text().split())
-    readme = (Path(stopping.__file__).parent / "README.md").read_text()
-    p55 = Fraction(55, 100)
-    cells = []
-    for cap, shown in stopping.STRICT.items():
-        rule = stopping.posterior_rule(shown)
-        equal, edge = stopping.outcome(HALF, cap, rule), stopping.outcome(p55, cap, rule)
-        row = [
-            f"posterior {shown.numerator / shown.denominator}",
-            f"{cap:,}",
-            f"{float(equal.first + equal.second):.3f}",
-            f"{float(equal.games):.1f}",
-            f"{float(edge.first):.3f}",
-            f"{float(edge.second):.3f}",
-            f"{float(edge.games):.1f}",
-        ]
-        assert "[" + "], [".join(row) + "]" in note, row
-        cells.append((f"{float(edge.first):.3f}", f"{float(edge.games):.1f}"))
-        assert f"{stopping.fewest_wins(cap, shown)} " in note
-    (a, ga), (b, gb) = cells
-    assert f"chance {a} and {b}, against 0.061 and 0.512" in note
-    assert f"after {ga} and {gb} games on average" in note
-    assert f"chance {a} (N = 100) or {b} (N = 1,000), after {ga} or {gb} games" in readme
+    assert "a threshold of 0.997037 or 0.9987002, a little lower" in note

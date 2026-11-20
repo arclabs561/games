@@ -27,8 +27,9 @@ def draw_board(
     """The board as a grid of letter squares, with each word in `words` traced through the
     squares of one path that spells it (the first word in the darkest line)."""
     n = len(board)
+    width = max(size * n + 0.6, 0.085 * len(title) + 0.3)  # wide enough for the title
     fig, ax = plt.subplots(
-        figsize=(size * n + 0.6, size * n + (0.8 if title else 0.3) + (0.3 if words else 0))
+        figsize=(width, size * n + (0.8 if title else 0.3) + (0.3 if words else 0))
     )
     for i, row in enumerate(board):
         for j, face in enumerate(row):
@@ -71,6 +72,10 @@ FIGURES = {
     "random-board.svg": lambda: draw_board(rand_board(random.Random(0)), ["traveler"], "A shake of the cubes (seed 0)"),
     "best-board.svg": lambda: draw_board(
         parse_board("perslatgsineters"), ["replastering"], "The best board for ENABLE2K: 3,625 points"
+    ),
+    "best-5x5.svg": lambda: draw_board(
+        parse_board("ligdrmanesietildsracsepes"), ["interspecies"],
+        "Best 5 by 5 board found: 10,397 points (enable1.txt)"
     ),
 }  # fmt: skip
 

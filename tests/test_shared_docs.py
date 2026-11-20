@@ -22,7 +22,7 @@ def test_readme_shared_sections_are_current(game):
 
 
 def test_games_with_shared_sections():
-    assert {"cannonballs", "erase"} <= set(sync_docs.games())
+    assert {"cannonballs", "erase", "peggle", "tenzi"} <= set(sync_docs.games())
 
 
 def test_placeholder_formats():
