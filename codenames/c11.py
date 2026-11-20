@@ -557,7 +557,22 @@ def score_filter(rows, g, filt: str, seed: int) -> dict:
         for m in GUESSERS
     }
     out["secondary"] = sec
-    out["per_board"] = {"h_a1": h1.tolist(), "h_a2": h2.tolist(), "kept": keep.tolist()}
+    out["per_board"] = [
+        {
+            "board": r["board"],
+            "kept": bool(keep[i]),
+            "h_a1": float(h1[i]) if keep[i] else None,
+            "h_a2": float(h2[i]) if keep[i] else None,
+            "played": {
+                a: [
+                    r[filt][a],
+                    *(None if np.isnan(x) else float(x) for x in (v[(a, m)][i] for m in GUESSERS)),
+                ]
+                for a in ARMS
+            },
+        }
+        for i, r in enumerate(rows)
+    ]
     return out
 
 
@@ -621,12 +636,11 @@ def score(lists_path: Path = LISTS, guesses: Path = GUESSES, runs: Path = RUNS) 
     result["strict"] = strict
     result["c10_arms"] = score_filter(rows, g, "c10", TEST)
     a, b = strict["per_board"], result["c10_arms"]["per_board"]
-    both = np.array(a["kept"]) & np.array(b["kept"])
+    both = [i for i in range(len(a)) if a[i]["kept"] and b[i]["kept"]]
     result["strict_minus_c10"] = {
-        "h_a1": bootstrap((np.array(a["h_a1"]) - np.array(b["h_a1"]))[both]),
-        "h_a2": bootstrap((np.array(a["h_a2"]) - np.array(b["h_a2"]))[both]),
-        "boards": int(both.sum()),
+        h: bootstrap([a[i][h] - b[i][h] for i in both]) for h in ("h_a1", "h_a2")
     }
+    result["strict_minus_c10"]["boards"] = len(both)
     result["repeat"] = repeat_summary(rows, g, TEST)
     result["pilot_replies"] = {
         m: reply_counts(
