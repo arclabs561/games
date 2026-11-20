@@ -6,15 +6,16 @@ paper quote, each computed here by the scripts that own it.
     python3 erase/report.py targets --targets 14 # only these targets of the targets section
 
 Sections and their cost on one core: deals and no_zero (about 35 s and 5 s, count.py),
-wild and certificates (a few seconds), twenty_four (about 10 s), countdown (about 3 min),
-simulated (about 4 min, simulate.py with its fixed seeds) and targets (about an hour for
+wild, certificates, ten_free and pairs (a few seconds), addition (about 4 min) and alone (about 10 s),
+twenty_four (about 10 s), countdown (about 3 min), simulated (about 4 min, simulate.py with
+its fixed seeds), plus_minus (instant, from simulated) and targets (about an hour for
 targets 1 to 30 and up to 11 cards). The tests recompute the cheap sections in full and the
 others in part.
 """
 
 import argparse
 import json
-from math import comb
+from math import comb, exp, lgamma, log
 from pathlib import Path
 
 import count
@@ -23,7 +24,7 @@ import simulate
 import targets
 import twenty_four
 
-from erase import in_families, multisets
+from erase import in_families, make, multisets
 
 RESULTS = Path(__file__).parent / "results.json"
 TARGETS = range(1, 31)
@@ -61,6 +62,116 @@ def certificates() -> dict:
         n: sum(not in_families(m) for m in multisets(n, [0] + [4] * 10)) for n in range(7, 12)
     }
     return {"cases": sum(by_size.values()), "by_size": by_size}
+
+
+def addition() -> dict:
+    """Deals that addition alone cannot clear, for both decks (count.stuck_addition)."""
+    out = {}
+    for name, zero in (("zero", True), ("no_zero", False)):
+        stuck, total = count.stuck_addition(zero)
+        out[name] = {"stuck": stuck, "total": total, "percent": round(100 * stuck / total, 2)}
+    return out
+
+
+def ten_free(max_cards: int = 7) -> dict:
+    """Nonzero multisets (at most four of each value) in which no part of two or more cards
+    makes 10, counted by size outside both families, and the six-card ones listed. Built
+    upward: a multiset is ten-free when it does not make 10 and every multiset one card
+    smaller is ten-free."""
+    level, by_size, six = {()}, [], []
+    for n in range(1, max_cards + 1):
+        grown = set()
+        for m in level:
+            for v in range(m[-1] if m else 1, 11):
+                new = m + (v,)
+                if m.count(v) == 4 or (n >= 2 and make(new, 10)):
+                    continue
+                if all(new[:i] + new[i + 1 :] in level for i in range(n)):
+                    grown.add(new)
+        level = grown
+        outside = sorted(m for m in level if not in_families(m))
+        by_size.append(len(outside))
+        if n == 6:
+            six = [list(m) for m in outside]
+    return {"by_size": by_size, "six": six}
+
+
+def pairs() -> dict:
+    """Deals that the printed rules (pairs that sum to 10) cannot clear (count.stuck_pairs);
+    the last entry lets a 10 be erased by itself, with cards 1 to 10."""
+    out = {}
+    for name, zero, lone in (
+        ("zero", True, False),
+        ("no_zero", False, False),
+        ("no_zero_lone_ten", False, True),
+    ):
+        stuck, total = count.stuck_pairs(zero, lone)
+        out[name] = {"stuck": stuck, "total": total, "percent": round(100 * stuck / total, 2)}
+    return out
+
+
+def alone() -> dict:
+    """Seven-card hands that cannot be cleared with no center cards (the original version)."""
+    stuck, total = count.stuck_alone()
+    return {"stuck": stuck, "total": total, "one_in": one_in(stuck, total)}
+
+
+def parity_blocked(zero: bool = True) -> tuple[int, int]:
+    """(deals with an odd number of odd hand cards and no odd center card, all deals)."""
+    odd, even = 20, 24 if zero else 20
+    blocked = sum(
+        comb(odd, k) * comb(even, 7 - k) * comb(even - (7 - k), 4) for k in range(1, 8, 2)
+    )
+    return blocked, comb(odd + even, 7) * comb(odd + even - 7, 4)
+
+
+def binomial_tail(k: int, n: int, p: float) -> float:
+    """P(X <= k) for X ~ Binomial(n, p), summed in logs."""
+    terms = [
+        lgamma(n + 1) - lgamma(i + 1) - lgamma(n - i + 1) + i * log(p) + (n - i) * log(1 - p)
+        for i in range(k + 1)
+    ]
+    top = max(terms)
+    return exp(top) * sum(exp(t - top) for t in terms)
+
+
+def clopper_pearson(k: int, n: int, level: float = 0.95) -> tuple[float, float]:
+    """The exact (Clopper-Pearson) interval for a binomial share k of n, by bisection."""
+
+    def solve(f, want):  # f increases in p
+        lo, hi = 0.0, 1.0
+        for _ in range(200):
+            mid = (lo + hi) / 2
+            lo, hi = (mid, hi) if f(mid) < want else (lo, mid)
+        return (lo + hi) / 2
+
+    a = (1 - level) / 2
+    low = 0.0 if k == 0 else solve(lambda p: 1 - binomial_tail(k - 1, n, p), a)
+    high = 1.0 if k == n else solve(lambda p: 1 - binomial_tail(k, n, p), 1 - a)
+    return low, high
+
+
+def plus_minus(sim: dict) -> dict:
+    """Deals stuck with + and - only: the parity share is exact, and only the deals that
+    parity does not block are estimated, from the simulated deals without the obstruction."""
+    out = {}
+    for name, zero in (("zero", True), ("no_zero", False)):
+        x = sim[name]
+        blocked, total = parity_blocked(zero)
+        p = blocked / total
+        sampled, other = x["deals"] - x["parity"], x["plus_minus"] - x["parity"]
+        low, high = clopper_pearson(other, sampled)
+        out[name] = {
+            "parity": blocked,
+            "total": total,
+            "parity_percent": round(100 * p, 3),
+            "sampled": sampled,
+            "other": other,
+            "percent": round(100 * (p + (1 - p) * other / sampled), 2),
+            "low": round(100 * (p + (1 - p) * low), 2),
+            "high": round(100 * (p + (1 - p) * high), 2),
+        }
+    return out
 
 
 def twenty_four_counts() -> dict:
@@ -124,9 +235,14 @@ SECTIONS = {
     "no_zero": lambda data: deals(False),
     "wild": lambda data: wild(data["deals"]["stuck"], data["no_zero"]["stuck"]),
     "certificates": lambda data: certificates(),
+    "ten_free": lambda data: ten_free(),
+    "pairs": lambda data: pairs(),
+    "addition": lambda data: addition(),
+    "alone": lambda data: alone(),
     "twenty_four": lambda data: twenty_four_counts(),
     "countdown": lambda data: countdown_counts(),
     "simulated": lambda data: simulated(),
+    "plus_minus": lambda data: plus_minus(data["simulated"]),
     "targets": targets_section,
 }
 ORDER = list(SECTIONS)

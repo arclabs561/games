@@ -26,23 +26,34 @@
 // the columns (a 1fr column for the widest text) and, if it wants, the alignment.
 // Fragments may carry Typst-only text in <!--raw-typst ...--> comments, such as
 // cross-references, which GitHub does not show.
-#let shared(readme, name, columns: auto, align: left) = {
-  show table: it => {
-    let cells = it.children
-    if cells.len() > 0 and cells.first().func() == table.hline { return it }  // done already
-    let head = ()
-    if cells.len() > 0 and cells.first().func() == table.header {
-      head = (cells.remove(0), table.hline(stroke: 0.4pt))
-    }
-    // labeled, so that a paper's own show rule for tables can tell this one apart
-    [#table(
-      columns: if columns == auto { it.columns } else { columns },
-      align: align,
-      table.hline(stroke: 0.6pt), ..head, ..cells, table.hline(stroke: 0.6pt),
-    ) <shared-table>]
+//
+// The table cmarker makes is rebuilt in the house style before it is placed, not by a show
+// rule on table: a show rule that returns a new table nests one tagged Table inside another,
+// which PDF/UA-1 rejects ("invalid table structure").
+#let house-table(it, columns, align) = {
+  let cells = it.children
+  let head = ()
+  if cells.len() > 0 and cells.first().func() == table.header {
+    head = (cells.remove(0), table.hline(stroke: 0.4pt))
   }
-  cmarker.render(section(readme, name), heading-labels: none, set-document-title: false)
+  // labeled, so that a paper's own show rule for tables can tell this one apart
+  [#table(
+    columns: if columns == auto { it.columns } else { columns },
+    align: align,
+    table.hline(stroke: 0.6pt), ..head, ..cells, table.hline(stroke: 0.6pt),
+  ) <shared-table>]
 }
+#let restyle-tables(c, columns, align) = {
+  if type(c) != content { c }
+  else if c.func() == table { house-table(c, columns, align) }
+  else if c.has("children") { c.children.map(x => restyle-tables(x, columns, align)).join() }
+  else { c }
+}
+#let shared(readme, name, columns: auto, align: left) = restyle-tables(
+  cmarker.render(section(readme, name), heading-labels: none, set-document-title: false),
+  columns,
+  align,
+)
 
 // A whole number with thousands separators, as sync_docs.py writes it: 12362536 -> 12,362,536.
 #let fmt(n) = {

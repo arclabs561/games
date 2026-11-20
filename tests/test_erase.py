@@ -192,6 +192,74 @@ def test_homemade_puzzles_and_pigeonhole():
         assert len(s) < 7 or any(v + 1 in s for v in s)
 
 
+def test_addition_piles_agree_with_the_simulator():
+    """count.clears_by_addition (minimal center sets) against simulate's group packing."""
+    import random
+
+    from count import clears_by_addition, piles
+    from simulate import groups, most_erased
+
+    rng = random.Random(7)
+    deck = [v for v in range(11) for _ in range(4)]
+    for _ in range(400):
+        rng.shuffle(deck)
+        hand, center = sorted(deck[:7]), sorted(deck[7:11])
+        packed = most_erased(7, groups(hand, center, False)) == 7
+        assert clears_by_addition(hand, center) == packed, (hand, center)
+    assert piles((10,)) == (1,)  # a lone 10 needs a center 0
+    assert not clears_by_addition((5, 5, 5), (1, 2, 3, 4))
+    assert clears_by_addition((5, 5, 5), (5,))
+
+
+def _pairs_clear(hand, center):
+    """Brute force for the printed rules: erase a pair from the hand, or one card whose
+    complement is in the center, until nothing is left."""
+    if not hand:
+        return True
+    first, rest = hand[0], hand[1:]
+    if 10 - first in center and _pairs_clear(rest, center):
+        return True
+    return any(
+        rest[i] == 10 - first and _pairs_clear(rest[:i] + rest[i + 1 :], center)
+        for i in range(len(rest))
+    )
+
+
+def test_pairs_needs_agree_with_brute_force():
+    import random
+
+    from count import pairs_needs
+
+    rng = random.Random(8)
+    deck = [v for v in range(11) for _ in range(4)]
+    for _ in range(2000):
+        rng.shuffle(deck)
+        hand, center = tuple(sorted(deck[:7])), set(deck[7:11])
+        assert (pairs_needs(hand) <= center) == _pairs_clear(hand, center), (hand, center)
+
+
+def test_statespace_engine_confirms_the_exception():
+    """The third engine of Theorem 15 (erase/smt/statespace.py), run here so CI covers it:
+    all seven cards of 1 6 6 7 7 7 7 make every whole number from 0 to 20 except 10."""
+    import importlib.util
+    from pathlib import Path
+
+    path = Path(__file__).resolve().parent.parent / "erase" / "smt" / "statespace.py"
+    spec = importlib.util.spec_from_file_location("erase_statespace", path)
+    assert spec and spec.loader
+    statespace = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(statespace)
+    values = statespace.finals((1, 6, 6, 7, 7, 7, 7))
+    assert [v for v in range(21) if v not in values] == [10]
+
+
+def test_original_version_hands():
+    """With no center cards the exception of Theorem 15 is partly stuck: one 7 is left."""
+    assert solve((1, 6, 6, 7, 7, 7, 7), ()) is None
+    assert solve((1, 6, 6, 7, 7, 7), ()) is not None
+    assert solve((4, 4, 6, 9, 5, 8, 5), ()) is not None
+
+
 def test_simulate_helpers():
     from simulate import groups, most_erased
 

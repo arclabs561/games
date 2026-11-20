@@ -8,8 +8,8 @@ Each status comes from the question's wording, by the rules in the script's docs
 |---|---:|
 | blocked on data | 8 |
 | blocked on compute | 3 |
-| partly answered | 10 |
-| open | 54 |
+| partly answered | 9 |
+| open | 55 |
 
 | Game | Question | Status |
 |---|---|---|
@@ -41,8 +41,8 @@ Each status comes from the question's wording, by the rules in the script's docs
 | [Egyptian Ratscrew](egyptian_ratscrew/README.md) | Which nine-card deck types have a trap with three players? The census was run for two players only. | open |
 | [Egyptian Ratscrew](egyptian_ratscrew/README.md) | What is the smallest deck with a trap with slaps in it for three players? For two players it has nine cards, and the census finds one such deck type among the 1,349. | open |
 | [Egyptian Ratscrew](egyptian_ratscrew/README.md) | Is the seat effect with four players zero, or too small to see in 200,000 games? | open |
-| [Erase](erase/README.md) | A proof of the theorem on big hands<!--raw-typst  (@thm-big)--> that does not check cases is still open; in particular, a short reason why any seven nonzero cards outside the two families make 10 using all of them, apart from 1 6 6 7 7 7 7. | open |
-| [Erase](erase/README.md) | Do the thresholds for targets other than 10 hold for hands of more than 11 cards? The induction to larger hands is worked out only for 10. | partly answered |
+| [Erase](erase/README.md) | A proof of the theorem on big hands<!--raw-typst  (@thm-big)--> that does not check cases is still open; in particular, a short reason why any seven nonzero cards outside the two families make 10 using all of them, apart from 1 6 6 7 7 7 7. | open |
+| [Erase](erase/README.md) | Do the thresholds hold for multisets of more than 11 cards, for 10 or for any other target? A deal never holds more than 11 cards, and every threshold here, that of 10 included, is checked only that far. | open |
 | [Erase](erase/README.md) | Does any target above 30 have a threshold above 9? Among the targets checked only 14 reaches 9, because of one multiset of eight cards. | partly answered |
 | [EV Nova and Naev](ev_nova/README.md) | Whether Naev's mean prices match the game. A running copy of Naev could check a few spobs. | blocked on data |
 | [EV Nova and Naev](ev_nova/README.md) | Time. A jump in Naev takes flying time that depends on the system, and the source comments put a jump at about three periods and a landing at about one. Rates per period would need a model of flight time. The map positions in `naev.json` are a first step: a jump point marked `autopos` lies at the system's radius, in the direction of the target system (`src/space.c`), so the distance flown inside a system between two such points can be computed. Ship speeds and the time of the jump itself are still needed. | partly answered |
