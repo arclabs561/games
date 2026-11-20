@@ -1,6 +1,8 @@
 """Tenzi: exact turn distributions, checked against seeded simulation."""
 
+import json
 import random
+from decimal import ROUND_HALF_UP, Decimal
 from fractions import Fraction
 from pathlib import Path
 from statistics import mean, stdev
@@ -172,72 +174,83 @@ def test_small_games_switching_is_best_for_every_deadline():
                 assert not optimal.by_turn(dice, faces, any_dice)[1]
 
 
-def note_text() -> str:
-    return " ".join((Path(tenzi.__file__).parent / "tenzi.typ").read_text().split())
+# ---------- results.json, which the README and the note read ----------
+
+COMMITTED = json.loads((Path(tenzi.__file__).parent / "results.json").read_text())
 
 
-def test_note_quotes_the_deadline_chances():
-    from tenzi import optimal
+def test_results_file_is_current():
+    from tenzi import report
 
-    chances, _ = optimal.by_turn()
-    note = note_text()
-    quoted = ", ".join(f"{float(chances[t - 1]):.4f}" for t in (5, 10, 14, 20))
-    assert f"{quoted} and {float(chances[29]):.4f}" in note
-    assert f"up to turn {len(chances)}" in note
-
-
-def sci(x, digits: int) -> str:
-    """A number as the note writes it, such as $4.2 times 10^(-10)$."""
-    mantissa, exponent = f"{float(x):.{digits}e}".split("e")
-    return f"{mantissa} times 10^({int(exponent)})"
+    quick = json.loads(report.dump(report.results(quick=True)))
+    assert set(COMMITTED) == set(quick) | report.SLOW
+    for key, value in quick.items():
+        assert COMMITTED[key] == value, key
+    assert COMMITTED["small_games_switching_best"] is True
 
 
-def test_note_quotes_the_harmonic_formula():
-    from tenzi import maximum
-
-    note = note_text()
-    approx = f"{maximum.harmonic_approximation(10):.12f}"
-    exact = f"{maximum.decimal(maximum.exact_mean(10)):.12f}"
-    spaced = [f"{x[:6]} thin {x[6:9]} thin {x[9:12]} thin {x[12:]}" for x in (approx, exact)]
-    assert f"{spaced[0]}, $" in note and f"${spaced[1]}$" in note
-    gap = maximum.decimal(maximum.exact_mean(10)) - maximum.harmonic_approximation(10)
-    assert f"differ by ${sci(gap, 2)}$" in note
-    assert f"gives {maximum.harmonic_approximation(1):.3f} against the exact 6" in note
-    gap20 = maximum.decimal(maximum.exact_mean(20)) - maximum.harmonic_approximation(20)
-    assert f"off by ${sci(gap20, 1)}$" in note
-    assert f"come to ${sci(maximum.term_size(10), 2)}$" in note
-    assert f"come to ${sci(maximum.term_size(10, k=2), 1)}$" in note
-    assert f"approx {sci(maximum.wobble_amplitude(), 2)}$" in note
-    assert f"from {maximum.dice_for_wobble()} dice on" in note
-    for n in (1, 2, 3, 5, 10, 20, 100):
-        gap = maximum.decimal(maximum.exact_mean(n)) - maximum.harmonic_approximation(n)
-        row = (
-            f"[{n}], [{float(maximum.exact_mean(n)):.6f}], [${sci(gap, 1)}$],"
-            f" [${sci(maximum.fourier_term(n, 6, 1), 1)}$],"
-        )
-        assert row in note, row
-
-
-def test_readme_quotes_the_new_results():
-    from tenzi import maximum, optimal
-
-    readme = (Path(tenzi.__file__).parent / "README.md").read_text()
-    gap = maximum.decimal(maximum.exact_mean(10)) - maximum.harmonic_approximation(10)
-    assert f"within {float(gap):.2e}".replace("e-10", "·10⁻¹⁰") in readme
-    assert f"give {float(maximum.fourier_term(10, 6, 1)):.3e}".replace("e-10", "·10⁻¹⁰") in readme
-    assert f"amplitude {float(maximum.wobble_amplitude()):.2e}".replace("e-23", "·10⁻²³") in readme
-    assert f"from {maximum.dice_for_wobble()} dice on" in readme
-    assert f"up to turn {len(optimal.by_turn()[0])}" in readme
-
-
-def test_simulated_means_in_the_note_and_readme_are_current():
+def test_simulated_results_are_current():
     # Common random numbers would make the simulations agree with each other by construction.
     assert len(set(tenzi.SEEDS.values())) == len(tenzi.SEEDS)
-    folder = Path(tenzi.__file__).parent
-    note, readme = (folder / "tenzi.typ").read_text(), (folder / "README.md").read_text()
-    for name, step in (("fixed face", tenzi.reroll), ("switching", tenzi.reroll_switching)):
-        games = tenzi.simulate(name, 100_000)
-        quoted = tenzi.interval(games)
-        assert quoted in note and quoted in readme, quoted
-        center, half = (float(x) for x in quoted.split(" ± "))
-        assert abs(center - float(tenzi.expected_turns(step))) < half
+    sims = COMMITTED["simulated"]
+    assert sims["seeds"] == tenzi.SEEDS
+    for name, (first, step) in tenzi.STRATEGIES.items():
+        center, half = (
+            float(x) for x in tenzi.interval(tenzi.simulate(name, sims["games"])).split(" ± ")
+        )
+        assert [center, half] == sims[name], name
+        assert abs(center - float(tenzi.expected_turns(step, first))) < half
+
+
+def test_quoted_values_agree_with_the_scripts():
+    from tenzi import maximum
+
+    r, h = COMMITTED, COMMITTED["harmonic"]
+    # the slides report the named-face game without its first roll, and these state vectors
+    assert f"{r['target_first_shifted']['done_by_4']:.4f}" == "0.0014"
+    assert f"{r['target_first_shifted']['on_20']:.4f}" == "0.0401"
+    mean_t, var = tenzi.target_first_moments()
+    assert r["strategies"]["target first"]["mean"] == float(mean_t)
+    assert f"{r['strategies']['target first']['sd']:.3f}" == f"{float(var) ** 0.5:.3f}" == "6.834"
+    assert h["gap_10_sci"] == [4.18, 10] and f"{h['gap_10']:.2e}" == "4.18e-10"
+    assert h["exact_10"] == f"{maximum.decimal(maximum.exact_mean(10)):.12f}"
+    # the race table quotes these players; the note's chain figure, these counts
+    assert set(r["race"]["switching"]) == {"2", "3", "4", "6", "10", "20", "30"}
+    assert r["turns_left_fixed"]["9"] == 6.0
+
+
+def floats(value):
+    if isinstance(value, float):
+        yield value
+    elif isinstance(value, dict):
+        for v in value.values():
+            yield from floats(v)
+    elif isinstance(value, list):
+        for v in value:
+            yield from floats(v)
+
+
+def test_no_quoted_float_sits_on_a_rounding_tie():
+    """Python rounds a float's binary value; Typst rounds its shortest decimal form, half away
+    from zero (2.675 gives 2.67 in Python and 2.68 in Typst). They agree unless the shortest
+    form ends in a 5 just past the digits printed, so no stored value may."""
+    for x in floats(COMMITTED):
+        for digits in range(5):
+            typst = Decimal(repr(x)).quantize(Decimal(1).scaleb(-digits), rounding=ROUND_HALF_UP)
+            assert f"{x:.{digits}f}" == f"{typst:.{digits}f}", (x, digits)
+
+
+def test_note_reads_its_numbers_from_results():
+    note = (Path(tenzi.__file__).parent / "tenzi.typ").read_text()
+    assert '#let R = json("results.json")' in note
+    for name in ("rules", "results", "checks", "open"):
+        assert f'shared(readme, "{name}"' in note
+    # numbers once typed by hand, now read from results.json
+    for stale in (
+        "15.2944 turns",
+        "[15.29], [15.11]",
+        "0.0159, 0.2505",
+        "16.564 thin 848",
+        "34.46 k",
+    ):
+        assert stale not in note, stale
