@@ -276,3 +276,29 @@ def test_both_games_pin_the_same_way():
 
     ours = pinned(Model("openai/gpt-oss-120b", "novita", {"reasoning_effort": "medium"}))
     assert ours == hanabi_pinned("openai/gpt-oss-120b", "novita", {"reasoning_effort": "medium"})
+
+
+def test_committed_provider_table():
+    from pathlib import Path
+
+    from codenames.providers import COLUMNS
+
+    path = Path(__file__).parent.parent / "codenames" / "results" / "llm-providers.json"
+    d = json.loads(path.read_text())
+    assert d["columns"] == list(COLUMNS)
+    rows = [dict(zip(COLUMNS, r, strict=True)) for r in d["logs"]]
+    assert all(len(r["requested"].split("; ")) == 1 for r in rows)  # one provider per log
+    assert not [r for r in rows if "gen-" in r["id_shapes"]]  # no OpenRouter ids logged
+
+    def c10(prefix, scored=True):
+        out = [r for r in rows if r["experiment"] == "c10" and r["run"].startswith(prefix)]
+        if scored:  # the listener's scored jobs: not the two that failed, the speaker or C
+            skip = ("test-50-100", "test-100-150", "test-speak", "test-choose-qwen")
+            out = [r for r in out if r["run"] not in skip]
+        return [r for r in out if r["log"] == "gpt-oss-120b"]
+
+    val, test = c10("val"), c10("test-")
+    assert (sum(r["empty"] for r in val), sum(r["calls"] for r in val)) == (1, 2401)
+    assert len(test) == 6
+    assert (sum(r["empty"] for r in test), sum(r["calls"] for r in test)) == (1135, 3850)
+    assert max(r["seconds_median"] for r in val) < 20 < 34 < min(r["seconds_median"] for r in test)

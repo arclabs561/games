@@ -286,3 +286,19 @@ def test_repeat_check_counts_prompts_whose_replies_change():
         "times": 2,
         "changed": 1,
     }
+
+
+def test_committed_harness_counts_agree_with_the_committed_games():
+    from pathlib import Path
+
+    results = Path(__file__).parent.parent / "hanabi" / "results"
+    for arm in json.loads((results / "h2-harness.json").read_text())["arms"]:
+        rows = [json.loads(x) for x in (results / "h2-runs" / arm["run"] / "scores.jsonl").open()]
+        rows = [r for r in rows if r["status"] == "complete"]
+        assert arm["games"] == len(rows)
+        assert arm["score"] == sum(r["score"] for r in rows)
+        fallbacks = arm["fallback_discards"] + arm["fallback_plays"] + arm["fallback_hints"]
+        assert fallbacks == sum(r["fallbacks"] for r in rows)
+        lost = arm["lives_lost_by_fallbacks"] + arm["lives_lost_by_model"]
+        assert lost == sum(r["lives_lost"] for r in rows)
+        assert arm["truncated"] == sum(r["truncated"] for r in rows)
