@@ -1,0 +1,19 @@
+{
+ "experiment": "mastermind-optimal",
+ "run": "seed-1",
+ "commit": "211eadf3c1a053e39ebb25905d2465f5ad6d219e",
+ "platform": "actions",
+ "command": [
+  "python",
+  "-m",
+  "mastermind.optimal",
+  "--out",
+  "OUT"
+ ],
+ "returncode": 0,
+ "seconds": 396.0,
+ "job_id": "44708019431",
+ "hardware": "GitHub Actions 1000100568",
+ "gpu": null,
+ "python": "3.14.4"
+}
