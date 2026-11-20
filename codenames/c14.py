@@ -54,6 +54,9 @@ DELTA = 0.05
 HOLM_Z, MDE_Z = 3.08, 2.80
 
 
+EXTRA: dict[str, dict] = {}  # request fields added per model (--extra), by amendment
+
+
 def chooser_model(name: str):
     from dataclasses import replace
 
@@ -61,7 +64,7 @@ def chooser_model(name: str):
 
     m = MODELS[name]
     assert m.provider == "deepinfra", (name, m.provider)
-    return replace(m)
+    return replace(m, extra={**m.extra, **EXTRA.get(name, {})})
 
 
 # Lists (here).
@@ -361,6 +364,9 @@ def main() -> None:
     parser.add_argument("--picks", type=Path, default=PICKS)
     parser.add_argument("--max-tokens", default="", help="choose: model=tokens,... (the cap rule)")
     parser.add_argument("--repeat", type=int, default=0)
+    parser.add_argument(
+        "--extra", action="append", default=[], help="choose: model=JSON request fields"
+    )
     parser.add_argument("--times", type=int, default=2)
     parser.add_argument("--workers", type=int, default=8)
     parser.add_argument("--cap", type=float, default=0.0)
@@ -380,6 +386,9 @@ def main() -> None:
     args.out.mkdir(parents=True, exist_ok=True)
     meter = Meter(args.cap)
     models = args.models.split(",")
+    for item in args.extra:
+        name, _, js = item.partition("=")
+        EXTRA[name] = json.loads(js)
     if args.what == "choose":
         caps = {m: CAPS[m][0] for m in models}
         for item in filter(None, args.max_tokens.split(",")):
