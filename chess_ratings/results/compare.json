@@ -1,0 +1,100 @@
+{
+ "deviation": [
+  {
+   "game": 1,
+   "model": 288.850066,
+   "real_median": 296.115598
+  },
+  {
+   "game": 2,
+   "model": 223.769429,
+   "real_median": 232.638544
+  },
+  {
+   "game": 5,
+   "model": 150.880288,
+   "real_median": 156.164516
+  },
+  {
+   "game": 10,
+   "model": 109.203436,
+   "real_median": 112.458847
+  },
+  {
+   "game": 11,
+   "model": 104.347889,
+   "real_median": 107.42195
+  },
+  {
+   "game": 20,
+   "model": 78.156157,
+   "real_median": 79.990385
+  },
+  {
+   "game": 40,
+   "model": 55.605452,
+   "real_median": 56.727238
+  },
+  {
+   "game": 60,
+   "model": 45.495539,
+   "real_median": 46.532468
+  }
+ ],
+ "first_game_below_110_model": 10,
+ "first_game_below_110_real_quartiles": [
+  10.0,
+  11.0,
+  11.0
+ ],
+ "per_player": 200,
+ "real_players": 323,
+ "seed": 300,
+ "settling": [
+  {
+   "game": 1,
+   "model": 0.165805,
+   "real": 0.170279
+  },
+  {
+   "game": 5,
+   "model": 0.404892,
+   "real": 0.331269
+  },
+  {
+   "game": 10,
+   "model": 0.602523,
+   "real": 0.455108
+  },
+  {
+   "game": 15,
+   "model": 0.744737,
+   "real": 0.572755
+  },
+  {
+   "game": 20,
+   "model": 0.84452,
+   "real": 0.69969
+  },
+  {
+   "game": 25,
+   "model": 0.916146,
+   "real": 0.76161
+  },
+  {
+   "game": 30,
+   "model": 0.961703,
+   "real": 0.848297
+  },
+  {
+   "game": 35,
+   "model": 0.987043,
+   "real": 0.928793
+  },
+  {
+   "game": 40,
+   "model": 0.997616,
+   "real": 0.959752
+  }
+ ]
+}
