@@ -33,6 +33,10 @@ Exact unless marked. Percentages are rounded; the exact fractions are in [`resul
 | Pot of Prosperity with 3 draw-2 cards, against the generic model that plays both | a starter 90.90% against 91.15%; a starter and an extender 73.18% against 73.98% | exact; simulated, 200,000 decks, seed 1, each within its 95% interval |
 | c draw-1 cards added to a deck of N | the same hands as the N cards without them | proved below, and checked exactly |
 | Public calculators | three agree with every value in their tables; one disagrees in 10 of 13 | exact values against values read on 2026-11-19 |
+| Fewest hand traps in 40 for at least one going second, 80 / 90 / 95% of the time; for at least two | 9 / 12 / 15; 17 / 20 / 23 | exact |
+| 12 starters and 12 hand traps, going second: a starter and a hand trap; the example deck with 12 hand traps: a starter, an extender and a hand trap | 80.58%; 62.81% | exact; simulated, 200,000 hands, seed 1, each within its 95% interval |
+| Example deck with 3 of its starters also extenders, going first: a starter and an extender | 70.13%; 71.90% if one card may count for both | exact; checked by brute force on small decks |
+| Example deck with 8 starters and 3 extenders that need the Normal Summon, going first: a starter and an extender, one Normal Summon | 53.86%, against 61.01% with none | exact; simulated as above |
 
 ## How the results are checked
 
@@ -80,6 +84,26 @@ Going first in 40 cards, the strict reading needs both kinds:
 The table is symmetric in its two counts, since the need is. Going second adds 7 to 11 points across these rows ([tables](results/tables.md)).
 
 Each brick lowers the chance of a clean hand. With 3 bricks in 40 cards, the hand has none 66.24% of the time going first and 60.57% going second. Going second is worse here, because the extra card can be a brick.
+
+## Going second: hand traps, two roles and the Normal Summon
+
+Going second, the question at the table is whether the hand holds a starter and a hand trap. With 12 starters and 12 hand traps in 40 cards, the 6-card hand holds both 80.58% of the time. In the example deck with 12 of its 16 other cards as hand traps, it holds a starter, an extender and a hand trap 62.81% of the time. Cards that fill two roles help, but a calculator that lets one card count for both overstates the chance. Starters and extenders that need the turn's one Normal Summon lower it further. All exact ([`results/second.md`](results/second.md)), with the method in `roles.py`.
+
+A **hand trap** is a card played from the hand during the opponent's turn. Here a card may carry several roles, and a need is a list of slots that different cards of the hand must fill. A card that is both a starter and an extender fills one slot, not two. A card that needs the **Normal Summon** competes with every other such card, since a turn has one Normal Summon.
+
+| Going second in 40 cards | 9 hand traps | 12 | 15 |
+|---|---:|---:|---:|
+| 9 starters: a starter and a hand trap | 63.58% | 71.71% | 76.41% |
+| 12 starters | 71.71% | 80.58% | 85.62% |
+| 15 starters | 76.41% | 85.62% | 90.78% |
+
+At least one hand trap takes the same counts as at least one starter: 12 for 90% going second. At least two takes 20. With 28 cards to split between starters and hand traps, 14 of each give the most, 88.03%.
+
+In the example deck going first, making 3 of the 12 starters also extenders raises "a starter and an extender" from 61.01% to 70.13%. Counting each of those cards once for each role gives 71.90%, which is 1.77 points too high. With all 12 starters also extenders the error is 7.07 points. The correct value then equals "a starter and another engine card" for the plain deck, 78.00%, since a second starter can now be the extender.
+
+If 8 of the 12 starters and 3 of the 9 extenders need the Normal Summon, a starter and an extender that can both be played come up 53.86% of the time, against 61.01% when none needs it. "At least one starter" does not change, since one card uses the Normal Summon at most once.
+
+The exact sum is checked against a listing of every hand of two small decks with two-role cards and Normal Summon cards, for eight needs. Four rows are also checked by 200,000 seeded hands each (seed 1), decided by trying every assignment of slots to cards; each exact value lies inside its 95% interval ([`results/second_simulation.md`](results/second_simulation.md)).
 
 ## Copies
 
@@ -172,6 +196,7 @@ uv run python -m yugioh.calc --starters 12 --extenders 9 --bricks 3   # about 0.
 uv run python -m yugioh.tables               # results/tables.md, about 1 second
 uv run python -m yugioh.tables --simulate    # also results/simulation.md, 1 to 2 minutes
 uv run python -m yugioh.prosperity --write   # results/prosperity.md and the simulation, about 5 seconds
+uv run python -m yugioh.second --simulate    # results/second.md and its simulation, about a minute
 uv run python -m yugioh.figures              # figures/*.svg
 uv run pytest tests/test_yugioh.py           # about 10 seconds
 ```
@@ -217,6 +242,8 @@ a starter and no brick                     57.61%        55.01%
 | `odds.py` | Decks, roles and needs; the exact sum over hands, the dynamic program over names, brute force and simulation |
 | `draws.py` | Draw-1, draw-2 and look-at-6 cards: exact recursion and separate seeded dealing |
 | `prosperity.py` | Pot of Prosperity with its costs: exact sum, brute force, seeded dealing; writes `results/prosperity.md` |
+| `roles.py` | Cards with several roles, needs as slots, the Normal Summon: exact sum, brute force, seeded dealing |
+| `second.py` | Writes `results/second.md` and, with `--simulate`, `results/second_simulation.md` |
 | `calc.py` | The calculator |
 | `tables.py` | Writes `results/tables.md` and, with `--simulate`, `results/simulation.md` |
 | `figures.py` | Writes the three SVG figures, without a plotting library |
