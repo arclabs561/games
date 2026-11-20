@@ -100,7 +100,7 @@ build-backend = "uv_build"
 
 [tool.uv.build-backend]
 module-root = ""
-module-name = ["boggle", "codenames", "drive_ya_nuts", "egyptian_ratscrew", "ev_nova", "hanabi", "mastermind", "peggle", "pokemon", "spot_it", "tenzi", "yahtzee", "yugioh"]
+module-name = ["boggle", "cannonballs", "codenames", "drive_ya_nuts", "egyptian_ratscrew", "ev_nova", "freecell", "hanabi", "mastermind", "peggle", "pokemon", "spot_it", "tenzi", "yahtzee", "yugioh"]
 
 [tool.ruff]
 line-length = 100
