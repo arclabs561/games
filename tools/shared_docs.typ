@@ -49,8 +49,10 @@
   else if c.has("children") { c.children.map(x => restyle-tables(x, columns, align)).join() }
   else { c }
 }
-#let shared(readme, name, columns: auto, align: left) = restyle-tables(
-  cmarker.render(section(readme, name), heading-labels: none, set-document-title: false),
+// `math` renders $...$ in a fragment (cmarker's math callback); with the default, none, dollar
+// signs are plain text, as they were before the option existed.
+#let shared(readme, name, columns: auto, align: left, math: none) = restyle-tables(
+  cmarker.render(section(readme, name), heading-labels: none, set-document-title: false, math: math),
   columns,
   align,
 )
