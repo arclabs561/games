@@ -72,6 +72,10 @@ FIGURES = {
     "best-board.svg": lambda: draw_board(
         parse_board("perslatgsineters"), ["replastering"], "The best board for ENABLE2K: 3,625 points"
     ),
+    "best-5x5.svg": lambda: draw_board(
+        parse_board("ligdrmanesietildsracsepes"), ["interspecies"],
+        "Best 5 by 5 board found: 10,397 points (enable1.txt)"
+    ),
 }  # fmt: skip
 
 

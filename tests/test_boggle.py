@@ -1,5 +1,6 @@
 """Boggle word search (boggle/board.py, which boggle.ipynb imports)."""
 
+import json
 import random
 from collections import Counter
 from fractions import Fraction
@@ -392,3 +393,18 @@ def test_boyans_board_resists_every_change_of_one_square_and_every_swap():
 @pytest.mark.skipif(anneal.compiler_missing(), reason="anneal.c needs a C compiler")
 def test_annealing_is_seeded():
     assert anneal.anneal(7, 1, steps=2000) == anneal.anneal(7, 1, steps=2000)
+
+
+def test_committed_search_summary_is_what_the_script_writes():
+    # 1,920 seeded searches; the best board they found is Vanderkam's, up to symmetry.
+    summary = anneal.summary()
+    committed = json.loads((HERE / "results" / "best-5x5.json").read_text())
+    assert summary == committed
+    assert summary["best"] == {
+        "board": "ligdrmanesietildsracsepes",
+        "points": 10397,
+        "words": 2338,
+        "searches": 269,
+    }
+    assert anneal.canonical("sepesdsracietilmanesligdr") == "ligdrmanesietildsracsepes"
+    assert anneal.canonical("rslcsdeiaegntrpatesesmidr") == summary["top boards"][1]["board"]
