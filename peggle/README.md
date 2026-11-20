@@ -76,8 +76,8 @@ All results are exact unless marked.
 
 - **The first-shooter edge in Peggle.** Who shoots first in a Peggle duel, and how large is that edge? The first-shooter edges here are assumed values, not measurements. Their size in actual duels, and whether it depends on the board, would need recorded duels.
 - **Drift and stopping.** A player whose chance rises from 0.45 to 0.55 halfway through 1,000 games is usually declared the worse player by the 95% rule. Does some rule that looks only at wins and games avoid this, or does it need the order of the games? For skill that changes smoothly, is there a stopping rule whose verdict keeps a clear meaning, such as "better over the last 100 games", with a guarantee like Ville's inequality?
-- **Other boundaries.** A threshold that changes with n could keep the 5% for equal players and declare the better player better more often at p = 0.55 than one fixed threshold does. Which boundary does this best for a given cap is not worked out here.
-- **The Kiefer–Weiss test for 0.45 against 0.55.** Weiss gives a scheme for the test that minimizes the largest mean length over all p. Computing it with the dynamic program here, and comparing its length at p = 1/2 with the 225 games of Wald's test, is left undone.
+- **Other boundaries.** A threshold that changes with n could keep the 5% for equal players and declare the better player better more often at p = 0.55 than one fixed threshold does. Which boundary does this best for a given cap?
+- **The Kiefer–Weiss test for 0.45 against 0.55.** Weiss gives a scheme for the test that minimizes the largest mean length over all p. How long is it at p = 1/2, against the 225 games of Wald's test? The dynamic program here could compute it.
 
 <!-- /shared -->
 
