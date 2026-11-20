@@ -90,7 +90,9 @@ def open_questions(readme: str) -> list[str]:
     def flush() -> None:
         nonlocal current
         if current:
-            questions.append(" ".join(current))
+            # HTML comments, such as the paper-only cross-references of shared sections, are
+            # hidden on GitHub, so they are left out here too
+            questions.append(re.sub(r"\s*<!--.*?-->", "", " ".join(current)))
         current = None
 
     for line in readme.splitlines():

@@ -66,3 +66,8 @@ def test_every_question_has_a_known_status():
     rows = [line for line in (ROOT / "OPEN.md").read_text().splitlines() if line.startswith("| [")]
     assert rows
     assert all(line.rsplit("|", 2)[1].strip() in oq.STATUSES for line in rows)
+
+
+def test_paper_only_comments_are_left_out():
+    readme = "## Open questions\n\n- Proved<!--raw-typst  (@thm-x)-->. Is it?\n"
+    assert oq.open_questions(readme) == ["Proved. Is it?"]

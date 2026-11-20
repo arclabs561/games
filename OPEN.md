@@ -1,6 +1,6 @@
 # Open questions
 
-74 open questions from 18 games' READMEs, collected by `tools/open_questions.py`. Edit the READMEs, not this file, then run `python3 tools/open_questions.py`; a test checks that this file is current.
+76 open questions from 18 games' READMEs, collected by `tools/open_questions.py`. Edit the READMEs, not this file, then run `python3 tools/open_questions.py`; a test checks that this file is current.
 
 Each status comes from the question's wording, by the rules in the script's docstring. It guides the choice of what to work on next and is not itself a finding.
 
@@ -9,7 +9,7 @@ Each status comes from the question's wording, by the rules in the script's docs
 | blocked on data | 8 |
 | blocked on compute | 3 |
 | partly answered | 10 |
-| open | 53 |
+| open | 55 |
 
 | Game | Question | Status |
 |---|---|---|
@@ -21,7 +21,7 @@ Each status comes from the question's wording, by the rules in the script's docs
 | [Common Words in Boggle](boggle/README.md) | **The best board for `enable1.txt`.** Vanderkam's proof is for ENABLE2K. Whether `perslatgsineters` is also best for `enable1.txt` has not been checked. | partly answered |
 | [Cannonballs](cannonballs/README.md) | **Square piles that are cubes.** Is the single ball the only square pile that holds a cube number of balls? The search found no other up to 10<sup>18</sup> layers. Four of the six cases for cubes survive every divisor up to 200, so a proof would need another idea, perhaps a bound on equations of the form \|ax³ − by³\| = 1 as for tetrahedral piles. | open |
 | [Cannonballs](cannonballs/README.md) | **A short proof for the tetrahedral pile of 34 layers.** Avanesov's proof that 7,140 is the last number that is both a triangle and a tetrahedral pile uses heavy machinery. Is there a proof by Pell equations and remainders, like Anglin's for Lucas's problem? | open |
-| [Cannonballs](cannonballs/README.md) | **Oblong piles that are triangles or cubes.** The rule for squares is proved<!--raw-typst  (@thm-oblong)-->. Which short sides allow an oblong pile with a triangular number of balls? For a fixed short side a, each extra ball of length adds a triangle of side a, so the remainder method of the square case applies, but it has not been worked out. | open |
+| [Cannonballs](cannonballs/README.md) | **Oblong piles that are triangles or cubes.** The rule for squares is proved. Which short sides allow an oblong pile with a triangular number of balls? For a fixed short side a, each extra ball of length adds a triangle of side a, so the remainder method of the square case applies, but it has not been worked out. | open |
 | [Cannonballs](cannonballs/README.md) | **Other packings.** The piles here are pieces of the face-centered cubic packing. A pile can also be built with each new layer turned the other way, as in the hexagonal close packing, which is equally dense. Which pile shapes stay stable then, and how do their counts and touching pairs change? | open |
 | [Chess: what a rating says, and what a player at a rating plays](chess_ratings/README.md) | How much of the gap between real and model settling comes from players who improve, and how much from strong players on new accounts? Splitting real players by their rating at game 61 against their first results would separate them. | open |
 | [Chess: what a rating says, and what a player at a rating plays](chess_ratings/README.md) | Does Maia-3 expect fewer opening blunders when it sees the moves that led to a position? Running the common positions with each occurrence's history would tell. | open |
@@ -40,7 +40,7 @@ Each status comes from the question's wording, by the rules in the script's docs
 | [Egyptian Ratscrew](egyptian_ratscrew/README.md) | Which nine-card deck types have a trap with three players? The census was run for two players only. | open |
 | [Egyptian Ratscrew](egyptian_ratscrew/README.md) | What is the smallest deck with a trap with slaps in it for three players? For two players it has nine cards, and the census finds one such deck type among the 1,349. | open |
 | [Egyptian Ratscrew](egyptian_ratscrew/README.md) | Is the seat effect with four players zero, or too small to see in 200,000 games? | open |
-| [Erase](erase/README.md) | A proof of the theorem on big hands<!--raw-typst  (@thm-big)--> that does not check cases is still open; in particular, a short reason why any seven nonzero cards outside the two families make 10 using all of them, apart from 1 6 6 7 7 7 7. | open |
+| [Erase](erase/README.md) | A proof of the theorem on big hands that does not check cases is still open; in particular, a short reason why any seven nonzero cards outside the two families make 10 using all of them, apart from 1 6 6 7 7 7 7. | open |
 | [Erase](erase/README.md) | Do the thresholds for targets other than 10 hold for hands of more than 11 cards? The induction to larger hands is worked out only for 10. | partly answered |
 | [Erase](erase/README.md) | Does any target above 30 have a threshold above 9? Among the targets checked only 14 reaches 9, because of one multiset of eight cards. | partly answered |
 | [EV Nova and Naev](ev_nova/README.md) | Whether Naev's mean prices match the game. A running copy of Naev could check a few spobs. | blocked on data |
@@ -77,8 +77,10 @@ Each status comes from the question's wording, by the rules in the script's docs
 | [Spot It](spot_it/README.md) | What is the largest maximal family of order 7 that is not a plane? Random searches found 37 cards, and Theorem 4 allows at most 47. | partly answered |
 | [Spot It](spot_it/README.md) | Does a plane of order 12, a deck of 157 cards, exist? It is the smallest order still open. | open |
 | [Spot It](spot_it/README.md) | Which two cards does a real box leave out? A card list of an actual box, with a license that allows checking it here, would settle it. | blocked on data |
-| [Tenzi](tenzi/README.md) | The slides' chart of a player who rolls faster gives a jump of 0.0235 at equal speeds, about half the exact chance of a tie between two players, 0.048. Where does 0.0235 come from? | open |
-| [Tenzi](tenzi/README.md) | What is the best strategy in a race against players who watch our dice and react to them? | open |
+| [Tenzi](tenzi/README.md) | **A proof for every deadline.** Switching is best for every deadline up to turn 163, by computation. An argument that covers every deadline, and every number of dice and faces, is still missing. | open |
+| [Tenzi](tenzi/README.md) | **Speed.** The slides ask how much a faster player gains; in a lockstep race every player rolls at the same pace. Their chart of a player who rolls faster gives a jump of 0.0235 at equal speeds, about half the exact chance of a tie between two players, 0.048. Where does 0.0235 come from? | open |
+| [Tenzi](tenzi/README.md) | **Players who react.** What is the best strategy in a race against players who watch our dice and react to them? The argument that switching is best assumes that the others' choices do not depend on our dice. | open |
+| [Tenzi](tenzi/README.md) | **Other sizes.** The same chain and decision process work for any number of dice and faces. Every deadline has been checked only for ten dice on six faces and for two to six dice on two to six faces. | open |
 | [Yahtzee](yahtzee/README.md) | Why Glenn's rule lists score 7.9 points more here than he reports. His tables leave open what a keep rule such as "Small straight" keeps, and whether a "tripleton" may be four of a kind. | partly answered |
 | [Yahtzee](yahtzee/README.md) | Which rules Kelly and Liese used, and whether exact rational arithmetic for the full game reproduces their fraction. | open |
 | [Yahtzee](yahtzee/README.md) | Whether a card can get closer than 9 points. The split of the sheet's loss suggests where to look: keeps that depend on more than the most common face, the longest run and the pairs. | open |
