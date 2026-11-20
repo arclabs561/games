@@ -90,13 +90,13 @@ The model assumes that every game has the same chance. If, between equal players
 uv run python -m peggle.peggle
 uv run python -m peggle.stopping                       # about 10 seconds
 uv run python -m peggle.variations                     # about 13 seconds
-uv run tools/typst_vendor.py peggle/peggle.typ   # rebuilds peggle.pdf
+uv run tools/typst_vendor.py peggle/peggle.typ --all   # the PDF, the phone PDF and the HTML page
 uv run python -m peggle.figures                        # the figures in figures/
 ```
 
 ## Files
 
-- `peggle.pdf`, from `peggle.typ`, explains and proves this, with a reading guide, puzzles and a glossary.
+- `peggle.pdf`, from `peggle.typ`, explains and proves this, with a reading guide, puzzles and a glossary. `peggle-phone.pdf` is the same text on a narrow page for reading on a phone. The HTML page that `--all` also writes is not committed.
 - `peggle.py` checks the coin-flip identity against the Beta integral with exact fractions, computes the tables, and writes `better.csv` for the figure.
 - `stopping.py` computes the optional-stopping chances exactly.
 - `variations.py` computes the other priors, the match formats, the ratings, and the chances that change from game to game, and writes `priors.csv`, `walk.csv` and `formats.csv` for the figures.

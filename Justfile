@@ -37,8 +37,8 @@ execute:
 papers:
     uv run tools/typst_vendor.py cannonballs/cannonballs.typ --all
     uv run tools/typst_vendor.py erase/paper/erase.typ --all
-    uv run tools/typst_vendor.py peggle/peggle.typ
-    uv run tools/typst_vendor.py tenzi/tenzi.typ
+    uv run tools/typst_vendor.py peggle/peggle.typ --all
+    uv run tools/typst_vendor.py tenzi/tenzi.typ --all
 
 # Everything CI runs, except the script lock and z3 checks and the PDF rebuild.
 ci: check fmt-check typecheck test notebooks
