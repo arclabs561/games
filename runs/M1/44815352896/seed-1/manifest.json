@@ -1,0 +1,22 @@
+{
+ "experiment": "M1",
+ "run": "seed-1",
+ "commit": "e9294afff86b99813c3f0997892d228a09b37a69",
+ "platform": "actions",
+ "command": [
+  "python",
+  "-m",
+  "mastermind.m1",
+  "run",
+  "--slice",
+  "SEED",
+  "--out",
+  "OUT"
+ ],
+ "returncode": 0,
+ "seconds": 380.0,
+ "job_id": "44815352896",
+ "hardware": "GitHub Actions 1000101713",
+ "gpu": null,
+ "python": "3.14.4"
+}

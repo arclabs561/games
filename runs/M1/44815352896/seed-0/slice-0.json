@@ -1,0 +1,1338 @@
+{
+ "plan": "experiments/plans/M1.md",
+ "slice": 0,
+ "words": "enable",
+ "zipf": null,
+ "seed": 31,
+ "screens": 5000,
+ "wordfreq": null,
+ "enable_sha256": "a392640f14602fcbb36779eb6671d170260c06d43f41c16383e7f0e35b221b4a",
+ "pool_sizes": {
+  "4": 3903,
+  "5": 8636,
+  "6": 15231,
+  "7": 23109,
+  "8": 28420,
+  "9": 24873,
+  "10": 20300,
+  "11": 15504,
+  "12": 11357,
+  "13": 7827,
+  "14": 5127,
+  "15": 3192
+ },
+ "rows": [
+  {
+   "level": "Very Easy",
+   "words": 5,
+   "screens": 5000,
+   "cracked_histogram": {
+    "most parts": {
+     "4": 113,
+     "5": 4887
+    },
+    "expected size": {
+     "4": 113,
+     "5": 4887
+    },
+    "entropy": {
+     "4": 113,
+     "5": 4887
+    },
+    "minimax": {
+     "4": 113,
+     "5": 4887
+    },
+    "most in common": {
+     "4": 117,
+     "5": 4883
+    },
+    "best possible": {
+     "4": 113,
+     "5": 4887
+    }
+   },
+   "random_share_sum": 4955.073333333334,
+   "random_share_sum_sq": 4915.026955555555,
+   "screens_no_sure_win": 113,
+   "mean_likeness_by_length": {
+    "4": {
+     "screens": 2475,
+     "sum": 800.8,
+     "sum_sq": 351.42
+    },
+    "5": {
+     "screens": 2525,
+     "sum": 1108.3,
+     "sum_sq": 629.77
+    }
+   },
+   "hardest": {
+    "cracked": 4,
+    "screen": [
+     "WAUK",
+     "EDIT",
+     "LOCI",
+     "FEND",
+     "OLEO"
+    ]
+   }
+  },
+  {
+   "level": "Very Easy",
+   "words": 10,
+   "screens": 5000,
+   "cracked_histogram": {
+    "most parts": {
+     "7": 81,
+     "8": 570,
+     "9": 1532,
+     "10": 2817
+    },
+    "expected size": {
+     "7": 4,
+     "8": 104,
+     "9": 870,
+     "10": 4022
+    },
+    "entropy": {
+     "7": 4,
+     "8": 119,
+     "9": 943,
+     "10": 3934
+    },
+    "minimax": {
+     "7": 3,
+     "8": 99,
+     "9": 757,
+     "10": 4141
+    },
+    "most in common": {
+     "7": 8,
+     "8": 168,
+     "9": 1246,
+     "10": 3578
+    },
+    "best possible": {
+     "7": 2,
+     "8": 59,
+     "9": 414,
+     "10": 4525
+    }
+   },
+   "random_share_sum": 4389.256421957672,
+   "random_share_sum_sq": 3878.5838022458156,
+   "screens_no_sure_win": 475,
+   "mean_likeness_by_length": {
+    "4": {
+     "screens": 2449,
+     "sum": 783.0222222222222,
+     "sum_sq": 273.9614814814815
+    },
+    "5": {
+     "screens": 2551,
+     "sum": 1105.3777777777777,
+     "sum_sq": 521.4528395061728
+    }
+   },
+   "hardest": {
+    "cracked": 7,
+    "screen": [
+     "ADIT",
+     "KEPS",
+     "OFAY",
+     "HOSE",
+     "SORI",
+     "TIKI",
+     "JATO",
+     "CHEZ",
+     "ZORI",
+     "TRUG"
+    ]
+   }
+  },
+  {
+   "level": "Very Easy",
+   "words": 15,
+   "screens": 5000,
+   "cracked_histogram": {
+    "most parts": {
+     "7": 4,
+     "8": 9,
+     "9": 65,
+     "10": 191,
+     "11": 513,
+     "12": 965,
+     "13": 1268,
+     "14": 1249,
+     "15": 736
+    },
+    "expected size": {
+     "10": 3,
+     "11": 34,
+     "12": 249,
+     "13": 943,
+     "14": 1876,
+     "15": 1895
+    },
+    "entropy": {
+     "10": 8,
+     "11": 90,
+     "12": 410,
+     "13": 993,
+     "14": 1759,
+     "15": 1740
+    },
+    "minimax": {
+     "10": 5,
+     "11": 39,
+     "12": 222,
+     "13": 848,
+     "14": 1796,
+     "15": 2090
+    },
+    "most in common": {
+     "10": 6,
+     "11": 92,
+     "12": 515,
+     "13": 1344,
+     "14": 1938,
+     "15": 1105
+    },
+    "best possible": {
+     "11": 7,
+     "12": 65,
+     "13": 345,
+     "14": 1179,
+     "15": 3404
+    }
+   },
+   "random_share_sum": 3835.8664070008767,
+   "random_share_sum_sq": 2966.392250042209,
+   "screens_no_sure_win": 1596,
+   "mean_likeness_by_length": {
+    "4": {
+     "screens": 2475,
+     "sum": 797.6380952380953,
+     "sum_sq": 269.11909297052154
+    },
+    "5": {
+     "screens": 2525,
+     "sum": 1102.5904761904762,
+     "sum_sq": 505.92072562358277
+    }
+   },
+   "hardest": {
+    "cracked": 11,
+    "screen": [
+     "KITH",
+     "CHEZ",
+     "BROO",
+     "DARB",
+     "HILI",
+     "TEEM",
+     "HOVE",
+     "SPUN",
+     "LOWE",
+     "SPUR",
+     "DAHL",
+     "AMAH",
+     "AMAS",
+     "SEPT",
+     "JINK"
+    ]
+   }
+  },
+  {
+   "level": "Very Easy",
+   "words": 20,
+   "screens": 5000,
+   "cracked_histogram": {
+    "most parts": {
+     "9": 1,
+     "10": 9,
+     "11": 58,
+     "12": 159,
+     "13": 354,
+     "14": 615,
+     "15": 897,
+     "16": 934,
+     "17": 849,
+     "18": 681,
+     "19": 359,
+     "20": 84
+    },
+    "expected size": {
+     "12": 2,
+     "13": 15,
+     "14": 85,
+     "15": 301,
+     "16": 664,
+     "17": 1057,
+     "18": 1253,
+     "19": 1136,
+     "20": 487
+    },
+    "entropy": {
+     "12": 4,
+     "13": 27,
+     "14": 132,
+     "15": 402,
+     "16": 755,
+     "17": 1084,
+     "18": 1209,
+     "19": 990,
+     "20": 397
+    },
+    "minimax": {
+     "12": 3,
+     "13": 25,
+     "14": 96,
+     "15": 334,
+     "16": 739,
+     "17": 1035,
+     "18": 1168,
+     "19": 1110,
+     "20": 490
+    },
+    "most in common": {
+     "12": 1,
+     "13": 29,
+     "14": 164,
+     "15": 495,
+     "16": 997,
+     "17": 1334,
+     "18": 1204,
+     "19": 632,
+     "20": 144
+    },
+    "best possible": {
+     "14": 9,
+     "15": 56,
+     "16": 299,
+     "17": 705,
+     "18": 1076,
+     "19": 1353,
+     "20": 1502
+    }
+   },
+   "random_share_sum": 3411.0203304300417,
+   "random_share_sum_sq": 2346.4971675441448,
+   "screens_no_sure_win": 3498,
+   "mean_likeness_by_length": {
+    "4": {
+     "screens": 2428,
+     "sum": 778.0315789473684,
+     "sum_sq": 257.32116343490304
+    },
+    "5": {
+     "screens": 2572,
+     "sum": 1124.4052631578948,
+     "sum_sq": 508.2175346260388
+    }
+   },
+   "hardest": {
+    "cracked": 14,
+    "screen": [
+     "PINK",
+     "NEMA",
+     "MISO",
+     "OXEN",
+     "HOCK",
+     "AURA",
+     "BULB",
+     "KAON",
+     "SENE",
+     "DRIB",
+     "CHAT",
+     "BORT",
+     "WINE",
+     "GATE",
+     "ODIC",
+     "LOAD",
+     "TUBS",
+     "LAUD",
+     "YETI",
+     "INTO"
+    ]
+   }
+  },
+  {
+   "level": "Easy",
+   "words": 5,
+   "screens": 5000,
+   "cracked_histogram": {
+    "most parts": {
+     "4": 15,
+     "5": 4985
+    },
+    "expected size": {
+     "4": 15,
+     "5": 4985
+    },
+    "entropy": {
+     "4": 15,
+     "5": 4985
+    },
+    "minimax": {
+     "4": 15,
+     "5": 4985
+    },
+    "most in common": {
+     "4": 20,
+     "5": 4980
+    },
+    "best possible": {
+     "4": 15,
+     "5": 4985
+    }
+   },
+   "random_share_sum": 4989.856666666667,
+   "random_share_sum_sq": 4980.409366666667,
+   "screens_no_sure_win": 15,
+   "mean_likeness_by_length": {
+    "6": {
+     "screens": 1640,
+     "sum": 887.2,
+     "sum_sq": 591.9
+    },
+    "7": {
+     "screens": 1655,
+     "sum": 1075.3,
+     "sum_sq": 837.4300000000001
+    },
+    "8": {
+     "screens": 1705,
+     "sum": 1200.1,
+     "sum_sq": 999.7900000000001
+    }
+   },
+   "hardest": {
+    "cracked": 4,
+    "screen": [
+     "CLEPED",
+     "ABSENT",
+     "GONION",
+     "RHOMBS",
+     "PUDDLE"
+    ]
+   }
+  },
+  {
+   "level": "Easy",
+   "words": 10,
+   "screens": 5000,
+   "cracked_histogram": {
+    "most parts": {
+     "7": 2,
+     "8": 30,
+     "9": 359,
+     "10": 4609
+    },
+    "expected size": {
+     "8": 4,
+     "9": 78,
+     "10": 4918
+    },
+    "entropy": {
+     "8": 4,
+     "9": 96,
+     "10": 4900
+    },
+    "minimax": {
+     "8": 4,
+     "9": 68,
+     "10": 4928
+    },
+    "most in common": {
+     "7": 1,
+     "8": 28,
+     "9": 535,
+     "10": 4436
+    },
+    "best possible": {
+     "8": 1,
+     "9": 18,
+     "10": 4981
+    }
+   },
+   "random_share_sum": 4786.546315145502,
+   "random_share_sum_sq": 4588.738499086561,
+   "screens_no_sure_win": 19,
+   "mean_likeness_by_length": {
+    "6": {
+     "screens": 1622,
+     "sum": 872.8444444444444,
+     "sum_sq": 503.6711111111111
+    },
+    "7": {
+     "screens": 1658,
+     "sum": 1079.9777777777779,
+     "sum_sq": 750.3837037037036
+    },
+    "8": {
+     "screens": 1720,
+     "sum": 1224.5555555555557,
+     "sum_sq": 920.3422222222222
+    }
+   },
+   "hardest": {
+    "cracked": 8,
+    "screen": [
+     "REPUMP",
+     "RETYPE",
+     "ACETUM",
+     "DIRECT",
+     "UPTORE",
+     "NEARER",
+     "MAMMAL",
+     "FRISKY",
+     "POWDER",
+     "HOAGIE"
+    ]
+   }
+  },
+  {
+   "level": "Easy",
+   "words": 15,
+   "screens": 5000,
+   "cracked_histogram": {
+    "most parts": {
+     "10": 3,
+     "11": 21,
+     "12": 88,
+     "13": 365,
+     "14": 1247,
+     "15": 3276
+    },
+    "expected size": {
+     "12": 1,
+     "13": 30,
+     "14": 465,
+     "15": 4504
+    },
+    "entropy": {
+     "12": 4,
+     "13": 54,
+     "14": 560,
+     "15": 4382
+    },
+    "minimax": {
+     "12": 1,
+     "13": 36,
+     "14": 372,
+     "15": 4591
+    },
+    "most in common": {
+     "11": 7,
+     "12": 48,
+     "13": 393,
+     "14": 1611,
+     "15": 2941
+    },
+    "best possible": {
+     "13": 2,
+     "14": 32,
+     "15": 4966
+    }
+   },
+   "random_share_sum": 4468.3802351828945,
+   "random_share_sum_sq": 4004.270939707106,
+   "screens_no_sure_win": 34,
+   "mean_likeness_by_length": {
+    "6": {
+     "screens": 1627,
+     "sum": 887.847619047619,
+     "sum_sq": 505.60580498866216
+    },
+    "7": {
+     "screens": 1681,
+     "sum": 1080.0380952380951,
+     "sum_sq": 719.7217233560091
+    },
+    "8": {
+     "screens": 1692,
+     "sum": 1207.6285714285714,
+     "sum_sq": 887.9220861678004
+    }
+   },
+   "hardest": {
+    "cracked": 13,
+    "screen": [
+     "FORNIX",
+     "BYZANT",
+     "DRILLS",
+     "TENUTO",
+     "MAMLUK",
+     "PROVER",
+     "ELOIGN",
+     "AMEBAS",
+     "SEPSES",
+     "KUGELS",
+     "RIMOSE",
+     "SALVOS",
+     "NEBULE",
+     "CLAXON",
+     "WHEEZY"
+    ]
+   }
+  },
+  {
+   "level": "Easy",
+   "words": 20,
+   "screens": 5000,
+   "cracked_histogram": {
+    "most parts": {
+     "12": 2,
+     "13": 4,
+     "14": 23,
+     "15": 76,
+     "16": 203,
+     "17": 559,
+     "18": 952,
+     "19": 1575,
+     "20": 1606
+    },
+    "expected size": {
+     "15": 1,
+     "16": 6,
+     "17": 46,
+     "18": 247,
+     "19": 1114,
+     "20": 3586
+    },
+    "entropy": {
+     "15": 3,
+     "16": 10,
+     "17": 89,
+     "18": 381,
+     "19": 1293,
+     "20": 3224
+    },
+    "minimax": {
+     "15": 3,
+     "16": 14,
+     "17": 54,
+     "18": 223,
+     "19": 915,
+     "20": 3791
+    },
+    "most in common": {
+     "14": 3,
+     "15": 27,
+     "16": 114,
+     "17": 493,
+     "18": 1269,
+     "19": 1825,
+     "20": 1269
+    },
+    "best possible": {
+     "17": 2,
+     "18": 20,
+     "19": 185,
+     "20": 4793
+    }
+   },
+   "random_share_sum": 4145.410512027724,
+   "random_share_sum_sq": 3450.180524318565,
+   "screens_no_sure_win": 207,
+   "mean_likeness_by_length": {
+    "6": {
+     "screens": 1708,
+     "sum": 931.6526315789474,
+     "sum_sq": 523.3714127423823
+    },
+    "7": {
+     "screens": 1657,
+     "sum": 1067.7052631578947,
+     "sum_sq": 703.6895290858726
+    },
+    "8": {
+     "screens": 1635,
+     "sum": 1161.878947368421,
+     "sum_sq": 843.114376731302
+    }
+   },
+   "hardest": {
+    "cracked": 17,
+    "screen": [
+     "GRAPEY",
+     "RENEGE",
+     "MORGAN",
+     "HAJJIS",
+     "QUESTS",
+     "ESCHEW",
+     "SHOLOM",
+     "INDIUM",
+     "KINKED",
+     "BOWFIN",
+     "CURARI",
+     "LANUGO",
+     "SHITTY",
+     "OCTAVE",
+     "THIRDS",
+     "AGEDLY",
+     "INKING",
+     "FIZZER",
+     "QUICHE",
+     "PRIMER"
+    ]
+   }
+  },
+  {
+   "level": "Average",
+   "words": 5,
+   "screens": 5000,
+   "cracked_histogram": {
+    "most parts": {
+     "4": 3,
+     "5": 4997
+    },
+    "expected size": {
+     "4": 3,
+     "5": 4997
+    },
+    "entropy": {
+     "4": 3,
+     "5": 4997
+    },
+    "minimax": {
+     "4": 3,
+     "5": 4997
+    },
+    "most in common": {
+     "4": 11,
+     "5": 4989
+    },
+    "best possible": {
+     "4": 3,
+     "5": 4997
+    }
+   },
+   "random_share_sum": 4996.7733333333335,
+   "random_share_sum_sq": 4993.700311111111,
+   "screens_no_sure_win": 3,
+   "mean_likeness_by_length": {
+    "9": {
+     "screens": 2465,
+     "sum": 2104.9,
+     "sum_sq": 2098.71
+    },
+    "10": {
+     "screens": 2535,
+     "sum": 2427.1,
+     "sum_sq": 2672.25
+    }
+   },
+   "hardest": {
+    "cracked": 4,
+    "screen": [
+     "PREVENTING",
+     "ADVERTENCE",
+     "UNDOMESTIC",
+     "CLANGOURED",
+     "RUBYTHROAT"
+    ]
+   }
+  },
+  {
+   "level": "Average",
+   "words": 10,
+   "screens": 5000,
+   "cracked_histogram": {
+    "most parts": {
+     "9": 52,
+     "10": 4948
+    },
+    "expected size": {
+     "9": 4,
+     "10": 4996
+    },
+    "entropy": {
+     "9": 8,
+     "10": 4992
+    },
+    "minimax": {
+     "9": 3,
+     "10": 4997
+    },
+    "most in common": {
+     "7": 1,
+     "8": 13,
+     "9": 275,
+     "10": 4711
+    },
+    "best possible": {
+     "9": 1,
+     "10": 4999
+    }
+   },
+   "random_share_sum": 4918.158772486772,
+   "random_share_sum_sq": 4838.836744424785,
+   "screens_no_sure_win": 1,
+   "mean_likeness_by_length": {
+    "9": {
+     "screens": 2456,
+     "sum": 2092.1555555555556,
+     "sum_sq": 1873.012839506173
+    },
+    "10": {
+     "screens": 2544,
+     "sum": 2411.9555555555557,
+     "sum_sq": 2400.098765432099
+    }
+   },
+   "hardest": {
+    "cracked": 9,
+    "screen": [
+     "WHIZBANGS",
+     "TRUSTLESS",
+     "OMNIARCHS",
+     "SEXTUPLET",
+     "DEOXIDIZE",
+     "HACIENDAS",
+     "ESPANOLES",
+     "DEPROGRAM",
+     "PSYCHOTIC",
+     "CUSPIDORS"
+    ]
+   }
+  },
+  {
+   "level": "Average",
+   "words": 15,
+   "screens": 5000,
+   "cracked_histogram": {
+    "most parts": {
+     "12": 4,
+     "13": 23,
+     "14": 271,
+     "15": 4702
+    },
+    "expected size": {
+     "13": 1,
+     "14": 17,
+     "15": 4982
+    },
+    "entropy": {
+     "14": 29,
+     "15": 4971
+    },
+    "minimax": {
+     "14": 15,
+     "15": 4985
+    },
+    "most in common": {
+     "11": 1,
+     "12": 17,
+     "13": 132,
+     "14": 1015,
+     "15": 3835
+    },
+    "best possible": {
+     "15": 5000
+    }
+   },
+   "random_share_sum": 4759.22973496016,
+   "random_share_sum_sq": 4532.54734802042,
+   "screens_no_sure_win": 0,
+   "mean_likeness_by_length": {
+    "9": {
+     "screens": 2488,
+     "sum": 2115.4,
+     "sum_sq": 1849.3016780045352
+    },
+    "10": {
+     "screens": 2512,
+     "sum": 2393.2190476190476,
+     "sum_sq": 2337.947755102041
+    }
+   },
+   "hardest": {
+    "cracked": 15,
+    "screen": [
+     "PROSIMIAN",
+     "CONSENTER",
+     "VIGNERONS",
+     "VITIATING",
+     "SAFETYMEN",
+     "CYTOLYSIS",
+     "LEUCEMIAS",
+     "FIRELOCKS",
+     "WHITRACKS",
+     "MARMOREAN",
+     "LETTERMEN",
+     "CARNELIAN",
+     "INTERMALE",
+     "PICTURIZE",
+     "CYCLECARS"
+    ]
+   }
+  },
+  {
+   "level": "Average",
+   "words": 20,
+   "screens": 5000,
+   "cracked_histogram": {
+    "most parts": {
+     "15": 1,
+     "16": 5,
+     "17": 44,
+     "18": 163,
+     "19": 901,
+     "20": 3886
+    },
+    "expected size": {
+     "19": 85,
+     "20": 4915
+    },
+    "entropy": {
+     "17": 2,
+     "18": 6,
+     "19": 199,
+     "20": 4793
+    },
+    "minimax": {
+     "17": 1,
+     "19": 56,
+     "20": 4943
+    },
+    "most in common": {
+     "15": 1,
+     "16": 18,
+     "17": 116,
+     "18": 601,
+     "19": 1758,
+     "20": 2506
+    },
+    "best possible": {
+     "20": 5000
+    }
+   },
+   "random_share_sum": 4565.269075709354,
+   "random_share_sum_sq": 4172.042167353351,
+   "screens_no_sure_win": 0,
+   "mean_likeness_by_length": {
+    "9": {
+     "screens": 2492,
+     "sum": 2133.0263157894738,
+     "sum_sq": 1862.0258448753464
+    },
+    "10": {
+     "screens": 2508,
+     "sum": 2387.942105263158,
+     "sum_sq": 2317.088725761773
+    }
+   },
+   "hardest": {
+    "cracked": 20,
+    "screen": [
+     "BLUNDERERS",
+     "ARROGATING",
+     "OUTRANGING",
+     "ARMATURING",
+     "MULTIPLIES",
+     "VARIEGATES",
+     "RECORDINGS",
+     "BARNSTORMS",
+     "SYMPATHIES",
+     "DECOLOURED",
+     "MICROTOMES",
+     "MANAGERIAL",
+     "FURANOSIDE",
+     "INHERITRIX",
+     "GLASSMAKER",
+     "EXHAUSTERS",
+     "NICTITATED",
+     "OUTDRAWING",
+     "ANNULMENTS",
+     "SUBECONOMY"
+    ]
+   }
+  },
+  {
+   "level": "Hard",
+   "words": 5,
+   "screens": 5000,
+   "cracked_histogram": {
+    "most parts": {
+     "5": 5000
+    },
+    "expected size": {
+     "5": 5000
+    },
+    "entropy": {
+     "5": 5000
+    },
+    "minimax": {
+     "5": 5000
+    },
+    "most in common": {
+     "4": 2,
+     "5": 4998
+    },
+    "best possible": {
+     "5": 5000
+    }
+   },
+   "random_share_sum": 4998.706666666667,
+   "random_share_sum_sq": 4997.427066666667,
+   "screens_no_sure_win": 0,
+   "mean_likeness_by_length": {
+    "11": {
+     "screens": 2490,
+     "sum": 2605.3,
+     "sum_sq": 3116.31
+    },
+    "12": {
+     "screens": 2510,
+     "sum": 2929.4,
+     "sum_sq": 3906.88
+    }
+   },
+   "hardest": {
+    "cracked": 5,
+    "screen": [
+     "PERSONALIST",
+     "ANATOMISING",
+     "PROCAMBIUMS",
+     "DIFFICULTLY",
+     "ILLEGALIZED"
+    ]
+   }
+  },
+  {
+   "level": "Hard",
+   "words": 10,
+   "screens": 5000,
+   "cracked_histogram": {
+    "most parts": {
+     "9": 10,
+     "10": 4990
+    },
+    "expected size": {
+     "9": 1,
+     "10": 4999
+    },
+    "entropy": {
+     "9": 1,
+     "10": 4999
+    },
+    "minimax": {
+     "10": 5000
+    },
+    "most in common": {
+     "8": 8,
+     "9": 171,
+     "10": 4821
+    },
+    "best possible": {
+     "10": 5000
+    }
+   },
+   "random_share_sum": 4956.81772255291,
+   "random_share_sum_sq": 4914.440003510861,
+   "screens_no_sure_win": 0,
+   "mean_likeness_by_length": {
+    "11": {
+     "screens": 2602,
+     "sum": 2730.2444444444445,
+     "sum_sq": 2993.088888888889
+    },
+    "12": {
+     "screens": 2398,
+     "sum": 2773.4,
+     "sum_sq": 3339.7901234567903
+    }
+   },
+   "hardest": {
+    "cracked": 10,
+    "screen": [
+     "DENERVATING",
+     "TRAFFICABLE",
+     "PREDOCTORAL",
+     "FIMBRIATION",
+     "OVERSELLING",
+     "HILARIOUSLY",
+     "SPHEROPLAST",
+     "CERTIORARIS",
+     "WINDSCREENS",
+     "MICROSCOPIC"
+    ]
+   }
+  },
+  {
+   "level": "Hard",
+   "words": 15,
+   "screens": 5000,
+   "cracked_histogram": {
+    "most parts": {
+     "13": 1,
+     "14": 73,
+     "15": 4926
+    },
+    "expected size": {
+     "14": 2,
+     "15": 4998
+    },
+    "entropy": {
+     "14": 4,
+     "15": 4996
+    },
+    "minimax": {
+     "15": 5000
+    },
+    "most in common": {
+     "12": 5,
+     "13": 71,
+     "14": 660,
+     "15": 4264
+    },
+    "best possible": {
+     "15": 5000
+    }
+   },
+   "random_share_sum": 4861.486275138295,
+   "random_share_sum_sq": 4727.869046863627,
+   "screens_no_sure_win": 0,
+   "mean_likeness_by_length": {
+    "11": {
+     "screens": 2479,
+     "sum": 2580.2190476190476,
+     "sum_sq": 2747.9451247165534
+    },
+    "12": {
+     "screens": 2521,
+     "sum": 2920.657142857143,
+     "sum_sq": 3458.962993197279
+    }
+   },
+   "hardest": {
+    "cracked": 15,
+    "screen": [
+     "ACQUISITORS",
+     "TRANSFERASE",
+     "ASSESSMENTS",
+     "SULFURETTED",
+     "THICKENINGS",
+     "OVERLOADING",
+     "SUPERPOSING",
+     "FINICALNESS",
+     "CORRELATIVE",
+     "SUPREMENESS",
+     "SOMERSETING",
+     "STEREOGRAPH",
+     "DESCENDANTS",
+     "ANTITOBACCO",
+     "PREHISTORIC"
+    ]
+   }
+  },
+  {
+   "level": "Hard",
+   "words": 20,
+   "screens": 5000,
+   "cracked_histogram": {
+    "most parts": {
+     "17": 4,
+     "18": 21,
+     "19": 289,
+     "20": 4686
+    },
+    "expected size": {
+     "19": 11,
+     "20": 4989
+    },
+    "entropy": {
+     "19": 31,
+     "20": 4969
+    },
+    "minimax": {
+     "19": 3,
+     "20": 4997
+    },
+    "most in common": {
+     "16": 5,
+     "17": 35,
+     "18": 299,
+     "19": 1370,
+     "20": 3291
+    },
+    "best possible": {
+     "20": 5000
+    }
+   },
+   "random_share_sum": 4732.566016594791,
+   "random_share_sum_sq": 4481.130255186561,
+   "screens_no_sure_win": 0,
+   "mean_likeness_by_length": {
+    "11": {
+     "screens": 2580,
+     "sum": 2689.8947368421054,
+     "sum_sq": 2850.23783933518
+    },
+    "12": {
+     "screens": 2420,
+     "sum": 2808.521052631579,
+     "sum_sq": 3309.29432132964
+    }
+   },
+   "hardest": {
+    "cracked": 20,
+    "screen": [
+     "STAKEHOLDER",
+     "FORMFITTING",
+     "FLAGRANCIES",
+     "CHIROPODIST",
+     "SCAPEGRACES",
+     "TATTLETALES",
+     "ANNUNCIATOR",
+     "ERRONEOUSLY",
+     "ENIGMATICAL",
+     "EJACULATORY",
+     "AWARENESSES",
+     "CALORIMETER",
+     "GENTLEWOMEN",
+     "DEFINIENTIA",
+     "CONCEPTIONS",
+     "APHETICALLY",
+     "STALACTITIC",
+     "NYMPHOMANIA",
+     "CIRCUMCISES",
+     "CATALECTICS"
+    ]
+   }
+  },
+  {
+   "level": "Very Hard",
+   "words": 12,
+   "screens": 5000,
+   "cracked_histogram": {
+    "most parts": {
+     "11": 1,
+     "12": 4999
+    },
+    "expected size": {
+     "12": 5000
+    },
+    "entropy": {
+     "12": 5000
+    },
+    "minimax": {
+     "12": 5000
+    },
+    "most in common": {
+     "10": 7,
+     "11": 177,
+     "12": 4816
+    },
+    "best possible": {
+     "12": 5000
+    }
+   },
+   "random_share_sum": 4962.843433061602,
+   "random_share_sum_sq": 4926.191210151212,
+   "screens_no_sure_win": 0,
+   "mean_likeness_by_length": {
+    "13": {
+     "screens": 1696,
+     "sum": 2158.7272727272725,
+     "sum_sq": 2830.407713498623
+    },
+    "14": {
+     "screens": 1641,
+     "sum": 2391.848484848485,
+     "sum_sq": 3591.8145087236
+    },
+    "15": {
+     "screens": 1663,
+     "sum": 2709.6363636363635,
+     "sum_sq": 4567.6019283746555
+    }
+   },
+   "hardest": {
+    "cracked": 12,
+    "screen": [
+     "INCOMPATIBLES",
+     "BILDUNGSROMAN",
+     "HYPOTHESIZING",
+     "NONPERSISTENT",
+     "DECONDITIONED",
+     "LEPTOCEPHALUS",
+     "EXPERIMENTING",
+     "REACTIONARIES",
+     "INFECTIVITIES",
+     "TRANSTHORACIC",
+     "MISTRUSTFULLY",
+     "EXTERNALITIES"
+    ]
+   }
+  },
+  {
+   "level": "Very Hard",
+   "words": 13,
+   "screens": 5000,
+   "cracked_histogram": {
+    "most parts": {
+     "12": 6,
+     "13": 4994
+    },
+    "expected size": {
+     "13": 5000
+    },
+    "entropy": {
+     "13": 5000
+    },
+    "minimax": {
+     "13": 5000
+    },
+    "most in common": {
+     "11": 7,
+     "12": 226,
+     "13": 4767
+    },
+    "best possible": {
+     "13": 5000
+    }
+   },
+   "random_share_sum": 4953.452738863701,
+   "random_share_sum_sq": 4907.618038288695,
+   "screens_no_sure_win": 0,
+   "mean_likeness_by_length": {
+    "13": {
+     "screens": 1703,
+     "sum": 2188.6794871794873,
+     "sum_sq": 2885.624095989481
+    },
+    "14": {
+     "screens": 1630,
+     "sum": 2373.9102564102564,
+     "sum_sq": 3558.99030243261
+    },
+    "15": {
+     "screens": 1667,
+     "sum": 2713.358974358974,
+     "sum_sq": 4551.1614069690995
+    }
+   },
+   "hardest": {
+    "cracked": 13,
+    "screen": [
+     "SENTIMENTALISED",
+     "HYPERINVOLUTION",
+     "CONSERVATIONIST",
+     "CRYSTALLOGRAPHY",
+     "SEMITRANSLUCENT",
+     "COUNTERINSTANCE",
+     "CRASHWORTHINESS",
+     "COUNTERGUERILLA",
+     "AUTOCORRELATION",
+     "POSSESSEDNESSES",
+     "ELECTROFISHINGS",
+     "INTERCOMPARISON",
+     "PURPOSIVENESSES"
+    ]
+   }
+  }
+ ]
+}
