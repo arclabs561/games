@@ -357,9 +357,9 @@ def test_strict_codemaster_skips_flagged_clues():
     )
     clues = ["teaching", "ocean"]
     forms = {c: (c, c) for c in clues}
-    kw = {"threshold": 0.01}  # count 1 only
-    loose = bench.FrameworkCodemaster("glove", as_vectors(vecs), clues, forms, **kw)
-    strict = bench.FrameworkCodemaster("glove", as_vectors(vecs), clues, forms, strict=True, **kw)
+    v = as_vectors(vecs)
+    loose = bench.FrameworkCodemaster("glove", v, clues, forms, threshold=0.01)  # count 1 only
+    strict = bench.FrameworkCodemaster("glove", v, clues, forms, threshold=0.01, strict=True)
     assert bench.framework_legal("teaching", forms["teaching"], board.words)
     assert bench.related("teaching", "teacher")
     assert loose(board) == bench.Clue("teaching", 1)
