@@ -19,6 +19,8 @@ JOB_OUTPUTS = {
     "common.json": "01071dafb40e516f32bf1f6f0e5e0ef153452541472010bf99cb82d6f383db1b",
     "estimate.json": "4d228344947857ffed2f4e6a1d9e7acd09216ae9e8cfc9e7424bfdae66703fa2",
     "middlegame.json": "c7e705ad60eccf6d58731a720cc8f175bb6aac6dd354ee9b42be16e71309062a",
+    "calibration-pilot.json": "46c299fcfdd09df40d9ab3eb299a3a1555e27ce891a31f1a296095b599c78e1f",
+    "calibration-fit.json": "68759397df8de6df38496be943baf5b4852c9010726bc7a675539d0b321b9dbb",
 }
 
 

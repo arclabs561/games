@@ -131,19 +131,24 @@ def pilot(strat: list[Record], pop: list[Record], counts: dict, log=print):
     return result, fit, cases(strat, fitted["F1"])
 
 
-def test(strat: list[Record], pop: list[Record], fit: dict) -> dict:
-    """The plan's primary and secondary results on the test games."""
+BIAS_ARM = "F7"  # the plan's amendment of 2026-11-20, after the pilot: see calibration-plan.md
+
+
+def test(strat: list[Record], pop: list[Record], fit: dict, bias_arm: str = BIAS_ARM) -> dict:
+    """The plan's primary and secondary results on the test games. The coverage question uses
+    the arm the plan's rule chose; the bias question uses `bias_arm` (the amendment)."""
     arms = {n: arm_from_json(d) for n, d in fit["arms"].items()}
     chosen = fit["chosen"]
-    old, new = arms["F0"], arms[chosen]
-    eo, en = evaluate(old, strat), evaluate(new, strat)
+    old, new, mapped = arms["F0"], arms[chosen], arms[bias_arm]
+    eo, en, em = evaluate(old, strat), evaluate(new, strat), evaluate(mapped, strat)
     err_o = np.array([e["estimate"] - r.rating for r, e in eo])
     err_n = np.array([e["estimate"] - r.rating for r, e in en])
+    err_m = np.array([e["estimate"] - r.rating for r, e in em])
     cov_o = np.array([e["lo"] <= r.rating <= e["hi"] for r, e in eo])
     cov_n = np.array([e["lo"] <= r.rating <= e["hi"] for r, e in en])
     low = np.array([r.band in LOWER for r in strat])
     low_records = [r for r, m in zip(strat, low, strict=True) if m]
-    lo_o, lo_n = err_o[low], err_n[low]
+    lo_o, lo_n = err_o[low], err_m[low]
 
     def gain(idx):
         return abs(lo_o[idx].mean()) - abs(lo_n[idx].mean())
@@ -158,6 +163,7 @@ def test(strat: list[Record], pop: list[Record], fit: dict) -> dict:
     (old_lo, old_hi), _ = cal.game_bootstrap(low_records, lambda i: lo_o[i].mean(), seed=13)
     primary = {
         "chosen": chosen,
+        "bias_arm": bias_arm,
         "bias_lower_bands_old": float(lo_o.mean()),
         "bias_lower_bands_old_interval": [old_lo, old_hi],
         "bias_lower_bands_new": float(lo_n.mean()),
@@ -189,6 +195,13 @@ def test(strat: list[Record], pop: list[Record], fit: dict) -> dict:
     )
     secondary["mae_reduction"] = float(np.abs(err_o).mean() - np.abs(err_n).mean())
     secondary["mae_reduction_interval"] = [a, b]
+    (a, b), _ = cal.game_bootstrap(
+        strat, lambda i: np.abs(err_o[i]).mean() - np.abs(err_m[i]).mean(), seed=21
+    )
+    secondary["mae_reduction_bias_arm"] = float(np.abs(err_o).mean() - np.abs(err_m).mean())
+    secondary["mae_reduction_bias_arm_interval"] = [a, b]
+    cov_m = np.array([e["lo"] <= r.rating <= e["hi"] for r, e in em])
+    secondary["coverage_bias_arm_wilson"] = cal.wilson(int(cov_m.sum()), len(cov_m))
     truth = np.array([r.rating for r in strat])
     secondary["baseline_mean_rating_mae"] = float(np.abs(truth - truth.mean()).mean())
     secondary["move_matching_at_true_rating"] = float(

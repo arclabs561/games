@@ -73,3 +73,14 @@ Maia3-5M runs on Hugging Face Jobs, cpu-upgrade (8 vCPU), as before: `python -m 
 ### 2026-11-20, before the stratified pilot sample was read: hardware
 
 The population pilot ran on cpu-upgrade as planned (598 player-games in 2,419 seconds). The stratified pilot job then timed out at 2 hours, and three jobs that split it by band were cancelled before they finished. A timing job found Maia-3 at 20 to 50 queries a second on cpu-upgrade, against about 230 earlier in the day, with the same torch (2.15.0) and code. So the stratified pilot sample and the test samples run on one Nvidia T4 (t4-small, $0.40 an hour) instead, with `MAIA_DEVICE=cuda`, in 32-bit floats and no mixed precision. Nothing else changes: the same games, grid, salts and arms. No output of the stopped jobs was stored or read. The cap stays at $0.50; about $0.17 of cpu-upgrade time was used by then.
+
+### 2026-11-20, after the pilot and before the test: the arms the test scores
+
+The diagnosis job (`calib-diagnose`, commit cd28449) wrote `calibration-pilot.json` and `calibration-fit.json`. The fit file's SHA-256 is 68759397df8de6df38496be943baf5b4852c9010726bc7a675539d0b321b9dbb, and the test reads that file unchanged.
+
+- **The rule's choice is F2**, the likelihood raised to τ = 0.56. In cross-validation F7 (the rating map, then τ = 0.68) had the best log score, −2.370 against −2.376 for F2, with a standard error of 0.025. F2 has one fitted constant and F7 two, so the rule took F2. Cross-validated coverage was 94.5% for F2 and 94.8% for F7, against 88.2% for F0.
+- **F2 cannot remove the bias.** A power on the likelihood widens the posterior around the same peak. In cross-validation its mean error below 1400 was +205, against +182 for F0; F7's was +114.
+- **Change.** Primary 1 (the bias below 1400) is scored with F7 instead of the rule's choice. Primary 2 (coverage) stays with F2, the rule's choice. Holm's correction still covers the two. F7's coverage and F2's bias are reported as secondary results. This choice was made after seeing pilot results, which is what the pilot is for, and before any test game was read.
+- **Detectable effect** for the bias, from the pilot's errors: 53 points.
+- The population goal uses F2 with the population prior, refit on the pilot population sample (τ = 0.56), as planned.
+- Test jobs: `calib-records --split test --kind stratified --per-band 100` and `--kind population --population 300` on one T4, with August 2025 mounted, then `calib-test`, all in one job.
