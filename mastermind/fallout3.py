@@ -324,9 +324,43 @@ def words_by_length() -> dict[int, list[Word]]:
     return groups
 
 
-def sample_screen(rng: random.Random, length: int, n: int) -> list[Word]:
-    """`n` different ENABLE words of `length` letters, in random order."""
-    return rng.sample(words_by_length()[length], n)
+# Plan M1: screens of common words, ENABLE words with a Zipf frequency (wordfreq) of at
+# least ZIPF. No list derived from wordfreq's data is committed (its data is CC BY-SA 4.0).
+ZIPF = 3.0
+WORDFREQ_VERSION = "3.1.1"
+
+
+@cache
+def common_by_length(zipf: float = ZIPF) -> dict[int, list[Word]]:
+    """ENABLE's words of 4 to 15 letters whose Zipf frequency in English is at least `zipf`,
+    grouped by length, in ENABLE's order."""
+    from importlib.metadata import version
+
+    from wordfreq import zipf_frequency
+
+    if version("wordfreq") != WORDFREQ_VERSION:
+        raise ValueError(f"wordfreq {version('wordfreq')}, not {WORDFREQ_VERSION}")
+    return {
+        n: [w for w in words if zipf_frequency(w, "en") >= zipf]
+        for n, words in words_by_length().items()
+        if 4 <= n <= 15
+    }
+
+
+def word_pool(words: str = "enable", zipf: float = ZIPF) -> dict[int, list[Word]]:
+    """The list screens are drawn from: all of ENABLE, or its common words."""
+    if words == "enable":
+        return words_by_length()
+    if words == "common":
+        return common_by_length(zipf)
+    raise ValueError(words)
+
+
+def sample_screen(
+    rng: random.Random, length: int, n: int, pool: dict[int, list[Word]] | None = None
+) -> list[Word]:
+    """`n` different words of `length` letters from `pool` (ENABLE), in random order."""
+    return rng.sample((pool or words_by_length())[length], n)
 
 
 def score_screen(
@@ -378,7 +412,17 @@ COUNTS: dict[str, tuple[int, ...]] = {
 }
 
 
-def study(screens: int = 1000, seed: int = SEED) -> None:
+def row_screens(
+    level: str, n: int, screens: int, seed: int, pool: dict[int, list[Word]] | None = None
+):
+    """The screens of one row of the study, in order: the row's generator is seeded by the
+    study's seed, the level and the word count, so each row can be drawn on its own."""
+    rng = random.Random(f"{seed} {level} {n}")
+    for _ in range(screens):
+        yield sample_screen(rng, rng.choice(LEVELS[level]), n, pool)
+
+
+def study(screens: int = 1000, seed: int = SEED, pool: dict[int, list[Word]] | None = None) -> None:
     """Print the chance of cracking a terminal within four attempts, by level and word count,
     how often each strategy can miss, the hardest screen found and the first-guess rules."""
     names = [*STRATEGIES, "random candidate", "best possible"]
@@ -387,13 +431,11 @@ def study(screens: int = 1000, seed: int = SEED) -> None:
     worst: tuple[Fraction, list[Word]] | None = None
     most_guesses: Counter[str] = Counter()
     rule_shares: dict[str, list[Fraction]] = {}
-    for level, lengths in LEVELS.items():
+    for level in LEVELS:
         for n in COUNTS[level]:
-            rng = random.Random(f"{seed} {level} {n}")
             won: dict[str, list[float]] = {name: [] for name in names}
             missed: Counter[str] = Counter()
-            for _ in range(screens):
-                screen = sample_screen(rng, rng.choice(lengths), n)
+            for screen in row_screens(level, n, screens, seed, pool):
                 scores = score_screen(screen)
                 for name in names:
                     won[name].append(float(scores[name][0]) / n)
@@ -494,10 +536,15 @@ def main(argv: Sequence[str] | None = None) -> None:
     parser.add_argument("--best", action="store_true", help="print the best next guess and exit")
     parser.add_argument("--study", action="store_true", help="score strategies on sampled screens")
     parser.add_argument("--screens", type=int, default=1000, help="screens per row of the study")
+    parser.add_argument("--seed", type=int, default=SEED, help="seed of the study's screens")
+    parser.add_argument(
+        "--words", choices=["enable", "common"], default="enable", help="the study's word list"
+    )
+    parser.add_argument("--zipf", type=float, default=ZIPF, help="least Zipf frequency (common)")
     parser.add_argument("--published", action="store_true", help="the Fallout 4 screens")
     args = parser.parse_args(argv)
     if args.study:
-        study(args.screens)
+        study(args.screens, args.seed, word_pool(args.words, args.zipf))
         return
     if args.published:
         published_screens()

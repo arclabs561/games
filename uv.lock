@@ -1358,6 +1358,7 @@ maps = [
 mastermind = [
     { name = "matplotlib" },
     { name = "numpy" },
+    { name = "wordfreq" },
 ]
 pokemon = [
     { name = "matplotlib" },
@@ -1457,6 +1458,7 @@ maps = [
 mastermind = [
     { name = "matplotlib", specifier = ">=3.11" },
     { name = "numpy", specifier = ">=2.5" },
+    { name = "wordfreq", specifier = "==3.1.1" },
 ]
 pokemon = [
     { name = "matplotlib", specifier = ">=3.11" },
