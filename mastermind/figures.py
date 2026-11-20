@@ -144,7 +144,7 @@ def guesses() -> str:
     ]
     arms += [
         (name, c, color)
-        for (name, c), color in zip(optimal_counts(), ("#1baf7a", "#7b5cc4"), strict=True)
+        for (name, c), color in zip(optimal_counts(), ("#1baf7a", "#3d3d3d"), strict=True)
     ]
     left, top, width, height, top_value = 60, 70, 640, 240, 700
     group = width / 6

@@ -68,3 +68,60 @@ def test_tree_json_round_trip_small_game():
     tree = game.strategy_tree()
     assert tree_from_json(tree_to_json(tree, game.codes), game.codes) == tree
     assert summary(tree, game.codes, 12)["total"] == game.cost(game.all_codes())
+
+
+# W. Goddard, "Mastermind revisited", J. Combin. Math. Combin. Comput. 51 (2004), the table of
+# r(n, k): the least average number of guesses, to three decimals, keyed (colors, pegs).
+GODDARD_AVERAGE = {
+    (2, 2): 2.000,
+    (2, 3): 2.250,
+    (2, 4): 2.750,
+    (2, 5): 3.031,
+    (2, 6): 3.500,
+    (3, 2): 2.333,
+    (3, 3): 2.704,
+    (3, 4): 3.037,
+    (3, 5): 3.358,
+    (4, 2): 2.813,
+    (4, 3): 3.219,
+    (4, 4): 3.535,
+    (5, 2): 3.240,
+    (5, 3): 3.608,
+    (6, 2): 3.667,
+    (6, 3): 3.954,
+    (7, 2): 4.041,
+}
+# The least worst case for the same games. Goddard's table agrees except in its two-peg column
+# at odd numbers of colors, where it is one higher than his own Theorem 1, f(2, k) = k // 2 + 2;
+# the search agrees with the theorem.
+LEAST_WORST_CASE = {
+    (2, 2): 3,
+    (2, 3): 3,
+    (2, 4): 4,
+    (2, 5): 4,
+    (2, 6): 5,
+    (3, 2): 3,
+    (3, 3): 4,
+    (3, 4): 4,
+    (3, 5): 4,
+    (4, 2): 4,
+    (4, 3): 4,
+    (4, 4): 4,
+    (5, 2): 4,
+    (5, 3): 5,
+    (6, 2): 5,
+    (6, 3): 5,
+    (7, 2): 5,
+}
+
+
+@pytest.mark.parametrize(("colors", "holes"), sorted(GODDARD_AVERAGE))
+def test_published_small_games(colors, holes):
+    """The least average matches Goddard's table, and the least worst case his Theorem 1."""
+    game = Game(colors, holes)
+    codes = game.all_codes()
+    assert abs(game.cost(codes, 12) / game.n - GODDARD_AVERAGE[colors, holes]) <= 0.0005 + 1e-9
+    least = LEAST_WORST_CASE[colors, holes]
+    assert game.cost(codes, least) < INF and game.cost(codes, least - 1) >= INF
+    if holes == 2:
+        assert least == colors // 2 + 2

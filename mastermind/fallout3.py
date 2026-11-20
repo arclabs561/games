@@ -378,9 +378,13 @@ COUNTS: dict[str, tuple[int, ...]] = {
 }
 
 
-def study(screens: int = 1000, seed: int = SEED) -> None:
-    """Print the chance of cracking a terminal within four attempts, by level and word count,
-    how often each strategy can miss, the hardest screen found and the first-guess rules."""
+def study(screens: int = 1000, seed: int = SEED, attempts: int = ATTEMPTS) -> None:
+    """Print the chance of cracking a terminal within `attempts` attempts, by level and word
+    count, how often each strategy can miss, the hardest screen found and the first-guess rules.
+
+    The screens are the same for every number of attempts. Three attempts is the limit for a
+    player who leaves the terminal before the fourth, which the Fallout 3 manual says resets the
+    password and the tries."""
     names = [*STRATEGIES, "random candidate", "best possible"]
     short = ["parts", "exp size", "entropy", "minimax", "common", "random", "best"]
     rows = []
@@ -394,7 +398,7 @@ def study(screens: int = 1000, seed: int = SEED) -> None:
             missed: Counter[str] = Counter()
             for _ in range(screens):
                 screen = sample_screen(rng, rng.choice(lengths), n)
-                scores = score_screen(screen)
+                scores = score_screen(screen, attempts)
                 for name in names:
                     won[name].append(float(scores[name][0]) / n)
                     missed[name] += scores[name][0] < n
@@ -410,7 +414,9 @@ def study(screens: int = 1000, seed: int = SEED) -> None:
             rows.append((level, n, won, missed))
 
     print(f"{screens} sampled screens per row, seed {seed}; the password is uniform over each")
-    print("screen. Percent of passwords cracked within 4 attempts, with a 95% interval:\n")
+    print(
+        f"screen. Percent of passwords cracked within {attempts} attempts, with a 95% interval:\n"
+    )
     print(f"{'level':<10}{'words':>6}" + "".join(f"{s:>14}" for s in short))
     for level, n, won, _ in rows:
         cells = "".join(
@@ -418,7 +424,9 @@ def study(screens: int = 1000, seed: int = SEED) -> None:
             for name in names
         )
         print(f"{level:<10}{n:>6}{cells}")
-    print("\nPercent of screens on which some password is not cracked within 4 attempts:\n")
+    print(
+        f"\nPercent of screens on which some password is not cracked within {attempts} attempts:\n"
+    )
     print(f"{'level':<10}{'words':>6}" + "".join(f"{s:>9}" for s in short))
     for level, n, _, missed in rows:
         print(f"{level:<10}{n:>6}" + "".join(f"{100 * missed[k] / screens:>9.1f}" for k in names))
@@ -494,10 +502,11 @@ def main(argv: Sequence[str] | None = None) -> None:
     parser.add_argument("--best", action="store_true", help="print the best next guess and exit")
     parser.add_argument("--study", action="store_true", help="score strategies on sampled screens")
     parser.add_argument("--screens", type=int, default=1000, help="screens per row of the study")
+    parser.add_argument("--attempts", type=int, default=ATTEMPTS, help="attempts in the study")
     parser.add_argument("--published", action="store_true", help="the Fallout 4 screens")
     args = parser.parse_args(argv)
     if args.study:
-        study(args.screens)
+        study(args.screens, attempts=args.attempts)
         return
     if args.published:
         published_screens()
