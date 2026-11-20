@@ -14,7 +14,7 @@ Most results in this repository are exact and run in seconds on a laptop. The ex
 
 Each experiment is one module, run as `uv run --group <game> python -m <game>.<module> --seed N --out DIR`. The module writes its results into `DIR` and does not know where it runs. Two launchers wrap it in the same four steps: check out a pinned commit, install the dependency group from `uv.lock`, run the module, and store `DIR` with a `manifest.json` written by `manifest.py`.
 
-- **Hugging Face Jobs** (`hfrun.py`), for GPUs and for hosted language models (Inference Providers). Every job has a hard timeout, and outputs go to the private dataset.
+- **Hugging Face Jobs** (`hfrun.py`), for GPUs and for hosted language models (Inference Providers). Every job has a hard timeout, and outputs go to the private dataset. Hosted calls pin one provider with the router's suffix (`model:provider`) and log who served each reply; the route that the runs up to 2026-11-19 used, the provider in the URL path, refuses chat requests since 2026-11-20 (`codenames/results/llm-providers.md`).
 - **GitHub Actions** (`.github/workflows/experiment.yml`), for CPU work that splits into seeds or slices. It is started by hand with the module, its arguments, a JSON list of seeds and a timeout; each seed is its own job, up to 20 at once. Outputs go to a branch named `compute/<experiment>-<run id>`, or to the private dataset when the repository has an `HF_TOKEN` secret. Runners are free for this public repository.
 - **A local machine**, for anything that fits.
 
@@ -34,6 +34,7 @@ Costs are recorded per run. A number from a run that did not happen is never rep
 | C8 | Do about 19,000 turns labeled by gpt-oss-120b raise the LoRA embedding model's match with human guesses? | Inference Providers and A10G, about $2.50 to $3.50; cap $5.50 | [C8](plans/C8.md) | done (PR #53): yes, by 3.3 points (0.9 to 5.9), level with the teacher; about $2.06 spent |
 | C9 | Does Qwen3.5, fine-tuned on human turns and then trained by RL with the person's pick as reward, guess as people do more often than gpt-oss-120b? | L4 or L40S, about $7 to $8.50; cap $12 | [C9](plans/C9.md) | proposed, needs approval |
 | C10 | When a hosted language model guesses on each of an embedding giver's legal clues and the giver picks the clue worth most to it, do unseen guessers find more words than with the embedding giver's first choice? | Inference Providers, about $0.50 to $1; cap $1.50 | [C10](plans/C10.md) | done: null; the listener's pick trails the first choice by 0.15 (−0.20 to −0.10) with strangers, and adds −0.02 (−0.03 to 0.001) to a population of six; $0.37 |
+| C11 | Does C10's population pick, which beats the embedding giver's first choice by 0.24 words per turn with embedding strangers, still beat it with language-model guessers of two other families, and with people in a small pilot? | Inference Providers, about $0.25 to $0.50; cap $1; the human pilot is unpaid | [C11](plans/C11.md) | proposed, needs approval; the pilot's boards and phone page are committed |
 | H1 | How many Hanabi deals reach 25 with every card visible? Decide the undecided deals and check with a second solver. | CPU (GitHub Actions) | [H1](plans/H1.md) | done (PR #45): 98.6% of two-player deals winnable with every card in view; two solvers agree on 79,396 deals |
 | H2 | How far below the open-game ceiling do hosted language models play, and, at three players, below the hat strategy? | Inference Providers, about $2 to $5 | [H2](plans/H2.md) | done (PR #44): both models far below the ceiling; deduction help shows no effect; three-player part not run |
 | H3 | In a two-color game, does Qwen3.5-2B trained by self-play score more with partners from other seeds and with a rule-based player? | L40S, about $10.40; cap $13.50 | [H3](plans/H3.md) | proposed, needs approval |
@@ -41,6 +42,12 @@ Costs are recorded per run. A number from a run that did not happen is never rep
 | P1 | Does the type-chart equilibrium predict which types people play? | CPU (GitHub Actions) | [P1](plans/P1.md) | done (PR #47): null; the number of Pokémon per typing predicts use better (Δρ = −0.32, interval −0.56 to −0.08) |
 
 Costs are estimates from the plans. Each plan has a hard cap, and the paid ones are approved one at a time.
+
+**2026-11-20, a methods amendment.** `METHOD.md` now asks each new plan for its minimum detectable effect at 80% power, five training seeds where they fit the cap, pinned providers with a repeat check per split, a limit on replies cut off at the token cap, and a check with people or with partners from another model family before a result with model partners is a headline. Three dated notes go with it, and none changes a published number:
+
+- `codenames/results/llm-providers.md`: which providers served the calls of C4, C6, C8, C10 and H2. Every call named one provider, and no log shows another. C10's empty test replies came with doubled latency at the same provider, model id and prompt tokens.
+- `codenames/results/guesser-calibration.md` (exploratory): calibration of the guessers on human turns, the turns with several picks, and agreement between people on shared words. People agree with each other 4.6 to 16.1 points more often than a guesser agrees with a person.
+- `hanabi/results/h2-harness.md`: 24% of gpt-oss-120b's turns in H2 reached the 4,096-token cap and got a fallback move, nearly always a discard, so H2's numbers for that model are partly limited by the harness.
 
 **Order.** C1, C3, H1 and P1 cost nothing and can run now, side by side. C2 and C4 use C1's split. H2 uses H1's verdict for each deal. C5 runs only if C4's second hypothesis holds. Two changes from the first version of this table:
 

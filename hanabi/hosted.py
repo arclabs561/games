@@ -5,6 +5,14 @@ and `h2.play_game`. Each call sends the prompt as one user message with temperat
 fixed seed, retries a failed request three times, and logs the prompt, the reply, the model
 id the provider reports, the request parameters, the token counts and the cost.
 
+The provider is pinned as in `codenames/hosted.py`: the model id carries the provider as a
+suffix (`openai/gpt-oss-120b:novita`), which the router never replaces, and the request
+carries OpenRouter's provider object with fallbacks off, which the router was found to
+ignore on 2026-11-20. Each reply's provider is read from its body or the router's
+`x-inference-provider` header and logged with `pin_held`; a reply from another provider
+counts as a failed attempt. The path route that H2 used (`router.huggingface.co/<provider>`)
+refused chat requests on 2026-11-20.
+
 The providers' usage objects report token counts but no cost (checked on Cerebras, Groq and
 DeepInfra, November 2026), so `Meter` prices each call at the provider's listed price per
 million tokens, as the router's model list gives it, and refuses a call that could take the
@@ -16,13 +24,15 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import threading
 import time
 import urllib.request
 from dataclasses import dataclass, field
-from typing import Any, cast
+from typing import Any
 
 ROUTER = "https://router.huggingface.co/v1/models"
+ROUTER_CHAT = "https://router.huggingface.co/v1/chat/completions"
 
 
 class CapError(Exception):
@@ -59,6 +69,70 @@ def fetch_models(token: str) -> list[dict]:
     req = urllib.request.Request(ROUTER, headers={"Authorization": f"Bearer {token}"})
     with urllib.request.urlopen(req, timeout=60) as r:
         return json.load(r)["data"]
+
+
+def pinned(model: str, provider: str, extra: dict | None = None) -> tuple[str, dict]:
+    """The model id and extra request fields that pin one provider (as codenames.hosted)."""
+    if provider in ("", "auto") or ":" in model:
+        raise ValueError(f"{model}: name one provider, not {provider!r}")
+    return f"{model}:{provider}", {**(extra or {}), "provider": {"order": [provider],
+                                                               "allow_fallbacks": False}}  # fmt: skip
+
+
+def provider_key(name: str | None) -> str:
+    key = re.sub(r"[^a-z0-9]", "", (name or "").lower())
+    return key.removesuffix("ai") if len(key) > 4 else key
+
+
+def served_provider(reply: Any) -> str | None:
+    """OpenRouter's `provider` field, or the router's header when it names a provider."""
+    who = getattr(reply, "provider", None)
+    if who:
+        return who
+    header = getattr(reply, "_router_header", None)
+    return header if header and provider_key(header) != "openrouter" else None
+
+
+def listed_quantization(model: str, provider: str) -> dict:
+    """The provider's quantization for the model in OpenRouter's endpoint list, read when
+    a run starts (as codenames.hosted.listed_quantizations). None when not listed."""
+    org, _, name = model.partition("/")
+    rid = f"{ {'deepseek-ai': 'deepseek'}.get(org, org) }/{name}".lower()
+    url = f"https://openrouter.ai/api/v1/models/{rid}/endpoints"
+    try:
+        with urllib.request.urlopen(url, timeout=30) as r:
+            endpoints = (json.load(r).get("data") or {}).get("endpoints", [])
+    except (OSError, ValueError) as e:  # recorded; the run goes on
+        return {"source": url, "error": f"{type(e).__name__}: {str(e)[:200]}"}
+    listed = {e.get("provider_name"): e.get("quantization") for e in endpoints}
+    mine = next((q for p, q in listed.items() if provider_key(p) == provider_key(provider)), None)
+    return {"source": url, "quantization": mine, "listed": listed}
+
+
+class RouterClient:
+    """POSTs to the router's chat endpoint; returns the reply with attribute access, and
+    the router's `x-inference-provider` header as `_router_header`."""
+
+    def __init__(self, token: str, timeout: int = 300):
+        self.token, self.timeout = token, timeout
+
+    def chat_completion(self, messages, model, extra_body=None, **params):
+        from types import SimpleNamespace
+        from urllib.error import HTTPError
+
+        body = {"model": model, "messages": messages, **params, **(extra_body or {})}
+        req = urllib.request.Request(
+            ROUTER_CHAT,
+            json.dumps(body).encode(),
+            {"Authorization": f"Bearer {self.token}", "Content-Type": "application/json"},
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=self.timeout) as r:
+                out = json.loads(r.read(), object_hook=lambda d: SimpleNamespace(**d))
+                out._router_header = r.headers.get("x-inference-provider")
+                return out
+        except HTTPError as e:
+            raise RuntimeError(f"HTTP {e.code}: {e.read().decode(errors='replace')[:300]}") from e
 
 
 @dataclass
@@ -111,16 +185,13 @@ class Hosted:
         wait: float = 5.0,
     ):
         self.model, self.provider, self.meter = model, provider, meter
+        extra = {"reasoning_effort": reasoning_effort} if reasoning_effort else {}
+        self.model_id, pin = pinned(model, provider, extra)
         self.params: dict = {"max_tokens": max_tokens, "temperature": 0, "seed": seed}
-        if reasoning_effort:
-            self.params["extra_body"] = {"reasoning_effort": reasoning_effort}
+        self.params["extra_body"] = pin
         self.retries, self.log, self.wait = retries, log, wait
         if client is None:
-            from huggingface_hub import InferenceClient
-
-            client = InferenceClient(
-                provider=cast(Any, provider), token=os.environ.get("HF_TOKEN"), timeout=300
-            )
+            client = RouterClient(os.environ.get("HF_TOKEN", ""))
         self.client = client
 
     def __call__(self, prompt: str) -> str:
@@ -130,7 +201,9 @@ class Hosted:
             start = time.time()
             try:
                 r = self.client.chat_completion(
-                    messages=[{"role": "user", "content": prompt}], model=self.model, **self.params
+                    messages=[{"role": "user", "content": prompt}],
+                    model=self.model_id,
+                    **self.params,
                 )
             except Exception as e:  # provider errors of any kind; the model is not at fault
                 self.meter.release()
@@ -142,6 +215,8 @@ class Hosted:
             cost = self.meter.settle(p, c)
             choice = r.choices[0]
             reply = choice.message.content or ""
+            who = served_provider(r)
+            held = None if who is None else provider_key(who) == provider_key(self.provider)
             if self.log is not None:
                 self.log(
                     {
@@ -149,7 +224,12 @@ class Hosted:
                         "seconds": round(time.time() - start, 3),
                         "model": self.model,
                         "provider": self.provider,
+                        "pinned": self.model_id,
                         "served_model": r.model,
+                        "served_provider": who,
+                        "router_header": getattr(r, "_router_header", None),
+                        "service_tier": getattr(r, "service_tier", None),
+                        "pin_held": held,
                         "id": r.id,
                         "params": self.params,
                         "attempt": attempt,
@@ -164,5 +244,16 @@ class Hosted:
                         "cost": cost,
                     }
                 )
+            if held is False:  # paid for, but another provider answered: try again
+                errors.append(f"served by {who}")
+                time.sleep(self.wait * 2**attempt)
+                continue
             return reply
         raise ProviderError("; ".join(errors))
+
+
+def repeat_check(complete, prompts: list[str], times: int = 2) -> dict:
+    """Send each prompt `times` times through a prompt-to-reply function and count the
+    prompts whose replies were not all the same."""
+    changed = sum(len({complete(p) for _ in range(times)}) > 1 for p in prompts)
+    return {"prompts": len(prompts), "times": times, "changed": changed}

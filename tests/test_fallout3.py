@@ -3,6 +3,7 @@
 import itertools
 import random
 from fractions import Fraction
+from pathlib import Path
 
 import pytest
 
@@ -189,3 +190,24 @@ def test_first_guess_rules_are_shares_of_the_optimum():
     shares = fo.first_guess_rules(table)
     assert all(0 < s <= 1 for s in shares.values())
     assert shares["expected size"] == 1 and shares["most in common"] == 1
+
+
+def test_readme_transcript(monkeypatch, capsys):
+    # Replays the helper session in the README: the password is WATER, and each prompt gets the
+    # likeness of the guess just named. The output, with the typed answers, matches line by line.
+    readme = (Path(fo.__file__).parent / "README.md").read_text()
+    block = readme.split("```\n$ ", 1)[1].split("```", 1)[0].splitlines()
+    words = block[0].split("fallout3 ", 1)[1].split()
+    seen: list[str] = []
+
+    def answer(prompt: str) -> str:
+        seen.append(capsys.readouterr().out)
+        guess = seen[-1].rsplit("guess ", 1)[1].split()[0]
+        typed = str(fo.likeness(guess, "WATER"))
+        seen.append(f"{prompt}{typed}\n")
+        return typed
+
+    monkeypatch.setattr("builtins.input", answer)
+    fo.main(words)
+    seen.append(capsys.readouterr().out)
+    assert "".join(seen).splitlines() == block[1:]

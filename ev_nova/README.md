@@ -1,8 +1,14 @@
 # EV Nova and Naev
 
+Which loop of planets earns a trader the most per jump, and can the routes players recommend be beaten? In Naev, Ore and Medicine between Burnan and Lora-Mor, one jump apart, earn 394 credits per ton per jump. Counting jumps, with one landing per system visited, no loop does better. In EV Nova the best is 217, and the routes on the EV Nova wiki include the best one for every landing cost tried. Exact, with a certificate of optimality for every best route.
+
+![A schematic map of EV Nova systems as circles with their trading stops: Sol, Kania, Altair, Tuatha, Dani Fort, Dani, Dani Evera and Ver'ashan. Lines join the stops of the best routes, labeled with jumps per leg.](figures/evnova_routes.svg)
+
+*The EV Nova routes that are best for some cost of a landing, on a schematic map; positions are not the game's. Blue legs are on the wiki's route pages, and the orange one is an equal best round trip that they do not list.*
+
 In *Escape Velocity Nova* (Ambrosia Software, 2002) and in [Naev](https://naev.org), an open-source game in the same style, a trader buys goods on one planet, flies to another and sells them. This folder treats the choice of where to trade as an optimization problem: which loop of planets earns the most per jump, how cargo space, credits and fuel change that loop, and whether the routes players recommend can be beaten.
 
-## The model
+## Rules as modeled
 
 - A **stop** is a planet or station with a commodity exchange. Each commodity it trades has one price there. In both games the price is the same whether the player buys or sells.
 - A **leg** goes from one stop to the next by the fewest jumps. It carries the one commodity whose price gains the most between the two stops, or nothing if none gains. Profit is linear in the load, so a full hold of the best commodity is optimal unless credits run short.
@@ -12,7 +18,35 @@ The cost of a landing matters. Both games have two stops in one system with a pr
 
 The best route is a cycle with the largest ratio of gain to cost. `routes.py` finds it with Howard's policy iteration (Cochet-Terrasson et al., 1998), first in floating point and then exactly with fractions. It returns a potential for each stop. For every leg from a to b, the potential of a is at least the leg's gain minus the rate times its cost, plus the potential of b. Adding these up around any cycle shows that no cycle has a higher rate. `check_certificate` checks those inequalities leg by leg.
 
-## Results for Naev
+## Results
+
+Every number is exact unless it says otherwise. Rates are in credits per ton at the mean prices.
+
+| Result | Value | How it is known |
+|---|---|---|
+| Naev: best round trip | Burnan and Lora-Mor, 394 per jump | exact; Howard's method with a checked certificate, and Karp's algorithm on a second model |
+| Naev: best route, one landing per system visited | no route beats 394 per jump | same |
+| Naev: best route as the landing cost x goes from 1/10 to 10 | changes at x = 29/168 and x = 111/86; 197 at x = 1 | exact sweep, linear in x between changes |
+| Naev: hidden jumps, fuel, cargo space | do not change the best route at x = 1 | exact |
+| Naev: price drift on the best route | one pass gains 748 to 828, against 788 at mean prices | sampled every half period over 20,000 periods |
+| EV Nova: best round trip | 217 per jump, reached by three round trips | exact, as for Naev |
+| EV Nova: published routes | every route that is best somewhere is on the wiki's pages | exact scoring of the 33 published routes |
+| Naev's prices | from Naev's price model, read from its source | not compared with a running game |
+
+## How the results are checked
+
+- Howard's method is compared with brute force, which lists every simple cycle, on 400 random galaxies, each at four landing costs. The best route is always a simple cycle: a cycle that visits a stop twice splits into two shorter cycles, and its rate lies between theirs.
+- Karp's algorithm (1978) finds a maximum-mean cycle in a graph where every edge costs one unit. It runs on a second model of the same problem, with one node for each system and cargo held. Its answer matches Howard's on the random galaxies, and on both games when counting jumps only and when a landing costs one jump. Karp's method is also compared with brute force on 300 random graphs.
+- Every best route on the real maps passes `check_certificate`.
+- The sweep over landing costs rests on one fact: whether one route beats another at a landing cost x is a linear inequality in x. A random test compares its answer with brute force at up to 1,000 costs.
+- Betweenness (Brandes, 2001, in exact fractions) and chokepoints are compared with brute force on 200 random graphs each.
+- The Naev price model is tested on hand-computed cases. It has not been compared with prices in a running game, which is the largest uncertainty here.
+- The EV Nova reader is tested on a small hand-written ConText file. Earth's flags decode to the levels the wiki lists, and the 80% and 125% rule reproduces the wiki's table for the Federation.
+- A test checks that the committed SVGs are what `figures.py` draws, and that the Naev routes it draws tie exactly where the best route changes.
+
+CI runs the tests on a small made-up galaxy and on Naev's committed data. The EV Nova data are not in the repository, so the test that reads them runs only where `EV_NOVA_CONTEXT` is set.
+
+## Naev: what is the best route?
 
 The data are Naev's XML files at commit `65cf3a39b892` (November 13, 2026). Prices come from Naev's price model, described under Data. Every rate here is in credits per ton at the mean prices, and every number is exact unless it says otherwise.
 
@@ -27,7 +61,11 @@ The data are Naev's XML files at commit `65cf3a39b892` (November 13, 2026). Pric
 
 No published Naev trade guide was found to compare with. Two searches turned up only guides for other games.
 
-## Results for EV Nova
+![A log-log plot of credits per ton per unit of cost against the cost of a landing, from 1/10 to 10 jumps, for three routes; the best rate is drawn thick, from Dvaer Prime and Eist Shipyard at the lowest costs, to Burnan and Lora-Mor, to Modus and Tankard Cloister above 111/86.](figures/naev_landing.svg)
+
+*Naev: the rate of each route that is best for some landing cost. Each rate is the gain per pass over jumps plus x per landing; the thick line is the best of the three. Where two lines cross, the best route changes.*
+
+## EV Nova: what is the best route?
 
 EV Nova's data are not in this repository (see Data). These results come from a ConText export of EV Nova 1.1.1, read at the start of a game, when 398 of the 545 system records are visible.
 
@@ -39,7 +77,7 @@ EV Nova's data are not in this repository (see Data). These results come from a 
 - Fuel does not change the answer at x = 1, for the same reason as in Naev. Neither do the special commodities, if they cost 80% of their base price where sold and fetch 125% where bought (an assumption; see below).
 - A new player has a 10-ton Shuttle and 25,000 credits, which fill the hold; the best rate at x = 1 is 1,670 credits per unit of cost. A 125-ton Terrapin with the same credits can fill only part of its hold. The best route is the same, but its rate is 10,004.5, against 20,875 with 100,000 credits.
 
-## Published EV Nova routes, checked
+## Do the published EV Nova routes hold up?
 
 The EV Nova wiki lists recommended routes on its [Trade Routes](https://evnova.miraheze.org/wiki/Trade_Routes) and [Making Money](https://evnova.miraheze.org/wiki/Nova:Making_Money) pages. `guides.py` holds the 33 that use only standard commodities and no hypergate. `study.py` checks the price levels and jump counts the pages give, and scores each route.
 
@@ -48,17 +86,14 @@ The EV Nova wiki lists recommended routes on its [Trade Routes](https://evnova.m
 - The jump counts agree, except Aria to Dani Fort, which the page gives as five jumps and the data as four.
 - The wiki's commodity table gives Polaris equipment as 600, 750 and 825, and some Auroran prices that do not follow the 80% and 125% rule. The data have one base price per commodity (STR# 4004). Ranks carry a price modifier (`PriceMod` in the rank resources), which might explain the difference; this was not checked.
 
-## How the results are checked
-
-- Howard's method is compared with brute force, which lists every simple cycle, on 400 random galaxies, each at four landing costs. The best route is always a simple cycle: a cycle that visits a stop twice splits into two shorter cycles, and its rate lies between theirs.
-- Karp's algorithm (1978) finds a maximum-mean cycle in a graph where every edge costs one unit. It runs on a second model of the same problem, with one node for each system and cargo held. Its answer matches Howard's on the random galaxies, and on both games when counting jumps only and when a landing costs one jump. Karp's method is also compared with brute force on 300 random graphs.
-- Every best route on the real maps passes `check_certificate`.
-- The sweep over landing costs rests on one fact: whether one route beats another at a landing cost x is a linear inequality in x. A random test compares its answer with brute force at up to 1,000 costs.
-- Betweenness (Brandes, 2001, in exact fractions) and chokepoints are compared with brute force on 200 random graphs each.
-- The Naev price model is tested on hand-computed cases. It has not been compared with prices in a running game, which is the largest uncertainty here.
-- The EV Nova reader is tested on a small hand-written ConText file. Earth's flags decode to the levels the wiki lists, and the 80% and 125% rule reproduces the wiki's table for the Federation.
-
 ## Data
+
+| Source | What | License | Committed |
+|---|---|---|---|
+| [naev/naev](https://github.com/naev/naev) XML data, commit `65cf3a39b892` | systems, jumps, spobs, commodities | CC BY-SA 4.0 | yes, as `naev.json` (CC BY-SA 4.0) |
+| Naev's `src/economy.c` | the price model | GPL-3 | no; reimplemented in `naev.py` |
+| EV Nova 1.1.1, ConText export from [vasi/evnova-utils](https://github.com/vasi/evnova-utils) | systems, stops, prices | Ambrosia Software's copyright | no |
+| EV Nova wiki | recommended routes, price levels, the 80% and 125% rule | not checked | the routes' stops, jumps and price levels, in `guides.py` |
 
 **Naev.** `naev.json` is derived from the XML files in [naev/naev](https://github.com/naev/naev) at commit `65cf3a39b892614c003ac13d24e43855e98fa36b`. Naev's `LICENSE` puts its XML data under the Creative Commons Attribution-ShareAlike 4.0 license, so `naev.json` is under CC BY-SA 4.0 too, with credit to the Naev developers. `uv run python -m ev_nova.naev --checkout PATH` rebuilds it from a checkout.
 
@@ -67,6 +102,13 @@ The prices follow `economy_initialiseCommodityPrices` in Naev's `src/economy.c`,
 **EV Nova.** The game's data files are Ambrosia Software's copyright and are not committed. `evnova.py` reads a ConText export, a tab-separated dump of the game's resources made by the ConText/ResStore tool. Its docstring gives the sections and fields it uses. [vasi/evnova-utils](https://github.com/vasi/evnova-utils) publishes such an export of EV Nova 1.1.1 (`Context/NovaConText.txt`). Its license states that the file was generated from Ambrosia's data, which remain Ambrosia's copyright. The numbers above come from that file. Field meanings come from the Nova Bible, Ambrosia's resource documentation, as transcribed on the [EV Nova wiki](https://evnova.miraheze.org/wiki/Sp%C3%B6b). The base prices (75, 350, 750, 900, 200 and 550) are in the data. The rule that low is 80% and high is 125% of base, rounded down, comes from the wiki's [commodity table](https://evnova.miraheze.org/wiki/Commodities); the Nova Bible does not state it.
 
 The tests use a small made-up galaxy. Set `EV_NOVA_CONTEXT` to the path of an export to run the test that reads the real data too.
+
+## Sources
+
+- J. Cochet-Terrasson, G. Cohen, S. Gaubert, M. McGettrick and J.-P. Quadrat, Numerical computation of spectral elements in max-plus algebra (1998): Howard's policy iteration for the best ratio of gain to cost.
+- R. M. Karp, A characterization of the minimum cycle mean in a digraph, *Discrete Mathematics* 23 (1978).
+- U. Brandes, A faster algorithm for betweenness centrality, *Journal of Mathematical Sociology* 25 (2001).
+- The EV Nova wiki's [Trade Routes](https://evnova.miraheze.org/wiki/Trade_Routes), [Making Money](https://evnova.miraheze.org/wiki/Nova:Making_Money) and [Commodities](https://evnova.miraheze.org/wiki/Commodities) pages, read 2026-11-18.
 
 ## Open questions
 
@@ -85,7 +127,10 @@ uv run --group ev_nova python -m ev_nova.study                                  
 uv run --group ev_nova python -m ev_nova.study --evnova path/to/NovaConText.txt  # both games
 uv run python -m ev_nova.naev --checkout path/to/naev                            # rebuild naev.json
 uv run pytest tests/test_ev_nova.py
+uv run python -m ev_nova.figures                                                 # the figures (about a minute)
 ```
+
+## Files
 
 | File | Contents |
 |---|---|
@@ -95,3 +140,4 @@ uv run pytest tests/test_ev_nova.py
 | `evnova.py` | Reader for a ConText export of EV Nova, with the control-bit tests that hide and show systems |
 | `guides.py` | The published EV Nova routes, with their sources |
 | `study.py` | Prints every result above |
+| `figures.py`, `figures/` | This README's figures, as SVG; a test checks they are current |

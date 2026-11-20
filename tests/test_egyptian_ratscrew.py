@@ -3,7 +3,6 @@
 import random
 from collections import Counter
 from fractions import Fraction
-from itertools import permutations
 from math import comb
 
 from egyptian_ratscrew.game import (
@@ -12,6 +11,7 @@ from egyptian_ratscrew.game import (
     ROYALS,
     answer_chance,
     challenger_keeps,
+    challenger_keeps_by_orders,
     deal,
     first_challenge,
     play,
@@ -43,24 +43,15 @@ def test_answer_chance_by_counting_hands():
 
 
 def test_challenger_keeps_matches_every_order_of_a_small_deck():
-    def by_enumeration(chances, cards):
-        orders = set(permutations(cards))
-        keeps = 0
-        for order in orders:
-            owed, challenger = chances, 0
-            for card in order:
-                if card in CHANCES:
-                    challenger, owed = 1 - challenger, CHANCES[card]
-                else:
-                    owed -= 1
-                    if owed == 0:
-                        break
-            keeps += challenger == 0
-        return Fraction(keeps, len(orders))
-
-    assert by_enumeration(2, ["J", "Q", "A", 2, 2, 2, 2]) == challenger_keeps(2, (1, 1, 0, 1), 4)
-    assert by_enumeration(3, ["J", "J", "K", 2, 2, 2, 2, 2]) == challenger_keeps(3, (2, 0, 1, 0), 5)
-    assert by_enumeration(4, ["Q", "K", "A", 3, 3, 3]) == challenger_keeps(4, (0, 1, 1, 1), 3)
+    assert challenger_keeps_by_orders(2, ["J", "Q", "A", 2, 2, 2, 2]) == challenger_keeps(
+        2, (1, 1, 0, 1), 4
+    )
+    assert challenger_keeps_by_orders(3, ["J", "J", "K", 2, 2, 2, 2, 2]) == challenger_keeps(
+        3, (2, 0, 1, 0), 5
+    )
+    assert challenger_keeps_by_orders(4, ["Q", "K", "A", 3, 3, 3]) == challenger_keeps(
+        4, (0, 1, 1, 1), 3
+    )
 
 
 def test_first_challenge_agrees_with_simulation():
@@ -161,3 +152,21 @@ def test_a_careless_player_loses_more():
     rng = random.Random(4)
     careful = sum(play_game([0.5, 0.5], rng, misslaps=[0, 0.1]).winner == 0 for _ in range(400))
     assert careful > 300
+
+
+def test_challenge_by_hand_on_three_cards():
+    # A jack is laid; unseen are one queen and two other cards. The next card is another
+    # card (2/3), and the challenger keeps the pile, or the queen (1/3), and then nobody can
+    # answer it from two plain cards. So the challenger keeps it with chance 2/3.
+    assert challenger_keeps(1, (0, 1, 0, 0), 2) == Fraction(2, 3)
+    assert challenger_keeps_by_orders(1, ["Q", 2, 2]) == Fraction(2, 3)
+
+
+def test_committed_svgs_are_what_the_script_writes(tmp_path):
+    from egyptian_ratscrew import figures
+
+    figures.main(tmp_path)
+    for name in figures.FIGURES:
+        assert (tmp_path / name).read_bytes() == (figures.HERE / "figures" / name).read_bytes(), (
+            name
+        )
