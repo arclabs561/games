@@ -640,6 +640,8 @@ def part_calib_records(args, out: Path) -> None:
     numbers = CALIB_FILES[(split, kind)]
     population = args.population if kind == "population" else 0
     chosen = sample(args.data, numbers, args.per_band, CALIB_SALT[split], population)
+    if args.bands:  # one job's share of the same sample, so that shares can run side by side
+        chosen = [g for g in chosen if g["band"] in args.bands.split(",")]
     log(f"calib: {len(chosen)} games sampled")
     maia, meta = load_maia(args.model)
     t = time.time()
@@ -669,7 +671,7 @@ def part_calib_records(args, out: Path) -> None:
             r["month_games"] = int(g)
             r["month_change"] = float(last - r["rating"]) if last is not None else None
         log("calib: month records counted")
-        if kind == "stratified":
+        if kind == "stratified" and (not args.bands or "600-1000" in args.bands):
             rows = con.execute(games.rating_counts_sql(files(args.data, numbers))).fetchall()
             counts: dict[str, dict[str, int]] = {}
             for tc, b, n in rows:
@@ -725,10 +727,14 @@ def part_calib_diagnose(args, out: Path) -> None:
     """Diagnosis, cross-validation and the frozen fit, from the stored pilot records."""
     from chess_ratings import calibration
 
-    runs = download_runs(["calib-pilot-stratified", "calib-pilot-population"])
-    strat = load_calib(runs["calib-pilot-stratified"], "stratified")
+    names = (args.runs or "calib-pilot-stratified").split(",")
+    runs = download_runs([*names, "calib-pilot-population"])
+    strat = [r for n in names for r in load_calib(runs[n], "stratified")]
     pop = load_calib(runs["calib-pilot-population"], "population")
-    counts = json.loads((runs["calib-pilot-stratified"] / "rating_counts.json").read_text())
+    counted = [
+        runs[n] / "rating_counts.json" for n in names if (runs[n] / "rating_counts.json").exists()
+    ]
+    counts = json.loads(counted[0].read_text())
     log(f"diagnose: {len(strat)} stratified and {len(pop)} population player-games")
     result, fit, cases = calibration.pilot(strat, pop, counts, log)
     (out / "cases.txt").write_text(cases)
@@ -741,8 +747,9 @@ def part_calib_test(args, out: Path) -> None:
     """The test, scored once with the frozen fit committed at this commit."""
     from chess_ratings import calibration
 
-    runs = download_runs(["calib-test-stratified", "calib-test-population"])
-    strat = load_calib(runs["calib-test-stratified"], "stratified")
+    names = (args.runs or "calib-test-stratified").split(",")
+    runs = download_runs([*names, "calib-test-population"])
+    strat = [r for n in names for r in load_calib(runs[n], "stratified")]
     pop = load_calib(runs["calib-test-population"], "population")
     fit = json.loads((Path(__file__).parent / "results" / "calibration-fit.json").read_text())
     write_compact(out, "calibration-test.json", rounded(calibration.test(strat, pop, fit), 4))
@@ -769,6 +776,7 @@ def main(argv=None) -> None:
     parser.add_argument("--split", default="pilot", choices=("pilot", "test"))
     parser.add_argument("--kind", default="stratified", choices=("stratified", "population"))
     parser.add_argument("--population", type=int, default=300)
+    parser.add_argument("--bands", default="", help="calib-records: only these bands")
     parser.add_argument("--run", default=None, help="upload OUT to runs/chess/RUN in the dataset")
     args = parser.parse_args(argv)
     out = Path(args.out)
