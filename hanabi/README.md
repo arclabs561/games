@@ -1,9 +1,10 @@
 # Hanabi
 
-Hanabi is a cooperative card game for two to five players. Each player sees the other hands but not their own, and the team tries to play the 50-card deck into five piles, one per color, in order from 1 to 5. A perfect game scores 25. This folder asks two questions:
+Hanabi is a cooperative card game for two to five players. Each player sees the other hands but not their own, and the team tries to play the 50-card deck into five piles, one per color, in order from 1 to 5. A perfect game scores 25. This folder asks, among other questions:
 
 - How well does the hat-guessing "information strategy" of Cox et al. (2015) play, and can its published numbers be reproduced?
 - What share of deals can reach 25 at all, if every player could see every card, including the deck? No strategy for the real game wins a deal that fails this test, so the share bounds every agent's rate of perfect games.
+- When people play, how much of their distance from 25 did the deal rule out? In 1,858 two-player games from hanab.live, under 1%: 0.013 of 1.63 points.
 
 ## Rules as modeled
 
@@ -147,6 +148,76 @@ The bound is optimistic. Real players do not see the deck order, so the best rea
 
 The last column is (25 − 24.9842) divided by the gap, with 24.9842 the two-player bound of plan H1 above; it carries that bound's uncertainty of about an eighth of its size. The 2,000-deal bound used before, 24.9765, gave shares about half again as large. Language models trail by a wide margin. In "Sparks of Cooperative Reasoning" (arXiv:2601.18077), the best of 17 models averages about 15 to 18 points over 10 seeded games per setting, and in LLM-Hanabi (arXiv:2510.04980) the best five-player score is DeepSeek-R1's 30.00 on a 100-point scale. The leaderboard of the AH2AC2 challenge (arXiv:2506.21490) reports 21.04 for OBL level 4 and 9.91 for DeepSeek-R1 with H-group conventions when paired with human proxies in two-player games. With five players the information strategy's gap is 0.32 points and hanabi.rs's is 0.08; only one five-player deal in 20,000 is lost, so in principle nearly all of it can be closed.
 
+## Human games: the deal or the table?
+
+*"We finished on 23. Could any team have made 25 with these cards?"* Almost always, if it could have seen every card. Of 1,858 two-player games played by people on hanab.live, 19 were dealt a deck whose best possible score is below 25, and of 1,221 three-player games, none. Two-player teams averaged 1.63 points below 25. The deal ruled out 0.013 of those points (95% interval 0.007 to 0.019), under 1% of the gap. The other 1.62 (1.54 to 1.70) lie between the score and the deal's ceiling. They were lost to hidden information or to play, and these games cannot say how much to each.
+
+![Two grids of games, one per number of players, counted by the deal's best possible score (rows 22 to 25) and the team's score (columns 13 to 25). Nearly all games sit in the top row, ceiling 25, with the largest counts at 25, 24 and 23 points.](results/humans-ceiling.svg)
+
+The grid counts games by their deal's ceiling and their score. Look at how few games lie below the top row: the ceiling is 25 for 1,839 of 1,858 two-player deals and for every three-player deal, so nearly all of the spread in scores is the team's distance from 25.
+
+**The ceiling.** As in the section above, the ceiling of a deal is the best score of the open game: every card in view, the deck included, and a hint only a pass that costs a token. No team scores above it. No team that cannot see its own cards can be expected to reach it either: the strongest published two-player agents average 24.08 to 24.61 in self-play (the table above), on deals almost all of whose ceilings are 25. So the gap between a team's score and its ceiling has two causes mixed together: what the players could not know, and what they chose. Separating them needs a reference agent that plays the real game well on the same decks. This section does not have one and does not split that part.
+
+**The data.** The AH2AC2 challenge (Dizdarević et al., 2025) released 1,858 two-player and 1,221 three-player games from hanab.live, played with the H-group conventions, each with its deck and every action. `humans_data.py` reads the files with the standard library. The challenge's documentation says the deck is listed from the top. The actions are numbered as in JaxMARL's Hanabi, which deals the hands in blocks from the top and puts a drawn card at the end of the hand, as `rules.py` does; plan H4's agreement test checked these conventions against JaxMARL itself. With them, every one of the 3,079 games replays in `rules.py` with every action legal and ends on its recorded score. The mean scores, 23.37 and 23.25, match the challenge paper's Table 1. The game numbers in the files are the challenge's own, not hanab.live's, so the games cannot be matched with the site's records.
+
+Two things about the sample:
+
+- No game in it loses its third life. Every game has at most two strikes, and the lowest scores are 13 and 14, as the paper's Table 1 also gives. The sources read here do not say whether lost games were left out.
+- 341 two-player and 321 three-player records stop before the rules' end of the game. For each of them, a search of the open game from the last position proves that no further point could be scored. This fits hanab.live's ending a game once no further point can be scored. These records are treated as finished, with their recorded score.
+
+**Results.** Exact unless marked; intervals are 95% intervals over games, by percentile bootstrap (10,000 resamples, seed 0) for means and by Wilson's method for shares.
+
+| | Two players | Three players | How it is known |
+|---|---:|---:|---|
+| Games | 1,858 | 1,221 | the dataset |
+| Deals whose ceiling is below 25 | 19 (1.02%; 0.66% to 1.59%) | 0 (0 to 0.31%) | exact search of each deal |
+| Mean ceiling | 24.987 | 25 | exact search |
+| Mean score | 23.37 (23.28 to 23.45) | 23.25 (23.14 to 23.36) | the records, replayed |
+| Points below 25 ruled out by the deal | 0.013 (0.007 to 0.019) | 0 | exact search |
+| Points between the score and the ceiling | 1.62 (1.54 to 1.70) | 1.75 (1.64 to 1.86) | exact search |
+| Share of the gap ruled out by the deal | 0.79% (0.43% to 1.20%) | 0 | exact search |
+| Perfect games, of deals that allow 25 | 731 of 1,839 (39.7%; 37.5% to 42.0%) | 445 of 1,221 (36.4%; 33.8% to 39.2%) | the records |
+| Reference: the information strategy on the same decks | 15.06 (14.95 to 15.17) | 22.22 (22.13 to 22.31) | simulated, one game per deck |
+| Teams minus the reference, same decks | 8.31 (8.18 to 8.44) | 1.04 (0.90 to 1.17) | as above |
+
+- **The deals.** The 19 two-player deals below 25 allow 24 (15 deals), 23 (3) and 22 (1); each fails at least one certificate of `solver.py` (the pooled game for all 19, time for 10, storage for 2). Five of their teams reached the ceiling. The share of such deals, 1.02% (0.66% to 1.59%), is close to plan H1's 1.38% (1.23% to 1.55%) on 20,000 seeded deals, and the intervals overlap, as they should if hanab.live shuffles uniformly. With three players H1 found 17 to 24 such deals in 20,000, so about one was expected here and none was found.
+- **The reference.** The information strategy of `information.py`, with the official discard rule, played each deck once. It is one fixed convention, built for five players. With two players a hint carries one of only two values, and it scores 15.1. It marks what a simple fixed convention reaches on these decks; it is not an estimate of what hidden information costs. With three players the teams beat it by 1.04 points on the same decks, and it beat the team on 279 of the 1,221 decks.
+
+**Where the ceiling falls.** The ceiling can only fall during a game, since the moves made are one of the open game's lines. For each point between a team's score and its ceiling, a binary search over the turns finds the turn after which that point was out of reach, and charges it to that turn's action. A charged action is not judged a mistake: a player who cannot see their own hand may have had no better move. Of 3,079 games, 3,012 were traced this way; in the other 67 (42 two-player, 25 three-player, holding 197 of the points) a search ran out of its budget, and they are left out of the table below.
+
+| Points below the ceiling, charged to | Two players | Three players |
+|---|---:|---:|
+| Discard of a card whose other copies were gone ("critical") | 876 (30%) | 568 (28%) |
+| Other discard | 1,130 (39%) | 524 (25%) |
+| Misplay (a strike) | 375 (13%) | 391 (19%) |
+| Hint | 310 (11%) | 347 (17%) |
+| Play | 188 (7%) | 233 (11%) |
+| When: 20 or more cards left in the deck | 1,139 (40%) | 354 (17%) |
+| When: 10 to 19 cards left | 537 (19%) | 541 (26%) |
+| When: 1 to 9 cards left | 888 (31%) | 968 (47%) |
+| When: the final round | 315 (11%) | 200 (10%) |
+| All points traced | 2,879 in 1,816 games | 2,063 in 1,196 games |
+
+- In two-player games, 40% of the points went while 20 or more cards were left in the deck, most of them on discards of a card whose other copies were gone (533 of the 1,139). With three players more of the loss comes late: 47% with 1 to 9 cards left.
+- A discard that is not of a critical card can still lower the ceiling. It may throw away a card that is needed sooner than its other copy arrives, or spend a turn that the end of the game needed. Late in the game, plays and hints lower the ceiling for the same reason: there are not enough turns left for the plays still needed.
+- Strikes were common, 0.80 a game with two players, but in the traced two-player games only 240 of 1,458 strikes lowered the ceiling. A strike can cost more than one point, so those 240 account for 375 points. Discards of critical cards lowered it 498 times out of 576.
+
+**The command line.** `ceiling.py` prints a deck's ceiling, with the certificates that rule out 25 when it is below 25. The deck is given as 50 cards from the top, as a seed of this package, or as a hanab.live JSON export. For an export it also replays the game and prints each turn after which the ceiling fell. It reads both the clue fields of the format's description and those of the site's `/export/<id>` pages; two exports fetched from the site replay to their recorded scores. Variants, detrimental characters and other rule options are refused.
+
+```
+$ uv run python -m hanabi.ceiling --players 2 --deck "W3 R1 R3 G1 R5 Y5 W5 B2 G4 B3 Y4 G2 B5 R4 W1 W4 W2 Y4 W3 Y1 R3 Y3 Y1 G1 G1 G4 Y3 R4 G2 G3 G3 B1 R1 W4 R2 W2 B4 G5 R2 B1 W1 R1 B1 B4 W1 Y2 Y1 B3 Y2 B2"
+Best possible score: 24 (exact).
+  pooled game: even one player holding every hand at once, with no turn order and no hint tokens, cannot reach 25 with these draws.
+$ uv run python -m hanabi.ceiling --players 5 --seed 18105
+Best possible score: 24 (exact).
+  time: the turns that draw the first 16 cards of the deck can play only cards dealt or drawn before the 16th draw (R1), and those allow 5 plays; then come 14 more draws and 5 final turns, so at most 5 + 14 + 5 = 24 cards are played.
+  pooled game: even one player holding every hand at once, with no turn order and no hint tokens, cannot reach 25 with these draws.
+```
+
+The first deck is two-player seed 161 of plan H1. The first command takes under a second and the second about 30 seconds on a shared two-core machine; `--line` adds a line of play that reaches the ceiling, and `--json game.json` reads an export.
+
+**Compute.** `humans.py run` analyzed the games on GitHub Actions in 60 jobs at commit cdc99e3, 6.8 runner-hours in all, at no cost. Half the games took under 0.02 seconds; the slowest took 512 seconds. A second run at an earlier commit, without the free-order test, found the same ceiling for every game. It also found the same turns wherever both runs settled them. `results/humans-games.jsonl` holds one record per game: numbers derived from the game, not its deck or its actions. `results/humans.json` and the picture are computed from it, and a test checks that they match.
+
 ## Language-model players
 
 Experiment H2 ([plan](../experiments/plans/H2.md), with two dated amendments) seats the same hosted model in both chairs of a two-player game, on seeded deals 0 to 29, and compares each score with the best score that the deal allows in the open game. The solver wins all 30 deals, so every deal's ceiling is 25 and the gap is 25 minus the score.
@@ -257,10 +328,15 @@ Limits: one game and one reading of the baseline, with a smaller network and far
 - JaxMARL's two-color game and `rules.py` agree on legal moves, game length and score in 4,000 random games (`tests/test_hanabi_jax.py`), and on the score of each of the 1,024,000 games of plan H4's evaluation. Action numbers convert both ways for two to four players. A tiny training run, its evaluation and its summary run end to end on a CPU in the tests.
 - The bootstrap of plan H4 is checked on matrices with known answers. The committed ceilings of the H4 test deals match a fresh solve on a sample of them.
 
+- From games in progress, `winnable` agrees with brute force on every target from every position of random games on every deal of three small decks, and the free-order game with a target below 25 never rules out a score that brute force reaches there.
+- Every one of the 3,079 human games replays in `rules.py` with every action legal and ends on its recorded score. No game scores above its deal's ceiling, and every game scored 25 has ceiling 25. A test recomputes the summary and the picture from the committed per-game records. Action numbers agree with `jax_bridge.py`, which plan H4 checked against JaxMARL. Exports in both clue styles of hanab.live replay in `ceiling.py`.
+
 The two solvers share the rules engine, so a bug there would fool both. The rules engine has its own tests, and the information strategy matches HanSim game by game, which checks the rules from outside.
 
 ## Open questions
 
+- Split the points between a team's score and its deal's ceiling into what hidden information costs and what play costs. That needs an agent that plays the real game well, scored on the same 3,079 decks: an H-group convention bot, or the challenge's human proxies, which are only reachable through its evaluation service.
+- Trace the 67 human games whose drops a search could not settle, with larger budgets.
 - Settle the 23 deals still undecided (listed above). No certificate here proves any of them lost, and 13 are won in the free-order game, so many may be won; a search guided by the free-order game's winning line might find a real one.
 - The free-order game drops tokens. No full deal here is lost to tokens alone, but some small decks are: with three players, hands of one card and one token, 24 of the 180 orderings of a four-card deck are lost though the free-order game wins them.
 - The best real (not open-information) score for each deal is unknown; Endgame-Analyzer on [git.abstractnonsen.se](https://git.abstractnonsen.se/Hanabi/Endgame-Analyzer) solves the case where players know their own cards but not the deck, for endgames.
@@ -292,6 +368,17 @@ uv run python -m hanabi.h2 report --runs hanabi/results/h2-runs --out hanabi/res
 ```
 
 `h2 play` needs `HF_TOKEN` and network access to Hugging Face; the runs above were launched with `experiments/hfrun.py` on Hugging Face Jobs. `h2 report` runs here in a few seconds.
+
+The human games need the `hanabi` group to download the dataset; the analysis itself uses the standard library:
+
+```bash
+uv run --group hanabi python -m hanabi.humans_data fetch     # download, replay every game, check the scores
+uv run python -m hanabi.humans run --players 2 --part 0 --parts 30 --out OUT   # one of the 60 blocks of the run
+uv run python -m hanabi.humans report --runs <folder of blocks>                # results/humans.json and the per-game records
+uv run python -m hanabi.humans figure                                          # results/humans-ceiling.svg
+uv run python -m hanabi.ceiling --players 2 --seed 161                         # one deck's ceiling, under a second
+uv run python -m hanabi.ceiling --json game.json --line                        # a hanab.live export
+```
 
 Plan H4 needs the `hanabi` group (JAX, Flax, Optax and JaxMARL; CPU builds) and, on a GPU, `hanabi-jax`, which adds JAX's CUDA libraries:
 
@@ -328,6 +415,19 @@ uv run python -m hanabi.h4 check hanabi/results/h4.json <sha256>    # the copied
 | `h4.py` | Plan H4: ceilings of the test deals, replay of every game, behavior counts and the paired bootstrap |
 | `results/h4.json` | Plan H4: every number of its README section, the 16 × 16 matrices, behavior per policy and training curves |
 | `results/h4-ceilings.json`, `results/h4-jobs.json` | The ceiling of each H4 test deal; the H4 jobs, their times and costs |
+| `humans_data.py` | Reads the AH2AC2 human games and replays them in `rules.py` |
+| `humans.py` | The ceiling of each human game, the turns where it fell, the reference strategy, the summary and the picture |
+| `ceiling.py` | The command line: a deck's ceiling with its certificates, or a hanab.live export replayed |
+| `results/humans-games.jsonl`, `results/humans.json`, `results/humans-ceiling.svg` | One record per human game (derived numbers only), the summary, and the picture |
+
+## Data
+
+| Source | What it is | License | Committed here |
+|---|---|---|---|
+| [`ah2ac2/datasets`](https://huggingface.co/datasets/ah2ac2/datasets) on Hugging Face (Dizdarević et al., 2025) | 1,858 two-player and 1,221 three-player games from hanab.live: deck, actions, score | The dataset card's metadata reads `license: apache-2.0`; the card has no other text. The games were played on hanab.live, which publishes no terms for its game records (its code is under the GPL 3.0). | No. Only numbers derived from each game (`results/humans-games.jsonl`): no deck and no action list. |
+| hanab.live `/export/<id>` pages | Two games used to test `ceiling.py`'s reader | No terms published | No |
+
+Because the dataset's license comes from a metadata tag alone and the site states no terms, this folder keeps derived numbers only.
 
 ## Sources
 
@@ -338,6 +438,7 @@ uv run python -m hanabi.h4 check hanabi/results/h4.json <sha256>    # the copied
 - N. Bard et al., "The Hanabi Challenge: A New Frontier for AI Research", *Artificial Intelligence* 280, 2020 (arXiv:1902.00506).
 - H. Hu, J. Foerster, "Simplified Action Decoder for Deep Multi-Agent Reinforcement Learning", ICLR 2020; A. Lerer, H. Hu, J. Foerster, N. Brown, "Improving Policies via Search in Cooperative Partially Observable Games", AAAI 2020; H. Hu et al., "Off-Belief Learning", ICML 2021.
 - J. Forkel, C. Ruhdorfer, M. Beukman, A. Bulling, J. Foerster, "High entropy leads to symmetry-equivariant policies in Dec-POMDPs", arXiv:2511.22581 (v5, 2026-05-05): Table 1, and Appendix F for their settings.
-- M. Ramesh et al., "Sparks of Cooperative Reasoning: LLMs as Strategic Hanabi Agents", arXiv:2601.18077; F. Liang et al., "LLM-Hanabi", arXiv:2510.04980; T. Dizdarević et al., "Ad-Hoc Human-AI Coordination Challenge", arXiv:2506.21490.
+- M. Ramesh et al., "Sparks of Cooperative Reasoning: LLMs as Strategic Hanabi Agents", arXiv:2601.18077; F. Liang et al., "LLM-Hanabi", arXiv:2510.04980; T. Dizdarević et al., "Ad-Hoc Human-AI Coordination Challenge", ICML 2025, arXiv:2506.21490; its open dataset and documentation (docs.ah2ac2.com) are the source of the human games.
+- hanab.live: the game format's description (`misc/example_game_with_comments.jsonc`) and the changelog of github.com/Hanabi-Live/hanabi-live, for the deal order and the starting player.
 - W. D. Harvey, M. L. Ginsberg, "Limited Discrepancy Search", IJCAI 1995.
 - A. Rutherford et al., "JaxMARL: Multi-Agent RL Environments and Algorithms in JAX", NeurIPS 2024 Datasets and Benchmarks; `jaxmarl` 0.2.0 (Apache 2.0). `ippo.py` writes again the algorithm of its `baselines/IPPO/ippo_rnn_hanabi.py`, which builds on PureJaxRL (C. Lu et al., "Discovered Policy Optimisation", NeurIPS 2022); both are under Apache 2.0.
