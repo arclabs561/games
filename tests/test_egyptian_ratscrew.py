@@ -93,8 +93,8 @@ def test_a_player_who_wins_every_slap_usually_wins():
 
 def test_tricks_match_the_beggar_my_neighbour_checker():
     """Cards and tricks for four record deals, as BeggarMyPython (the checker linked from
-    Richard Mann's list) counts them. Mann's list gives 713 tricks for Manasse's deal and 6,914
-    cards for Collins's; the checker and this code give 712 and 6,913."""
+    Richard Mann's list) counts them. Mann's list gives 713 tricks for the 5,104-card deal and 6,914
+    cards for the 960-trick deal; the checker and this code give 712 and 6,913."""
     deals = [
         ("---AJ--Q---------QAKQJJ-QK", "-----A----KJ-K--------A---", 8344, 1164),
         ("--A-Q--J--J---Q--AJ-K---K-", "-J-------Q------A--A--QKK-", 7225, 1016),
