@@ -40,6 +40,7 @@ class Stub:
 
 
 MODEL = Model("org/model", "provider", {"reasoning_effort": "low"})
+PIN = {"order": ["provider"], "allow_fallbacks": False}
 
 
 def test_meter_stops_before_the_cap():
@@ -66,10 +67,12 @@ def test_retries_then_logs_every_field(tmp_path):
         "max_tokens": 64,
         "temperature": 0.0,
         "seed": 0,
-        "extra_body": {"reasoning_effort": "low"},
+        "extra_body": {"reasoning_effort": "low", "provider": PIN},
     }
     assert rec["prompt"] == "the prompt" and rec["cost"] == 1e-4
-    assert stub.sent[-1][2] == {"reasoning_effort": "low"}
+    assert stub.sent[-1][1] == "org/model:provider"
+    assert stub.sent[-1][2] == {"reasoning_effort": "low", "provider": PIN}
+    assert rec["pinned"] == "org/model:provider" and rec["pin_held"] is None
 
 
 def test_a_call_that_always_fails_returns_empty_and_costs_nothing(tmp_path):

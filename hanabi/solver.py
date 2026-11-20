@@ -76,9 +76,11 @@ def copy_state(s: State) -> State:
     )
 
 
-def brute_winnable(rules: Rules, deck: list[int], target: int = 0) -> bool:
+def brute_winnable(
+    rules: Rules, deck: list[int], target: int = 0, start: State | None = None
+) -> bool:
     """Exhaustive search over every legal action of the rules engine: can the score reach
-    the target (by default the maximum)?"""
+    the target (by default the maximum)? `start` is a game in progress on this deck."""
     failed: set[tuple] = set()
     target = target or rules.max_score
 
@@ -98,7 +100,7 @@ def brute_winnable(rules: Rules, deck: list[int], target: int = 0) -> bool:
         failed.add(key)
         return False
 
-    return search(new_game(rules, deck))
+    return search(copy_state(start) if start else new_game(rules, deck))
 
 
 # --- the fast engine -----------------------------------------------------------------------
@@ -304,6 +306,7 @@ def winnable(
     schedule=SCHEDULE,
     target: int = 0,
     stats: dict | None = None,
+    start: State | None = None,
 ):
     """Fast search. Returns (True, line), (False, None), or (None, None) when the node budget
     (0 for none) runs out. A line is a list of open-game moves (player, kind, card).
@@ -313,9 +316,10 @@ def winnable(
     most k steps away from the first child. The limits grow through `schedule`, which ends
     with no limit, so a deal is declared lost only after a complete search. With a target
     below the maximum it asks whether that score can be reached instead. If `stats` is a
-    dict, its "nodes" entry is increased by the number of states expanded."""
+    dict, its "nodes" entry is increased by the number of states expanded. `start` is a game
+    in progress on this deck (not over); by default the search starts from the deal."""
     d = Deal(rules, deck, target)
-    nr, np, h, maxh = d.nr, d.np, d.h, rules.max_hints
+    nr, np, maxh = d.nr, d.np, rules.max_hints
     failed: dict = {}  # state -> largest limit it failed under (INF: failed outright)
     pool_memo: dict = {}
     nodes = 0
@@ -435,12 +439,20 @@ def winnable(
         failed[state] = disc if cut else INF
         return False, not cut
 
-    board0 = (0,) * rules.colors
-    hands0 = tuple(d.canon(deck[i * h : (i + 1) * h], board0) for i in range(np))
-    start = (board0, hands0, np * h, maxh, rules.lives, 0, -1)
+    if start is None:  # the deal itself, built exactly as before games in progress existed
+        h = rules.hand
+        board0 = (0,) * rules.colors
+        hands0 = tuple(d.canon(deck[i * h : (i + 1) * h], board0) for i in range(np))
+        root = (board0, hands0, np * h, maxh, rules.lives, 0, -1)
+    else:
+        assert not start.over and list(start.deck) == list(deck), "not a game on this deck"
+        board0 = tuple(start.board)
+        hands0 = tuple(d.canon(x, board0) for x in start.hands)
+        root = (board0, hands0, start.pos, start.hints, start.lives, start.current)
+        root += (start.turns_left,)
     try:
         for limit in schedule:
-            ok, exact = search(start, limit)
+            ok, exact = search(root, limit)
             if ok:
                 return True, list(line)
             if exact:
@@ -453,10 +465,10 @@ def winnable(
     return None, None
 
 
-def replay(rules: Rules, deck: list[int], line) -> int:
+def replay(rules: Rules, deck: list[int], line, start: State | None = None) -> int:
     """Play a winning line with the rules engine and return the score. Trash and passes are
-    resolved to a concrete card and a legal hint."""
-    s = new_game(rules, deck)
+    resolved to a concrete card and a legal hint. `start` is the game the line starts from."""
+    s = copy_state(start) if start else new_game(rules, deck)
     for player, kind, card in line:
         assert s.current == player, "line out of turn"
         hand = s.hands[player]

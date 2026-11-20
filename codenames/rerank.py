@@ -224,6 +224,7 @@ def price(models, out: Path) -> None:
         MODELS[name] = replace(m, price=prices.get(m.repo, {}).get(m.provider))
     listed = {MODELS[n].repo: prices.get(MODELS[n].repo, {}) for n in models}
     (out / "prices.json").write_text(json.dumps(listed, indent=1) + "\n")
+    c4.record_serving([MODELS[n] for n in models], out)
 
 
 def model_list(arg: str) -> list[str]:

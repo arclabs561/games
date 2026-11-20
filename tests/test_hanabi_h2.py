@@ -10,6 +10,7 @@ from hanabi.h2 import (
     bootstrap,
     ceiling,
     complete_prefix,
+    fallback_effect,
     main,
     paired,
     parse_seeds,
@@ -117,7 +118,9 @@ def test_hosted_retries_three_times_then_gives_up():
     ok = Hosted("org/model", "slow", meter, client=fake, log=log.append, wait=0)
     assert ok("prompt") == "PLAY 1"
     assert log[0]["attempt"] == 3 and len(log[0]["errors"]) == 3
-    assert log[0]["params"] == {"max_tokens": 512, "temperature": 0, "seed": 0}
+    pin = {"provider": {"order": ["slow"], "allow_fallbacks": False}}
+    assert log[0]["params"] == {"max_tokens": 512, "temperature": 0, "seed": 0, "extra_body": pin}
+    assert log[0]["pinned"] == "org/model:slow" and log[0]["pin_held"] is None
     bad = Hosted("org/model", "slow", meter, client=FakeClient(fail=4), wait=0)
     with pytest.raises(ProviderError):
         bad("prompt")
@@ -127,7 +130,10 @@ def test_hosted_retries_three_times_then_gives_up():
 def test_reasoning_effort_is_sent():
     meter = Meter(Price(1.0, 1.0), cap=1.0, max_call=0.01)
     h = Hosted("m", "p", meter, reasoning_effort="medium", client=FakeClient())
-    assert h.params["extra_body"] == {"reasoning_effort": "medium"}
+    assert h.params["extra_body"] == {
+        "reasoning_effort": "medium",
+        "provider": {"order": ["p"], "allow_fallbacks": False},
+    }
 
 
 def test_seeds_prefix_and_statistics():
@@ -223,3 +229,76 @@ def test_provider_failure_replays_the_game_once(tmp_path):
     row = json.loads((tmp_path / "scores.jsonl").read_text())
     assert row["status"] == "complete" and row["attempts"] == 2
     assert (tmp_path / "calls" / "seed-0-replay1.jsonl").exists()
+
+
+def test_fallback_effect_splits_the_lives_lost():
+    # every third reply is unreadable, so those turns get the fallback
+    rules = Rules(players=2)
+    deck = seeded_deck(rules, 3)
+    turn = {"n": 0}
+
+    def complete(prompt: str) -> str:
+        turn["n"] += 1
+        return "no move here" if turn["n"] % 3 == 0 else first_discard_or_last(prompt)
+
+    state, record = play_game(rules, deck, complete, deduction=False)
+    e = fallback_effect(rules, deck, record["moves"], record["fallback_turns"])
+    assert e["score"] == state.score
+    assert e["lives_lost_by_fallbacks"] + e["lives_lost_by_model"] == record["lives_lost"]
+    kinds = e["fallback_plays"] + e["fallback_discards"] + e["fallback_hints"]
+    assert kinds == record["fallbacks"] == len(record["fallback_turns"]) > 0
+    with pytest.raises(ValueError):
+        fallback_effect(rules, deck, ["PLAY 9"], [])
+
+
+def test_harness_report_counts_over_complete_games(tmp_path):
+    runs = tmp_path / "runs"
+    run_games(args_for(runs / "on"), MODELS, FakeClient())
+    out = tmp_path / "harness.json"
+    main(["harness", "--runs", str(runs), "--out", str(out)])
+    arm = json.loads(out.read_text())["arms"][0]
+    assert arm["games"] == 3 and arm["max_tokens"] == 512
+    assert arm["lives_lost_by_fallbacks"] == 0 and arm["truncated"] == 0
+
+
+def test_a_reply_from_another_provider_counts_as_a_failed_attempt():
+    class Elsewhere(FakeClient):
+        def chat_completion(self, messages, model, **params):
+            r = super().chat_completion(messages, model, **params)
+            r.provider = "Crusoe" if self.calls == 1 else "Novita"
+            return r
+
+    meter = Meter(Price(1.0, 1.0), cap=1.0, max_call=0.01)
+    log = []
+    h = Hosted("org/model", "novita", meter, client=Elsewhere(reply=lambda p: "PLAY 1"),
+               log=log.append, wait=0)  # fmt: skip
+    assert h("prompt") == "PLAY 1"
+    assert [c["pin_held"] for c in log] == [False, True]
+    assert log[1]["errors"] == ["served by Crusoe"] and meter.calls == 2
+
+
+def test_repeat_check_counts_prompts_whose_replies_change():
+    from hanabi.hosted import repeat_check
+
+    replies = iter(["PLAY 1", "PLAY 1", "PLAY 1", "PLAY 2"])
+    assert repeat_check(lambda p: next(replies), ["a", "b"]) == {
+        "prompts": 2,
+        "times": 2,
+        "changed": 1,
+    }
+
+
+def test_committed_harness_counts_agree_with_the_committed_games():
+    from pathlib import Path
+
+    results = Path(__file__).parent.parent / "hanabi" / "results"
+    for arm in json.loads((results / "h2-harness.json").read_text())["arms"]:
+        rows = [json.loads(x) for x in (results / "h2-runs" / arm["run"] / "scores.jsonl").open()]
+        rows = [r for r in rows if r["status"] == "complete"]
+        assert arm["games"] == len(rows)
+        assert arm["score"] == sum(r["score"] for r in rows)
+        fallbacks = arm["fallback_discards"] + arm["fallback_plays"] + arm["fallback_hints"]
+        assert fallbacks == sum(r["fallbacks"] for r in rows)
+        lost = arm["lives_lost_by_fallbacks"] + arm["lives_lost_by_model"]
+        assert lost == sum(r["lives_lost"] for r in rows)
+        assert arm["truncated"] == sum(r["truncated"] for r in rows)
