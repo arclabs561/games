@@ -22,7 +22,7 @@ def table(board: chess.Board, probs: dict[int, dict[str, float]], top: int) -> s
     ratings = sorted(probs)
     chosen: set[str] = set()
     for r in ratings:
-        chosen |= set(sorted(probs[r], key=lambda m: -probs[r][m])[:top])
+        chosen |= set(sorted(probs[r], key=lambda m: (-probs[r][m], m))[:top])
     middle = ratings[len(ratings) // 2]
     order = sorted(chosen, key=lambda m: (-probs[middle][m], m))
     head = "move    " + "".join(f"{r:>7}" for r in ratings)

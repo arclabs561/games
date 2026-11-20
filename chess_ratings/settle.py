@@ -221,7 +221,8 @@ def normal_two_sided(z: float) -> float:
     return 1 - erf(z / sqrt(2))
 
 
-def main() -> None:
+def compute() -> dict:
+    """Every number that results/settle.json holds."""
     out: dict = {"opponent_rd": OPPONENT_RD}
     rds = (45, 60, 80, 110, 200, 350, 500)
     out["games_to_establish"] = {
@@ -293,8 +294,27 @@ def main() -> None:
         }
         for gap in (25, 50, 100, 200, 400)
     }
+    return out
+
+
+def rounded(x, digits: int = 6):
+    """Floats rounded to `digits` decimals, so the file does not depend on the last bits."""
+    if isinstance(x, float):
+        return round(x, digits)
+    if isinstance(x, dict):
+        return {k: rounded(v, digits) for k, v in x.items()}
+    if isinstance(x, list | tuple):
+        return [rounded(v, digits) for v in x]
+    return x
+
+
+def to_text(out: dict) -> str:
+    return json.dumps(rounded(out), indent=1, sort_keys=True) + "\n"
+
+
+def main() -> None:
     RESULTS.mkdir(exist_ok=True)
-    text = json.dumps(out, indent=1, sort_keys=True) + "\n"
+    text = to_text(compute())
     (RESULTS / "settle.json").write_text(text)
     print(text)
 

@@ -133,7 +133,7 @@ def cap(x: Glicko) -> Glicko:
 
 def live(x: Glicko, days: float) -> Glicko:
     """The deviation after `days` without a game, as Lichess reads it before the next game."""
-    deviation = sqrt(x.deviation**2 + PERIODS_PER_DAY * days * x.volatility**2)
+    deviation = sqrt(x.deviation**2 + PERIODS_PER_DAY * days * (x.volatility * SCALE) ** 2)
     return Glicko(x.rating, min(max(deviation, MIN_DEVIATION), MAX_DEVIATION), x.volatility)
 
 

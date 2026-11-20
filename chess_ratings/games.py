@@ -75,7 +75,8 @@ def blitz_sample_sql(files: list[str], per_band: int, salt: str, bands: tuple) -
     A game qualifies if it is rated blitz, ended normally or on time, and moved neither rating
     by more than 15 points, which keeps players whose deviation is small. It falls in the band
     of the mean of the two ratings; within a band, games are ordered by md5(salt || Site), so the
-    sample is fixed by the salt and the files.
+    sample is fixed by the salt and the files. The moves are fetched afterwards, by
+    `movetext_sql`, for the chosen games only.
     """
     listed = ", ".join(f"'{f}'" for f in files)
     cases = " ".join(
@@ -85,17 +86,23 @@ def blitz_sample_sql(files: list[str], per_band: int, salt: str, bands: tuple) -
     )
     return f"""
         WITH g AS (
-            SELECT Site, WhiteElo, BlackElo, Result, TimeControl, movetext,
+            SELECT Site, WhiteElo, BlackElo, Result, TimeControl,
                    CASE {cases} ELSE NULL END AS band,
                    md5('{salt}' || Site) AS h
             FROM read_parquet([{listed}])
             WHERE Event LIKE 'Rated Blitz%'
               AND Termination IN ('Normal', 'Time forfeit')
               AND abs(WhiteRatingDiff) <= 15 AND abs(BlackRatingDiff) <= 15
-              AND movetext LIKE '%clk%'
         )
         SELECT * FROM (
             SELECT *, row_number() OVER (PARTITION BY band ORDER BY h) AS rank FROM g
             WHERE band IS NOT NULL
         ) WHERE rank <= {per_band} ORDER BY band, rank
     """
+
+
+def movetext_sql(files: list[str], sites: list[str]) -> str:
+    """SQL for the moves of the chosen games, by their Site."""
+    listed = ", ".join(f"'{f}'" for f in files)
+    wanted = ", ".join(f"'{s}'" for s in sites)
+    return f"SELECT Site, movetext FROM read_parquet([{listed}]) WHERE Site IN ({wanted})"

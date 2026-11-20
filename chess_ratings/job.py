@@ -40,6 +40,13 @@ BANDS = estimate.BANDS
 STOCKFISH = "/usr/games/stockfish"
 
 
+START = time.time()
+
+
+def log(message: str) -> None:
+    print(f"[{time.time() - START:7.0f} s] {message}", flush=True)
+
+
 def files(data: str, numbers) -> list[str]:
     return [f"{data}/train-{i:05d}-of-00062.parquet" for i in numbers]
 
@@ -71,12 +78,22 @@ def sample(data: str, numbers, per_band: int, salt: str = SALT) -> list[dict]:
     sql = games.blitz_sample_sql(files(data, numbers), 3 * per_band, salt, BANDS)
     cur = con.execute(sql)
     cols = [c[0] for c in cur.description]
+    chosen = [dict(zip(cols, row, strict=True)) for row in cur.fetchall()]
+    log(f"sample: {len(chosen)} candidate games")
+    texts = dict(
+        con.execute(
+            games.movetext_sql(files(data, numbers), [g["Site"] for g in chosen])
+        ).fetchall()
+    )
+    log("sample: moves fetched")
     kept: dict[str, list[dict]] = {}
-    for row in cur.fetchall():
-        game = dict(zip(cols, row, strict=True))
+    for game in chosen:
         if len(kept.setdefault(game["band"], [])) >= per_band:
             continue
-        ply_list = games.plies(game["movetext"], games.base_seconds(game["TimeControl"]))
+        text = texts.get(game["Site"], "")
+        if "clk" not in text:
+            continue
+        ply_list = games.plies(text, games.base_seconds(game["TimeControl"]))
         if len(ply_list) >= 40:
             game["plies"] = ply_list
             kept[game["band"]].append(game)
@@ -214,7 +231,9 @@ def part_pilot(args, out: Path) -> None:
         "GROUP BY Event ORDER BY c DESC LIMIT 8"
     ).fetchall()
     info["events"] = [[e, c] for e, c in events]
+    log(f"pilot: files {info}")
     maia, meta = load_maia(args.model)
+    log("pilot: model loaded")
     info |= meta
     checks = []
     for moves in ([], ["e2e4", "e7e5", "d1h5", "b8c6", "f1c4"], ["d2d4", "g8f6", "c2c4"]):
@@ -228,6 +247,7 @@ def part_pilot(args, out: Path) -> None:
     t = time.time()
     maia.probabilities(queries)
     info["queries_per_second"] = len(queries) / (time.time() - t)
+    log(f"pilot: {info['queries_per_second']:.0f} queries per second; uci check {checks}")
     pilot = sample(args.data, [30, 31], per_band=8)
     info["pilot_games"] = len(pilot)
     for use_history in (True, False):
@@ -239,6 +259,7 @@ def part_pilot(args, out: Path) -> None:
         s.pop("rows")
         info[f"estimate_{key}"] = s
         info[f"seconds_{key}"] = time.time() - t
+        log(f"pilot: {key} done")
     with chess.engine.SimpleEngine.popen_uci(STOCKFISH) as engine:
         info["stockfish"] = engine.id.get("name")
         board = chess.Board()
@@ -464,9 +485,9 @@ def main(argv=None) -> None:
         "middlegame": part_middlegame,
     }
     for name in args.part.split(","):
-        t = time.time()
+        log(f"part {name} starts")
         parts[name](args, out)
-        print(f"part {name} took {time.time() - t:.0f} s", flush=True)
+        log(f"part {name} done")
 
 
 if __name__ == "__main__":

@@ -34,11 +34,11 @@ def player_games_sql(files: list[str]) -> str:
             WHERE Event LIKE 'Rated Blitz%' AND WhiteRatingDiff IS NOT NULL
         ), p AS (
             SELECT White AS player, WhiteElo AS elo, WhiteRatingDiff AS diff, BlackElo AS opp,
-                   CASE Result WHEN '1-0' THEN 1.0 WHEN '0-1' THEN 0.0 ELSE 0.5 END AS score,
+                   CAST(CASE Result WHEN '1-0' THEN 1 WHEN '0-1' THEN 0 ELSE 0.5 END AS DOUBLE) AS score,
                    1 AS white, UTCDate AS d, UTCTime AS t, Site FROM g
             UNION ALL
             SELECT Black, BlackElo, BlackRatingDiff, WhiteElo,
-                   CASE Result WHEN '1-0' THEN 0.0 WHEN '0-1' THEN 1.0 ELSE 0.5 END,
+                   CAST(CASE Result WHEN '1-0' THEN 0 WHEN '0-1' THEN 1 ELSE 0.5 END AS DOUBLE),
                    0, UTCDate, UTCTime, Site FROM g
         ), firsts AS (
             SELECT player FROM (
