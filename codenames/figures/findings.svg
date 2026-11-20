@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="420" viewBox="0 0 720 420" role="img" font-family="Helvetica, Arial, sans-serif">
+<title>The primary comparison of each experiment, with its 95% interval</title>
+<desc>Two dot plots. The top one gives differences in the share of held-out human turns where the guesser picks the person&#x27;s word; only C1, C4 and C8 lie above zero. The bottom one gives differences in words per turn with guessers the giver never trained with; only C3, population training, lies above zero.</desc>
+<rect width="720" height="420" fill="#ffffff"/>
+<text x="10" y="24" font-size="14" font-weight="bold" fill="#0b0b0b">Predicting human guesses</text>
+<line x1="346.36" y1="40" x2="346.36" y2="136" stroke="#d9d8d4"/>
+<text x="346.36" y="152" font-size="12" fill="#52514e" text-anchor="middle">−0.05</text>
+<line x1="428.18" y1="40" x2="428.18" y2="136" stroke="#d9d8d4"/>
+<text x="428.18" y="152" font-size="12" fill="#52514e" text-anchor="middle">0</text>
+<line x1="510" y1="40" x2="510" y2="136" stroke="#d9d8d4"/>
+<text x="510" y="152" font-size="12" fill="#52514e" text-anchor="middle">+0.05</text>
+<line x1="591.82" y1="40" x2="591.82" y2="136" stroke="#d9d8d4"/>
+<text x="591.82" y="152" font-size="12" fill="#52514e" text-anchor="middle">+0.1</text>
+<line x1="673.64" y1="40" x2="673.64" y2="136" stroke="#d9d8d4"/>
+<text x="673.64" y="152" font-size="12" fill="#52514e" text-anchor="middle">+0.15</text>
+<line x1="428.18" y1="40" x2="428.18" y2="136" stroke="#52514e" stroke-width="1.5"/>
+<text x="510" y="170" font-size="12" fill="#52514e" text-anchor="middle">difference in the share of 551 test turns where the guess is the person&#x27;s word</text>
+<text x="320" y="56" font-size="12" text-anchor="end" fill="#0b0b0b">C1: linear map on potion, minus untrained potion</text>
+<line x1="530.81" y1="52" x2="613.98" y2="52" stroke="#2a78d6" stroke-width="2"/>
+<circle cx="571.92" cy="52" r="5" fill="#2a78d6"/>
+<text x="619.98" y="56" font-size="11" fill="#52514e">+0.088</text>
+<text x="320" y="80" font-size="12" text-anchor="end" fill="#0b0b0b">C4: gpt-oss-120b, minus EmbeddingGemma 2</text>
+<line x1="543.79" y1="76" x2="648.34" y2="76" stroke="#2a78d6" stroke-width="2"/>
+<circle cx="594.49" cy="76" r="5" fill="#2a78d6"/>
+<text x="654.34" y="80" font-size="11" fill="#52514e">+0.102</text>
+<text x="320" y="104" font-size="12" text-anchor="end" fill="#0b0b0b">C8: LoRA with teacher&#x27;s labels, minus without</text>
+<line x1="442.56" y1="100" x2="524.04" y2="100" stroke="#2a78d6" stroke-width="2"/>
+<circle cx="482.63" cy="100" r="5" fill="#2a78d6"/>
+<text x="530.04" y="104" font-size="11" fill="#52514e">+0.033</text>
+<text x="320" y="128" font-size="12" text-anchor="end" fill="#0b0b0b">C2: LoRA on Qwen3 0.6B, minus the potion map</text>
+<line x1="361.86" y1="124" x2="473.94" y2="124" stroke="#52514e" stroke-width="2"/>
+<circle cx="417.09" cy="124" r="5" fill="#52514e"/>
+<text x="479.94" y="128" font-size="11" fill="#52514e">−0.007</text>
+<text x="10" y="196" font-size="14" font-weight="bold" fill="#0b0b0b">Giving clues to guessers never trained with</text>
+<line x1="366" y1="212" x2="366" y2="356" stroke="#d9d8d4"/>
+<text x="366" y="372" font-size="12" fill="#52514e" text-anchor="middle">−0.4</text>
+<line x1="438" y1="212" x2="438" y2="356" stroke="#d9d8d4"/>
+<text x="438" y="372" font-size="12" fill="#52514e" text-anchor="middle">−0.2</text>
+<line x1="510" y1="212" x2="510" y2="356" stroke="#d9d8d4"/>
+<text x="510" y="372" font-size="12" fill="#52514e" text-anchor="middle">0</text>
+<line x1="582" y1="212" x2="582" y2="356" stroke="#d9d8d4"/>
+<text x="582" y="372" font-size="12" fill="#52514e" text-anchor="middle">+0.2</text>
+<line x1="654" y1="212" x2="654" y2="356" stroke="#d9d8d4"/>
+<text x="654" y="372" font-size="12" fill="#52514e" text-anchor="middle">+0.4</text>
+<line x1="510" y1="212" x2="510" y2="356" stroke="#52514e" stroke-width="1.5"/>
+<text x="510" y="390" font-size="12" fill="#52514e" text-anchor="middle">difference in expected words per turn</text>
+<text x="320" y="228" font-size="12" text-anchor="end" fill="#0b0b0b">C3: population training, minus self-play</text>
+<line x1="602.66" y1="224" x2="641.29" y2="224" stroke="#2a78d6" stroke-width="2"/>
+<circle cx="621.85" cy="224" r="5" fill="#2a78d6"/>
+<text x="647.29" y="228" font-size="11" fill="#52514e">+0.311</text>
+<text x="320" y="252" font-size="12" text-anchor="end" fill="#0b0b0b">C10: listener added to the population</text>
+<line x1="497.65" y1="248" x2="510.4" y2="248" stroke="#52514e" stroke-width="2"/>
+<circle cx="503.95" cy="248" r="5" fill="#52514e"/>
+<text x="516.4" y="252" font-size="11" fill="#52514e">−0.017</text>
+<text x="320" y="276" font-size="12" text-anchor="end" fill="#0b0b0b">C6: language model choosing from 120 actions</text>
+<line x1="468.17" y1="272" x2="508.24" y2="272" stroke="#d95926" stroke-width="2"/>
+<circle cx="488.9" cy="272" r="5" fill="#d95926"/>
+<text x="514.24" y="276" font-size="11" fill="#52514e">−0.059</text>
+<text x="320" y="300" font-size="12" text-anchor="end" fill="#0b0b0b">C7: GRPO-trained model, minus feature policy</text>
+<line x1="451.84" y1="296" x2="489.48" y2="296" stroke="#d95926" stroke-width="2"/>
+<circle cx="471.32" cy="296" r="5" fill="#d95926"/>
+<text x="495.48" y="300" font-size="11" fill="#52514e">−0.107</text>
+<text x="320" y="324" font-size="12" text-anchor="end" fill="#0b0b0b">C10: language model as listener, minus first choice</text>
+<line x1="436.56" y1="320" x2="474.54" y2="320" stroke="#d95926" stroke-width="2"/>
+<circle cx="455.57" cy="320" r="5" fill="#d95926"/>
+<text x="480.54" y="324" font-size="11" fill="#52514e">−0.151</text>
+<text x="320" y="348" font-size="12" text-anchor="end" fill="#0b0b0b">C4: language-model clues, minus embedding giver</text>
+<line x1="344.48" y1="344" x2="450.16" y2="344" stroke="#d95926" stroke-width="2"/>
+<circle cx="400.45" cy="344" r="5" fill="#d95926"/>
+<text x="456.16" y="348" font-size="11" fill="#52514e">−0.304</text>
+<text x="10" y="410" font-size="12" fill="#52514e">Blue: interval above 0. Orange: below 0. Gray: includes 0.</text>
+</svg>

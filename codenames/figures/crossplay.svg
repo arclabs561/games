@@ -1,0 +1,215 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="768" height="392" viewBox="0 0 768 392" role="img" font-family="Helvetica, Arial, sans-serif">
+<title>Expected team words found per clue, giver by guesser</title>
+<desc>A heat map of results/crossplay.json: rows are givers, columns are guessers, and each cell is the exact expected number of team words found per clue over 200 boards. The outlined diagonal, where giver and guesser share a model, is the darkest in each row.</desc>
+<rect width="768" height="392" fill="#ffffff"/>
+<text x="190" y="18" font-size="13" fill="#52514e">Guesser</text>
+<text x="10" y="82" font-size="13" fill="#52514e">Giver</text>
+<text x="221" y="82" font-size="12" text-anchor="start" transform="rotate(-40 221 82)" fill="#0b0b0b">potion</text>
+<text x="283" y="82" font-size="12" text-anchor="start" transform="rotate(-40 283 82)" fill="#0b0b0b">wordllama</text>
+<text x="345" y="82" font-size="12" text-anchor="start" transform="rotate(-40 345 82)" fill="#0b0b0b">granite</text>
+<text x="407" y="82" font-size="12" text-anchor="start" transform="rotate(-40 407 82)" fill="#0b0b0b">bge</text>
+<text x="469" y="82" font-size="12" text-anchor="start" transform="rotate(-40 469 82)" fill="#0b0b0b">Qwen3 0.6B</text>
+<text x="531" y="82" font-size="12" text-anchor="start" transform="rotate(-40 531 82)" fill="#0b0b0b">harrier 270m</text>
+<text x="593" y="82" font-size="12" text-anchor="start" transform="rotate(-40 593 82)" fill="#0b0b0b">harrier 0.6b</text>
+<text x="655" y="82" font-size="12" text-anchor="start" transform="rotate(-40 655 82)" fill="#0b0b0b">Gemma 2</text>
+<text x="717" y="82" font-size="12" text-anchor="start" transform="rotate(-40 717 82)" fill="#0b0b0b">EAT counts</text>
+<text x="182" y="109" font-size="12" text-anchor="end" fill="#0b0b0b">potion</text>
+<rect x="190" y="92" width="60" height="24" fill="#1a4891"/>
+<text x="220" y="108" font-size="12" fill="#ffffff" text-anchor="middle">2.13</text>
+<rect x="190" y="92" width="60" height="24" fill="none" stroke="#0b0b0b" stroke-width="2"/>
+<rect x="252" y="92" width="60" height="24" fill="#b3c3dd"/>
+<text x="282" y="108" font-size="12" fill="#0b0b0b" text-anchor="middle">1.14</text>
+<rect x="314" y="92" width="60" height="24" fill="#c7d3e7"/>
+<text x="344" y="108" font-size="12" fill="#0b0b0b" text-anchor="middle">1.01</text>
+<rect x="376" y="92" width="60" height="24" fill="#89a2c8"/>
+<text x="406" y="108" font-size="12" fill="#0b0b0b" text-anchor="middle">1.41</text>
+<rect x="438" y="92" width="60" height="24" fill="#9bb0d1"/>
+<text x="468" y="108" font-size="12" fill="#0b0b0b" text-anchor="middle">1.29</text>
+<rect x="500" y="92" width="60" height="24" fill="#9eb2d3"/>
+<text x="530" y="108" font-size="12" fill="#0b0b0b" text-anchor="middle">1.28</text>
+<rect x="562" y="92" width="60" height="24" fill="#88a1c8"/>
+<text x="592" y="108" font-size="12" fill="#0b0b0b" text-anchor="middle">1.42</text>
+<rect x="624" y="92" width="60" height="24" fill="#9eb2d3"/>
+<text x="654" y="108" font-size="12" fill="#0b0b0b" text-anchor="middle">1.28</text>
+<rect x="686" y="92" width="60" height="24" fill="#dae3f1"/>
+<text x="716" y="108" font-size="12" fill="#0b0b0b" text-anchor="middle">0.89</text>
+<text x="182" y="135" font-size="12" text-anchor="end" fill="#0b0b0b">wordllama</text>
+<rect x="190" y="118" width="60" height="24" fill="#a3b7d5"/>
+<text x="220" y="134" font-size="12" fill="#0b0b0b" text-anchor="middle">1.24</text>
+<rect x="252" y="118" width="60" height="24" fill="#4369a5"/>
+<text x="282" y="134" font-size="12" fill="#ffffff" text-anchor="middle">1.87</text>
+<rect x="252" y="118" width="60" height="24" fill="none" stroke="#0b0b0b" stroke-width="2"/>
+<rect x="314" y="118" width="60" height="24" fill="#d1dbec"/>
+<text x="344" y="134" font-size="12" fill="#0b0b0b" text-anchor="middle">0.95</text>
+<rect x="376" y="118" width="60" height="24" fill="#b9c8e0"/>
+<text x="406" y="134" font-size="12" fill="#0b0b0b" text-anchor="middle">1.10</text>
+<rect x="438" y="118" width="60" height="24" fill="#bbcae1"/>
+<text x="468" y="134" font-size="12" fill="#0b0b0b" text-anchor="middle">1.09</text>
+<rect x="500" y="118" width="60" height="24" fill="#b3c3dd"/>
+<text x="530" y="134" font-size="12" fill="#0b0b0b" text-anchor="middle">1.14</text>
+<rect x="562" y="118" width="60" height="24" fill="#a4b7d6"/>
+<text x="592" y="134" font-size="12" fill="#0b0b0b" text-anchor="middle">1.24</text>
+<rect x="624" y="118" width="60" height="24" fill="#b8c7e0"/>
+<text x="654" y="134" font-size="12" fill="#0b0b0b" text-anchor="middle">1.11</text>
+<rect x="686" y="118" width="60" height="24" fill="#e8eef8"/>
+<text x="716" y="134" font-size="12" fill="#0b0b0b" text-anchor="middle">0.80</text>
+<text x="182" y="161" font-size="12" text-anchor="end" fill="#0b0b0b">granite</text>
+<rect x="190" y="144" width="60" height="24" fill="#a7b9d7"/>
+<text x="220" y="160" font-size="12" fill="#0b0b0b" text-anchor="middle">1.22</text>
+<rect x="252" y="144" width="60" height="24" fill="#bdcce2"/>
+<text x="282" y="160" font-size="12" fill="#0b0b0b" text-anchor="middle">1.07</text>
+<rect x="314" y="144" width="60" height="24" fill="#5073ac"/>
+<text x="344" y="160" font-size="12" fill="#ffffff" text-anchor="middle">1.79</text>
+<rect x="314" y="144" width="60" height="24" fill="none" stroke="#0b0b0b" stroke-width="2"/>
+<rect x="376" y="144" width="60" height="24" fill="#b6c6df"/>
+<text x="406" y="160" font-size="12" fill="#0b0b0b" text-anchor="middle">1.12</text>
+<rect x="438" y="144" width="60" height="24" fill="#a9bcd8"/>
+<text x="468" y="160" font-size="12" fill="#0b0b0b" text-anchor="middle">1.20</text>
+<rect x="500" y="144" width="60" height="24" fill="#98aed0"/>
+<text x="530" y="160" font-size="12" fill="#0b0b0b" text-anchor="middle">1.31</text>
+<rect x="562" y="144" width="60" height="24" fill="#99aed0"/>
+<text x="592" y="160" font-size="12" fill="#0b0b0b" text-anchor="middle">1.31</text>
+<rect x="624" y="144" width="60" height="24" fill="#afc0db"/>
+<text x="654" y="160" font-size="12" fill="#0b0b0b" text-anchor="middle">1.16</text>
+<rect x="686" y="144" width="60" height="24" fill="#e4ebf5"/>
+<text x="716" y="160" font-size="12" fill="#0b0b0b" text-anchor="middle">0.82</text>
+<text x="182" y="187" font-size="12" text-anchor="end" fill="#0b0b0b">bge</text>
+<rect x="190" y="170" width="60" height="24" fill="#7894c0"/>
+<text x="220" y="186" font-size="12" fill="#0b0b0b" text-anchor="middle">1.52</text>
+<rect x="252" y="170" width="60" height="24" fill="#c8d4e7"/>
+<text x="282" y="186" font-size="12" fill="#0b0b0b" text-anchor="middle">1.01</text>
+<rect x="314" y="170" width="60" height="24" fill="#c9d5e8"/>
+<text x="344" y="186" font-size="12" fill="#0b0b0b" text-anchor="middle">1.00</text>
+<rect x="376" y="170" width="60" height="24" fill="#345d9e"/>
+<text x="406" y="186" font-size="12" fill="#ffffff" text-anchor="middle">1.97</text>
+<rect x="376" y="170" width="60" height="24" fill="none" stroke="#0b0b0b" stroke-width="2"/>
+<rect x="438" y="170" width="60" height="24" fill="#a0b4d4"/>
+<text x="468" y="186" font-size="12" fill="#0b0b0b" text-anchor="middle">1.26</text>
+<rect x="500" y="170" width="60" height="24" fill="#a2b6d5"/>
+<text x="530" y="186" font-size="12" fill="#0b0b0b" text-anchor="middle">1.25</text>
+<rect x="562" y="170" width="60" height="24" fill="#94abce"/>
+<text x="592" y="186" font-size="12" fill="#0b0b0b" text-anchor="middle">1.34</text>
+<rect x="624" y="170" width="60" height="24" fill="#aabcd8"/>
+<text x="654" y="186" font-size="12" fill="#0b0b0b" text-anchor="middle">1.20</text>
+<rect x="686" y="170" width="60" height="24" fill="#e2e9f5"/>
+<text x="716" y="186" font-size="12" fill="#0b0b0b" text-anchor="middle">0.83</text>
+<text x="182" y="213" font-size="12" text-anchor="end" fill="#0b0b0b">Qwen3 0.6B</text>
+<rect x="190" y="196" width="60" height="24" fill="#a4b8d6"/>
+<text x="220" y="212" font-size="12" fill="#0b0b0b" text-anchor="middle">1.24</text>
+<rect x="252" y="196" width="60" height="24" fill="#cfdaeb"/>
+<text x="282" y="212" font-size="12" fill="#0b0b0b" text-anchor="middle">0.96</text>
+<rect x="314" y="196" width="60" height="24" fill="#ccd7e9"/>
+<text x="344" y="212" font-size="12" fill="#0b0b0b" text-anchor="middle">0.98</text>
+<rect x="376" y="196" width="60" height="24" fill="#b1c2dc"/>
+<text x="406" y="212" font-size="12" fill="#0b0b0b" text-anchor="middle">1.15</text>
+<rect x="438" y="196" width="60" height="24" fill="#285498"/>
+<text x="468" y="212" font-size="12" fill="#ffffff" text-anchor="middle">2.04</text>
+<rect x="438" y="196" width="60" height="24" fill="none" stroke="#0b0b0b" stroke-width="2"/>
+<rect x="500" y="196" width="60" height="24" fill="#a9bbd8"/>
+<text x="530" y="212" font-size="12" fill="#0b0b0b" text-anchor="middle">1.21</text>
+<rect x="562" y="196" width="60" height="24" fill="#87a0c7"/>
+<text x="592" y="212" font-size="12" fill="#0b0b0b" text-anchor="middle">1.43</text>
+<rect x="624" y="196" width="60" height="24" fill="#aebfdb"/>
+<text x="654" y="212" font-size="12" fill="#0b0b0b" text-anchor="middle">1.17</text>
+<rect x="686" y="196" width="60" height="24" fill="#e2e9f5"/>
+<text x="716" y="212" font-size="12" fill="#0b0b0b" text-anchor="middle">0.83</text>
+<text x="182" y="239" font-size="12" text-anchor="end" fill="#0b0b0b">harrier 270m</text>
+<rect x="190" y="222" width="60" height="24" fill="#abbdd9"/>
+<text x="220" y="238" font-size="12" fill="#0b0b0b" text-anchor="middle">1.19</text>
+<rect x="252" y="222" width="60" height="24" fill="#c8d4e7"/>
+<text x="282" y="238" font-size="12" fill="#0b0b0b" text-anchor="middle">1.01</text>
+<rect x="314" y="222" width="60" height="24" fill="#bbcae1"/>
+<text x="344" y="238" font-size="12" fill="#0b0b0b" text-anchor="middle">1.09</text>
+<rect x="376" y="222" width="60" height="24" fill="#abbdd9"/>
+<text x="406" y="238" font-size="12" fill="#0b0b0b" text-anchor="middle">1.19</text>
+<rect x="438" y="222" width="60" height="24" fill="#a4b7d6"/>
+<text x="468" y="238" font-size="12" fill="#0b0b0b" text-anchor="middle">1.24</text>
+<rect x="500" y="222" width="60" height="24" fill="#1b4992"/>
+<text x="530" y="238" font-size="12" fill="#ffffff" text-anchor="middle">2.13</text>
+<rect x="500" y="222" width="60" height="24" fill="none" stroke="#0b0b0b" stroke-width="2"/>
+<rect x="562" y="222" width="60" height="24" fill="#708dbc"/>
+<text x="592" y="238" font-size="12" fill="#ffffff" text-anchor="middle">1.58</text>
+<rect x="624" y="222" width="60" height="24" fill="#98add0"/>
+<text x="654" y="238" font-size="12" fill="#0b0b0b" text-anchor="middle">1.32</text>
+<rect x="686" y="222" width="60" height="24" fill="#eaf0f9"/>
+<text x="716" y="238" font-size="12" fill="#0b0b0b" text-anchor="middle">0.78</text>
+<text x="182" y="265" font-size="12" text-anchor="end" fill="#0b0b0b">harrier 0.6b</text>
+<rect x="190" y="248" width="60" height="24" fill="#9cb1d2"/>
+<text x="220" y="264" font-size="12" fill="#0b0b0b" text-anchor="middle">1.29</text>
+<rect x="252" y="248" width="60" height="24" fill="#c4d1e5"/>
+<text x="282" y="264" font-size="12" fill="#0b0b0b" text-anchor="middle">1.03</text>
+<rect x="314" y="248" width="60" height="24" fill="#c2cfe4"/>
+<text x="344" y="264" font-size="12" fill="#0b0b0b" text-anchor="middle">1.05</text>
+<rect x="376" y="248" width="60" height="24" fill="#a9bcd8"/>
+<text x="406" y="264" font-size="12" fill="#0b0b0b" text-anchor="middle">1.20</text>
+<rect x="438" y="248" width="60" height="24" fill="#7f9ac3"/>
+<text x="468" y="264" font-size="12" fill="#0b0b0b" text-anchor="middle">1.48</text>
+<rect x="500" y="248" width="60" height="24" fill="#718ebc"/>
+<text x="530" y="264" font-size="12" fill="#ffffff" text-anchor="middle">1.57</text>
+<rect x="562" y="248" width="60" height="24" fill="#1c4a92"/>
+<text x="592" y="264" font-size="12" fill="#ffffff" text-anchor="middle">2.12</text>
+<rect x="562" y="248" width="60" height="24" fill="none" stroke="#0b0b0b" stroke-width="2"/>
+<rect x="624" y="248" width="60" height="24" fill="#9aafd1"/>
+<text x="654" y="264" font-size="12" fill="#0b0b0b" text-anchor="middle">1.30</text>
+<rect x="686" y="248" width="60" height="24" fill="#e4ebf6"/>
+<text x="716" y="264" font-size="12" fill="#0b0b0b" text-anchor="middle">0.82</text>
+<text x="182" y="291" font-size="12" text-anchor="end" fill="#0b0b0b">Gemma 2</text>
+<rect x="190" y="274" width="60" height="24" fill="#8ba3c9"/>
+<text x="220" y="290" font-size="12" fill="#0b0b0b" text-anchor="middle">1.40</text>
+<rect x="252" y="274" width="60" height="24" fill="#b3c3dd"/>
+<text x="282" y="290" font-size="12" fill="#0b0b0b" text-anchor="middle">1.14</text>
+<rect x="314" y="274" width="60" height="24" fill="#b9c8e0"/>
+<text x="344" y="290" font-size="12" fill="#0b0b0b" text-anchor="middle">1.10</text>
+<rect x="376" y="274" width="60" height="24" fill="#9eb2d3"/>
+<text x="406" y="290" font-size="12" fill="#0b0b0b" text-anchor="middle">1.28</text>
+<rect x="438" y="274" width="60" height="24" fill="#96accf"/>
+<text x="468" y="290" font-size="12" fill="#0b0b0b" text-anchor="middle">1.33</text>
+<rect x="500" y="274" width="60" height="24" fill="#89a1c8"/>
+<text x="530" y="290" font-size="12" fill="#0b0b0b" text-anchor="middle">1.41</text>
+<rect x="562" y="274" width="60" height="24" fill="#7894c0"/>
+<text x="592" y="290" font-size="12" fill="#0b0b0b" text-anchor="middle">1.52</text>
+<rect x="624" y="274" width="60" height="24" fill="#4e72ab"/>
+<text x="654" y="290" font-size="12" fill="#ffffff" text-anchor="middle">1.80</text>
+<rect x="624" y="274" width="60" height="24" fill="none" stroke="#0b0b0b" stroke-width="2"/>
+<rect x="686" y="274" width="60" height="24" fill="#d0daeb"/>
+<text x="716" y="290" font-size="12" fill="#0b0b0b" text-anchor="middle">0.96</text>
+<text x="182" y="317" font-size="12" text-anchor="end" fill="#0b0b0b">ensemble without bge</text>
+<rect x="190" y="300" width="60" height="24" fill="#7b96c1"/>
+<text x="220" y="316" font-size="12" fill="#0b0b0b" text-anchor="middle">1.51</text>
+<rect x="252" y="300" width="60" height="24" fill="#91a8cc"/>
+<text x="282" y="316" font-size="12" fill="#0b0b0b" text-anchor="middle">1.36</text>
+<rect x="314" y="300" width="60" height="24" fill="#a2b5d5"/>
+<text x="344" y="316" font-size="12" fill="#0b0b0b" text-anchor="middle">1.25</text>
+<rect x="376" y="300" width="60" height="24" fill="#91a8cc"/>
+<text x="406" y="316" font-size="12" fill="#0b0b0b" text-anchor="middle">1.36</text>
+<rect x="438" y="300" width="60" height="24" fill="#7f99c3"/>
+<text x="468" y="316" font-size="12" fill="#0b0b0b" text-anchor="middle">1.48</text>
+<rect x="500" y="300" width="60" height="24" fill="#7e98c3"/>
+<text x="530" y="316" font-size="12" fill="#0b0b0b" text-anchor="middle">1.49</text>
+<rect x="562" y="300" width="60" height="24" fill="#6e8cbb"/>
+<text x="592" y="316" font-size="12" fill="#ffffff" text-anchor="middle">1.59</text>
+<rect x="624" y="300" width="60" height="24" fill="#869fc7"/>
+<text x="654" y="316" font-size="12" fill="#0b0b0b" text-anchor="middle">1.44</text>
+<rect x="686" y="300" width="60" height="24" fill="#d8e1f0"/>
+<text x="716" y="316" font-size="12" fill="#0b0b0b" text-anchor="middle">0.90</text>
+<text x="182" y="343" font-size="12" text-anchor="end" fill="#0b0b0b">ensemble without Gemma 2</text>
+<rect x="190" y="326" width="60" height="24" fill="#7692bf"/>
+<text x="220" y="342" font-size="12" fill="#ffffff" text-anchor="middle">1.54</text>
+<rect x="252" y="326" width="60" height="24" fill="#93aacd"/>
+<text x="282" y="342" font-size="12" fill="#0b0b0b" text-anchor="middle">1.35</text>
+<rect x="314" y="326" width="60" height="24" fill="#a0b4d4"/>
+<text x="344" y="342" font-size="12" fill="#0b0b0b" text-anchor="middle">1.26</text>
+<rect x="376" y="326" width="60" height="24" fill="#87a0c7"/>
+<text x="406" y="342" font-size="12" fill="#0b0b0b" text-anchor="middle">1.43</text>
+<rect x="438" y="326" width="60" height="24" fill="#7d97c2"/>
+<text x="468" y="342" font-size="12" fill="#0b0b0b" text-anchor="middle">1.49</text>
+<rect x="500" y="326" width="60" height="24" fill="#7d98c2"/>
+<text x="530" y="342" font-size="12" fill="#0b0b0b" text-anchor="middle">1.49</text>
+<rect x="562" y="326" width="60" height="24" fill="#6e8cbb"/>
+<text x="592" y="342" font-size="12" fill="#ffffff" text-anchor="middle">1.59</text>
+<rect x="624" y="326" width="60" height="24" fill="#8ea6cb"/>
+<text x="654" y="342" font-size="12" fill="#0b0b0b" text-anchor="middle">1.38</text>
+<rect x="686" y="326" width="60" height="24" fill="#d6e0ef"/>
+<text x="716" y="342" font-size="12" fill="#0b0b0b" text-anchor="middle">0.91</text>
+<text x="10" y="374" font-size="12" fill="#52514e">Darker cells find more words. Outlined: giver and guesser share a model.</text>
+</svg>

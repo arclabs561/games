@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="520" height="270" viewBox="0 0 520 270" role="img" font-family="Helvetica, Arial, sans-serif">
+<title>Two cards of the plane of order 7 and their one shared symbol</title>
+<desc>Two round cards with eight generic symbols each, shapes in colors. Exactly one symbol is on both cards, and it is circled with a dashed line on each.</desc>
+<rect width="520" height="270" fill="#ffffff"/>
+<circle cx="130" cy="125" r="110" fill="#ffffff" stroke="#0b0b0b" stroke-width="2"/>
+<circle cx="130" cy="125" r="26.4" fill="none" stroke="#0b0b0b" stroke-width="1.5" stroke-dasharray="3 2"/>
+<rect x="117.62" y="112.62" width="24.75" height="24.75" fill="#c98500"/>
+<rect x="46.33" y="108.63" width="33" height="9.08" fill="#008300"/>
+<rect x="58.3" y="96.67" width="9.08" height="33" fill="#008300"/>
+<polygon points="78.87,153.63 62.37,170.13 78.87,186.63 95.37,170.13" fill="#d95926"/>
+<circle cx="133.41" cy="193.11" r="11.55" fill="none" stroke="#d55181" stroke-width="5.77"/>
+<polygon points="201.88,164.8 193.63,150.51 177.13,150.51 168.88,164.8 177.13,179.09 193.63,179.09" fill="#6250d6"/>
+<rect x="183.27" y="94.14" width="24.75" height="24.75" fill="#2a78d6"/>
+<circle cx="156.48" cy="62.15" r="14.03" fill="#d55181"/>
+<polygon points="97.37,48.61 83.08,73.36 111.66,73.36" fill="#1baf7a"/>
+<circle cx="390" cy="125" r="110" fill="#ffffff" stroke="#0b0b0b" stroke-width="2"/>
+<polygon points="406.5,125 398.25,110.71 381.75,110.71 373.5,125 381.75,139.29 398.25,139.29" fill="#d55181"/>
+<circle cx="389.32" cy="56.8" r="26.4" fill="none" stroke="#0b0b0b" stroke-width="1.5" stroke-dasharray="3 2"/>
+<rect x="376.95" y="44.43" width="24.75" height="24.75" fill="#c98500"/>
+<circle cx="336.26" cy="83.01" r="11.55" fill="none" stroke="#c98500" stroke-width="5.77"/>
+<polygon points="340.16,140.84 331.91,126.55 315.41,126.55 307.16,140.84 315.41,155.13 331.91,155.13" fill="#d95926"/>
+<polygon points="361.02,170.24 344.52,186.74 361.02,203.24 377.52,186.74" fill="#1baf7a"/>
+<polygon points="420.2,169.65 403.7,186.15 420.2,202.65 436.7,186.15" fill="#008300"/>
+<circle cx="456.64" cy="139.51" r="14.03" fill="#e34948"/>
+<circle cx="442.9" cy="81.95" r="11.55" fill="none" stroke="#2a78d6" stroke-width="5.77"/>
+<text x="260" y="258" font-size="12" fill="#52514e" text-anchor="middle">Cards 10 and 40 of the plane of order 7; the dashed circles mark the one shared symbol.</text>
+</svg>

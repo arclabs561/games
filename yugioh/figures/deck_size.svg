@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="430" viewBox="0 0 760 430" font-family="Helvetica, Arial, sans-serif" role="img">
+<title>Fewest starters for a 90% chance against deck size</title>
+<rect width="760" height="430" fill="#fff"/>
+<line x1="64" x2="704" y1="370.0" y2="370.0" stroke="#e4e3df" stroke-width="1"/>
+<text x="56.0" y="374.0" font-size="12" fill="#52514e" text-anchor="end" font-weight="normal">10</text>
+<line x1="64" x2="704" y1="327.1" y2="327.1" stroke="#e4e3df" stroke-width="1"/>
+<text x="56.0" y="331.1" font-size="12" fill="#52514e" text-anchor="end" font-weight="normal">12</text>
+<line x1="64" x2="704" y1="284.3" y2="284.3" stroke="#e4e3df" stroke-width="1"/>
+<text x="56.0" y="288.3" font-size="12" fill="#52514e" text-anchor="end" font-weight="normal">14</text>
+<line x1="64" x2="704" y1="241.4" y2="241.4" stroke="#e4e3df" stroke-width="1"/>
+<text x="56.0" y="245.4" font-size="12" fill="#52514e" text-anchor="end" font-weight="normal">16</text>
+<line x1="64" x2="704" y1="198.6" y2="198.6" stroke="#e4e3df" stroke-width="1"/>
+<text x="56.0" y="202.6" font-size="12" fill="#52514e" text-anchor="end" font-weight="normal">18</text>
+<line x1="64" x2="704" y1="155.7" y2="155.7" stroke="#e4e3df" stroke-width="1"/>
+<text x="56.0" y="159.7" font-size="12" fill="#52514e" text-anchor="end" font-weight="normal">20</text>
+<line x1="64" x2="704" y1="112.9" y2="112.9" stroke="#e4e3df" stroke-width="1"/>
+<text x="56.0" y="116.9" font-size="12" fill="#52514e" text-anchor="end" font-weight="normal">22</text>
+<line x1="64" x2="704" y1="70.0" y2="70.0" stroke="#e4e3df" stroke-width="1"/>
+<text x="56.0" y="74.0" font-size="12" fill="#52514e" text-anchor="end" font-weight="normal">24</text>
+<line x1="64" x2="704" y1="370" y2="370" stroke="#52514e" stroke-width="1"/>
+<text x="64.0" y="388.0" font-size="12" fill="#52514e" text-anchor="middle" font-weight="normal">40</text>
+<text x="128.0" y="388.0" font-size="12" fill="#52514e" text-anchor="middle" font-weight="normal">42</text>
+<text x="192.0" y="388.0" font-size="12" fill="#52514e" text-anchor="middle" font-weight="normal">44</text>
+<text x="256.0" y="388.0" font-size="12" fill="#52514e" text-anchor="middle" font-weight="normal">46</text>
+<text x="320.0" y="388.0" font-size="12" fill="#52514e" text-anchor="middle" font-weight="normal">48</text>
+<text x="384.0" y="388.0" font-size="12" fill="#52514e" text-anchor="middle" font-weight="normal">50</text>
+<text x="448.0" y="388.0" font-size="12" fill="#52514e" text-anchor="middle" font-weight="normal">52</text>
+<text x="512.0" y="388.0" font-size="12" fill="#52514e" text-anchor="middle" font-weight="normal">54</text>
+<text x="576.0" y="388.0" font-size="12" fill="#52514e" text-anchor="middle" font-weight="normal">56</text>
+<text x="640.0" y="388.0" font-size="12" fill="#52514e" text-anchor="middle" font-weight="normal">58</text>
+<text x="704.0" y="388.0" font-size="12" fill="#52514e" text-anchor="middle" font-weight="normal">60</text>
+<text x="384.0" y="410.0" font-size="13" fill="#0b0b0b" text-anchor="middle" font-weight="normal">Cards in the main deck</text>
+<text x="64.0" y="56.0" font-size="13" fill="#0b0b0b" text-anchor="start" font-weight="normal">Fewest starters for at least one in hand 90% of the time</text>
+<polyline points="64.0,284.3 96.0,284.3 96.0,262.9 128.0,262.9 160.0,262.9 160.0,241.4 192.0,241.4 224.0,241.4 256.0,241.4 256.0,220.0 288.0,220.0 320.0,220.0 352.0,220.0 352.0,198.6 384.0,198.6 416.0,198.6 416.0,177.1 448.0,177.1 480.0,177.1 512.0,177.1 512.0,155.7 544.0,155.7 576.0,155.7 608.0,155.7 608.0,134.3 640.0,134.3 672.0,134.3 672.0,112.9 704.0,112.9" fill="none" stroke="#2a78d6" stroke-width="2"/>
+<circle cx="64.0" cy="284.3" r="3.5" fill="#2a78d6" stroke="#fff" stroke-width="1.5"><title>40: 14.00</title></circle>
+<circle cx="96.0" cy="262.9" r="3.5" fill="#2a78d6" stroke="#fff" stroke-width="1.5"><title>41: 15.00</title></circle>
+<circle cx="128.0" cy="262.9" r="3.5" fill="#2a78d6" stroke="#fff" stroke-width="1.5"><title>42: 15.00</title></circle>
+<circle cx="160.0" cy="241.4" r="3.5" fill="#2a78d6" stroke="#fff" stroke-width="1.5"><title>43: 16.00</title></circle>
+<circle cx="192.0" cy="241.4" r="3.5" fill="#2a78d6" stroke="#fff" stroke-width="1.5"><title>44: 16.00</title></circle>
+<circle cx="224.0" cy="241.4" r="3.5" fill="#2a78d6" stroke="#fff" stroke-width="1.5"><title>45: 16.00</title></circle>
+<circle cx="256.0" cy="220.0" r="3.5" fill="#2a78d6" stroke="#fff" stroke-width="1.5"><title>46: 17.00</title></circle>
+<circle cx="288.0" cy="220.0" r="3.5" fill="#2a78d6" stroke="#fff" stroke-width="1.5"><title>47: 17.00</title></circle>
+<circle cx="320.0" cy="220.0" r="3.5" fill="#2a78d6" stroke="#fff" stroke-width="1.5"><title>48: 17.00</title></circle>
+<circle cx="352.0" cy="198.6" r="3.5" fill="#2a78d6" stroke="#fff" stroke-width="1.5"><title>49: 18.00</title></circle>
+<circle cx="384.0" cy="198.6" r="3.5" fill="#2a78d6" stroke="#fff" stroke-width="1.5"><title>50: 18.00</title></circle>
+<circle cx="416.0" cy="177.1" r="3.5" fill="#2a78d6" stroke="#fff" stroke-width="1.5"><title>51: 19.00</title></circle>
+<circle cx="448.0" cy="177.1" r="3.5" fill="#2a78d6" stroke="#fff" stroke-width="1.5"><title>52: 19.00</title></circle>
+<circle cx="480.0" cy="177.1" r="3.5" fill="#2a78d6" stroke="#fff" stroke-width="1.5"><title>53: 19.00</title></circle>
+<circle cx="512.0" cy="155.7" r="3.5" fill="#2a78d6" stroke="#fff" stroke-width="1.5"><title>54: 20.00</title></circle>
+<circle cx="544.0" cy="155.7" r="3.5" fill="#2a78d6" stroke="#fff" stroke-width="1.5"><title>55: 20.00</title></circle>
+<circle cx="576.0" cy="155.7" r="3.5" fill="#2a78d6" stroke="#fff" stroke-width="1.5"><title>56: 20.00</title></circle>
+<circle cx="608.0" cy="134.3" r="3.5" fill="#2a78d6" stroke="#fff" stroke-width="1.5"><title>57: 21.00</title></circle>
+<circle cx="640.0" cy="134.3" r="3.5" fill="#2a78d6" stroke="#fff" stroke-width="1.5"><title>58: 21.00</title></circle>
+<circle cx="672.0" cy="112.9" r="3.5" fill="#2a78d6" stroke="#fff" stroke-width="1.5"><title>59: 22.00</title></circle>
+<circle cx="704.0" cy="112.9" r="3.5" fill="#2a78d6" stroke="#fff" stroke-width="1.5"><title>60: 22.00</title></circle>
+<polyline points="64.0,327.1 96.0,327.1 96.0,305.7 128.0,305.7 160.0,305.7 192.0,305.7 192.0,284.3 224.0,284.3 256.0,284.3 288.0,284.3 288.0,262.9 320.0,262.9 352.0,262.9 384.0,262.9 384.0,241.4 416.0,241.4 448.0,241.4 480.0,241.4 480.0,220.0 512.0,220.0 544.0,220.0 576.0,220.0 576.0,198.6 608.0,198.6 640.0,198.6 672.0,198.6 704.0,198.6 704.0,177.1" fill="none" stroke="#eb6834" stroke-width="2"/>
+<circle cx="64.0" cy="327.1" r="3.5" fill="#eb6834" stroke="#fff" stroke-width="1.5"><title>40: 12.00</title></circle>
+<circle cx="96.0" cy="305.7" r="3.5" fill="#eb6834" stroke="#fff" stroke-width="1.5"><title>41: 13.00</title></circle>
+<circle cx="128.0" cy="305.7" r="3.5" fill="#eb6834" stroke="#fff" stroke-width="1.5"><title>42: 13.00</title></circle>
+<circle cx="160.0" cy="305.7" r="3.5" fill="#eb6834" stroke="#fff" stroke-width="1.5"><title>43: 13.00</title></circle>
+<circle cx="192.0" cy="284.3" r="3.5" fill="#eb6834" stroke="#fff" stroke-width="1.5"><title>44: 14.00</title></circle>
+<circle cx="224.0" cy="284.3" r="3.5" fill="#eb6834" stroke="#fff" stroke-width="1.5"><title>45: 14.00</title></circle>
+<circle cx="256.0" cy="284.3" r="3.5" fill="#eb6834" stroke="#fff" stroke-width="1.5"><title>46: 14.00</title></circle>
+<circle cx="288.0" cy="262.9" r="3.5" fill="#eb6834" stroke="#fff" stroke-width="1.5"><title>47: 15.00</title></circle>
+<circle cx="320.0" cy="262.9" r="3.5" fill="#eb6834" stroke="#fff" stroke-width="1.5"><title>48: 15.00</title></circle>
+<circle cx="352.0" cy="262.9" r="3.5" fill="#eb6834" stroke="#fff" stroke-width="1.5"><title>49: 15.00</title></circle>
+<circle cx="384.0" cy="241.4" r="3.5" fill="#eb6834" stroke="#fff" stroke-width="1.5"><title>50: 16.00</title></circle>
+<circle cx="416.0" cy="241.4" r="3.5" fill="#eb6834" stroke="#fff" stroke-width="1.5"><title>51: 16.00</title></circle>
+<circle cx="448.0" cy="241.4" r="3.5" fill="#eb6834" stroke="#fff" stroke-width="1.5"><title>52: 16.00</title></circle>
+<circle cx="480.0" cy="220.0" r="3.5" fill="#eb6834" stroke="#fff" stroke-width="1.5"><title>53: 17.00</title></circle>
+<circle cx="512.0" cy="220.0" r="3.5" fill="#eb6834" stroke="#fff" stroke-width="1.5"><title>54: 17.00</title></circle>
+<circle cx="544.0" cy="220.0" r="3.5" fill="#eb6834" stroke="#fff" stroke-width="1.5"><title>55: 17.00</title></circle>
+<circle cx="576.0" cy="198.6" r="3.5" fill="#eb6834" stroke="#fff" stroke-width="1.5"><title>56: 18.00</title></circle>
+<circle cx="608.0" cy="198.6" r="3.5" fill="#eb6834" stroke="#fff" stroke-width="1.5"><title>57: 18.00</title></circle>
+<circle cx="640.0" cy="198.6" r="3.5" fill="#eb6834" stroke="#fff" stroke-width="1.5"><title>58: 18.00</title></circle>
+<circle cx="672.0" cy="198.6" r="3.5" fill="#eb6834" stroke="#fff" stroke-width="1.5"><title>59: 18.00</title></circle>
+<circle cx="704.0" cy="177.1" r="3.5" fill="#eb6834" stroke="#fff" stroke-width="1.5"><title>60: 19.00</title></circle>
+<line x1="64" x2="86" y1="32" y2="32" stroke="#2a78d6" stroke-width="2"/>
+<text x="92.0" y="36.0" font-size="12" fill="#0b0b0b" text-anchor="start" font-weight="normal">going first (5 cards)</text>
+<line x1="247" x2="269" y1="32" y2="32" stroke="#eb6834" stroke-width="2"/>
+<text x="275.0" y="36.0" font-size="12" fill="#0b0b0b" text-anchor="start" font-weight="normal">going second (6 cards)</text>
+</svg>
