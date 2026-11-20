@@ -1,7 +1,7 @@
 """Search for high-scoring 5 by 5 boards with `anneal.c`, and summarize the runs.
 
 The C program scores a board as `board.score` does, with the same trie walk and the same
-points, about a thousand times faster; `check` compares the two. A search is simulated
+points, about 70 times faster; `check` compares the two. A search is simulated
 annealing from a random board followed by a full climb (every one-square change to any of
 the 26 faces, and every swap of two squares, until none raises the score), so each run ends
 on a board that no single change or swap improves. The settings were fixed before the main
