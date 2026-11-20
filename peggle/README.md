@@ -26,5 +26,5 @@ The duel rules come from the Peggle Deluxe readme (PopCap, 2008, archived), whic
 uv run python -m peggle.peggle
 uv run python -m peggle.stopping                       # about 10 seconds
 uv run python -m peggle.variations                     # about 13 seconds
-uv run erase/paper/typst_vendor.py peggle/peggle.typ   # rebuilds peggle.pdf
+uv run tools/typst_vendor.py peggle/peggle.typ   # rebuilds peggle.pdf
 ```

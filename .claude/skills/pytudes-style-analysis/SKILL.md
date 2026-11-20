@@ -68,3 +68,56 @@ about a game or puzzle with code.
 - Keep the code a notebook runs importable from a module, so tests can import it instead of
   executing notebook cells.
 - Separate exact results from simulated ones, with sample size and interval for the latter.
+
+## Notebook craft
+
+From a closer reading of four more pytudes notebooks (War, The Unfinished Game of Risk, The
+Diamond Game, Can't Stop), Rule et al., "Ten simple rules for writing and sharing
+computational analyses in Jupyter Notebooks" (PLOS Comp. Biol. 2019), and Pimentel et al.'s
+studies of 1.4 million GitHub notebooks (MSR 2019; EMSE 2021).
+
+- **Escalate the approach in named sections, and show why each simpler one fails.** War
+  goes from simple arithmetic, to brute force (feasible only for small decks), to
+  simulation (zero sweeps in 100,000 games: no estimate at all), to an exact abstract
+  enumeration that takes 0.07 seconds. The failures teach as much as the answer.
+- **Sanity-check the exact answer against a rough one** and state the ratio. War's exact
+  sweep chance is within 1.7% of the arithmetic (24/51)^26; Risk's 82% from simulation sits
+  beside the exact 81.05%.
+- **Simulate with its error bar.** Give √(p(1 − p)/n) or an interval with every simulated
+  number. Replace it by an exact value when one becomes feasible, and keep both on the page.
+- **Work the algorithm on a tiny case.** Show the probability distribution after one, two
+  and three battles, so the reader can check a step by hand.
+- **Define it, then understand it.** After computing the optimal strategy, plot it and
+  explain its shape. Examples: the Diamond Game's sawtooth with period 12, and Risk's gaps
+  and odd–even spikes. Write down what surprised you, then explain it or say it is open.
+- **Then vary the setting.** "We could stop here, but": sweep the parameters that a reader
+  would ask about (spread, shape, mean, sample size), and say which ones matter.
+- **Measure the simple human strategy against the optimal one.** The Diamond Game's cutoff
+  rule trails the optimum by about 4 diamonds, a gap a player can weigh.
+- **Answer the question as it was asked, and then the one you would rather ask,** and say
+  how they differ (War: 26 battles in a row, versus winning within 26 plays).
+- **Cells are paragraphs.** One step per cell, a sentence above it, and well under a page of
+  code (pytudes cells rarely pass 30 lines). Parameters sit at the top.
+- **Keep the story, and record the dead ends briefly.** A notebook is a distilled
+  explanation, not a lab log. Good explanation often transforms the idea, as Olah and
+  Carter's "Research Debt" argues. Dead ends get a line each.
+- **Prediction before the answer.** A "Try it" question, or a guess the reader writes down,
+  makes the result stick. This is self-explanation, as in Distill's survey of interactive
+  articles.
+- **Pictures of the game itself.** Draw the board, the hand or the deal, not only plots of
+  numbers.
+
+## Notebooks that rerun
+
+- Only 24% of the GitHub notebooks Pimentel et al. ran finished without error, and 4%
+  reproduced their stored outputs. The causes were hidden state, cells run out of order,
+  and unrecorded dependencies.
+- Before committing, restart and run all. CI reruns every notebook (nbval) and compares
+  figures pixel by pixel, so a stale output fails the build.
+- Seeds are fixed in advance and printed. Pytudes sometimes picks "a representative seed";
+  this repository never chooses a seed by its result.
+- **Format.** Keep `.ipynb` with outputs committed: GitHub renders it, plots included, on a
+  phone. marimo stores notebooks as plain `.py` files that run as scripts, carry PEP 723
+  dependencies and cannot hold hidden state. But GitHub shows those files without their
+  outputs. Reconsider marimo for a notebook meant to be interactive, and export it to HTML
+  if so.

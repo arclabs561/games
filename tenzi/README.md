@@ -61,5 +61,5 @@ uv run python -m tenzi.tenzi
 uv run python -m tenzi.optimal
 uv run python -m tenzi.maximum
 uv run --group tenzi python -m tenzi.tenzi --plot   # also a histogram with a fitted gamma density
-uv run erase/paper/typst_vendor.py tenzi/tenzi.typ    # rebuilds tenzi.pdf
+uv run tools/typst_vendor.py tenzi/tenzi.typ    # rebuilds tenzi.pdf
 ```
