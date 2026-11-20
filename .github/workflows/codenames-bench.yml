@@ -1,0 +1,216 @@
+name: codenames-bench
+# Exploratory runs of codenames/bench_play.py: the framework's word-vector bots
+# (stepmat/Codenames_GPT at fc28bc9) reproduced and played against this package's
+# givers and guessers. Runs on push to this branch; the outputs are committed to this
+# branch under runs/bench/<run id>/.
+on:
+  push:
+    branches: ["compute/codenames-bench"]
+    paths: [".github/workflows/codenames-bench.yml", "codenames/bench*.py"]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: codenames-bench
+  cancel-in-progress: true
+env:
+  FRAMEWORK_COMMIT: fc28bc9fc7206f9ba2034d6f0a0b0fcf8e65dcc6
+  GLOVE_URL: https://nlp.stanford.edu/data/glove.6B.zip
+  GLOVE_MIRROR: https://huggingface.co/stanfordnlp/glove/resolve/main/glove.6B.zip
+  W2V_URL: https://github.com/RaRe-Technologies/gensim-data/releases/download/word2vec-google-news-300/word2vec-google-news-300.gz
+jobs:
+  data:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          python-version: "3.12"
+      - id: cache
+        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5.1.0
+        with:
+          path: codenames/.cache/bench
+          key: bench-data-v1
+      - name: Extract the vectors and the clue forms
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          curl -fsSL --retry 3 -o "$RUNNER_TEMP/glove.zip" "$GLOVE_URL" || curl -fsSL --retry 3 -o "$RUNNER_TEMP/glove.zip" "$GLOVE_MIRROR"
+          curl -fsSL --retry 3 -o "$RUNNER_TEMP/w2v.gz" "$W2V_URL"
+          ls -l "$RUNNER_TEMP"
+          uv run --group codenames python -m codenames.bench_data fetch
+          uv run --group codenames python -m codenames.bench_data extract --glove "$RUNNER_TEMP/glove.zip" --w2v "$RUNNER_TEMP/w2v.gz"
+          uv run --group codenames --with nltk python -m codenames.bench_data forms
+          rm -rf codenames/.cache/bench/nltk_data
+          ls -l codenames/.cache/bench
+
+  reproduce:
+    needs: data
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          python-version: "3.12"
+      - uses: actions/cache/restore@caa296126883cff596d87d8935842f9db880ef25 # v5.1.0
+        with:
+          path: codenames/.cache/bench
+          key: bench-data-v1
+          fail-on-cache-miss: true
+      - name: Replay the published games with the port
+        run: |
+          mkdir -p "$RUNNER_TEMP/out"
+          uv run --group codenames python -m codenames.bench_play reproduce --out "$RUNNER_TEMP/out/reproduce.json"
+          cp codenames/.cache/bench/vectors.json "$RUNNER_TEMP/out/vectors.json"
+          python3 -c "import json; d=json.load(open('codenames/.cache/bench/forms.json')); print(json.dumps({'nltk': d['nltk'], 'words': len(d['forms'])}))" > "$RUNNER_TEMP/out/forms.json"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: reproduce
+          path: ${{ runner.temp }}/out
+
+  original:
+    needs: data
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        pair: ["w2v w2v", "w2v glove", "w2v w2vglove", "glove w2v", "glove glove", "glove w2vglove", "w2vglove w2v", "w2vglove glove", "w2vglove w2vglove"]
+    steps:
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          python-version: "3.12"
+      - name: Run the framework's own code on seeds 0 to 9
+        env:
+          PAIR: ${{ matrix.pair }}
+        run: |
+          cd "$RUNNER_TEMP"
+          git clone -q https://github.com/stepmat/Codenames_GPT.git fw
+          git -C fw checkout -q "$FRAMEWORK_COMMIT"
+          curl -fsSL --retry 3 -o glove.zip "$GLOVE_URL" || curl -fsSL --retry 3 -o glove.zip "$GLOVE_MIRROR"
+          unzip -q glove.zip glove.6B.300d.txt
+          curl -fsSL --retry 3 -o w2v.gz "$W2V_URL"
+          uv venv -q -p 3.12 venv
+          uv pip install -q --python venv gensim scipy nltk colorama numpy
+          uv pip freeze --python venv > versions.txt
+          cat versions.txt
+          venv/bin/python -c "import nltk; nltk.download('wordnet', quiet=True)"
+          cat > drive.py <<'PY'
+          import importlib, sys
+          sys.path.insert(0, ".")
+          from game import Game
+          glove = Game.load_glove_vecs(sys.argv[1])
+          w2v = Game.load_w2v(sys.argv[2])
+          kw = {"glove_vecs": glove, "word_vectors": w2v}
+          cm = importlib.import_module("players.codemaster_" + sys.argv[3]).AICodemaster
+          gu = importlib.import_module("players.guesser_" + sys.argv[4]).AIGuesser
+          for seed in range(int(sys.argv[5]), int(sys.argv[6])):
+              Game(cm, gu, cm, gu, seed=seed, do_print=False, do_log=True, single_team=True,
+                   cmr_kwargs=kw, gr_kwargs=kw, cmb_kwargs=kw, gb_kwargs=kw).run()
+          PY
+          cd fw/codenames
+          read -r cm gu <<< "$PAIR"
+          ../../venv/bin/python ../../drive.py ../../glove.6B.300d.txt ../../w2v.gz "$cm" "$gu" 0 10
+          mkdir -p "$RUNNER_TEMP/out/$cm-$gu"
+          cp results/bot_results_new_style.txt results/move_log.txt ../../versions.txt "$RUNNER_TEMP/out/$cm-$gu/"
+          echo "PAIR_NAME=$cm-$gu" >> "$GITHUB_ENV"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: original-${{ env.PAIR_NAME }}
+          path: ${{ runner.temp }}/out
+
+  crossplay:
+    needs: data
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    strategy:
+      fail-fast: false
+      matrix:
+        giver: [w2v, glove, w2vglove, gemma2-first, potion-first, potion-c3-self, potion-c3-population]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          python-version: "3.12"
+      - uses: actions/cache/restore@caa296126883cff596d87d8935842f9db880ef25 # v5.1.0
+        with:
+          path: codenames/.cache/bench
+          key: bench-data-v1
+          fail-on-cache-miss: true
+      - name: Vectors of the Hugging Face models
+        run: |
+          git fetch -q --depth 1 https://github.com/arclabs561/games.git compute/codenames-embed
+          git checkout FETCH_HEAD -- codenames/vectors
+          git reset -q
+          ls -l codenames/vectors
+      - name: The C8 encoder, if the token can read the private dataset
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          if [ -n "$HF_TOKEN" ]; then
+            uvx --from 'huggingface_hub>=1.0' hf download arclabs561/games-runs --repo-type dataset \
+              --include "runs/c8/b-s1/*" --local-dir "$RUNNER_TEMP/c8" > /dev/null && \
+              echo "LORA=--lora $RUNNER_TEMP/c8/runs/c8/b-s1 --guessers w2v glove w2vglove gemma2 potion lora-c8" >> "$GITHUB_ENV" || echo "no access to the C8 run"
+          else
+            echo "no HF_TOKEN"
+          fi
+      - name: Play
+        env:
+          GIVER: ${{ matrix.giver }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/out"
+          uv run --group codenames --with "sentence-transformers>=5" --with torch --with torchvision --with pillow --with peft \
+            python -m codenames.bench_play crossplay --giver "$GIVER" $LORA --out "$RUNNER_TEMP/out/crossplay-$GIVER.json"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: crossplay-${{ matrix.giver }}
+          path: ${{ runner.temp }}/out
+
+  store:
+    needs: [reproduce, original, crossplay]
+    if: always()
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          path: ${{ runner.temp }}/runs
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          python-version: "3.12"
+      - uses: actions/cache/restore@caa296126883cff596d87d8935842f9db880ef25 # v5.1.0
+        with:
+          path: codenames/.cache/bench
+          key: bench-data-v1
+      - name: Compare the framework's own games with the published ones and the port
+        continue-on-error: true
+        run: |
+          mkdir -p "$RUNNER_TEMP/logs"
+          for d in "$RUNNER_TEMP"/runs/original-*; do cp -r "$d"/* "$RUNNER_TEMP/logs/"; done
+          uv run --group codenames python -m codenames.bench_play original --logs "$RUNNER_TEMP/logs" --out "$RUNNER_TEMP/runs/reproduce/original.json"
+      - name: Commit the outputs to this branch
+        run: |
+          dest="runs/bench/$GITHUB_RUN_ID"
+          mkdir -p "$dest/original"
+          for d in "$RUNNER_TEMP"/runs/*; do
+            case "$(basename "$d")" in
+              original-*) cp -r "$d"/* "$dest/original/" ;;
+              *) cp -r "$d"/* "$dest/" ;;
+            esac
+          done
+          printf '{"run_id": "%s", "commit": "%s", "platform": "github-hosted ubuntu-latest"}\n' "$GITHUB_RUN_ID" "$GITHUB_SHA" > "$dest/source.json"
+          git config user.name arclabs561
+          git config user.email arclabs561@users.noreply.github.com
+          git add runs
+          git status --short | head
+          git commit -q -m "codenames bench outputs from run $GITHUB_RUN_ID"
+          for i in 1 2 3 4 5; do git pull -q --rebase && git push -q && break; sleep 10; done
