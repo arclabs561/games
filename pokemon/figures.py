@@ -13,8 +13,8 @@ from pathlib import Path
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib.axes import Axes
-from matplotlib.colors import ListedColormap
 from matplotlib.figure import Figure
+from matplotlib.patches import Rectangle
 
 from pokemon.scoring import CHART, SUPER, TYPES, incoming, outgoing
 
@@ -33,8 +33,12 @@ SHORT = {t: t[:3].capitalize() for t in TYPES} | {"fighting": "Fgt", "fairy": "F
 
 def _grid(ax: Axes, rows: Sequence[Sequence[Fraction]], row_labels, col_labels) -> None:
     """A table of multipliers, one colored cell each, neutral cells left blank."""
-    cmap = ListedColormap(COLORS)
-    ax.imshow([[LEVELS.index(m) for m in row] for row in rows], cmap=cmap, vmin=-0.5, vmax=5.5)
+    for i, row in enumerate(rows):  # rectangles, not imshow: an SVG then embeds no PNG,
+        for j, m in enumerate(row):  # whose compressed bytes vary between zlib builds
+            ax.add_patch(Rectangle((j - 0.5, i - 0.5), 1, 1, fc=COLORS[LEVELS.index(m)], lw=0))
+    ax.set_xlim(-0.5, len(col_labels) - 0.5)
+    ax.set_ylim(len(row_labels) - 0.5, -0.5)
+    ax.set_aspect("equal")
     for i, row in enumerate(rows):
         for j, m in enumerate(row):
             if m != 1:
@@ -62,7 +66,7 @@ def draw_chart(highlight: Sequence[str] = ()) -> Figure:
     ax.xaxis.tick_top()
     for t in highlight:
         i = TYPES.index(t)
-        ax.add_patch(plt.Rectangle((-0.5, i - 0.5), 18, 1, fill=False, lw=1.4, ec="black"))
+        ax.add_patch(Rectangle((-0.5, i - 0.5), 18, 1, fill=False, lw=1.4, ec="black"))
     fig.tight_layout()
     return fig
 
