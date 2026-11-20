@@ -307,6 +307,18 @@ def c3_policies() -> dict:
     return {"params": {k: v.tolist() for k, v in params.items()}, "theta_max_difference": check}
 
 
+def cpu_quota() -> int:
+    """CPUs this container may use (cgroup v2 cpu.max), not the host's count, so that
+    torch does not start more threads than it has CPUs."""
+    try:
+        quota, period = Path("/sys/fs/cgroup/cpu.max").read_text().split()
+        if quota != "max":
+            return max(1, int(quota) // int(period))
+    except (OSError, ValueError):
+        pass
+    return len(os.sched_getaffinity(0))
+
+
 @cache
 def lora_space(folder: Path, extra: tuple[str, ...]) -> tuple[Space, dict]:
     """The C8 encoder's vectors (clue side in its chosen template, word side bare), with
@@ -321,7 +333,7 @@ def lora_space(folder: Path, extra: tuple[str, ...]) -> tuple[Space, dict]:
     missing = sorted(w for w in extra if w not in have)
     st = importlib.import_module("sentence_transformers")
     torch = importlib.import_module("torch")
-    torch.set_num_threads(os.cpu_count() or 1)
+    torch.set_num_threads(cpu_quota())
     t0 = time.perf_counter()
     model = st.SentenceTransformer(
         "Qwen/Qwen3-Embedding-0.6B", device="cpu", model_kwargs={"torch_dtype": torch.float32}
@@ -337,7 +349,15 @@ def lora_space(folder: Path, extra: tuple[str, ...]) -> tuple[Space, dict]:
 
     probe = words[:: max(1, len(words) // 200)][:200]
     pos = {w: i for i, w in enumerate(words)}
-    info = {"template": template, "extra_words": len(missing)}
+    info = {"template": template, "extra_words": len(missing), "threads": torch.get_num_threads()}
+    print(
+        "C8 encoder: encoding",
+        len(missing),
+        "words with",
+        torch.get_num_threads(),
+        "threads",
+        flush=True,
+    )
     mats = {}
     for t, z in stored.items():
         v = z["vectors"]
@@ -567,7 +587,7 @@ def read_latest(runs: list[Path], name: str):
     return json.loads(path.read_text())
 
 
-def collect(runs: list[Path], lora: Path | None) -> dict:
+def collect(runs: list[Path], lora: list[Path]) -> dict:
     """Compact the raw outputs of the workflow runs (later runs replace earlier ones) and
     of the C8 job into one file."""
     rep = read_latest(runs, "reproduce.json")["games"]
@@ -618,13 +638,17 @@ def collect(runs: list[Path], lora: Path | None) -> dict:
         for p in sorted(r.glob("crossplay-*.json")):
             sl = json.loads(p.read_text())
             slices[(sl.get("strict", False), sl["giver"], "games")] = sl  # later runs replace
-    if lora:
-        for p in sorted(lora.glob("crossplay-lora-*.json")):
+    for folder in lora:
+        for p in sorted(folder.glob("crossplay-lora-*.json")):
             sl = json.loads(p.read_text())
             slices[(sl.get("strict", False), sl["giver"], "lora")] = sl
-        out["data"]["lora_job"] = json.loads((lora / "data.json").read_text())
-        if (lora / "manifest.json").exists():
-            out["source"]["lora_job"] = json.loads((lora / "manifest.json").read_text())
+        out["data"].setdefault("lora_jobs", []).append(
+            json.loads((folder / "data.json").read_text())
+        )
+        if (folder / "manifest.json").exists():
+            out["source"].setdefault("lora_jobs", []).append(
+                json.loads((folder / "manifest.json").read_text())
+            )
     variants: dict[str, dict] = {"all": {}, "strict": {}}
     info: dict[str, dict] = {}
     for (strict, giver, kind), sl in sorted(slices.items()):
@@ -970,7 +994,7 @@ def main() -> None:
     co.add_argument(
         "--runs", type=Path, nargs="+", required=True, help="later runs replace earlier"
     )
-    co.add_argument("--lora", type=Path, default=None, help="outputs of the C8 job")
+    co.add_argument("--lora", type=Path, nargs="*", default=[], help="outputs of the C8 jobs")
     sub.add_parser("analyze", help="results/bench.json and bench.md from bench-runs.json")
     args = parser.parse_args()
     if args.cmd == "reproduce":
