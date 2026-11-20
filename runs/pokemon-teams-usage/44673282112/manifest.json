@@ -1,0 +1,19 @@
+{
+ "experiment": "pokemon-teams-usage",
+ "run": "seed-1",
+ "commit": "60709f06b4a697984f10ae3a7d443562ed5b4adc",
+ "platform": "actions",
+ "command": [
+  "python",
+  "-m",
+  "pokemon.teams_usage",
+  "--out",
+  "OUT"
+ ],
+ "returncode": 0,
+ "seconds": 16.0,
+ "job_id": "44673282112",
+ "hardware": "GitHub Actions 1000099992",
+ "gpu": null,
+ "python": "3.14.4"
+}

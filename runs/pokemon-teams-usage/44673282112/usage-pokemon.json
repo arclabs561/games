@@ -1,0 +1,2370 @@
+{
+ "cutoff": 1500,
+ "files": [
+  {
+   "battles": 933115,
+   "bytes": 16221261,
+   "sha256": "46dad8beed0fcd1cdf8ce569229ac1f6c10cd92c66979376ff9f761d6091c456",
+   "url": "https://www.smogon.com/stats/2025-11/chaos/gen9ou-1500.json"
+  },
+  {
+   "battles": 935985,
+   "bytes": 16313575,
+   "sha256": "672d8c4b2c9ba9ff9e44fbc457d0e148b97806fc6601a723b88c8ff1478b9e1d",
+   "url": "https://www.smogon.com/stats/2025-12/chaos/gen9ou-1500.json"
+  },
+  {
+   "battles": 1050903,
+   "bytes": 17295860,
+   "sha256": "7e6e6f1ff6e799e3d9aebd3efd1d0237609b9596fe503328a2cf5e9b59c2996e",
+   "url": "https://www.smogon.com/stats/2026-01/chaos/gen9ou-1500.json"
+  },
+  {
+   "battles": 1034254,
+   "bytes": 17007320,
+   "sha256": "d0d95da670c0bebf804ad82d2ca090343077bca1d75d2913f1e35cc309df77f1",
+   "url": "https://www.smogon.com/stats/2026-02/chaos/gen9ou-1500.json"
+  },
+  {
+   "battles": 1289120,
+   "bytes": 19044121,
+   "sha256": "08571e5b5ff2e665ed910ad1c04fba02ef1a446495dce95ecfbce9b44e4b502a",
+   "url": "https://www.smogon.com/stats/2026-03/chaos/gen9ou-1500.json"
+  },
+  {
+   "battles": 1135486,
+   "bytes": 18349197,
+   "sha256": "5fc69eef8a47e339504ece2770b7e13f161eb9de86a4dfa599f1d92613c9cca6",
+   "url": "https://www.smogon.com/stats/2026-04/chaos/gen9ou-1500.json"
+  },
+  {
+   "battles": 942140,
+   "bytes": 16305656,
+   "sha256": "0cec3430a495b2f698044d88560c3e2cd56c0a3c7b73d3cc10cc8e13c4e23cb9",
+   "url": "https://www.smogon.com/stats/2026-05/chaos/gen9ou-1500.json"
+  },
+  {
+   "battles": 767456,
+   "bytes": 14409292,
+   "sha256": "b931c5f316707734f643aadde6ec063dc588031da023ed59695fd63c16aaa243",
+   "url": "https://www.smogon.com/stats/2026-06/chaos/gen9ou-1500.json"
+  },
+  {
+   "battles": 654262,
+   "bytes": 12948682,
+   "sha256": "5f616894f49c608689ba5c015af6bec5d385a032bb47a4cdaab8cda51c8c8c97",
+   "url": "https://www.smogon.com/stats/2026-07/chaos/gen9ou-1500.json"
+  },
+  {
+   "battles": 730502,
+   "bytes": 13180615,
+   "sha256": "098551f539cd0360779a1ca35fecab40c2ed21c6ce2c4bb6d75da607d42e3412",
+   "url": "https://www.smogon.com/stats/2026-08/chaos/gen9ou-1500.json"
+  },
+  {
+   "battles": 574541,
+   "bytes": 12334141,
+   "sha256": "800f5b222a00ca8f2441c3fc7a7d4f57d41472720c5c7c4e3074bed5c25e57f8",
+   "url": "https://www.smogon.com/stats/2026-09/chaos/gen9ou-1500.json"
+  },
+  {
+   "battles": 608936,
+   "bytes": 12476854,
+   "sha256": "47c8c41f2e30577ddaf88316e9ab78782158ec61acf67cbd6f174869ebc11d76",
+   "url": "https://www.smogon.com/stats/2026-10/chaos/gen9ou-1500.json"
+  }
+ ],
+ "format": "gen9ou",
+ "license": "unknown; the raw files are not redistributed",
+ "months": [
+  "2025-11",
+  "2025-12",
+  "2026-01",
+  "2026-02",
+  "2026-03",
+  "2026-04",
+  "2026-05",
+  "2026-06",
+  "2026-07",
+  "2026-08",
+  "2026-09",
+  "2026-10"
+ ],
+ "pokemon": [
+  {
+   "abilities": {
+    "protosynthesis": 1.0
+   },
+   "identifier": "great-tusk",
+   "moves": {
+    "bodypress": 0.0242474371750438,
+    "bulkup": 0.15466036495256127,
+    "closecombat": 0.35131838065687837,
+    "earthquake": 0.12517401686050372,
+    "headlongrush": 0.8567241252926695,
+    "headsmash": 0.06109340654354835,
+    "icespinner": 0.7737408429080685,
+    "knockoff": 0.21133254473182453,
+    "rapidspin": 0.9281408763484224,
+    "stealthrock": 0.3892667285183067,
+    "stoneedge": 0.016881851146977097,
+    "supercellslam": 0.014757093103041736,
+    "taunt": 0.029783967326245962,
+    "temperflare": 0.03284407156592921
+   },
+   "rank": 1,
+   "showdown": "Great Tusk",
+   "usage": 0.32410025000000003
+  },
+  {
+   "abilities": {
+    "goodasgold": 1.0
+   },
+   "identifier": "gholdengo",
+   "moves": {
+    "dazzlinggleam": 0.14597537012827091,
+    "focusblast": 0.21020371862245463,
+    "hex": 0.1208824435225727,
+    "makeitrain": 0.8770005534155803,
+    "nastyplot": 0.5276072052244823,
+    "psyshock": 0.09593744286499101,
+    "recover": 0.5426995193244399,
+    "shadowball": 0.8383365958633198,
+    "thunderbolt": 0.09377556469607577,
+    "thunderwave": 0.1542472921982997,
+    "trick": 0.3368959765109512
+   },
+   "rank": 2,
+   "showdown": "Gholdengo",
+   "usage": 0.21943828333333334
+  },
+  {
+   "abilities": {
+    "defiant": 0.036619485980417574,
+    "pressure": 0.0013988667630971895,
+    "supremeoverlord": 0.9619816472564854
+   },
+   "identifier": "kingambit",
+   "moves": {
+    "brickbreak": 0.02098715443982583,
+    "ironhead": 0.8470311091065008,
+    "kowtowcleave": 0.81327584554758,
+    "lowkick": 0.2953958474295694,
+    "suckerpunch": 0.9899498053634669,
+    "swordsdance": 0.9317222552688555,
+    "terablast": 0.04464112869299902
+   },
+   "rank": 3,
+   "showdown": "Kingambit",
+   "usage": 0.21515173333333332
+  },
+  {
+   "abilities": {
+    "innerfocus": 0.016757520315254137,
+    "multiscale": 0.9832424796847457
+   },
+   "identifier": "dragonite",
+   "moves": {
+    "dracometeor": 0.010777514766198548,
+    "dragonclaw": 0.05502307091558797,
+    "dragondance": 0.8175468986492839,
+    "dragontail": 0.09779084662677295,
+    "earthquake": 0.7835539987979709,
+    "encore": 0.1293900759419248,
+    "extremespeed": 0.7391866834141698,
+    "firepunch": 0.18532941240972356,
+    "hurricane": 0.01578721103777892,
+    "icespinner": 0.28435848649031775,
+    "ironhead": 0.015914093746863374,
+    "lowkick": 0.028496089269228975,
+    "outrage": 0.12149955367191435,
+    "roost": 0.36193211599724673,
+    "scaleshot": 0.0782492065321877,
+    "substitute": 0.022868422762812392,
+    "terablast": 0.13505263963729883,
+    "thunderpunch": 0.015520852437197113
+   },
+   "rank": 4,
+   "showdown": "Dragonite",
+   "usage": 0.16462748333333332
+  },
+  {
+   "abilities": {
+    "waterabsorb": 1.0
+   },
+   "identifier": "ogerpon-wellspring-mask",
+   "moves": {
+    "encore": 0.1973647611582315,
+    "grassyglide": 0.01125844380732071,
+    "hornleech": 0.4016788779869532,
+    "ivycudgel": 0.9976520989896107,
+    "knockoff": 0.3371547784649416,
+    "playrough": 0.37019667734078476,
+    "powerwhip": 0.250089576887847,
+    "spikes": 0.09497503260458175,
+    "spikyshield": 0.019106837296924233,
+    "substitute": 0.0221193188072469,
+    "swordsdance": 0.5921107375181257,
+    "synthesis": 0.07684897339001745,
+    "taunt": 0.1054219853714423,
+    "trailblaze": 0.16533389828775136,
+    "uturn": 0.2986853042620621,
+    "woodhammer": 0.01725983312305791
+   },
+   "rank": 5,
+   "showdown": "Ogerpon-Wellspring",
+   "usage": 0.1610121
+  },
+  {
+   "abilities": {
+    "dauntlessshield": 1.0
+   },
+   "identifier": "zamazenta",
+   "moves": {
+    "bodypress": 0.5738663469398472,
+    "closecombat": 0.42606518165436497,
+    "crunch": 0.8323210608020726,
+    "heavyslam": 0.4034349476502329,
+    "icefang": 0.2041645621474127,
+    "irondefense": 0.5455221931983861,
+    "ironhead": 0.035936772607801155,
+    "lightscreen": 0.06448065772094969,
+    "playrough": 0.016741615868082205,
+    "psychicfangs": 0.03146692778035724,
+    "reflect": 0.06341451661406602,
+    "rest": 0.03907381288033861,
+    "roar": 0.3424137187966803,
+    "stoneedge": 0.2608308636837497,
+    "substitute": 0.11129543371001104,
+    "wildcharge": 0.010670973067656844
+   },
+   "rank": 6,
+   "showdown": "Zamazenta",
+   "usage": 0.15641348333333333
+  },
+  {
+   "abilities": {
+    "quarkdrive": 1.0
+   },
+   "identifier": "iron-valiant",
+   "moves": {
+    "aurasphere": 0.09804167279013573,
+    "calmmind": 0.3155787116875664,
+    "closecombat": 0.43258191634594484,
+    "destinybond": 0.12589034732550977,
+    "drainpunch": 0.013585891935932128,
+    "encore": 0.3406403345927041,
+    "focusblast": 0.04063533617823991,
+    "icepunch": 0.024999521787427724,
+    "knockoff": 0.38726069919339323,
+    "moonblast": 0.8275232418729124,
+    "psychic": 0.01866229938893521,
+    "psyshock": 0.06528789624760133,
+    "shadowball": 0.3610517528267059,
+    "shadowsneak": 0.013815501846080998,
+    "spiritbreak": 0.10522343922157265,
+    "swordsdance": 0.1551081086495101,
+    "taunt": 0.05562781562538243,
+    "terablast": 0.012288026644003995,
+    "thunderbolt": 0.29004971266863266,
+    "trick": 0.05118777373112671,
+    "vacuumwave": 0.18208851073979598
+   },
+   "rank": 7,
+   "showdown": "Iron Valiant",
+   "usage": 0.15526726666666665
+  },
+  {
+   "abilities": {
+    "protosynthesis": 1.0
+   },
+   "identifier": "raging-bolt",
+   "moves": {
+    "calmmind": 0.548282060658782,
+    "discharge": 0.030918071952605132,
+    "dracometeor": 0.38394444292635266,
+    "dragonpulse": 0.6253173640496531,
+    "solarbeam": 0.031033519716149434,
+    "taunt": 0.010437933909323054,
+    "terablast": 0.04261237480022745,
+    "thunder": 0.08694608301433757,
+    "thunderbolt": 0.7191608987046775,
+    "thunderclap": 0.9652269637864972,
+    "voltswitch": 0.3037794384063808,
+    "weatherball": 0.20485989045359174
+   },
+   "rank": 8,
+   "showdown": "Raging Bolt",
+   "usage": 0.1446946
+  },
+  {
+   "abilities": {
+    "curiousmedicine": 0.004463405489131462,
+    "owntempo": 0.00036248297259963236,
+    "regenerator": 0.995174111538269
+   },
+   "identifier": "slowking-galar",
+   "moves": {
+    "chillyreception": 0.755742493679031,
+    "fireblast": 0.01988816145993848,
+    "flamethrower": 0.28734385071224017,
+    "focusblast": 0.020927806054328098,
+    "futuresight": 0.6099666549703303,
+    "icebeam": 0.31492186140633205,
+    "psychic": 0.02692809894974562,
+    "psychicnoise": 0.2148767530970132,
+    "psyshock": 0.13360781030863614,
+    "slackoff": 0.03906476362753401,
+    "sludgebomb": 0.84805544370967,
+    "sludgewave": 0.041008406717687546,
+    "surf": 0.01961095693605193,
+    "thunderwave": 0.3314666098029335,
+    "toxic": 0.1353717909590995,
+    "toxicspikes": 0.03229070245148772,
+    "trick": 0.06435370990749635,
+    "trickroom": 0.023062736157155678,
+    "whirlpool": 0.010137320249220937
+   },
+   "rank": 9,
+   "showdown": "Slowking-Galar",
+   "usage": 0.14136190833333334
+  },
+  {
+   "abilities": {
+    "clearbody": 0.3556026177908874,
+    "cursedbody": 0.023489014946435974,
+    "infiltrator": 0.6209083672626765
+   },
+   "identifier": "dragapult",
+   "moves": {
+    "curse": 0.022927287794706642,
+    "dracometeor": 0.4925178096635238,
+    "dragondance": 0.09795445688742434,
+    "dragondarts": 0.5150133988155319,
+    "fireblast": 0.0747816214654937,
+    "flamethrower": 0.264823688655747,
+    "hex": 0.2878031244230586,
+    "hydropump": 0.019808993689883706,
+    "lightscreen": 0.014344130768837806,
+    "phantomforce": 0.12699816897136293,
+    "psychicfangs": 0.03247482386841163,
+    "quickattack": 0.01786855774302248,
+    "reflect": 0.01419667850783964,
+    "shadowball": 0.41417090916843596,
+    "substitute": 0.05193975028152319,
+    "suckerpunch": 0.12467496469157577,
+    "surf": 0.014505046663914651,
+    "terablast": 0.14201322505884392,
+    "thunderbolt": 0.0641094677875477,
+    "thunderwave": 0.07289897681490089,
+    "uturn": 0.7430157905121275,
+    "willowisp": 0.331861558937277
+   },
+   "rank": 10,
+   "showdown": "Dragapult",
+   "usage": 0.137571225
+  },
+  {
+   "abilities": {
+    "anticipation": 0.00048712549936704195,
+    "healer": 0.004090790648854479,
+    "magicbounce": 0.9954220838517785
+   },
+   "identifier": "hatterene",
+   "moves": {
+    "calmmind": 0.23407076685283673,
+    "dazzlinggleam": 0.22762972414180158,
+    "drainingkiss": 0.701961115588649,
+    "expandingforce": 0.030271743889649743,
+    "futuresight": 0.06181739910145631,
+    "gigadrain": 0.010896753668448438,
+    "healingwish": 0.3371662702126987,
+    "mistyexplosion": 0.02397731162839555,
+    "mysticalfire": 0.4229161035314687,
+    "nuzzle": 0.5789158617580314,
+    "painsplit": 0.2241677987242496,
+    "psychic": 0.05831156989143101,
+    "psychicnoise": 0.5974576490126582,
+    "psyshock": 0.19628662587656726,
+    "storedpower": 0.05870653244281775,
+    "trickroom": 0.17606350210292043
+   },
+   "rank": 11,
+   "showdown": "Hatterene",
+   "usage": 0.12542124166666666
+  },
+  {
+   "abilities": {
+    "mirrorarmor": 0.19092741421909068,
+    "pressure": 0.8021030831833362,
+    "unnerve": 0.006969502597573094
+   },
+   "identifier": "corviknight",
+   "moves": {
+    "agility": 0.013430201364953593,
+    "bodypress": 0.47655168486901583,
+    "bravebird": 0.5560192744281739,
+    "bulkup": 0.06740520384250047,
+    "defog": 0.7607539443527421,
+    "drillpeck": 0.012865920216310878,
+    "irondefense": 0.29832445805334773,
+    "ironhead": 0.053095875129299974,
+    "powertrip": 0.024840548682432573,
+    "protect": 0.02625583272384221,
+    "roost": 0.9656378841708847,
+    "taunt": 0.014435948863410961,
+    "uturn": 0.6682464937081984
+   },
+   "rank": 12,
+   "showdown": "Corviknight",
+   "usage": 0.12340747499999999
+  },
+  {
+   "abilities": {
+    "pressure": 1.0
+   },
+   "identifier": "kyurem",
+   "moves": {
+    "blizzard": 0.15779002404982154,
+    "bodypress": 0.06132405820886312,
+    "dracometeor": 0.3568755190499164,
+    "dragondance": 0.2523598039227009,
+    "dragonpulse": 0.013493986182697277,
+    "earthpower": 0.8250831164095626,
+    "flashcannon": 0.05707212324217655,
+    "focusblast": 0.04003351757938873,
+    "freezedry": 0.823500002588375,
+    "icebeam": 0.40947113298431637,
+    "iciclespear": 0.26785245871881364,
+    "ironhead": 0.01123399855761308,
+    "protect": 0.14543481412314996,
+    "scaleshot": 0.17040065147463243,
+    "shadowball": 0.012806539134134627,
+    "substitute": 0.24119175986224853,
+    "terablast": 0.09026149158972765
+   },
+   "rank": 13,
+   "showdown": "Kyurem",
+   "usage": 0.11935645
+  },
+  {
+   "abilities": {
+    "blaze": 0.3305910944894367,
+    "libero": 0.6694089055105632
+   },
+   "identifier": "cinderace",
+   "moves": {
+    "courtchange": 0.8486126783331449,
+    "flareblitz": 0.010360841657336394,
+    "gunkshot": 0.14067289038247882,
+    "highjumpkick": 0.22186336919800737,
+    "ironhead": 0.018562616278517467,
+    "lowkick": 0.04828194152867015,
+    "pyroball": 0.976890404342831,
+    "suckerpunch": 0.3533397518469844,
+    "swordsdance": 0.026724094347666448,
+    "taunt": 0.014594090109099147,
+    "uturn": 0.8532092869388248,
+    "willowisp": 0.41686755542767073,
+    "zenheadbutt": 0.010146367960993417
+   },
+   "rank": 14,
+   "showdown": "Cinderace",
+   "usage": 0.11568108333333335
+  },
+  {
+   "abilities": {
+    "sharpness": 0.9910259014011183,
+    "torrent": 0.008974098598881673
+   },
+   "identifier": "samurott-hisui",
+   "moves": {
+    "aquacutter": 0.25116365651794,
+    "aquajet": 0.20366032770283476,
+    "ceaselessedge": 0.9947985234434363,
+    "encore": 0.08266061134949586,
+    "flipturn": 0.3618163362237778,
+    "knockoff": 0.5950143529447994,
+    "razorshell": 0.5655768324835522,
+    "sacredsword": 0.239398574893451,
+    "suckerpunch": 0.5353330337211011,
+    "surf": 0.012930555218434002,
+    "swordsdance": 0.07574633286720309,
+    "taunt": 0.030215008915186328,
+    "xscissor": 0.01579114960883691
+   },
+   "rank": 15,
+   "showdown": "Samurott-Hisui",
+   "usage": 0.11188891666666667
+  },
+  {
+   "abilities": {
+    "hypercutter": 0.0056971464647067906,
+    "poisonheal": 0.9943028535352934
+   },
+   "identifier": "gliscor",
+   "moves": {
+    "acrobatics": 0.011540677877678462,
+    "agility": 0.06606971232926637,
+    "crabhammer": 0.011708863798843247,
+    "dualwingbeat": 0.017636263963306267,
+    "earthquake": 0.6976612729674069,
+    "facade": 0.27235855047525365,
+    "icefang": 0.014122889899577846,
+    "knockoff": 0.5414859491164515,
+    "protect": 0.8511653155675618,
+    "spikes": 0.29650171099654954,
+    "stealthrock": 0.1431609663544397,
+    "substitute": 0.07085390384969072,
+    "swordsdance": 0.3286140517849923,
+    "taunt": 0.013573749797229818,
+    "toxic": 0.46221068362692597,
+    "toxicspikes": 0.04170793747824785,
+    "uturn": 0.09688969398133221
+   },
+   "rank": 16,
+   "showdown": "Gliscor",
+   "usage": 0.11125576666666666
+  },
+  {
+   "abilities": {
+    "quarkdrive": 1.0
+   },
+   "identifier": "iron-treads",
+   "moves": {
+    "earthpower": 0.14927824485121857,
+    "earthquake": 0.7912606922224729,
+    "endeavor": 0.027257916260053822,
+    "heavyslam": 0.01570624542256297,
+    "highhorsepower": 0.034865763581867215,
+    "icespinner": 0.364486850934852,
+    "ironhead": 0.11164228030557698,
+    "knockoff": 0.4408533856805207,
+    "megahorn": 0.010975329790745891,
+    "rapidspin": 0.9852622504687145,
+    "stealthrock": 0.6997863201252503,
+    "steelbeam": 0.13952040655428902,
+    "stoneedge": 0.017740728130072356,
+    "supercellslam": 0.02891949432295958,
+    "voltswitch": 0.14886008927922692
+   },
+   "rank": 17,
+   "showdown": "Iron Treads",
+   "usage": 0.10800641666666667
+  },
+  {
+   "abilities": {
+    "intimidate": 1.0
+   },
+   "identifier": "landorus-therian",
+   "moves": {
+    "brickbreak": 0.020126206570631595,
+    "crunch": 0.028434791975011416,
+    "earthpower": 0.24294823785638486,
+    "earthquake": 0.7397452881097344,
+    "grassknot": 0.12961634329386473,
+    "gravity": 0.011459569832582334,
+    "hammerarm": 0.013808806108939574,
+    "outrage": 0.029721168036110232,
+    "psychic": 0.01064940382369321,
+    "rockslide": 0.03832760149878189,
+    "rocktomb": 0.042602008925252066,
+    "sandsearstorm": 0.013985001670976067,
+    "sludgebomb": 0.010949314037482878,
+    "smackdown": 0.05698718053933701,
+    "stealthrock": 0.6637353090801237,
+    "stoneedge": 0.37068544918480945,
+    "swordsdance": 0.02762514703515597,
+    "taunt": 0.44620500018908305,
+    "terablast": 0.07775384106600958,
+    "uturn": 0.941058946521339,
+    "weatherball": 0.017970948449075475
+   },
+   "rank": 18,
+   "showdown": "Landorus-Therian",
+   "usage": 0.10642529166666669
+  },
+  {
+   "abilities": {
+    "healer": 0.004285893367553734,
+    "hydration": 0.0005188249797790645,
+    "regenerator": 0.9951952816526672
+   },
+   "identifier": "alomomola",
+   "moves": {
+    "acrobatics": 0.01644524018560523,
+    "alluringvoice": 0.011639916374000343,
+    "aquajet": 0.1878737937590789,
+    "bodyslam": 0.22196803855684427,
+    "chillingwater": 0.010550047025740321,
+    "flipturn": 0.986622650598559,
+    "healingwish": 0.035757941650714116,
+    "icebeam": 0.01547629364542559,
+    "icywind": 0.011797051937690055,
+    "liquidation": 0.01127442529306441,
+    "mirrorcoat": 0.42071359811715625,
+    "playrough": 0.15255135398928338,
+    "protect": 0.5647367943693585,
+    "scald": 0.5255894556092594,
+    "tickle": 0.12686582952020156,
+    "whirlpool": 0.015335507016781234,
+    "wish": 0.6504777781144605
+   },
+   "rank": 19,
+   "showdown": "Alomomola",
+   "usage": 0.10351197500000002
+  },
+  {
+   "abilities": {
+    "vesselofruin": 1.0
+   },
+   "identifier": "ting-lu",
+   "moves": {
+    "bodypress": 0.013521751796365838,
+    "earthquake": 0.8593212470616172,
+    "heavyslam": 0.08488675655974001,
+    "payback": 0.11959165840478748,
+    "protect": 0.012629882935708195,
+    "rest": 0.1468221762052107,
+    "ruination": 0.7777615731347152,
+    "sleeptalk": 0.08676544380706894,
+    "spikes": 0.3999110622417651,
+    "stealthrock": 0.679377138847855,
+    "stoneedge": 0.0265620022493322,
+    "taunt": 0.037413175598475824,
+    "throatchop": 0.028361208199197054,
+    "whirlwind": 0.6893043889914348
+   },
+   "rank": 20,
+   "showdown": "Ting-Lu",
+   "usage": 0.098647875
+  },
+  {
+   "abilities": {
+    "baddreams": 1.0
+   },
+   "identifier": "darkrai",
+   "moves": {
+    "darkpulse": 0.9863967724857942,
+    "focusblast": 0.347537908306365,
+    "icebeam": 0.7901720579472434,
+    "knockoff": 0.17816039009570325,
+    "nastyplot": 0.3002658803500009,
+    "psychic": 0.07950621615964898,
+    "psyshock": 0.05632973379916464,
+    "shadowball": 0.012894590272539844,
+    "sludgebomb": 0.6519966888336483,
+    "substitute": 0.012542491362495117,
+    "suckerpunch": 0.06129779462531235,
+    "taunt": 0.021981051537414035,
+    "terablast": 0.013768621625492057,
+    "thunder": 0.023380024832192727,
+    "thunderwave": 0.03586680500536697,
+    "trick": 0.21357219388652873,
+    "willowisp": 0.15897753757655653
+   },
+   "rank": 21,
+   "showdown": "Darkrai",
+   "usage": 0.091718875
+  },
+  {
+   "abilities": {
+    "corrosion": 0.022157211216940934,
+    "toxicdebris": 0.9778427887830589
+   },
+   "identifier": "glimmora",
+   "moves": {
+    "dazzlinggleam": 0.08817141666676277,
+    "earthpower": 0.8213679050002514,
+    "energyball": 0.09447058554968424,
+    "memento": 0.014735978605168662,
+    "meteorbeam": 0.3063984809588092,
+    "mortalspin": 0.8275150636730007,
+    "mudshot": 0.016345453128261887,
+    "powergem": 0.4629754322960258,
+    "rockpolish": 0.016496279696821166,
+    "sludgebomb": 0.06759624955446752,
+    "sludgewave": 0.1906549204989109,
+    "spikes": 0.20164881273503607,
+    "spikyshield": 0.05315301834446346,
+    "stealthrock": 0.7164300624514953,
+    "toxic": 0.03709684083992819,
+    "toxicspikes": 0.020722923056761294
+   },
+   "rank": 22,
+   "showdown": "Glimmora",
+   "usage": 0.08976471666666667
+  },
+  {
+   "abilities": {
+    "poisonpuppeteer": 1.0
+   },
+   "identifier": "pecharunt",
+   "moves": {
+    "destinybond": 0.019992687908076286,
+    "foulplay": 0.22880351848743782,
+    "hex": 0.12598852815503891,
+    "malignantchain": 0.8830311058500789,
+    "nastyplot": 0.2242562765242165,
+    "partingshot": 0.7377703680583533,
+    "protect": 0.012693328448097873,
+    "recover": 0.9534164853836486,
+    "shadowball": 0.6414586873697319,
+    "terablast": 0.0177406613174509,
+    "toxic": 0.12550363972851702
+   },
+   "rank": 23,
+   "showdown": "Pecharunt",
+   "usage": 0.0895793
+  },
+  {
+   "abilities": {
+    "flashfire": 0.16988871274300285,
+    "weakarmor": 0.8301112872569971
+   },
+   "identifier": "ceruledge",
+   "moves": {
+    "bitterblade": 0.969079056012886,
+    "brickbreak": 0.01427010972248204,
+    "bulkup": 0.10232571880040683,
+    "closecombat": 0.29984249515713707,
+    "destinybond": 0.049346330949376946,
+    "endure": 0.02195479757238863,
+    "poltergeist": 0.6528039209532697,
+    "shadowclaw": 0.02907852963947176,
+    "shadowsneak": 0.8102899824766002,
+    "solarblade": 0.04465527564290312,
+    "swordsdance": 0.8242010254524799,
+    "taunt": 0.05937195361946877,
+    "terablast": 0.023560728332490174,
+    "willowisp": 0.010594806039673846
+   },
+   "rank": 24,
+   "showdown": "Ceruledge",
+   "usage": 0.08388624166666667
+  },
+  {
+   "abilities": {
+    "quarkdrive": 1.0
+   },
+   "identifier": "iron-moth",
+   "moves": {
+    "agility": 0.03697232754102936,
+    "bugbuzz": 0.02420824971721657,
+    "dazzlinggleam": 0.4382203069716985,
+    "discharge": 0.08379231352954546,
+    "energyball": 0.4400653836031772,
+    "fierydance": 0.9631487475509172,
+    "fireblast": 0.012726796819586455,
+    "flamethrower": 0.01695726386949507,
+    "meteorbeam": 0.014121209559285716,
+    "morningsun": 0.07506027550899873,
+    "overheat": 0.10649527070932903,
+    "psychic": 0.12513649126816415,
+    "sludgewave": 0.9337166070897048,
+    "solarbeam": 0.0540762256099846,
+    "substitute": 0.27661579812446707,
+    "terablast": 0.09262930008271586,
+    "toxic": 0.02581670463885676,
+    "toxicspikes": 0.12158960836226392,
+    "uturn": 0.05341249508962802,
+    "whirlwind": 0.06491558994704749
+   },
+   "rank": 25,
+   "showdown": "Iron Moth",
+   "usage": 0.08069175833333334
+  },
+  {
+   "abilities": {
+    "grassysurge": 0.9944774139684402,
+    "overgrow": 0.005522586031559563
+   },
+   "identifier": "rillaboom",
+   "moves": {
+    "bulkup": 0.010427618650753033,
+    "drainpunch": 0.09636285488051323,
+    "drumbeating": 0.027295075007079526,
+    "earthquake": 0.018708434483738254,
+    "fakeout": 0.02620191322646141,
+    "grassyglide": 0.9802942712906625,
+    "highhorsepower": 0.18749534679120045,
+    "knockoff": 0.8289154610270587,
+    "leechseed": 0.014712062534003775,
+    "lowkick": 0.0831366134310371,
+    "swordsdance": 0.24849961361049253,
+    "taunt": 0.011542276757112847,
+    "terablast": 0.06253387302436227,
+    "uturn": 0.7090944374238741,
+    "woodhammer": 0.6404823380677632
+   },
+   "rank": 26,
+   "showdown": "Rillaboom",
+   "usage": 0.077386
+  },
+  {
+   "abilities": {
+    "pressure": 0.03315185644188067,
+    "static": 0.9668481435581192
+   },
+   "identifier": "zapdos",
+   "moves": {
+    "discharge": 0.2608530250411771,
+    "heatwave": 0.3323718038394606,
+    "hurricane": 0.9158925316602498,
+    "roost": 0.8233939587099169,
+    "terablast": 0.032553257665373446,
+    "thunder": 0.10779607057378447,
+    "thunderbolt": 0.13797580443035473,
+    "thunderwave": 0.3190993116680098,
+    "uturn": 0.20861310618483492,
+    "voltswitch": 0.7050798362952577,
+    "weatherball": 0.0924866489927171
+   },
+   "rank": 27,
+   "showdown": "Zapdos",
+   "usage": 0.073815875
+  },
+  {
+   "abilities": {
+    "protosynthesis": 1.0
+   },
+   "identifier": "walking-wake",
+   "moves": {
+    "agility": 0.03624306530424149,
+    "aquajet": 0.012006104378108628,
+    "dracometeor": 0.8885381954946829,
+    "dragonpulse": 0.42555475987849106,
+    "dragontail": 0.018376285249376314,
+    "flamethrower": 0.6312141849644642,
+    "flipturn": 0.4393868487299352,
+    "hurricane": 0.04101196919280867,
+    "hydropump": 0.026936597829745352,
+    "hydrosteam": 0.8639897183673109,
+    "knockoff": 0.14391405170387808,
+    "scald": 0.038755278513533865,
+    "substitute": 0.0282816235335174,
+    "sunnyday": 0.017357860327067078,
+    "surf": 0.08698213137363715,
+    "terablast": 0.04295304358419201,
+    "weatherball": 0.2194400870360807
+   },
+   "rank": 28,
+   "showdown": "Walking Wake",
+   "usage": 0.07175971666666667
+  },
+  {
+   "abilities": {
+    "clearbody": 0.01074160484568093,
+    "purifyingsalt": 0.976454564808717,
+    "sturdy": 0.012803830345602075
+   },
+   "identifier": "garganacl",
+   "moves": {
+    "avalanche": 0.022725515005113186,
+    "block": 0.020968228495921303,
+    "bodypress": 0.2645704147001126,
+    "curse": 0.1882520559729421,
+    "earthquake": 0.12169587760198733,
+    "icepunch": 0.03691358554374118,
+    "irondefense": 0.22604145461548272,
+    "protect": 0.5666746509768981,
+    "recover": 0.965111695067066,
+    "saltcure": 0.9930565855083777,
+    "stealthrock": 0.5211818308583817,
+    "substitute": 0.015741501299608628
+   },
+   "rank": 29,
+   "showdown": "Garganacl",
+   "usage": 0.059994016666666664
+  },
+  {
+   "abilities": {
+    "pressure": 1.0
+   },
+   "identifier": "deoxys-speed",
+   "moves": {
+    "darkpulse": 0.024233124512991314,
+    "expandingforce": 0.041060264681680704,
+    "extremespeed": 0.016158200721643687,
+    "focusblast": 0.16331203091687568,
+    "icebeam": 0.25084989277727343,
+    "knockoff": 0.20028693986267287,
+    "lightscreen": 0.29308894028012655,
+    "meteorbeam": 0.011290279815574757,
+    "nastyplot": 0.18613538269599192,
+    "painsplit": 0.024920165694671058,
+    "psychic": 0.02457081360305751,
+    "psychicnoise": 0.018128615391878947,
+    "psychoboost": 0.6811794551096781,
+    "recover": 0.0228462139816415,
+    "reflect": 0.2945234558454023,
+    "shadowball": 0.08503398112641042,
+    "skillswap": 0.07977671539381688,
+    "spikes": 0.20740279748223456,
+    "stealthrock": 0.3191053369765565,
+    "storedpower": 0.013419441153232637,
+    "substitute": 0.023218958907945245,
+    "superpower": 0.21993807129912973,
+    "taunt": 0.5060467750929889,
+    "teleport": 0.04735452347764256,
+    "thunderbolt": 0.07159005323274029,
+    "thunderwave": 0.03475976960102921,
+    "trick": 0.021574337533243577
+   },
+   "rank": 30,
+   "showdown": "Deoxys-Speed",
+   "usage": 0.05861720833333334
+  },
+  {
+   "abilities": {
+    "flamebody": 0.9829440604648434,
+    "pressure": 0.01705593953515668
+   },
+   "identifier": "moltres",
+   "moves": {
+    "airslash": 0.05433361467398935,
+    "bravebird": 0.02611892980147819,
+    "fireblast": 0.027613858369414507,
+    "flamethrower": 0.9041420915322472,
+    "hurricane": 0.14735733100754156,
+    "overheat": 0.03014175878082037,
+    "roar": 0.5036033214870815,
+    "roost": 0.9517720330474664,
+    "scorchingsands": 0.15156619902180216,
+    "uturn": 0.7437970726632791,
+    "willowisp": 0.39612146073343724
+   },
+   "rank": 31,
+   "showdown": "Moltres",
+   "usage": 0.05497074166666667
+  },
+  {
+   "abilities": {
+    "liquidvoice": 0.4563589370276457,
+    "torrent": 0.5436410629723544
+   },
+   "identifier": "primarina",
+   "moves": {
+    "alluringvoice": 0.019021564920310416,
+    "aquajet": 0.045225424452141366,
+    "calmmind": 0.27077618792066,
+    "drainingkiss": 0.2655164501134663,
+    "encore": 0.02807655408085811,
+    "energyball": 0.06999159143521477,
+    "flipturn": 0.4794318467271066,
+    "hydropump": 0.05851690287010902,
+    "hypervoice": 0.09854176333311747,
+    "icebeam": 0.1416794983356053,
+    "moonblast": 0.7931209422291131,
+    "protect": 0.01515113548093333,
+    "psychic": 0.03818154381353583,
+    "psychicnoise": 0.6927716820672495,
+    "shadowball": 0.042417706981938794,
+    "sparklingaria": 0.07173451960249874,
+    "substitute": 0.21803393687040415,
+    "surf": 0.44564172171177946,
+    "whirlpool": 0.1444238715785101
+   },
+   "rank": 32,
+   "showdown": "Primarina",
+   "usage": 0.05494093333333333
+  },
+  {
+   "abilities": {
+    "sandstream": 0.9963038127120257,
+    "unnerve": 0.003696187287974044
+   },
+   "identifier": "tyranitar",
+   "moves": {
+    "avalanche": 0.014952540336715135,
+    "brickbreak": 0.011608430949313403,
+    "crunch": 0.04950991183744555,
+    "dragondance": 0.06349823505746548,
+    "dragontail": 0.04097316578276764,
+    "earthquake": 0.19086846432920485,
+    "fireblast": 0.014045255281521537,
+    "firepunch": 0.02118566965648813,
+    "heavyslam": 0.025050358655218062,
+    "icebeam": 0.3346336341347023,
+    "icepunch": 0.41795398250906635,
+    "ironhead": 0.011022989242845251,
+    "knockoff": 0.8908110039758957,
+    "lowkick": 0.4102048155028015,
+    "roar": 0.1323151835251563,
+    "rockblast": 0.01911460185703863,
+    "rockslide": 0.03606514386553269,
+    "stealthrock": 0.45899907564993525,
+    "stoneedge": 0.5203757192194687,
+    "thunderbolt": 0.023031048044322995,
+    "thunderpunch": 0.011316935758634083,
+    "thunderwave": 0.17775126529207302
+   },
+   "rank": 33,
+   "showdown": "Tyranitar",
+   "usage": 0.05456776666666668
+  },
+  {
+   "abilities": {
+    "cutecharm": 0.005639876879925889,
+    "magicguard": 0.7016496984230459,
+    "unaware": 0.292710424697028
+   },
+   "identifier": "clefable",
+   "moves": {
+    "alluringvoice": 0.011601348878290455,
+    "calmmind": 0.3729990728825777,
+    "chargebeam": 0.024758882755577652,
+    "cosmicpower": 0.0919471424726752,
+    "drainingkiss": 0.03079305449395444,
+    "encore": 0.03515914737430206,
+    "fireblast": 0.036238119089649225,
+    "flamethrower": 0.17242701790943035,
+    "healingwish": 0.011585542729664803,
+    "icebeam": 0.04457334362027142,
+    "knockoff": 0.35094657451714995,
+    "moonblast": 0.9205061790208136,
+    "moonlight": 0.7777239071518653,
+    "protect": 0.0984596141339135,
+    "psyshock": 0.01663335433250631,
+    "stealthrock": 0.38874316726774405,
+    "storedpower": 0.07318921186025196,
+    "thunderbolt": 0.02677802593677044,
+    "thunderwave": 0.25461876334021466,
+    "trick": 0.03972527508759939,
+    "wish": 0.14101167753782323
+   },
+   "rank": 34,
+   "showdown": "Clefable",
+   "usage": 0.052583925000000004
+  },
+  {
+   "abilities": {
+    "flamebody": 0.1699155217105608,
+    "flashfire": 0.8300844782894389
+   },
+   "identifier": "heatran",
+   "moves": {
+    "bodypress": 0.01804525653892687,
+    "darkpulse": 0.016288002572536882,
+    "dragonpulse": 0.02034662909355611,
+    "earthpower": 0.8533921195424764,
+    "fireblast": 0.019112746100562752,
+    "flamethrower": 0.05774682555198657,
+    "flashcannon": 0.20906874494789462,
+    "heavyslam": 0.0584450169323582,
+    "lavaplume": 0.13898966795275863,
+    "magmastorm": 0.7922320104160678,
+    "overheat": 0.030330238909075054,
+    "powergem": 0.043678392363691754,
+    "protect": 0.1882729464310345,
+    "scorchingsands": 0.019716793545989944,
+    "solarbeam": 0.018935016140987162,
+    "stealthrock": 0.6082402605031336,
+    "steelbeam": 0.010964169764564144,
+    "substitute": 0.02072570780266327,
+    "taunt": 0.544910572433922,
+    "terablast": 0.02910615307633177,
+    "willowisp": 0.25101153278674565
+   },
+   "rank": 35,
+   "showdown": "Heatran",
+   "usage": 0.05200698333333334
+  },
+  {
+   "abilities": {
+    "lightmetal": 0.0012812459857077208,
+    "swarm": 0.015069209392512236,
+    "technician": 0.9836495446217798
+   },
+   "identifier": "scizor",
+   "moves": {
+    "aerialace": 0.01519176195974039,
+    "brickbreak": 0.012930398946860926,
+    "bugbite": 0.050276131514052025,
+    "bulletpunch": 0.993065501416163,
+    "closecombat": 0.5862734036684248,
+    "defog": 0.21845127734406655,
+    "dualwingbeat": 0.15613551066907388,
+    "knockoff": 0.7437960003416361,
+    "quickattack": 0.012072370796720024,
+    "swordsdance": 0.3970176179088301,
+    "terablast": 0.04175066396820323,
+    "thief": 0.015077147852696222,
+    "trailblaze": 0.018398378556496082,
+    "uturn": 0.671221959186937
+   },
+   "rank": 36,
+   "showdown": "Scizor",
+   "usage": 0.04998415833333333
+  },
+  {
+   "abilities": {
+    "regenerator": 1.0
+   },
+   "identifier": "tornadus-therian",
+   "moves": {
+    "airslash": 0.01416912287241016,
+    "bleakwindstorm": 0.8909661854329516,
+    "darkpulse": 0.053053119645296264,
+    "focusblast": 0.12040805580452048,
+    "grassknot": 0.13945142859922996,
+    "heatwave": 0.765604700458779,
+    "hurricane": 0.08469994368099512,
+    "icywind": 0.022875198198289013,
+    "knockoff": 0.6413167565824907,
+    "nastyplot": 0.19797573459640425,
+    "sludgebomb": 0.011258310252590237,
+    "sludgewave": 0.012542900228902542,
+    "tailwind": 0.011184435415938644,
+    "taunt": 0.12248922739307362,
+    "terablast": 0.018993035098485808,
+    "uturn": 0.7533991014052652,
+    "weatherball": 0.08977942617192043
+   },
+   "rank": 37,
+   "showdown": "Tornadus-Therian",
+   "usage": 0.04871221666666666
+  },
+  {
+   "abilities": {
+    "roughskin": 1.0
+   },
+   "identifier": "garchomp",
+   "moves": {
+    "crunch": 0.014386882435305707,
+    "dracometeor": 0.04014376101647736,
+    "dragonclaw": 0.08112799048965577,
+    "dragontail": 0.47578358310069874,
+    "earthquake": 0.9622845216153287,
+    "endure": 0.01990179546240694,
+    "fireblast": 0.0534377433944535,
+    "firefang": 0.1562167377405368,
+    "flamethrower": 0.01290529693550261,
+    "ironhead": 0.09040134879613516,
+    "liquidation": 0.037781372494189974,
+    "outrage": 0.05974799893120456,
+    "poisonjab": 0.06859766996319396,
+    "protect": 0.01173820342359626,
+    "rest": 0.012384632348008092,
+    "rockslide": 0.023594887332263045,
+    "scaleshot": 0.34274421752352197,
+    "spikes": 0.4157890659058218,
+    "stealthrock": 0.5290018025059018,
+    "stoneedge": 0.06474852610641903,
+    "substitute": 0.020369608769820035,
+    "swordsdance": 0.39510739431519354,
+    "terablast": 0.04158886768808709
+   },
+   "rank": 38,
+   "showdown": "Garchomp",
+   "usage": 0.048460825
+  },
+  {
+   "abilities": {
+    "contrary": 0.8919956438579167,
+    "cutecharm": 0.1080043561420833
+   },
+   "identifier": "enamorus-incarnate",
+   "moves": {
+    "agility": 0.013098082601770021,
+    "calmmind": 0.0579827861383958,
+    "drainingkiss": 0.05590499843137283,
+    "earthpower": 0.9278551779004397,
+    "focusblast": 0.021802005330398232,
+    "grassknot": 0.016944885809253154,
+    "healingwish": 0.6251644211223345,
+    "ironhead": 0.026238036852472186,
+    "moonblast": 0.937439842665145,
+    "mysticalfire": 0.626565261013788,
+    "playrough": 0.04007426051514161,
+    "psychic": 0.02824819880517653,
+    "sludgebomb": 0.05495385802867623,
+    "substitute": 0.08887752376555032,
+    "superpower": 0.16219109538647292,
+    "taunt": 0.024026438510482716,
+    "terablast": 0.2110672409735641,
+    "weatherball": 0.017236114931832195,
+    "zenheadbutt": 0.016029705773717522
+   },
+   "rank": 39,
+   "showdown": "Enamorus",
+   "usage": 0.04781138333333333
+  },
+  {
+   "abilities": {
+    "quarkdrive": 1.0
+   },
+   "identifier": "iron-crown",
+   "moves": {
+    "agility": 0.08141532191782856,
+    "airslash": 0.01010547875434835,
+    "calmmind": 0.373352753949783,
+    "expandingforce": 0.050843817706378046,
+    "focusblast": 0.7268699979536626,
+    "futuresight": 0.14493364535773776,
+    "irondefense": 0.030398233757394248,
+    "psychic": 0.12739775215580146,
+    "psychicnoise": 0.3482662373969307,
+    "psyshock": 0.35187029577572365,
+    "storedpower": 0.09590266993131007,
+    "substitute": 0.016185806430460255,
+    "tachyoncutter": 0.9572176123447325,
+    "terablast": 0.04924343248850154,
+    "voltswitch": 0.6119769106671881
+   },
+   "rank": 40,
+   "showdown": "Iron Crown",
+   "usage": 0.046386575
+  },
+  {
+   "abilities": {
+    "levitate": 0.17776896426894284,
+    "mistysurge": 0.023305751368909944,
+    "neutralizinggas": 0.7989252843621472
+   },
+   "identifier": "weezing-galar",
+   "moves": {
+    "clearsmog": 0.03748142761845082,
+    "dazzlinggleam": 0.01923539630829576,
+    "defog": 0.9022527245673644,
+    "destinybond": 0.01150926573235792,
+    "fireblast": 0.019489754725177385,
+    "flamethrower": 0.06518184503403886,
+    "gunkshot": 0.011577188148054638,
+    "haze": 0.022213320948763583,
+    "memento": 0.011143051340319295,
+    "overheat": 0.02165679183089355,
+    "painsplit": 0.6995133308264386,
+    "protect": 0.12224971765036952,
+    "sludgebomb": 0.38219429879440203,
+    "sludgewave": 0.025584373423633195,
+    "strangesteam": 0.3936762232891068,
+    "taunt": 0.014478649633505179,
+    "toxic": 0.20394987202815978,
+    "toxicspikes": 0.1197849503324786,
+    "willowisp": 0.8481522610138235
+   },
+   "rank": 41,
+   "showdown": "Weezing-Galar",
+   "usage": 0.04614784166666666
+  },
+  {
+   "abilities": {
+    "defiant": 1.0
+   },
+   "identifier": "ogerpon",
+   "moves": {
+    "encore": 0.3194279212586026,
+    "hornleech": 0.019956642368759443,
+    "ivycudgel": 0.9808931503858401,
+    "knockoff": 0.8695630032510291,
+    "lowkick": 0.14020465152938283,
+    "playrough": 0.07510365872513124,
+    "rocktomb": 0.3979232042798416,
+    "spikes": 0.02715631195140706,
+    "stompingtantrum": 0.018841782959174914,
+    "superpower": 0.11467538948897096,
+    "swordsdance": 0.20176435360541717,
+    "synthesis": 0.045217437931025874,
+    "uturn": 0.7273919825875569
+   },
+   "rank": 42,
+   "showdown": "Ogerpon",
+   "usage": 0.04395860833333333
+  },
+  {
+   "abilities": {
+    "drizzle": 0.9975659103907638,
+    "keeneye": 0.0013575235259908529,
+    "raindish": 0.0010765660832454994
+   },
+   "identifier": "pelipper",
+   "moves": {
+    "chillingwater": 0.010342434611301009,
+    "hurricane": 0.9561216816246966,
+    "hydropump": 0.05840683222056582,
+    "icebeam": 0.15696240247596632,
+    "knockoff": 0.2664065583690713,
+    "protect": 0.012747969538430864,
+    "roost": 0.7064616657541297,
+    "surf": 0.2910192432729964,
+    "tailwind": 0.045113336418297956,
+    "terablast": 0.011212541327544664,
+    "uturn": 0.937497934668212,
+    "weatherball": 0.5025096159365448
+   },
+   "rank": 43,
+   "showdown": "Pelipper",
+   "usage": 0.04254106666666666
+  },
+  {
+   "abilities": {
+    "oblivious": 0.004214314142213682,
+    "unaware": 0.9916565410498115,
+    "waterveil": 0.004129144807974906
+   },
+   "identifier": "dondozo",
+   "moves": {
+    "avalanche": 0.2607673545492983,
+    "bodypress": 0.47258609289579423,
+    "crunch": 0.05333998945333256,
+    "curse": 0.6966021132368404,
+    "earthquake": 0.08227632006405645,
+    "heavyslam": 0.020299657975665186,
+    "liquidation": 0.19888003350246158,
+    "outrage": 0.018919988225481764,
+    "protect": 0.030212658637844343,
+    "rest": 0.9086101255125543,
+    "sleeptalk": 0.6752189335936645,
+    "waterfall": 0.349881094221115,
+    "wavecrash": 0.16451388896470853
+   },
+   "rank": 44,
+   "showdown": "Dondozo",
+   "usage": 0.04156516666666667
+  },
+  {
+   "abilities": {
+    "moldbreaker": 0.15147537871032085,
+    "sandforce": 0.007800225504004912,
+    "sandrush": 0.8407243957856743
+   },
+   "identifier": "excadrill",
+   "moves": {
+    "brickbreak": 0.01160715505168563,
+    "earthquake": 0.9788661189244402,
+    "highhorsepower": 0.017164002991763065,
+    "ironhead": 0.6652255563847438,
+    "poisonjab": 0.02327991579107086,
+    "rapidspin": 0.8807941972711427,
+    "rockblast": 0.02261134790226823,
+    "rockslide": 0.46154967614999215,
+    "rocktomb": 0.01452448632457781,
+    "stealthrock": 0.0766609328507981,
+    "substitute": 0.17848877285111556,
+    "swordsdance": 0.5563577224712576,
+    "terablast": 0.051640485435693786,
+    "xscissor": 0.01996866701778392
+   },
+   "rank": 45,
+   "showdown": "Excadrill",
+   "usage": 0.037766224999999994
+  },
+  {
+   "abilities": {
+    "overgrow": 0.047924282830289974,
+    "protean": 0.9520757171697102
+   },
+   "identifier": "meowscarada",
+   "moves": {
+    "brickbreak": 0.016356801114499386,
+    "flowertrick": 0.9024596994265076,
+    "knockoff": 0.8933193971397897,
+    "lowkick": 0.0664498132845881,
+    "playrough": 0.10725208557875443,
+    "powergem": 0.011208826993354744,
+    "spikes": 0.041845239941400325,
+    "suckerpunch": 0.09065182552523988,
+    "taunt": 0.015574559707278942,
+    "thunderpunch": 0.019953824787482914,
+    "trick": 0.08885507681574309,
+    "tripleaxel": 0.7612786499520116,
+    "uturn": 0.8726301197050904
+   },
+   "rank": 46,
+   "showdown": "Meowscarada",
+   "usage": 0.037574058333333334
+  },
+  {
+   "abilities": {
+    "magician": 1.0
+   },
+   "identifier": "hoopa-unbound",
+   "moves": {
+    "brickbreak": 0.025637026966418536,
+    "darkpulse": 0.17836676441568367,
+    "destinybond": 0.02286008124649979,
+    "drainpunch": 0.6661345563463925,
+    "energyball": 0.024501602308681508,
+    "expandingforce": 0.08922058241471065,
+    "firepunch": 0.011896249129492973,
+    "focusblast": 0.1468770559971703,
+    "futuresight": 0.025780970305510242,
+    "grassknot": 0.010640207683995024,
+    "gunkshot": 0.1679815042388728,
+    "hyperspacefury": 0.5489712214079433,
+    "icepunch": 0.058381047115624383,
+    "knockoff": 0.48221309826762687,
+    "nastyplot": 0.03838489196127261,
+    "psychic": 0.19393846968554154,
+    "psychicnoise": 0.35054225063167743,
+    "psyshock": 0.05341878474857189,
+    "shadowball": 0.013737962842976065,
+    "substitute": 0.022844184807031095,
+    "terablast": 0.024178377735990127,
+    "thunderbolt": 0.3099757708954286,
+    "trick": 0.09491829083497944,
+    "trickroom": 0.1493206708116561,
+    "zenheadbutt": 0.24570312715704143
+   },
+   "rank": 47,
+   "showdown": "Hoopa-Unbound",
+   "usage": 0.03397159166666667
+  },
+  {
+   "abilities": {
+    "drought": 0.9930190364677184,
+    "shellarmor": 0.003511031681341742,
+    "whitesmoke": 0.00346993185093974
+   },
+   "identifier": "torkoal",
+   "moves": {
+    "bodypress": 0.19788719418723907,
+    "burningjealousy": 0.02551112751555354,
+    "clearsmog": 0.15909627364354526,
+    "earthpower": 0.18950833066721465,
+    "earthquake": 0.13971449361718316,
+    "eruption": 0.15854586119667816,
+    "fireblast": 0.02911797157671721,
+    "flamethrower": 0.09906981236802057,
+    "lavaplume": 0.48225330900157815,
+    "overheat": 0.20731618440526414,
+    "protect": 0.011449423305479609,
+    "rapidspin": 0.7852415339070099,
+    "rest": 0.011408133137563366,
+    "scorchingsands": 0.013485578542957302,
+    "shellsmash": 0.011251937924495962,
+    "solarbeam": 0.1256573548613573,
+    "stealthrock": 0.7613319876628799,
+    "sunnyday": 0.012979264739062952,
+    "weatherball": 0.07041242625648092,
+    "willowisp": 0.4507801177458709
+   },
+   "rank": 48,
+   "showdown": "Torkoal",
+   "usage": 0.032851825
+  },
+  {
+   "abilities": {
+    "drought": 0.9976899522553974,
+    "flashfire": 0.0023100477446024205
+   },
+   "identifier": "ninetales",
+   "moves": {
+    "encore": 0.8905693286059967,
+    "fireblast": 0.01991106936701774,
+    "flamethrower": 0.14844658463181856,
+    "healingwish": 0.8570407795724494,
+    "memento": 0.03827827367657307,
+    "nastyplot": 0.024367617422984,
+    "overheat": 0.41336724637046973,
+    "roar": 0.0183196616394472,
+    "scorchingsands": 0.1630662876776937,
+    "solarbeam": 0.13194620823754558,
+    "sunnyday": 0.012739956414149229,
+    "weatherball": 0.4239529147868843,
+    "willowisp": 0.7655420056241273
+   },
+   "rank": 49,
+   "showdown": "Ninetales",
+   "usage": 0.032363408333333336
+  },
+  {
+   "abilities": {
+    "limber": 0.0022490967002182045,
+    "merciless": 0.021426731556768695,
+    "regenerator": 0.9763241717430133
+   },
+   "identifier": "toxapex",
+   "moves": {
+    "acidspray": 0.01953610183771414,
+    "banefulbunker": 0.34255785684054313,
+    "chillingwater": 0.07004863080246546,
+    "gunkshot": 0.017453666705372267,
+    "haze": 0.641385532001066,
+    "hydropump": 0.010868909452633151,
+    "icebeam": 0.04999374540003405,
+    "icespinner": 0.012692790038328948,
+    "infestation": 0.2678267761952169,
+    "liquidation": 0.07228339806950894,
+    "poisonjab": 0.16499831989044828,
+    "protect": 0.01727916549270194,
+    "recover": 0.8532852594686695,
+    "sludgebomb": 0.09464178224715503,
+    "surf": 0.17958309415939955,
+    "toxic": 0.7244984396735022,
+    "toxicspikes": 0.39494328659169453
+   },
+   "rank": 50,
+   "showdown": "Toxapex",
+   "usage": 0.03198514166666667
+  },
+  {
+   "abilities": {
+    "regenerator": 0.9872392831734403,
+    "stickyhold": 0.0073282890092643115,
+    "supersweetsyrup": 0.005432427817295408
+   },
+   "identifier": "hydrapple",
+   "moves": {
+    "bodypress": 0.03077329790303437,
+    "dracometeor": 0.17373203995685904,
+    "dragontail": 0.03885451045095439,
+    "earthpower": 0.9431689800719477,
+    "energyball": 0.018567742747565515,
+    "ficklebeam": 0.8269240203766707,
+    "gigadrain": 0.8402546463496678,
+    "hydropump": 0.04259531785385162,
+    "leafstorm": 0.14046500381103416,
+    "nastyplot": 0.8255626503143904,
+    "recover": 0.037068223865572764,
+    "terablast": 0.022594286393567663
+   },
+   "rank": 51,
+   "showdown": "Hydrapple",
+   "usage": 0.031809075
+  },
+  {
+   "abilities": {
+    "poisonpoint": 0.008247455949438594,
+    "unaware": 0.649400367172167,
+    "waterabsorb": 0.34235217687839437
+   },
+   "identifier": "clodsire",
+   "moves": {
+    "amnesia": 0.16901033074139185,
+    "bulldoze": 0.03006636147615029,
+    "chillingwater": 0.016448637081647795,
+    "counter": 0.024557639235733855,
+    "curse": 0.04113395935150264,
+    "earthquake": 0.8675965863854325,
+    "gunkshot": 0.04444331051981734,
+    "haze": 0.0580419904789768,
+    "highhorsepower": 0.01007033278554764,
+    "liquidation": 0.010742341715411627,
+    "poisonjab": 0.2219065873471435,
+    "poisonsting": 0.012287650654596145,
+    "protect": 0.033989799140106636,
+    "recover": 0.9612576922496499,
+    "spikes": 0.23836144064438555,
+    "stealthrock": 0.4021195838893423,
+    "stockpile": 0.014034495414113307,
+    "toxic": 0.6981175845893633,
+    "toxicspikes": 0.06712794443706109,
+    "waterfall": 0.011918631023760529
+   },
+   "rank": 52,
+   "showdown": "Clodsire",
+   "usage": 0.03108115
+  },
+  {
+   "abilities": {
+    "healer": 0.004737136683225624,
+    "naturalcure": 0.938797277780886,
+    "serenegrace": 0.05646558553588829
+   },
+   "identifier": "blissey",
+   "moves": {
+    "calmmind": 0.5940319934029612,
+    "flamethrower": 0.13263742677603546,
+    "healbell": 0.13326294281965875,
+    "icebeam": 0.08425695841665315,
+    "lightscreen": 0.012538053285042252,
+    "protect": 0.04937721347415548,
+    "seismictoss": 0.7794132908012004,
+    "shadowball": 0.3046622559982798,
+    "softboiled": 0.9761050204999719,
+    "stealthrock": 0.5700467688489026,
+    "thunder": 0.010414164865535707,
+    "thunderbolt": 0.014393587802909348,
+    "thunderwave": 0.2035137792976404,
+    "trick": 0.04632189374444667
+   },
+   "rank": 53,
+   "showdown": "Blissey",
+   "usage": 0.031017575000000002
+  },
+  {
+   "abilities": {
+    "bulletproof": 0.0196211752320288,
+    "guts": 0.9796539531532309,
+    "unnerve": 0.0007248716147402838
+   },
+   "identifier": "ursaluna",
+   "moves": {
+    "avalanche": 0.02676550076390202,
+    "bodyslam": 0.04078218659718302,
+    "brickbreak": 0.010067285366690111,
+    "bulkup": 0.06365678712637873,
+    "closecombat": 0.059088852502758686,
+    "crunch": 0.09412986032216705,
+    "doubleedge": 0.014433664834689053,
+    "drainpunch": 0.11412754529157569,
+    "earthquake": 0.2686070278465492,
+    "facade": 0.9176365237493493,
+    "firepunch": 0.5498636096061917,
+    "gunkshot": 0.010676908336320193,
+    "headlongrush": 0.7071950811658285,
+    "icepunch": 0.18096019413363273,
+    "playrough": 0.021706752389055707,
+    "protect": 0.21951756063791453,
+    "rest": 0.010772904427983664,
+    "shadowclaw": 0.012356945023332039,
+    "supercellslam": 0.08279718073645385,
+    "swordsdance": 0.4258186132991329,
+    "thunderpunch": 0.012234452770325675,
+    "trailblaze": 0.04862712024975703
+   },
+   "rank": 54,
+   "showdown": "Ursaluna",
+   "usage": 0.029753058333333332
+  },
+  {
+   "abilities": {
+    "levitate": 1.0
+   },
+   "identifier": "cresselia",
+   "moves": {
+    "calmmind": 0.3981339683649738,
+    "futuresight": 0.01347155037857874,
+    "icebeam": 0.3687603489189067,
+    "lightscreen": 0.03894247802899632,
+    "lunarblessing": 0.09076957484871157,
+    "lunardance": 0.5870399205832914,
+    "moonblast": 0.4875762762390502,
+    "moonlight": 0.6461636750589476,
+    "psychic": 0.24731172232794346,
+    "psyshock": 0.027437779460222585,
+    "reflect": 0.04247850931112949,
+    "storedpower": 0.27604206609517673,
+    "thunder": 0.01268090313842881,
+    "thunderbolt": 0.1005445926438355,
+    "thunderwave": 0.24835285585699984,
+    "trick": 0.02133412615611386,
+    "trickroom": 0.35067759526403236
+   },
+   "rank": 55,
+   "showdown": "Cresselia",
+   "usage": 0.028362866666666667
+  },
+  {
+   "abilities": {
+    "swarm": 0.005993712972907306,
+    "tintedlens": 0.9940062870270925
+   },
+   "identifier": "lokix",
+   "moves": {
+    "axekick": 0.061051511765794444,
+    "firstimpression": 0.9379132792497274,
+    "knockoff": 0.9361585995730708,
+    "leechlife": 0.6406399140323635,
+    "lowkick": 0.02592980619071343,
+    "suckerpunch": 0.36272731985789997,
+    "swordsdance": 0.0942235217086046,
+    "throatchop": 0.011114400346389105,
+    "uturn": 0.8888991159376274
+   },
+   "rank": 56,
+   "showdown": "Lokix",
+   "usage": 0.02795536666666667
+  },
+  {
+   "abilities": {
+    "waterabsorb": 0.018131364965929663,
+    "waterbubble": 0.9818686350340702
+   },
+   "identifier": "araquanid",
+   "moves": {
+    "bugbuzz": 0.037898247713930744,
+    "crunch": 0.01735834191348897,
+    "endeavor": 0.6589384921247662,
+    "endure": 0.36714918772410987,
+    "gigadrain": 0.010344503147383013,
+    "hydropump": 0.016382720677725185,
+    "icywind": 0.019548451611329377,
+    "infestation": 0.04162610426378136,
+    "leechlife": 0.20701757833473294,
+    "liquidation": 0.3944514669576093,
+    "lunge": 0.3354331412214685,
+    "mirrorcoat": 0.17011065170327835,
+    "poisonjab": 0.040191945422299265,
+    "pounce": 0.025947928217080835,
+    "protect": 0.012988751341325933,
+    "raindance": 0.010407520885140168,
+    "reflect": 0.010746667967588119,
+    "scaryface": 0.015037064101371189,
+    "stickyweb": 0.9527547204136773,
+    "surf": 0.594588289053278
+   },
+   "rank": 57,
+   "showdown": "Araquanid",
+   "usage": 0.02659695833333333
+  },
+  {
+   "abilities": {
+    "pickpocket": 0.27278236934782096,
+    "pressure": 0.7272176306521793
+   },
+   "identifier": "weavile",
+   "moves": {
+    "beatup": 0.08639143302931465,
+    "brickbreak": 0.03212511513108727,
+    "fakeout": 0.030533611644269616,
+    "iceshard": 0.8471781756622502,
+    "icespinner": 0.03579085526503109,
+    "iciclecrash": 0.17854026745356102,
+    "iciclespear": 0.015675569733122133,
+    "knockoff": 0.9167914408784117,
+    "lowkick": 0.49308737646473316,
+    "poisonjab": 0.031666480845349995,
+    "swordsdance": 0.4719965959733638,
+    "tripleaxel": 0.7729337051289572,
+    "upperhand": 0.0123916302031086
+   },
+   "rank": 58,
+   "showdown": "Weavile",
+   "usage": 0.025006283333333334
+  },
+  {
+   "abilities": {
+    "snowwarning": 1.0
+   },
+   "identifier": "ninetales-alola",
+   "moves": {
+    "auroraveil": 0.9817592991625185,
+    "blizzard": 0.23303693148712395,
+    "calmmind": 0.013566460845657529,
+    "darkpulse": 0.019361436993526684,
+    "dazzlinggleam": 0.01165157287111332,
+    "drainingkiss": 0.01605032351347402,
+    "encore": 0.8198385151581054,
+    "freezedry": 0.8103379445499275,
+    "mistyterrain": 0.01601185854823954,
+    "moonblast": 0.6447536570398726,
+    "nastyplot": 0.04807124390052194,
+    "painsplit": 0.020098617765314533,
+    "roar": 0.1024374948288971,
+    "snowscape": 0.17788882048294735,
+    "terablast": 0.014912384786227719
+   },
+   "rank": 59,
+   "showdown": "Ninetales-Alola",
+   "usage": 0.024872908333333332
+  },
+  {
+   "abilities": {
+    "heatproof": 0.9726407667699715,
+    "hospitality": 0.02735923323002847
+   },
+   "identifier": "sinistcha",
+   "moves": {
+    "calmmind": 0.845773223756316,
+    "foulplay": 0.02299387136475076,
+    "gigadrain": 0.024538381894267804,
+    "hex": 0.07742480593146765,
+    "irondefense": 0.02288226634817967,
+    "matchagotcha": 0.9517048027415155,
+    "nastyplot": 0.03402167207876035,
+    "scald": 0.055115481030272334,
+    "shadowball": 0.8839312396240211,
+    "strengthsap": 0.9692615349015258,
+    "stunspore": 0.033593776238685646,
+    "terablast": 0.016371951653603112,
+    "trickroom": 0.028375558902772217
+   },
+   "rank": 60,
+   "showdown": "Sinistcha",
+   "usage": 0.023321058333333332
+  },
+  {
+   "abilities": {
+    "blaze": 0.010894975244557887,
+    "speedboost": 0.9891050247554424
+   },
+   "identifier": "blaziken",
+   "moves": {
+    "acrobatics": 0.03292301594233344,
+    "aurasphere": 0.027195277697567175,
+    "blazekick": 0.14052615889441347,
+    "bravebird": 0.04163031544947916,
+    "brickbreak": 0.013658250715174897,
+    "bulkup": 0.019482076222516256,
+    "closecombat": 0.838445375434735,
+    "detect": 0.0326618538969812,
+    "earthquake": 0.08204776860004814,
+    "endure": 0.02341486546281062,
+    "firepunch": 0.03221181935692514,
+    "flamethrower": 0.011040527014848504,
+    "flareblitz": 0.5578385575748059,
+    "focusblast": 0.021163266414125664,
+    "focusenergy": 0.10789695139133992,
+    "knockoff": 0.2122309758746054,
+    "overheat": 0.1459898345812154,
+    "protect": 0.5112664020129339,
+    "reversal": 0.04282027323111545,
+    "stoneedge": 0.11701618686239036,
+    "substitute": 0.01588438855666428,
+    "swordsdance": 0.6659662941988451,
+    "terablast": 0.02115305859163572,
+    "thunderpunch": 0.04614034444994992,
+    "upperhand": 0.10524873961344737,
+    "uturn": 0.019885521232881724,
+    "vacuumwave": 0.017953761597033657,
+    "willowisp": 0.010243364206451656
+   },
+   "rank": 61,
+   "showdown": "Blaziken",
+   "usage": 0.02301620833333333
+  },
+  {
+   "abilities": {
+    "propellertail": 0.0016175413242163863,
+    "swiftswim": 0.9983824586757837
+   },
+   "identifier": "barraskewda",
+   "moves": {
+    "aquajet": 0.7368519621602638,
+    "closecombat": 0.9135735417439609,
+    "crunch": 0.0394411513289303,
+    "drillrun": 0.03278094711900745,
+    "flipturn": 0.9171494086064594,
+    "icefang": 0.03424665083428083,
+    "liquidation": 0.9504101389277222,
+    "poisonjab": 0.22229843674639946,
+    "psychicfangs": 0.08707159782046667,
+    "waterfall": 0.040125622596847745
+   },
+   "rank": 62,
+   "showdown": "Barraskewda",
+   "usage": 0.022784516666666668
+  },
+  {
+   "abilities": {
+    "honeygather": 0.026023635219431643,
+    "shielddust": 0.9430604566247485,
+    "sweetveil": 0.030915908155820026
+   },
+   "identifier": "ribombee",
+   "moves": {
+    "bugbuzz": 0.12710578456982488,
+    "charm": 0.019196238064481903,
+    "drainingkiss": 0.01260457216019771,
+    "energyball": 0.014345661474880339,
+    "lightscreen": 0.022329163867938245,
+    "moonblast": 0.9468878346859119,
+    "psychic": 0.03517445470763897,
+    "psychicnoise": 0.16773459349560865,
+    "quiverdance": 0.09933038533894285,
+    "reflect": 0.023828413364594177,
+    "skillswap": 0.5337020666018428,
+    "stickyweb": 0.9774447734338434,
+    "storedpower": 0.01482216654564545,
+    "stunspore": 0.7314252177388181,
+    "switcheroo": 0.024298810364531305,
+    "tailwind": 0.03319323530110533,
+    "terablast": 0.024125683834080782,
+    "trick": 0.05135413943258446,
+    "uturn": 0.09366397064605197
+   },
+   "rank": 63,
+   "showdown": "Ribombee",
+   "usage": 0.022588275
+  },
+  {
+   "abilities": {
+    "waterabsorb": 1.0
+   },
+   "identifier": "volcanion",
+   "moves": {
+    "bodypress": 0.0518759582898009,
+    "earthpower": 0.68325737936553,
+    "fireblast": 0.07689542097505675,
+    "firespin": 0.08029504803720745,
+    "flamethrower": 0.7619162993355537,
+    "flashcannon": 0.01488207526695964,
+    "focusblast": 0.02042181390775784,
+    "haze": 0.016395806477809215,
+    "overheat": 0.04383766829196456,
+    "scald": 0.0243993809919007,
+    "scorchingsands": 0.014520664576816453,
+    "sludgebomb": 0.5763605861522048,
+    "sludgewave": 0.09322858375724188,
+    "solarbeam": 0.014064299246452925,
+    "steameruption": 0.9875047682153072,
+    "substitute": 0.010992604439447221,
+    "taunt": 0.18738159657877637,
+    "terablast": 0.02230891175434464,
+    "willowisp": 0.24356273155475602
+   },
+   "rank": 64,
+   "showdown": "Volcanion",
+   "usage": 0.022295116666666667
+  },
+  {
+   "abilities": {
+    "quarkdrive": 1.0
+   },
+   "identifier": "iron-hands",
+   "moves": {
+    "bellydrum": 0.019286428712498662,
+    "closecombat": 0.2597941194760729,
+    "drainpunch": 0.7349785246163653,
+    "earthquake": 0.18860435959397695,
+    "fakeout": 0.05811364417366587,
+    "firepunch": 0.012261824064008981,
+    "heavyslam": 0.1303233397106247,
+    "icepunch": 0.9102199677434565,
+    "ironhead": 0.010493054941485416,
+    "playrough": 0.01658351252561835,
+    "substitute": 0.010858741469532428,
+    "supercellslam": 0.4094666965743636,
+    "swordsdance": 0.5803484799377784,
+    "thunderpunch": 0.2844244780097808,
+    "voltswitch": 0.04915179161670332,
+    "wildcharge": 0.2719604873233491
+   },
+   "rank": 65,
+   "showdown": "Iron Hands",
+   "usage": 0.022018316666666666
+  },
+  {
+   "abilities": {
+    "moldbreaker": 0.5008847745837683,
+    "owntempo": 0.010637543130027457,
+    "pickpocket": 0.4884776822862044
+   },
+   "identifier": "tinkaton",
+   "moves": {
+    "encore": 0.8280755513316629,
+    "endeavor": 0.012288139748787754,
+    "fakeout": 0.02422519527213117,
+    "foulplay": 0.013675718562415229,
+    "gigatonhammer": 0.9573284350782718,
+    "icehammer": 0.31565632607931904,
+    "knockoff": 0.2614604629567678,
+    "playrough": 0.10787252100117865,
+    "protect": 0.020194631259064393,
+    "stealthrock": 0.8464862059884906,
+    "swordsdance": 0.053279553688821396,
+    "thunderwave": 0.5113351330513453
+   },
+   "rank": 66,
+   "showdown": "Tinkaton",
+   "usage": 0.021863758333333334
+  },
+  {
+   "abilities": {
+    "sturdy": 1.0
+   },
+   "identifier": "ogerpon-cornerstone-mask",
+   "moves": {
+    "brickbreak": 0.010174385343716423,
+    "counter": 0.012383971614615796,
+    "encore": 0.10174255433329116,
+    "grassyglide": 0.033917849315881834,
+    "hornleech": 0.35187571886924396,
+    "ivycudgel": 0.9968712995404453,
+    "knockoff": 0.42246864170562676,
+    "lowkick": 0.4162024335345416,
+    "playrough": 0.02301457953543453,
+    "powerwhip": 0.5519689665011248,
+    "spikes": 0.03903727860297868,
+    "spikyshield": 0.04654593448814955,
+    "stompingtantrum": 0.012574706079162163,
+    "superpower": 0.054634321746000726,
+    "swordsdance": 0.665769301386974,
+    "taunt": 0.053054933187283486,
+    "trailblaze": 0.08741714838359127,
+    "uturn": 0.0625562268993568,
+    "woodhammer": 0.011157193108502524
+   },
+   "rank": 67,
+   "showdown": "Ogerpon-Cornerstone",
+   "usage": 0.021494258333333332
+  },
+  {
+   "abilities": {
+    "contrary": 0.9912057238699119,
+    "overgrow": 0.00879427613008781
+   },
+   "identifier": "serperior",
+   "moves": {
+    "dragonpulse": 0.38212891801041277,
+    "dragontail": 0.017130579925666647,
+    "endure": 0.024698903441557403,
+    "gastroacid": 0.018507584782412736,
+    "gigadrain": 0.2661449458741026,
+    "glare": 0.7294408700318948,
+    "knockoff": 0.18616450710902638,
+    "leafstorm": 0.9905411450325549,
+    "leechseed": 0.26945506555918614,
+    "lightscreen": 0.021701581786129243,
+    "mirrorcoat": 0.012649674955990639,
+    "protect": 0.028972713903013248,
+    "reflect": 0.02016002245641476,
+    "substitute": 0.47097278815604265,
+    "synthesis": 0.08529988243528772,
+    "taunt": 0.0533718273604086,
+    "terablast": 0.3527156461089821
+   },
+   "rank": 68,
+   "showdown": "Serperior",
+   "usage": 0.020708258333333333
+  },
+  {
+   "abilities": {
+    "levitate": 1.0
+   },
+   "identifier": "latios",
+   "moves": {
+    "agility": 0.10166644073458216,
+    "aurasphere": 0.38678892770630907,
+    "calmmind": 0.3688727865995704,
+    "dracometeor": 0.7772392358166157,
+    "dragonpulse": 0.05945981055112868,
+    "energyball": 0.010110121743083443,
+    "flipturn": 0.2546232179857823,
+    "futuresight": 0.0225458565915886,
+    "icebeam": 0.11390691768747684,
+    "lusterpurge": 0.4708887289910033,
+    "memento": 0.011642005416152465,
+    "psychic": 0.018587055017877847,
+    "psychicnoise": 0.34872944823464225,
+    "psyshock": 0.055005611825942824,
+    "recover": 0.35112751911500667,
+    "shadowball": 0.050303989562311933,
+    "storedpower": 0.0964726411012981,
+    "substitute": 0.011627628350156486,
+    "surf": 0.045020165917596645,
+    "terablast": 0.011350797252342799,
+    "thunderbolt": 0.09011476775140444,
+    "thunderwave": 0.012025573357377332,
+    "trick": 0.2531003378755745,
+    "weatherball": 0.010262100512292371
+   },
+   "rank": 69,
+   "showdown": "Latios",
+   "usage": 0.020365224999999997
+  },
+  {
+   "abilities": {
+    "battlebond": 0.66413758151548,
+    "protean": 0.31647692242371733,
+    "torrent": 0.019385496060802806
+   },
+   "identifier": "greninja",
+   "moves": {
+    "blizzard": 0.021312611556006427,
+    "darkpulse": 0.8237684196406305,
+    "extrasensory": 0.05900273067245776,
+    "grassknot": 0.09978946442446397,
+    "gunkshot": 0.07826205081294796,
+    "hydropump": 0.3350361067343304,
+    "icebeam": 0.7521538596634936,
+    "icepunch": 0.0109488522676182,
+    "liquidation": 0.03149343237537707,
+    "lowkick": 0.04606013026621127,
+    "nightslash": 0.02076407885818944,
+    "sludgewave": 0.3133513615316654,
+    "spikes": 0.05185834579003914,
+    "surf": 0.4282244903238483,
+    "switcheroo": 0.021372036830851815,
+    "swordsdance": 0.021365160170656237,
+    "taunt": 0.028013407690465064,
+    "terablast": 0.017275982761982514,
+    "toxicspikes": 0.017088215823314674,
+    "upperhand": 0.013814705458408426,
+    "uturn": 0.1606776196136924,
+    "watershuriken": 0.5494304049647626,
+    "weatherball": 0.013091269932881372
+   },
+   "rank": 70,
+   "showdown": "Greninja",
+   "usage": 0.019591475000000004
+  },
+  {
+   "abilities": {
+    "limber": 0.007304952832119329,
+    "moldbreaker": 0.09447866635490543,
+    "unburden": 0.8982163808129751
+   },
+   "identifier": "hawlucha",
+   "moves": {
+    "acrobatics": 0.9022141875428863,
+    "bravebird": 0.05077525202708145,
+    "bulkup": 0.02046679445141132,
+    "closecombat": 0.7039258330997075,
+    "defog": 0.08999356772651766,
+    "drainpunch": 0.09574315869156523,
+    "encore": 0.47225878935276355,
+    "firepunch": 0.05573529168742552,
+    "flyingpress": 0.017491079527611676,
+    "highjumpkick": 0.02326245009159481,
+    "lowkick": 0.10126817904278987,
+    "poisonjab": 0.011713164229355486,
+    "roost": 0.14961755930009643,
+    "skyattack": 0.012569501952413782,
+    "stoneedge": 0.023905563002424027,
+    "substitute": 0.1129452735075897,
+    "swordsdance": 0.9140964625841855,
+    "taunt": 0.043851362299998066,
+    "terablast": 0.020313475806816438,
+    "throatchop": 0.06465422747825116,
+    "thunderpunch": 0.011600339146782082,
+    "upperhand": 0.010891816805300158,
+    "uturn": 0.03160801272532176
+   },
+   "rank": 71,
+   "showdown": "Hawlucha",
+   "usage": 0.019455658333333334
+  },
+  {
+   "abilities": {
+    "levitate": 1.0
+   },
+   "identifier": "rotom-wash",
+   "moves": {
+    "darkpulse": 0.015237512243259282,
+    "discharge": 0.06517645340595371,
+    "electricterrain": 0.010184933657145926,
+    "foulplay": 0.012154063966574294,
+    "hex": 0.020453309989030354,
+    "hydropump": 0.9659167192080939,
+    "lightscreen": 0.028521548967196147,
+    "nastyplot": 0.028166838591728766,
+    "painsplit": 0.5580351436023029,
+    "protect": 0.06228978149727663,
+    "reflect": 0.02308577344446606,
+    "shadowball": 0.033327488432298186,
+    "thunder": 0.01222005125122786,
+    "thunderbolt": 0.11989110429944694,
+    "thunderwave": 0.15338408691442543,
+    "trick": 0.20893581411944992,
+    "voltswitch": 0.9194574654399028,
+    "willowisp": 0.7247268301266662
+   },
+   "rank": 72,
+   "showdown": "Rotom-Wash",
+   "usage": 0.019069583333333334
+  },
+  {
+   "abilities": {
+    "keeneye": 0.018423346406415388,
+    "sturdy": 0.9510721503580761,
+    "weakarmor": 0.030504503235508414
+   },
+   "identifier": "skarmory",
+   "moves": {
+    "bodypress": 0.7282445348265746,
+    "bravebird": 0.2512215562426304,
+    "drillpeck": 0.015395407349229858,
+    "drillrun": 0.03433734284549147,
+    "irondefense": 0.3990056064222079,
+    "ironhead": 0.037038287761525124,
+    "roar": 0.03062535406201138,
+    "roost": 0.9410767024189254,
+    "spikes": 0.7035477838281305,
+    "stealthrock": 0.2614450527065374,
+    "swordsdance": 0.024628056303735442,
+    "taunt": 0.04592330985953975,
+    "whirlwind": 0.48035191486241113
+   },
+   "rank": 73,
+   "showdown": "Skarmory",
+   "usage": 0.01891308333333333
+  },
+  {
+   "abilities": {
+    "chlorophyll": 0.9571541563537105,
+    "overgrow": 0.04284584364628953
+   },
+   "identifier": "venusaur",
+   "moves": {
+    "earthpower": 0.28310211366359617,
+    "earthquake": 0.16160276822882644,
+    "energyball": 0.014396860471714195,
+    "gigadrain": 0.8568401101643264,
+    "growth": 0.8678730986890706,
+    "knockoff": 0.013949704727005945,
+    "leechseed": 0.04990934179403441,
+    "protect": 0.015730927212326887,
+    "sludgebomb": 0.667515006662684,
+    "solarbeam": 0.1069114624603388,
+    "sunnyday": 0.012359164218913588,
+    "synthesis": 0.026024849505134378,
+    "toxic": 0.02379066909376465,
+    "weatherball": 0.8394474752580796
+   },
+   "rank": 74,
+   "showdown": "Venusaur",
+   "usage": 0.018456591666666668
+  },
+  {
+   "abilities": {
+    "blaze": 0.017260519290319812,
+    "unaware": 0.9827394807096801
+   },
+   "identifier": "skeledirge",
+   "moves": {
+    "alluringvoice": 0.12370657962306263,
+    "earthpower": 0.189727933620379,
+    "encore": 0.0223996950145923,
+    "flamecharge": 0.031048203051313214,
+    "hex": 0.5023268222925755,
+    "protect": 0.02203799600296305,
+    "roar": 0.024031365176058164,
+    "scorchingsands": 0.02658001627430574,
+    "shadowball": 0.3358151062677947,
+    "slackoff": 0.887960597951361,
+    "substitute": 0.03267435495011637,
+    "terablast": 0.027310373083996475,
+    "torchsong": 0.9860263669725271,
+    "willowisp": 0.7273126789587117
+   },
+   "rank": 75,
+   "showdown": "Skeledirge",
+   "usage": 0.01730725
+  },
+  {
+   "abilities": {
+    "justified": 1.0
+   },
+   "identifier": "keldeo-ordinary",
+   "moves": {
+    "airslash": 0.05883464136410886,
+    "aurasphere": 0.2208293338582275,
+    "calmmind": 0.20541526163331014,
+    "flipturn": 0.6083759762453992,
+    "focusblast": 0.01385090182522405,
+    "hydropump": 0.12261248841944157,
+    "icywind": 0.13053632929693157,
+    "secretsword": 0.762106337466045,
+    "substitute": 0.07603863520621112,
+    "surf": 0.8960621255854468,
+    "taunt": 0.020930911696552347,
+    "terablast": 0.0432950909789477,
+    "vacuumwave": 0.8105729937838104
+   },
+   "rank": 76,
+   "showdown": "Keldeo",
+   "usage": 0.0163362
+  },
+  {
+   "abilities": {
+    "protosynthesis": 1.0
+   },
+   "identifier": "slither-wing",
+   "moves": {
+    "acrobatics": 0.020109873943941065,
+    "bulkup": 0.038694378404788204,
+    "closecombat": 0.5887098227062106,
+    "earthquake": 0.2646596827809258,
+    "firstimpression": 0.9140821297803234,
+    "flamecharge": 0.03673558335831287,
+    "flareblitz": 0.3361441293164237,
+    "leechlife": 0.05803175068478925,
+    "lowkick": 0.028344765193069877,
+    "morningsun": 0.29713700744371596,
+    "temperflare": 0.08668872718473039,
+    "uturn": 0.8966623586135584,
+    "wildcharge": 0.09470493042584727,
+    "willowisp": 0.279752360400031
+   },
+   "rank": 77,
+   "showdown": "Slither Wing",
+   "usage": 0.01626761666666667
+  },
+  {
+   "abilities": {
+    "frisk": 0.002794581045033392,
+    "pickpocket": 0.004044360589925991,
+    "prankster": 0.9931610583650403
+   },
+   "identifier": "grimmsnarl",
+   "moves": {
+    "bulkup": 0.024475277362744182,
+    "crunch": 0.022704397095578126,
+    "drainpunch": 0.027823282418576893,
+    "fakeout": 0.031197280442816056,
+    "foulplay": 0.03691579630617533,
+    "lightscreen": 0.8343554528315987,
+    "lowkick": 0.1387114566143288,
+    "partingshot": 0.61403359989148,
+    "playrough": 0.06222010634426676,
+    "reflect": 0.8396916497225134,
+    "spiritbreak": 0.4695700166980918,
+    "suckerpunch": 0.09866931703603951,
+    "taunt": 0.3992066510554144,
+    "thunderwave": 0.24573422323307462,
+    "trick": 0.06596230338491305
+   },
+   "rank": 78,
+   "showdown": "Grimmsnarl",
+   "usage": 0.015074116666666667
+  },
+  {
+   "abilities": {
+    "levitate": 1.0
+   },
+   "identifier": "hydreigon",
+   "moves": {
+    "crunch": 0.011748189752407899,
+    "darkpulse": 0.8943577895810371,
+    "dracometeor": 0.861735024879516,
+    "dragondance": 0.015107868084703609,
+    "dragonpulse": 0.038712490305487485,
+    "earthpower": 0.591723363202621,
+    "earthquake": 0.012293714507240447,
+    "fireblast": 0.06289351468665658,
+    "flamethrower": 0.12529135298465907,
+    "flashcannon": 0.7298627772864631,
+    "focusblast": 0.016398565085726097,
+    "focusenergy": 0.01824347554705427,
+    "nastyplot": 0.20200259919720234,
+    "stealthrock": 0.03795136508552949,
+    "substitute": 0.0872962994925715,
+    "surf": 0.017269932843393367,
+    "taunt": 0.03682132821585819,
+    "terablast": 0.020679213537475274,
+    "uturn": 0.14202005605240645
+   },
+   "rank": 79,
+   "showdown": "Hydreigon",
+   "usage": 0.014063333333333334
+  },
+  {
+   "abilities": {
+    "moxie": 0.9823658007213151,
+    "torrent": 0.01763419927868512
+   },
+   "identifier": "quaquaval",
+   "moves": {
+    "acrobatics": 0.019875298925501515,
+    "aquajet": 0.1829281021872977,
+    "aquastep": 0.9513735336156689,
+    "bravebird": 0.0636116502338409,
+    "brickbreak": 0.03367460082887364,
+    "bulkup": 0.06807651661030716,
+    "closecombat": 0.8761378071637212,
+    "encore": 0.02704753669449654,
+    "flipturn": 0.063689274803516,
+    "icespinner": 0.247409521565087,
+    "knockoff": 0.31648368157111817,
+    "lowkick": 0.010880593888411063,
+    "rapidspin": 0.4337211538566131,
+    "roost": 0.06735144565218322,
+    "substitute": 0.014179467351972664,
+    "swordsdance": 0.189343581222525,
+    "terablast": 0.013600113655873675,
+    "tripleaxel": 0.21530087954479007,
+    "upperhand": 0.023615689209432023,
+    "uturn": 0.0824737435842175,
+    "wavecrash": 0.053925713722840544
+   },
+   "rank": 80,
+   "showdown": "Quaquaval",
+   "usage": 0.013957125
+  }
+ ],
+ "source": "Smogon usage statistics, https://www.smogon.com/stats/ (chaos JSON)"
+}
