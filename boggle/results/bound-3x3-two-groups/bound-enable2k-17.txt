@@ -1,0 +1,11 @@
+board serlatpes 503
+board selratdes 505
+board selratpes 528
+board septalres 503
+board sedtarles 505
+board septarles 528
+board saptilres 508
+board saltipres 518
+board serlitpas 508
+board serpitlas 518
+classes 5 nodes 8396263 pruned 7485638 boards 406479 found 10

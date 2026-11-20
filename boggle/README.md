@@ -104,7 +104,7 @@ Each board is a sampling unit and each word a species, so the estimators use onl
 
 *The best 3 by 3 board for both word lists, 545 points, with one of its longest words.*
 
-A class of boards gives each cell a set of letters. Two quick upper bounds drop most classes whole, and the rest are split one cell at a time until each is below 500 points or is a single board, as in Vanderkam's 2009 search. The search tree, about 51 million classes per word list, is not kept as a certificate; the tests check the search against scoring every board on smaller cases. The note [`results/best-3x3.md`](results/best-3x3.md) has the method, the checks and the 42 boards.
+A class of boards gives each cell a set of letters. Two quick upper bounds drop most classes whole, and the rest are split one cell at a time until each is below 500 points or is a single board, as in Vanderkam's 2009 search. The search tree, about 51 million classes per word list, is not kept as a certificate; the tests check the search against scoring every board on smaller cases. Started instead from Vanderkam's two groups of letters, the search finds the 57 boards his README reports, which are the same 42 boards counted with repeats. The note [`results/best-3x3.md`](results/best-3x3.md) has the method, the checks and the 42 boards.
 
 ## Files and usage
 
@@ -126,7 +126,8 @@ uv run python -m boggle.anneal summary runs/*/anneal-*.jsonl           # writes 
 uv run python -m boggle.chance        # results/chances.json, about 30 seconds
 uv run python -m boggle.unseen        # results/unseen.json, about 2 minutes on 2 cores
 uv run python -m boggle.bound run --shard 0 --shards 20 --out runs/   # one of 20 slices
-uv run python -m boggle.bound summary runs/bound-*.txt                 # results/best-3x3.json
+uv run python -m boggle.bound summary boggle/results/bound-3x3/bound-*.txt \
+    --two-groups boggle/results/bound-3x3-two-groups/bound-*.txt       # results/best-3x3.json
 uv run pytest tests/test_boggle.py tests/test_boggle_unseen.py tests/test_boggle_bound.py
 ```
 

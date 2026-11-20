@@ -6,7 +6,8 @@ Every board that reaches the threshold is found, up to rotation and reflection. 
 starts from Vanderkam's four groups of letters, and ran in 20 slices on GitHub Actions:
 
     uv run python -m boggle.bound run --shard 0 --shards 20 --out runs/   # one slice
-    uv run python -m boggle.bound summary runs/*/bound-*.txt              # writes results/
+    uv run python -m boggle.bound summary boggle/results/bound-3x3/bound-*.txt \\
+        --two-groups boggle/results/bound-3x3-two-groups/bound-*.txt       # writes results/
     uv run python -m boggle.bound check   # the search agrees with scoring every board
 
 The checks: on 3 by 3 boards over a few letters, and on all 2 by 2 boards, the boards the
@@ -116,7 +117,35 @@ def run(
         (out / f"bound-{name}-{shard:02d}.txt").write_text(text)
 
 
-def summary(paths: list[Path]) -> dict:
+TWO_GROUPS = "aeiosuy bcdfghjklmnpqrtvwxz"  # the groups of Vanderkam's README run
+
+
+def two_groups(paths: list[Path]) -> dict:
+    """The ENABLE2K search started from Vanderkam's two groups of letters instead of four:
+    its counts, and its boards up to symmetry."""
+    boards: dict[str, int] = {}
+    totals: dict[str, int] = {}
+    for p in sorted(paths):
+        found, counts = parse(p.read_text())
+        boards |= {canonical(b, 3, 3): s for b, s in found.items()}
+        for k, v in counts.items():
+            totals[k] = totals.get(k, 0) + v
+    return {
+        "groups": TWO_GROUPS,
+        "slices": len(paths),
+        "classes": totals["classes"],
+        "nodes": totals["nodes"],
+        "boards scored": totals["boards"],
+        "boards found, with repeats": totals["found"],
+        "boards found": len(boards),
+        "boards": [
+            {"board": b, "points": s}
+            for b, s in sorted(boards.items(), key=lambda kv: (-kv[1], kv[0]))
+        ],
+    }
+
+
+def summary(paths: list[Path], two_group_paths: list[Path] | None = None) -> dict:
     """The boards of 500 points or more for each word list, up to symmetry, best first, with
     the search's counts summed over the slices; each board is rescored by anneal.c."""
     result: dict = {"groups": GROUPS, "threshold": THRESHOLD}
@@ -144,6 +173,8 @@ def summary(paths: list[Path]) -> dict:
             },
             "boards": [{"board": b, "points": s} for b, s in top],
         }
+    if two_group_paths:
+        result["enable2k, two groups"] = two_groups(two_group_paths)
     return result
 
 
@@ -158,6 +189,9 @@ def main() -> None:
     r.add_argument("--lists", nargs="+", default=list(LISTS), choices=list(LISTS))
     s = sub.add_parser("summary")
     s.add_argument("paths", type=Path, nargs="+")
+    s.add_argument(
+        "--two-groups", type=Path, nargs="*", default=[], help="slices of the two-group run"
+    )
     sub.add_parser("check")
     args = parser.parse_args()
     if args.command == "run":
@@ -165,7 +199,7 @@ def main() -> None:
     elif args.command == "summary":
         RESULTS.mkdir(exist_ok=True)
         out = RESULTS / "best-3x3.json"
-        out.write_text(json.dumps(summary(args.paths), indent=1) + "\n")
+        out.write_text(json.dumps(summary(args.paths, args.two_groups), indent=1) + "\n")
         print("wrote", out)
     else:
         words = LISTS["enable1"]

@@ -67,8 +67,14 @@ def test_canonical_is_the_least_image():
 
 def test_committed_summary_is_what_the_script_writes():
     paths = sorted((HERE / "results" / "bound-3x3").glob("bound-*.txt"))
+    two = sorted((HERE / "results" / "bound-3x3-two-groups").glob("bound-*.txt"))
     committed = json.loads((HERE / "results" / "best-3x3.json").read_text())
-    assert bound.summary(paths) == committed
+    assert bound.summary(paths, two) == committed
+    # Started from Vanderkam's two groups, the search finds the same 42 boards; counting the
+    # repeats from classes that are their own mirror images, 57, as his README reports.
+    check = committed["enable2k, two groups"]
+    assert check["boards found, with repeats"] == 57
+    assert check["boards"] == committed["enable2k"]["boards"]
     for name in ("enable1", "enable2k"):
         assert committed[name]["slices"] == 20
         assert committed[name]["best"]["board"] == bound.canonical("streaedlp", 3, 3)

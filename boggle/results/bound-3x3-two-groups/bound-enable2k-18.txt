@@ -1,0 +1,15 @@
+board selraptem 501
+board sertagrin 504
+board sebtalred 502
+board sectalrep 523
+board sedtalreb 526
+board sedtalrep 545
+board septalrec 502
+board septalred 522
+board sertalnip 504
+board seltaprem 501
+board septarled 540
+board sedtelrap 520
+board sedternac 505
+board saptilred 503
+classes 5 nodes 15561091 pruned 12800772 boards 1733969 found 14

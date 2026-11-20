@@ -368,5 +368,184 @@
     "points": 500
    }
   ]
+ },
+ "enable2k, two groups": {
+  "groups": "aeiosuy bcdfghjklmnpqrtvwxz",
+  "slices": 20,
+  "classes": 102,
+  "nodes": 178297221,
+  "boards scored": 17606968,
+  "boards found, with repeats": 57,
+  "boards found": 42,
+  "boards": [
+   {
+    "board": "deslatper",
+    "points": 545
+   },
+   {
+    "board": "leprasset",
+    "points": 542
+   },
+   {
+    "board": "delratpes",
+    "points": 540
+   },
+   {
+    "board": "lepsartes",
+    "points": 536
+   },
+   {
+    "board": "lessartep",
+    "points": 528
+   },
+   {
+    "board": "lestarsep",
+    "points": 528
+   },
+   {
+    "board": "gelrasset",
+    "points": 527
+   },
+   {
+    "board": "berlatdes",
+    "points": 526
+   },
+   {
+    "board": "lertassep",
+    "points": 524
+   },
+   {
+    "board": "ceslatper",
+    "points": 523
+   },
+   {
+    "board": "derlatpes",
+    "points": 522
+   },
+   {
+    "board": "desletpar",
+    "points": 520
+   },
+   {
+    "board": "lersatpes",
+    "points": 520
+   },
+   {
+    "board": "letrassep",
+    "points": 520
+   },
+   {
+    "board": "laspitser",
+    "points": 518
+   },
+   {
+    "board": "delraspet",
+    "points": 514
+   },
+   {
+    "board": "detlasper",
+    "points": 514
+   },
+   {
+    "board": "getrassel",
+    "points": 514
+   },
+   {
+    "board": "leptasser",
+    "points": 513
+   },
+   {
+    "board": "getraspel",
+    "points": 511
+   },
+   {
+    "board": "patlesser",
+    "points": 510
+   },
+   {
+    "board": "celraspet",
+    "points": 508
+   },
+   {
+    "board": "paslitser",
+    "points": 508
+   },
+   {
+    "board": "detrasgel",
+    "points": 507
+   },
+   {
+    "board": "lessatper",
+    "points": 507
+   },
+   {
+    "board": "canretdes",
+    "points": 505
+   },
+   {
+    "board": "desratsel",
+    "points": 505
+   },
+   {
+    "board": "gelraspet",
+    "points": 505
+   },
+   {
+    "board": "celrasset",
+    "points": 504
+   },
+   {
+    "board": "ngriaerts",
+    "points": 504
+   },
+   {
+    "board": "niptalser",
+    "points": 504
+   },
+   {
+    "board": "depraslet",
+    "points": 503
+   },
+   {
+    "board": "derlitpas",
+    "points": 503
+   },
+   {
+    "board": "peslatser",
+    "points": 503
+   },
+   {
+    "board": "beslatder",
+    "points": 502
+   },
+   {
+    "board": "cerlatpes",
+    "points": 502
+   },
+   {
+    "board": "lesparmet",
+    "points": 501
+   },
+   {
+    "board": "lespatmer",
+    "points": 501
+   },
+   {
+    "board": "linsagter",
+    "points": 501
+   },
+   {
+    "board": "ceprasset",
+    "points": 500
+   },
+   {
+    "board": "derlespat",
+    "points": 500
+   },
+   {
+    "board": "detraspel",
+    "points": 500
+   }
+  ]
  }
 }
