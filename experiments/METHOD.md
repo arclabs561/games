@@ -35,3 +35,16 @@ Each plan in `plans/` follows these rules. Where a plan departs from one, it say
 - H. Hu, A. Lerer, A. Peysakhovich, J. Foerster, "'Other-Play' for Zero-Shot Coordination", ICML 2020.
 - T. Dizdarević et al., "Ad-Hoc Human-AI Coordination Challenge", arXiv:2506.21490.
 - The NeurIPS 2020 and 2021 pre-registration workshops, preregister.science.
+
+## Amendments
+
+### 2026-11-20: power, seeds, pinned providers, and model partners
+
+A review of C4 to C10 and H2 found four gaps. Plans did not say what effect they could detect. C2, C7 and C8 trained three seeds per arm. Hosted calls did not record who served them. Results with model partners stood in for play with people without a check. Plans merged after this date follow the rules below. Plans merged before it keep their rules, but a rerun of any of them follows these, and its README says which numbers come from before the change.
+
+- **Minimum detectable effect.** Each plan states the smallest effect its primary test can detect with 80% power at the two-sided 5% level, from the pilot's standard deviation of the paired differences. For n independent units that is (1.96 + 0.84) × sd / √n = 2.80 × sd / √n. When units come in clusters (turns in games, boards in seeds), sd is that of the cluster means and n the number of clusters. If the detectable effect is larger than the effect the plan calls worth finding, the plan adds units or says it is underpowered before the run. A null result is reported with its detectable effect.
+- **Training seeds.** Five training seeds are the default for every arm, including GPU runs, wherever five fit in the approved cap. A plan with fewer says why, with the cost of five, and three remains the floor. With five or more seeds, the spread between seeds is reported beside the mean.
+- **Pinned providers.** Hosted calls name one provider with the router's suffix (`model:provider`), which the router does not replace; the provider object alone is ignored (`codenames/results/llm-providers.md`). Every reply's serving provider, model id and response id are logged, a reply from another provider is sent again and counted, and the job saves the provider's listed quantization when it starts (`codenames/hosted.py`, `hanabi/hosted.py`). The plan runs `repeat_check` on at least 20 prompts at the start of validation and again at the start of test, and reports, per split, empty replies, replies cut off at the cap, and median latency. When these differ between validation and test, the test result is also reported on the units with no such reply, as exploratory.
+- **Reply caps.** For a model that reasons before it answers, the pilot reports the share of replies that reached the token cap. Above 5%, the plan raises the cap or lowers the reasoning effort before the confirmatory run, or states that the cap is part of what is measured.
+- **Model partners are a proxy.** A score with partners that are models (embedding guessers, other training seeds, language models) is a proxy for play with people. It becomes a headline only after a check with people (human turns, or games with human players) or with partners out of the family of every model the agent was trained, tuned or selected against: another architecture, training method and data source. Until then the README states the result as a proxy result and does not open with it.
+

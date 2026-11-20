@@ -1,0 +1,31 @@
+$ uv run python -m chess_ratings.whatwould --checkpoint maia3-5m.pt --moves e2e4 e7e5 d1h5 b8c6 f1c4
+r1bqkbnr/pppp1ppp/2n5/4p2Q/2B1P3/8/PPPP1PPP/RNB1K1NR b KQkq - 3 3
+Black to move; both players at the rating shown.
+move        800   1100   1500   1900   2300
+g6        63.2%  71.4%  61.2%  58.2%  82.3%
+Qf6        1.9%   5.4%  18.0%  20.9%   6.1%
+Qe7        6.4%   6.0%  10.4%  15.4%   9.3%
+Nf6       11.8%   6.1%   5.2%   3.2%   1.1%
+Nh6       10.8%   8.8%   3.5%   0.9%   0.2%
+other      6.0%   2.3%   1.6%   1.4%   1.1%
+
+$ uv run python -m chess_ratings.whatwould --checkpoint maia3-5m.pt --moves e2e4 e7e5 g1f3 b8c6 f1c4 g8f6 f3g5
+r1bqkb1r/pppp1ppp/2n2n2/4p1N1/2B1P3/8/PPPP1PPP/RNBQK2R b KQkq - 5 4
+Black to move; both players at the rating shown.
+move        800   1100   1500   1900   2300
+d5        47.1%  73.9%  76.7%  76.8%  80.7%
+Bc5        8.4%   8.3%  13.4%  14.7%  15.3%
+Nxe4       7.5%   4.8%   6.0%   6.8%   2.9%
+Qe7       16.7%   5.5%   0.7%   0.1%   0.0%
+other     20.3%   7.5%   3.3%   1.7%   1.0%
+
+$ uv run python -m chess_ratings.whatwould --checkpoint maia3-5m.pt "r1bqkb1r/pppp1ppp/2n2n2/4p2Q/2B1P3/8/PPPP1PPP/RNB1K1NR w KQkq - 4 4"
+r1bqkb1r/pppp1ppp/2n2n2/4p2Q/2B1P3/8/PPPP1PPP/RNB1K1NR w KQkq - 4 4
+White to move; both players at the rating shown.
+move        800   1100   1500   1900   2300
+Qxf7#     83.6%  80.0%  80.3%  86.4%  93.7%
+Qf3        6.3%  13.4%  13.7%   6.6%   1.2%
+Qe2        1.4%   1.1%   1.3%   2.1%   1.5%
+Bxf7+      1.4%   0.7%   0.9%   1.1%   1.5%
+Qf5        2.9%   1.2%   0.4%   0.2%   0.0%
+other      4.5%   3.5%   3.4%   3.7%   2.0%
