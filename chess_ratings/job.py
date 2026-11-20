@@ -525,9 +525,14 @@ def compact(folder: Path, out: Path) -> None:
         c = json.loads((folder / "common.json").read_text())
         for p in c["positions"]:
             p["maia"] = {r: v for r, v in p["maia"].items() if int(r) % 200 == 0}
+            p["blunder_moves"] = len(p.pop("blunders"))
+            p["observed"] = {
+                b: [o["n"], o["blunders"], round(o["maia_expected"], 2)]
+                for b, o in p["observed"].items()
+            }
         names.append(("common.json", c))
     for name, obj in names:
-        text = json.dumps(rounded(obj), indent=1, sort_keys=True) + "\n"
+        text = json.dumps(rounded(obj), sort_keys=True, separators=(",", ":")) + "\n"
         (out / name).write_text(text)
         print(f"=== {name} sha256 {hashlib.sha256(text.encode()).hexdigest()}\n{text}", flush=True)
     for f in sorted(folder.glob("*")):
