@@ -1,0 +1,42 @@
+name: fallout-retry
+# Fallout 3 exit and retry (mastermind/retry.py): both readings of the manual on the 1,000
+# screens per row that fallout3.study draws (seed 3), one job per row, exact per screen.
+# Commits one JSON file per row to this branch under mastermind/results/retry-runs/.
+on:
+  push:
+    branches: ["compute/fallout-retry"]
+    paths: [".github/workflows/fallout-retry.yml"]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  row:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      matrix:
+        row: [0, 1, 2, 3, 4]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          python-version: "3.14"
+      - name: Score the row
+        env:
+          ROW: ${{ matrix.row }}
+        run: |
+          dir=mastermind/results/retry-runs
+          mkdir -p $dir
+          uv run --no-project python -m mastermind.retry --row "$ROW" --screens 1000 --out $dir
+          echo "$GITHUB_SHA" > "$dir/row$ROW.commit"
+      - name: Commit the row to this branch
+        run: |
+          git config user.name arclabs561
+          git config user.email arclabs561@users.noreply.github.com
+          git add mastermind/results/retry-runs
+          git commit -q -m "mastermind: retry row ${{ matrix.row }}"
+          for i in $(seq 1 40); do
+            git pull -q --rebase && git push -q && break
+            sleep $((RANDOM % 20 + 5))
+          done
