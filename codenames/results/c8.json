@@ -415,6 +415,17 @@
   "metric": "top-1 of arm B (human plus teacher, mean of 3 seeds) minus arm A (C2's arm 4, mean of 3 seeds), paired by turn",
   "n": 551
  },
+ "primary_seeds_resampled": {
+  "ci": [
+   0.005343164204515195,
+   0.06172839506172845
+  ],
+  "mean": 0.03327283726557784,
+  "seeds": [
+   3,
+   3
+  ]
+ },
  "runs": {
   "b-s1": {
    "batch": 64,
