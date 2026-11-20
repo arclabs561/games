@@ -2,6 +2,7 @@
 a known model of move choice by rating."""
 
 import itertools
+import json
 import math
 
 import duckdb
@@ -185,10 +186,15 @@ def test_pilot_and_test_steps_run_end_to_end():
     counts = {"180+0": {str(b): 10 for b in range(600, 2600, 25)}}
     result, fit, cases = calibration.pilot(strat, pop, counts, log=lambda m: None)
     assert result["chosen"] in cal.ARMS and "true rating" in cases
+    from chess_ratings.job import rounded
+
+    json.dumps(rounded(result, 3))  # the job writes these as JSON
+    fit = json.loads(json.dumps(rounded(fit, 6)))
     held = synthetic(80, seed=13, shift=100)
     for r in held:
         r.extra["top"] = np.zeros(r.logp.shape[0])
     out = calibration.test(held, pop, fit)
+    json.dumps(rounded(out, 4))
     p = out["primary"]
     assert p["player_games"] == 80 and set(p["holm"]) == {"bias", "coverage"}
 
@@ -292,8 +298,6 @@ class FakeMaia:
 
 
 def test_job_records_round_trip(tmp_path):
-    import json
-
     from chess_ratings import job
 
     text = (

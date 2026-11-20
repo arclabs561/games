@@ -731,10 +731,10 @@ def part_calib_diagnose(args, out: Path) -> None:
     counts = json.loads((runs["calib-pilot-stratified"] / "rating_counts.json").read_text())
     log(f"diagnose: {len(strat)} stratified and {len(pop)} population player-games")
     result, fit, cases = calibration.pilot(strat, pop, counts, log)
-    write(out, "calibration-pilot.json", rounded(result))
-    write(out, "calibration-fit.json", fit)
     (out / "cases.txt").write_text(cases)
     print(cases, flush=True)
+    write_compact(out, "calibration-pilot.json", rounded(result, 3))
+    write_compact(out, "calibration-fit.json", rounded(fit, 6))
 
 
 def part_calib_test(args, out: Path) -> None:
@@ -745,7 +745,14 @@ def part_calib_test(args, out: Path) -> None:
     strat = load_calib(runs["calib-test-stratified"], "stratified")
     pop = load_calib(runs["calib-test-population"], "population")
     fit = json.loads((Path(__file__).parent / "results" / "calibration-fit.json").read_text())
-    write(out, "calibration-test.json", rounded(calibration.test(strat, pop, fit)))
+    write_compact(out, "calibration-test.json", rounded(calibration.test(strat, pop, fit), 4))
+
+
+def write_compact(out: Path, name: str, obj) -> None:
+    """One line of JSON, printed with its SHA-256 so that a copy in results/ can be checked."""
+    text = json.dumps(obj, sort_keys=True, separators=(",", ":")) + "\n"
+    (out / name).write_text(text)
+    print(f"=== {name} sha256 {hashlib.sha256(text.encode()).hexdigest()}\n{text}", flush=True)
 
 
 def main(argv=None) -> None:
