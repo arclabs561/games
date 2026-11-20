@@ -17,11 +17,18 @@ gets one status, assigned from its text by the first rule that matches:
    not checked, or a case that was settled while others were not.
 4. **open**: anything else.
 
-The rules read words, not meaning, so a status is a guide for choosing work, not a finding.
+The rules are phrases fitted by hand to the questions as they stand, and they read words, not
+meaning, so a status is a guide for choosing work, not a finding. A new question may need a new
+phrase.
+
+Each game is named as in the root README's table, and relative links in a question are rewritten
+so that they resolve from the repository root. Every question should be one a reader can take
+alone, ending in a question mark; the script prints a warning for each bullet without one.
 Standard library only.
 """
 
 import argparse
+import posixpath
 import re
 import sys
 from pathlib import Path
@@ -139,6 +146,43 @@ def title(readme: str, folder: str) -> str:
     return folder
 
 
+LINK = re.compile(r"(\]\()([^)\s]+)(\))")
+ROW_NAME = re.compile(r"^\|\s*\*\*(.+?)\*\*\s*\|.*\]\(([\w-]+)/?\)\s*\|\s*$")
+
+
+def rebase_links(text: str, folder: str) -> str:
+    """Rewrite the relative links of a question so that they resolve from the repository root."""
+
+    def fix(m: re.Match[str]) -> str:
+        target = m[2]
+        if re.match(r"^[a-z][a-z0-9+.-]*:", target, re.IGNORECASE) or target.startswith("/"):
+            return m[0]
+        if target.startswith("#"):
+            return f"{m[1]}{folder}/README.md{target}{m[3]}"
+        path, sep, anchor = target.partition("#")
+        return f"{m[1]}{posixpath.normpath(posixpath.join(folder, path))}{sep}{anchor}{m[3]}"
+
+    return LINK.sub(fix, text)
+
+
+def root_names(root: Path = ROOT) -> dict[str, str]:
+    """Each folder's game name as the root README's table gives it, in bold in the first column."""
+    readme = root / "README.md"
+    if not readme.exists():
+        return {}
+    names = {}
+    for line in readme.read_text(encoding="utf-8").splitlines():
+        m = ROW_NAME.match(line)
+        if m:
+            names[m[2]] = m[1]
+    return names
+
+
+def is_question(text: str) -> bool:
+    """Whether an open-questions bullet asks something, by its question mark."""
+    return "?" in text
+
+
 def cell(text: str) -> str:
     """Text safe inside a Markdown table cell."""
     return text.replace("|", "\\|")
@@ -147,10 +191,11 @@ def cell(text: str) -> str:
 def render(root: Path = ROOT) -> str:
     rows: list[tuple[str, str, str, str]] = []
     without: list[str] = []
+    names = root_names(root)
     for folder in games(root):
         readme = (folder / "README.md").read_text(encoding="utf-8")
-        qs = open_questions(readme)
-        name = title(readme, folder.name)
+        qs = [rebase_links(q, folder.name) for q in open_questions(readme)]
+        name = names.get(folder.name) or title(readme, folder.name)
         if not qs:
             without.append(f"[{name}]({folder.name}/README.md)")
         for q in qs:
@@ -163,8 +208,9 @@ def render(root: Path = ROOT) -> str:
         "collected by `tools/open_questions.py`. Edit the READMEs, not this file, then run "
         "`python3 tools/open_questions.py`; a test checks that this file is current.",
         "",
-        "Each status comes from the question's wording, by the rules in the script's docstring. "
-        "It guides the choice of what to work on next and is not itself a finding.",
+        "Each status comes from the question's wording, by phrase rules fitted by hand and listed "
+        "in the script's docstring. It guides the choice of what to work on next and is not "
+        "itself a finding.",
         "",
         "| Status | Questions |",
         "|---|---:|",
@@ -179,11 +225,23 @@ def render(root: Path = ROOT) -> str:
     return "\n".join(lines) + "\n"
 
 
+def not_questions(root: Path = ROOT) -> list[tuple[str, str]]:
+    """The open-questions bullets, by folder, that have no question mark."""
+    return [
+        (folder.name, q)
+        for folder in games(root)
+        for q in open_questions((folder / "README.md").read_text(encoding="utf-8"))
+        if not is_question(q)
+    ]
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--check", action="store_true", help="compare with OPEN.md, write nothing")
     args = parser.parse_args(argv)
     text = render()
+    for folder, q in not_questions():
+        print(f"warning: {folder}: not a question: {q[:100]}", file=sys.stderr)
     if args.check:
         same = OUT.exists() and OUT.read_text(encoding="utf-8") == text
         print("OPEN.md is current" if same else "OPEN.md is out of date")

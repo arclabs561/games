@@ -1,9 +1,9 @@
 # Usage
 
-Every command, with times. Moved unchanged from the [Hanabi README](../README.md), which keeps the short answers.
+Every command, with times. The [Hanabi README](../README.md) gives the short answers.
 
 
-Everything except `solver_cp.py` and `hosted.py` uses only the standard library; `solver_cp.py` needs OR-Tools (`uv run --with ortools ...`), and `hosted.py` needs the `hanabi` dependency group (`huggingface_hub`). Times are from one run on a shared two-core machine.
+The rules engine, the solvers, the information strategy and the analysis of the human games use only the standard library. `solver_cp.py` needs OR-Tools (`uv run --with ortools ...`); `hosted.py` and the download of the human games need the `hanabi` dependency group (`huggingface_hub`); plan H4 needs JAX and `jaxmarl` (the `hanabi-jax` group, a CUDA build). Times are from one run on a two-core computer.
 
 ```bash
 uv run python -m hanabi.information -n 2000               # five players, about 1 min
@@ -25,7 +25,7 @@ uv run --group hanabi python -m hanabi.h2 play --model openai/gpt-oss-120b --pro
 uv run python -m hanabi.h2 report --runs hanabi/results/h2-runs --out hanabi/results/h2.json
 ```
 
-`h2 play` needs `HF_TOKEN` and network access to Hugging Face; the runs above were launched with `experiments/hfrun.py` on Hugging Face Jobs. `h2 report` runs here in a few seconds.
+`h2 play` needs `HF_TOKEN` and network access to Hugging Face; the runs above were launched with `experiments/hfrun.py` on Hugging Face Jobs. `h2 report` runs locally in a few seconds.
 
 The human games need the `hanabi` group to download the dataset; the analysis itself uses the standard library:
 

@@ -64,8 +64,8 @@ def read_safetensors(path: str | Path) -> dict[str, tuple[list[int], list[int]]]
 
 @dataclass(frozen=True)
 class HumanGame:
-    """One recorded game: its id on hanab.live, the deck as `hanabi.rules` cards, and the
-    current player's action id on each turn."""
+    """One recorded game: its number in the challenge's file (not a hanab.live game id), the
+    deck as `hanabi.rules` cards, and the current player's action id on each turn."""
 
     game_id: int
     players: int

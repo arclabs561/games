@@ -1,9 +1,9 @@
 # Which deals can reach 25?
 
-The open game, the two solvers and their certificates, and exact counts on every deal of small decks. Plan H1 on the full game is in [h1.md](h1.md). Moved unchanged from the [Hanabi README](../README.md), which keeps the short answers.
+The open game, the two solvers and their certificates, and exact counts on every deal of small decks. Plan H1 on the full game is in [h1.md](h1.md). The [Hanabi README](../README.md) gives the short answers.
 
 
-With every card in view, a hint carries no information; it only passes the turn and costs a token. Van den Bergh (2015) calls this the open game and shows that a deal can be won in the real game only if it can be won in the open game. Baffier et al. (2017) prove that deciding this is NP-complete, even with hands of two cards, so the answer here comes from search.
+With every card in view, a hint carries no information; it only passes the turn and costs a token. Van den Bergh (2015) calls this the open game and shows that a deal can be won in the real game only if it can be won in the open game. Baffier et al. (2017) prove that a one-player version, with every card known, no hints and no final round, is NP-complete for decks of growing size, even with hands of two cards (their Theorem 5.1). That model is a relative of the open game, not the same game, and a result about growing decks says nothing about one deck of 50 cards. The answers here come from search.
 
 `solver.py` has two engines. `brute_winnable` tries every legal action of the rules engine. `winnable` searches the open game: it tries plays first, writes every card that can no longer be played as one "trash" symbol, never discards the last copy of a needed card, and cuts off states that fail three bounds:
 

@@ -1,6 +1,6 @@
 # Human games: the deal or the table?
 
-The 3,079 human games of the AH2AC2 dataset: their ceilings, where the ceiling fell, and the command line. Moved unchanged from the [Hanabi README](../README.md), which keeps the short answers.
+The 3,079 human games of the AH2AC2 dataset: their ceilings, where the ceiling fell, and the command line. The [Hanabi README](../README.md) gives the short answers.
 
 
 *"We finished on 23. Could any team have made 25 with these cards?"* Almost always, if it could have seen every card. Of 1,858 two-player games played by people on hanab.live, 19 were dealt a deck whose best possible score is below 25, and of 1,221 three-player games, none. Two-player teams averaged 1.63 points below 25. The deal ruled out 0.013 of those points (95% interval 0.007 to 0.019), under 1% of the gap. The other 1.62 (1.54 to 1.70) lie between the score and the deal's ceiling. They were lost to hidden information or to play, and these games cannot say how much to each.
@@ -9,13 +9,13 @@ The 3,079 human games of the AH2AC2 dataset: their ceilings, where the ceiling f
 
 The grid counts games by their deal's ceiling and their score. Look at how few games lie below the top row: the ceiling is 25 for 1,839 of 1,858 two-player deals and for every three-player deal, so nearly all of the spread in scores is the team's distance from 25.
 
-**The ceiling.** As in the section above, the ceiling of a deal is the best score of the open game: every card in view, the deck included, and a hint only a pass that costs a token. No team scores above it. No team that cannot see its own cards can be expected to reach it either: the strongest published two-player agents average 24.08 to 24.61 in self-play (the table above), on deals almost all of whose ceilings are 25. So the gap between a team's score and its ceiling has two causes mixed together: what the players could not know, and what they chose. Separating them needs a reference agent that plays the real game well on the same decks. This section does not have one and does not split that part.
+**The ceiling.** As in [open-game.md](open-game.md), the ceiling of a deal is the best score of the open game: every card in view, the deck included, and a hint only a pass that costs a token. No team scores above it. No team that cannot see its own cards can be expected to reach it either: the strongest published two-player agents average 24.08 to 24.61 in self-play (the table above), on deals almost all of whose ceilings are 25. So the gap between a team's score and its ceiling has two causes mixed together: what the players could not know, and what they chose. Separating them needs a reference agent that plays the real game well on the same decks. This section does not have one and does not split that part.
 
 **The data.** The AH2AC2 challenge (Dizdarević et al., 2025) released 1,858 two-player and 1,221 three-player games from hanab.live, played with the H-group conventions, each with its deck and every action. `humans_data.py` reads the files with the standard library. The challenge's documentation says the deck is listed from the top. The actions are numbered as in JaxMARL's Hanabi, which deals the hands in blocks from the top and puts a drawn card at the end of the hand, as `rules.py` does; plan H4's agreement test checked these conventions against JaxMARL itself. With them, every one of the 3,079 games replays in `rules.py` with every action legal and ends on its recorded score. The mean scores, 23.37 and 23.25, match the challenge paper's Table 1. The game numbers in the files are the challenge's own, not hanab.live's, so the games cannot be matched with the site's records.
 
 Two things about the sample:
 
-- No game in it loses its third life. Every game has at most two strikes, and the lowest scores are 13 and 14, as the paper's Table 1 also gives. The sources read here do not say whether lost games were left out.
+- No game in it loses its third life. Every game has at most two strikes, and the lowest scores are 13 and 14, as the paper's Table 1 also gives. The challenge's announcement (blog.foersterlab.com/ah2ac2) says the released games are a subset of a much larger set of over 100,000 two-player games, and its statistics give a lowest score of 13, so no game that lost its third life is among them. The 1.63 points are for games that kept a life; with such games included the shortfall would be larger and the deal's share smaller.
 - 341 two-player and 321 three-player records stop before the rules' end of the game. For each of them, a search of the open game from the last position proves that no further point could be scored. This fits hanab.live's ending a game once no further point can be scored. These records are treated as finished, with their recorded score.
 
 **Results.** Exact unless marked; intervals are 95% intervals over games, by percentile bootstrap (10,000 resamples, seed 0) for means and by Wilson's method for shares.
@@ -51,7 +51,7 @@ Two things about the sample:
 | When: the final round | 315 (11%) | 200 (10%) |
 | All points traced | 2,879 in 1,816 games | 2,063 in 1,196 games |
 
-- In two-player games, 40% of the points went while 20 or more cards were left in the deck, most of them on discards of a card whose other copies were gone (533 of the 1,139). With three players more of the loss comes late: 47% with 1 to 9 cards left.
+- In two-player games, 40% of the points went while 20 or more cards were left in the deck, nearly half of them on discards of a card whose other copies were gone (533 of the 1,139). With three players more of the loss comes late: 47% with 1 to 9 cards left.
 - A discard that is not of a critical card can still lower the ceiling. It may throw away a card that is needed sooner than its other copy arrives, or spend a turn that the end of the game needed. Late in the game, plays and hints lower the ceiling for the same reason: there are not enough turns left for the plays still needed.
 - Strikes were common, 0.80 a game with two players, but in the traced two-player games only 240 of 1,458 strikes lowered the ceiling. A strike can cost more than one point, so those 240 account for 375 points. Discards of critical cards lowered it 498 times out of 576.
 

@@ -71,3 +71,30 @@ def test_every_question_has_a_known_status():
 def test_paper_only_comments_are_left_out():
     readme = "## Open questions\n\n- Proved<!--raw-typst  (@thm-x)-->. Is it?\n"
     assert oq.open_questions(readme) == ["Proved. Is it?"]
+
+
+def test_links_resolve_from_the_root():
+    q = "See [h1.md](results/h1.md), [the table](#results), [up](../OPEN.md) and [web](https://a.b/c)."
+    assert oq.rebase_links(q, "hanabi") == (
+        "See [h1.md](hanabi/results/h1.md), [the table](hanabi/README.md#results), "
+        "[up](OPEN.md) and [web](https://a.b/c)."
+    )
+
+
+def test_every_link_in_open_md_resolves():
+    text = (ROOT / "OPEN.md").read_text(encoding="utf-8")
+    for target in oq.LINK.findall(text):
+        path = target[1].partition("#")[0]
+        if path and "://" not in path:
+            assert (ROOT / path).exists(), path
+
+
+def test_games_are_named_as_in_the_root_readme():
+    names = oq.root_names()
+    assert names["chess_ratings"] == "Chess"
+    assert names["ev_nova"] == "EV Nova and Naev"
+
+
+def test_questions_are_questions():
+    assert oq.is_question("Does a plane of order 12 exist?")
+    assert not oq.is_question("Time.")

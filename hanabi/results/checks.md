@@ -1,6 +1,6 @@
 # Checks
 
-Every check of the rules engine, the strategy, the solvers, the certificates and the experiments. Moved unchanged from the [Hanabi README](../README.md), which keeps the short answers.
+Every check of the rules engine, the strategy, the solvers, the certificates and the experiments. The [Hanabi README](../README.md) gives the short answers.
 
 
 - The rules engine has tests for each rule above, including the extra round after the last card and the score of 0 on the third life.
@@ -8,7 +8,7 @@ Every check of the rules engine, the strategy, the solvers, the certificates and
 - On every deal of four small decks, the two solver engines give the same answer, for the maximum score and for every lower target. Every won deal's line is replayed by the rules engine.
 - Each certificate is checked against brute force on those decks: no deal with a certificate is won.
 - Solver B (`dfs_solver.py`) agrees with brute force on every deal of the four smaller decks, with and without its bounds, and with `winnable` on every deal of the decks in the table. The two new certificates never hold for a won deal there. A test checks greedy scheduling against an exhaustive search of the schedule on 200 random deals.
-- On the full game, Solver A and Solver B give the same verdict on every one of the 79,396 deals both decide (plan H1, below). Every win of either solver is replayed by the rules engine.
+- On the full game, Solver A and Solver B give the same verdict on every one of the 79,396 deals both decide (plan H1, in [h1.md](h1.md)). Every win of either solver is replayed by the rules engine.
 - The constraint model of `solver_cp.py` agrees with brute force on every deal of three small decks (540 deals); a test checks some of them when OR-Tools is installed.
 - JaxMARL's two-color game and `rules.py` agree on legal moves, game length and score in 4,000 random games (`tests/test_hanabi_jax.py`), and on the score of each of the 1,024,000 games of plan H4's evaluation. Action numbers convert both ways for two to four players. A tiny training run, its evaluation and its summary run end to end on a CPU in the tests.
 - The bootstrap of plan H4 is checked on matrices with known answers. The committed ceilings of the H4 test deals match a fresh solve on a sample of them.
