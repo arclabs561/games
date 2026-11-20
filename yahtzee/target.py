@@ -392,10 +392,98 @@ def sheet_distribution() -> np.ndarray:
     )
 
 
+TARGETS = (150, 200, 250, 300, 350, 400, 500)
+
+
+def at_least(dist: np.ndarray) -> np.ndarray:
+    """P(score >= T) for T = 0, 1, ..., len(dist), from the chance of each score."""
+    return np.concatenate([np.cumsum(dist[::-1])[::-1], [0.0]])
+
+
+def report(runs: Path) -> dict:
+    """results/target.json from the outputs of the Actions jobs, with the comparisons quoted."""
+    found = {
+        p.stem: json.loads(p.read_text())
+        for p in runs.rglob("*.json")
+        if p.stem in {"reach", *RESPOND}
+    }
+    assert set(found) == {"reach", *RESPOND}, sorted(found)
+    f = np.array(found["reach"]["reach"])
+    best = at_least(optimal_distribution())
+    sheet = at_least(sheet_distribution())
+    assert abs(f[0] - 1) < 1e-12 and f[-1] == 0 and (np.diff(f) <= 1e-15).all()
+    rows = [
+        {"target": t, "best": float(f[t]), "optimal": float(best[t]), "sheet": float(sheet[t])}
+        for t in TARGETS
+    ]
+    return {
+        "mean_of_best_chances": float(f[1:].sum()),
+        "targets": rows,
+        "respond": {k: found[k]["value"] for k in RESPOND},
+        "seconds": {k: v["seconds"] for k, v in sorted(found.items())},
+        "reach": f.tolist(),
+    }
+
+
+def chances_svg(data: dict) -> str:
+    """P(score >= T) against T: the best chance for each T, optimal play for the mean, the sheet."""
+    w, h, left, right, top, bottom = 760, 400, 60, 20, 20, 50
+    lo, hi = 100, 500
+    f = np.array(data["reach"])
+    lines = [
+        ("best chance for each target", f, "#1f5fa8"),
+        ("optimal play for the mean", at_least(optimal_distribution()), "#333333"),
+        ("cheat sheet", at_least(sheet_distribution()), "#d35400"),
+    ]
+
+    def x(v):
+        return left + (w - left - right) * (v - lo) / (hi - lo)
+
+    def y(p):
+        return top + (h - top - bottom) * (1 - p)
+
+    out = [
+        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}" width="{w}" height="{h}" '
+        'font-family="Helvetica, Arial, sans-serif" font-size="12">',
+        f'<rect width="{w}" height="{h}" fill="white"/>',
+    ]
+    for p in np.arange(0, 1.01, 0.2):
+        out.append(
+            f'<line x1="{left}" x2="{w - right}" y1="{y(p):.1f}" y2="{y(p):.1f}" stroke="#e5e5e5"/>'
+        )
+        out.append(f'<text x="{left - 6}" y="{y(p) + 4:.1f}" text-anchor="end">{p:.1f}</text>')
+    for v in range(lo, hi + 1, 50):
+        out.append(f'<text x="{x(v):.1f}" y="{h - bottom + 16}" text-anchor="middle">{v}</text>')
+    out.append(
+        f'<text x="{(w - right + left) / 2}" y="{h - 10}" text-anchor="middle">target T (points)</text>'
+    )
+    out.append(
+        f'<text transform="translate(16 {(h - bottom) / 2}) rotate(-90)" text-anchor="middle">'
+        "chance of scoring T or more (exact)</text>"
+    )
+    for i, (label, curve, color) in enumerate(lines):
+        pts = " ".join(f"{x(t):.1f},{y(curve[t]):.1f}" for t in range(lo, hi + 1))
+        out.append(f'<polyline points="{pts}" fill="none" stroke="{color}" stroke-width="2"/>')
+        ly = top + 20 + 20 * i  # a legend at the top right, where every curve is low
+        lx = x(360)
+        out.append(
+            f'<line x1="{lx:.1f}" x2="{lx + 24:.1f}" y1="{ly}" y2="{ly}" stroke="{color}" stroke-width="2"/>'
+        )
+        out.append(f'<text x="{lx + 30:.1f}" y="{ly + 4}">{label}</text>')
+    out.append("</svg>")
+    return "\n".join(out) + "\n"
+
+
 def main(argv: list[str]) -> None:
     out = Path(argv[argv.index("--out") + 1]) if "--out" in argv else None
     workers = int(argv[argv.index("--workers") + 1]) if "--workers" in argv else 1
     start = time.time()
+    if argv[0] == "report":
+        data = report(Path(argv[argv.index("--runs") + 1]))
+        (HERE / "results" / "target.json").write_text(json.dumps(data, indent=1) + "\n")
+        (HERE / "chances.svg").write_text(chances_svg(data))
+        print(json.dumps({k: v for k, v in data.items() if k != "reach"}, indent=1))
+        return
     if argv[0] == "reach":
         f = reach(OFFICIAL, OFFICIAL_WIDTH, verbose=True, workers=workers)
         data = {"reach": f.tolist()}

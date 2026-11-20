@@ -210,6 +210,14 @@ def percentile(original: int, sizes: list[tuple[int, int]]) -> dict:
     return {"below": below, "equal": equal, "total": total}
 
 
+def wilson(k: int, n: int, z: float = 1.959964) -> tuple[float, float]:
+    """The Wilson 95% interval for k successes in n trials."""
+    p = k / n
+    centre = (p + z * z / (2 * n)) / (1 + z * z / n)
+    half = z * (p * (1 - p) / n + z * z / (4 * n * n)) ** 0.5 / (1 + z * z / n)
+    return centre - half, centre + half
+
+
 def merge(hists: list[list]) -> list[tuple[int, int]]:
     total: Counter = Counter()
     for h in hists:
@@ -224,7 +232,9 @@ def report(runs: Path) -> dict:
     parts = [json.loads(p.read_text()) for p in sorted(runs.rglob("difficulty-exact-*.json"))]
     assert sorted(p["part"] for p in parts) == list(range(parts[0]["parts"]))
     out: dict = {"exact": {}, "sampled": {}}
-    for key in ("edge_sequences", "rings", "distinct", "one"):
+    assert len({p["edge_sequences"] for p in parts}) == 1  # each part counts them all
+    out["exact"]["edge_sequences"] = parts[0]["edge_sequences"]
+    for key in ("rings", "distinct", "one"):
         out["exact"][key] = sum(p[key] for p in parts)
     out["exact"]["solutions"] = [sum(c) for c in zip(*(p["solutions"] for p in parts), strict=True)]
     out["sampled"]["seeds"] = sorted(s["seed"] for s in samples)
@@ -237,6 +247,71 @@ def report(runs: Path) -> dict:
         out["exact"][k] = {"original": mine, **percentile(mine, exact), "sizes": exact}
         out["sampled"][k] = {"original": mine, **percentile(mine, sampled), "sizes": sampled}
     return out
+
+
+def figure(data: dict) -> str:
+    """Bars: one-solution sets by search size (with look-ahead), in bins; the original marked."""
+    d = data["exact"]["look_ahead"]
+    bin_width = 20
+    bins: Counter = Counter()
+    for t, c in d["sizes"]:
+        bins[t // bin_width] += c
+    lo, hi = min(bins), max(bins)
+    total = d["total"]
+    w, h, left, right, top, bottom = 760, 360, 60, 20, 34, 50
+    peak = max(bins.values()) / total
+
+    def x(b):
+        return left + (w - left - right) * (b - lo) / (hi - lo + 1)
+
+    def y(share):
+        return top + (h - top - bottom) * (1 - share / peak)
+
+    mine = d["original"] // bin_width
+    out = [
+        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}" width="{w}" height="{h}" '
+        'font-family="Helvetica, Arial, sans-serif" font-size="12">',
+        f'<rect width="{w}" height="{h}" fill="white"/>',
+    ]
+    step = 0.01 if peak < 0.06 else 0.02
+    v = 0.0
+    while v <= peak + 1e-12:
+        out.append(
+            f'<line x1="{left}" x2="{w - right}" y1="{y(v):.1f}" y2="{y(v):.1f}" stroke="#e5e5e5"/>'
+        )
+        out.append(f'<text x="{left - 6}" y="{y(v) + 4:.1f}" text-anchor="end">{v:.0%}</text>')
+        v += step
+    bw = x(lo + 1) - x(lo)
+    for b in range(lo, hi + 1):
+        share = bins.get(b, 0) / total
+        color = "#d35400" if b == mine else "#7f8c8d"
+        out.append(
+            f'<rect x="{x(b) + 0.5:.1f}" y="{y(share):.1f}" width="{bw - 1:.1f}" '
+            f'height="{y(0) - y(share):.1f}" fill="{color}"/>'
+        )
+    first = (lo * bin_width + 199) // 200 * 200
+    for t in range(first, (hi + 1) * bin_width + 1, 200):
+        out.append(
+            f'<text x="{x(t / bin_width):.1f}" y="{h - bottom + 16}" text-anchor="middle">{t}</text>'
+        )
+    out.append(
+        f'<text x="{(w + left) / 2}" y="{h - 10}" text-anchor="middle">'
+        f"search size (calls of the solver, six searches added up), in bins of {bin_width}</text>"
+    )
+    out.append(
+        f'<text transform="translate(14 {(h - bottom) / 2}) rotate(-90)" text-anchor="middle">'
+        "share of one-solution sets</text>"
+    )
+    cx = x(mine) + bw / 2
+    out.append(
+        f'<line x1="{cx:.1f}" x2="{cx:.1f}" y1="{top - 4}" y2="{y(bins[mine] / total) - 2:.1f}" '
+        'stroke="#d35400" stroke-dasharray="3 3"/>'
+    )
+    out.append(
+        f'<text x="{cx + 6:.1f}" y="{top - 6}" fill="#d35400">the original set, {d["original"]}</text>'
+    )
+    out.append("</svg>")
+    return "\n".join(out) + "\n"
 
 
 def main(argv: list[str]) -> None:
@@ -253,6 +328,7 @@ def main(argv: list[str]) -> None:
     if args.what == "report":
         data = report(args.runs)
         (HERE / "difficulty.json").write_text(json.dumps(data, indent=1) + "\n")
+        (HERE / "figures" / "difficulty.svg").write_text(figure(data))
         for k in ("look_ahead", "plain"):
             print(k, {x: data["exact"][k][x] for x in ("original", "below", "equal", "total")})
         return

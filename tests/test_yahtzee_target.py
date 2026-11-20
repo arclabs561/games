@@ -10,14 +10,24 @@ import pytest
 from tests.test_yahtzee import SMALL
 from yahtzee import policy, target, versus
 from yahtzee.brute import brute_force
-from yahtzee.rules import OFFICIAL
+from yahtzee.rules import OFFICIAL, Rules
 from yahtzee.solver import Tables, best_keep, final_rolls, solve
 
 RESULTS = Path(__file__).parent.parent / "yahtzee" / "results"
-FAST = SMALL[:3] + SMALL[4:5]  # the small games that brute force settles in seconds
+# Small games that brute force settles in seconds, and one with three rolls (half a minute).
+THREE_ROLLS = Rules(
+    dice=3,
+    faces=4,
+    rolls=3,
+    categories=("fours", "small_straight", "yahtzee", "three_kind"),
+    threshold=8,
+)
+FAST = SMALL[:3] + SMALL[4:5]
 
 
-@pytest.mark.parametrize("rules", FAST, ids=lambda r: "-".join(r.categories))
+@pytest.mark.parametrize(
+    "rules", [*FAST, THREE_ROLLS], ids=lambda r: f"{'-'.join(r.categories)}-{r.rolls}"
+)
 def test_reach_matches_brute_force(rules):
     f = target.reach(rules)
     top = int(np.nonzero(f > 0)[0][-1])
@@ -120,11 +130,112 @@ def test_committed_head_to_head():
     assert summary["median"] == cards["summary"]["median"]
     assert summary["sd"] == pytest.approx(cards["summary"]["sd"], abs=1e-9)
     best = target.optimal_distribution()
-    assert data["optimal_against_sheet"] == versus.duel(best, sheet)
+    # Dot products may differ in the last bit between machines (BLAS), so compare to 1e-12.
+    assert data["optimal_against_sheet"] == pytest.approx(versus.duel(best, sheet), abs=1e-12)
     m, first = versus.margin(best, sheet)
-    assert data["margin"] == versus.summary(m, first)
+    assert data["margin"] == pytest.approx(versus.summary(m, first), abs=1e-12)
     assert data["margin"]["mean"] == pytest.approx(254.5896094820 - cards["score"], abs=1e-8)
     sim = data["simulated"]
     for key in ("win", "tie"):
         lo, hi = sim[f"{key}_interval"]
         assert lo <= data["optimal_against_sheet"][key] <= hi
+
+
+def committed_target() -> dict:
+    return json.loads((RESULTS / "target.json").read_text())
+
+
+def test_committed_best_chances():
+    data = committed_target()
+    f = np.array(data["reach"])
+    assert len(f) == target.OFFICIAL_WIDTH and f[-1] == 0 and f[-2] > 0  # the top score, 1575
+    assert f[0] == pytest.approx(1, abs=1e-12) and (np.diff(f) <= 1e-15).all()
+    assert data["mean_of_best_chances"] == f[1:].sum()
+    best = target.at_least(target.optimal_distribution())
+    sheet = target.at_least(target.sheet_distribution())
+    n = len(best)
+    # The best chance for each target is at least that of any one strategy.
+    assert (f[:n] >= best - 1e-12).all() and (f[: len(sheet)] >= sheet[: len(f)] - 1e-12).all()
+    for row in data["targets"]:
+        t = row["target"]
+        assert (row["best"], row["optimal"], row["sheet"]) == (f[t], best[t], sheet[t])
+    duels = committed_versus()
+    respond = data["respond"]
+    assert respond["respond-win"] >= duels["optimal_against_optimal"]["win"]
+    assert respond["respond-half"] >= 0.5
+    assert respond["respond-sheet-win"] >= duels["optimal_against_sheet"]["win"]
+
+
+def test_committed_chances_figure_is_current():
+    svg = (Path(__file__).parent.parent / "yahtzee" / "chances.svg").read_text()
+    assert svg == target.chances_svg(committed_target())
+
+
+README = Path(__file__).parent.parent / "yahtzee" / "README.md"
+ANCHORS = (
+    "(#how-often-does-optimal-play-beat-the-cheat-sheet)",
+    "(#what-is-the-best-chance-of-reaching-a-score)",
+)
+
+
+def added_text() -> str:
+    """The README's two sections on head-to-head play and targets, and their rows of the results table."""
+    text = README.read_text()
+    rows = [line for line in text.splitlines() if any(a in line for a in ANCHORS)]
+    start = text.index("## How often does optimal play beat the cheat sheet?")
+    return "\n".join(rows) + "\n" + text[start : text.index("## Data", start)]
+
+
+def pct(p: float) -> str:
+    return f"{p * 100:.2f}"
+
+
+def test_added_numbers_come_from_the_results():
+    from tests.readme_moves import numbers
+    from yahtzee.study import DENOMINATOR, NUMERATOR
+
+    duels, data = committed_versus(), committed_target()
+    f = np.array(data["reach"])
+    best = target.at_least(target.optimal_distribution())
+    gap = f[: len(best)] - best
+    sim, margin, respond = duels["simulated"], duels["margin"], data["respond"]
+    computed = {
+        *(
+            pct(duels[k][r])
+            for k in ("optimal_against_sheet", "optimal_against_optimal")
+            for r in ("win", "tie", "loss")
+        ),
+        *(pct(sim[k]) for k in ("win", "tie")),
+        *(pct(x) for x in sim["win_interval"]),
+        *(pct(respond[k]) for k in ("respond-win", "respond-sheet-win")),
+        f"{respond['respond-half']:.4f}",
+        pct(respond["respond-half"]),
+        f"{margin['mean']:.2f}",
+        *(str(margin[q]).replace("-", "−") for q in ("q25", "q50", "q75")),
+        pct(margin["behind_by_50_or_more"]),
+        *(pct(row[k]) for row in data["targets"] for k in ("best", "optimal", "sheet")),
+        *(str(row["target"]) for row in data["targets"]),
+        pct(gap.max()),
+        f"{data['mean_of_best_chances']:.4f}",
+        f"{data['mean_of_best_chances'] - 264.449:.3f}",
+        str(round(data["seconds"]["reach"] / 60)),
+        str(int(np.round(gap.argmax(), -1))),
+        "254.5896",  # the optimal mean, in the results table above
+        f"{NUMERATOR / DENOMINATOR:.4f}",  # Kelly and Liese's fraction
+    }
+    cited = {"264.449", "254.589", "2007", "2010"}  # Pawlewicz, Glenn
+    # Games, seeds, cores, branches, the interval, the figure's axis and width, and 10⁻¹².
+    words = {
+        "20,000",
+        "3",
+        "4",
+        "50",
+        "95",
+        "100",
+        "760",
+        "10",
+        "¹²",
+        "44788982543",
+        "44791753155",
+    }  # games, seeds, cores, branches
+    assert numbers(added_text()) - computed - cited - words == set()
