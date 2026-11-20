@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="700" height="446" viewBox="0 0 700 446" role="img" font-family="Helvetica, Arial, sans-serif">
+<title>Held-out guesser&#x27;s value: population training against self-play</title>
+<desc>For each of the 14 tasks of plan C3 (a giver and a held-out model), the mean expected turn value with the held-out guesser for the self-play policy (hollow) and the population policy (filled), over five seeds and 200 test boards. The filled dot is to the right in every row.</desc>
+<rect width="700" height="446" fill="#ffffff"/>
+<line x1="250" y1="42" x2="250" y2="386" stroke="#d9d8d4"/>
+<text x="250" y="402" font-size="12" fill="#52514e" text-anchor="middle">0</text>
+<line x1="355" y1="42" x2="355" y2="386" stroke="#d9d8d4"/>
+<text x="355" y="402" font-size="12" fill="#52514e" text-anchor="middle">0.25</text>
+<line x1="460" y1="42" x2="460" y2="386" stroke="#d9d8d4"/>
+<text x="460" y="402" font-size="12" fill="#52514e" text-anchor="middle">0.5</text>
+<line x1="565" y1="42" x2="565" y2="386" stroke="#d9d8d4"/>
+<text x="565" y="402" font-size="12" fill="#52514e" text-anchor="middle">0.75</text>
+<line x1="670" y1="42" x2="670" y2="386" stroke="#d9d8d4"/>
+<text x="670" y="402" font-size="12" fill="#52514e" text-anchor="middle">1</text>
+<text x="460" y="422" font-size="12" fill="#52514e" text-anchor="middle">expected turn value with the held-out guesser (words per turn)</text>
+<circle cx="250" cy="18" r="5" fill="#ffffff" stroke="#52514e" stroke-width="2"/>
+<text x="260" y="22" font-size="12" fill="#52514e">self-play</text>
+<circle cx="350" cy="18" r="5" fill="#2a78d6"/>
+<text x="360" y="22" font-size="12" fill="#52514e">population of six other models</text>
+<text x="240" y="66" font-size="12" text-anchor="end" fill="#0b0b0b">potion giver, wordllama held out</text>
+<line x1="441.39" y1="62" x2="627.79" y2="62" stroke="#d9d8d4" stroke-width="3"/>
+<circle cx="441.39" cy="62" r="5" fill="#ffffff" stroke="#52514e" stroke-width="2"/>
+<circle cx="627.79" cy="62" r="5" fill="#2a78d6"/>
+<text x="240" y="90" font-size="12" text-anchor="end" fill="#0b0b0b">potion giver, granite held out</text>
+<line x1="325.14" y1="86" x2="516.03" y2="86" stroke="#d9d8d4" stroke-width="3"/>
+<circle cx="325.14" cy="86" r="5" fill="#ffffff" stroke="#52514e" stroke-width="2"/>
+<circle cx="516.03" cy="86" r="5" fill="#2a78d6"/>
+<text x="240" y="114" font-size="12" text-anchor="end" fill="#0b0b0b">potion giver, bge held out</text>
+<line x1="542.74" y1="110" x2="646.73" y2="110" stroke="#d9d8d4" stroke-width="3"/>
+<circle cx="542.74" cy="110" r="5" fill="#ffffff" stroke="#52514e" stroke-width="2"/>
+<circle cx="646.73" cy="110" r="5" fill="#2a78d6"/>
+<text x="240" y="138" font-size="12" text-anchor="end" fill="#0b0b0b">potion giver, Qwen3 0.6B held out</text>
+<line x1="497.46" y1="134" x2="610.78" y2="134" stroke="#d9d8d4" stroke-width="3"/>
+<circle cx="497.46" cy="134" r="5" fill="#ffffff" stroke="#52514e" stroke-width="2"/>
+<circle cx="610.78" cy="134" r="5" fill="#2a78d6"/>
+<text x="240" y="162" font-size="12" text-anchor="end" fill="#0b0b0b">potion giver, harrier 270m held out</text>
+<line x1="455.38" y1="158" x2="603.18" y2="158" stroke="#d9d8d4" stroke-width="3"/>
+<circle cx="455.38" cy="158" r="5" fill="#ffffff" stroke="#52514e" stroke-width="2"/>
+<circle cx="603.18" cy="158" r="5" fill="#2a78d6"/>
+<text x="240" y="186" font-size="12" text-anchor="end" fill="#0b0b0b">potion giver, harrier 0.6b held out</text>
+<line x1="534.72" y1="182" x2="658.32" y2="182" stroke="#d9d8d4" stroke-width="3"/>
+<circle cx="534.72" cy="182" r="5" fill="#ffffff" stroke="#52514e" stroke-width="2"/>
+<circle cx="658.32" cy="182" r="5" fill="#2a78d6"/>
+<text x="240" y="210" font-size="12" text-anchor="end" fill="#0b0b0b">potion giver, Gemma 2 held out</text>
+<line x1="481.67" y1="206" x2="634.38" y2="206" stroke="#d9d8d4" stroke-width="3"/>
+<circle cx="481.67" cy="206" r="5" fill="#ffffff" stroke="#52514e" stroke-width="2"/>
+<circle cx="634.38" cy="206" r="5" fill="#2a78d6"/>
+<text x="240" y="234" font-size="12" text-anchor="end" fill="#0b0b0b">Qwen3 0.6B giver, potion held out</text>
+<line x1="441.39" y1="230" x2="577.81" y2="230" stroke="#d9d8d4" stroke-width="3"/>
+<circle cx="441.39" cy="230" r="5" fill="#ffffff" stroke="#52514e" stroke-width="2"/>
+<circle cx="577.81" cy="230" r="5" fill="#2a78d6"/>
+<text x="240" y="258" font-size="12" text-anchor="end" fill="#0b0b0b">Qwen3 0.6B giver, wordllama held out</text>
+<line x1="336.9" y1="254" x2="498.3" y2="254" stroke="#d9d8d4" stroke-width="3"/>
+<circle cx="336.9" cy="254" r="5" fill="#ffffff" stroke="#52514e" stroke-width="2"/>
+<circle cx="498.3" cy="254" r="5" fill="#2a78d6"/>
+<text x="240" y="282" font-size="12" text-anchor="end" fill="#0b0b0b">Qwen3 0.6B giver, granite held out</text>
+<line x1="319.64" y1="278" x2="425.06" y2="278" stroke="#d9d8d4" stroke-width="3"/>
+<circle cx="319.64" cy="278" r="5" fill="#ffffff" stroke="#52514e" stroke-width="2"/>
+<circle cx="425.06" cy="278" r="5" fill="#2a78d6"/>
+<text x="240" y="306" font-size="12" text-anchor="end" fill="#0b0b0b">Qwen3 0.6B giver, bge held out</text>
+<line x1="429.97" y1="302" x2="560.38" y2="302" stroke="#d9d8d4" stroke-width="3"/>
+<circle cx="429.97" cy="302" r="5" fill="#ffffff" stroke="#52514e" stroke-width="2"/>
+<circle cx="560.38" cy="302" r="5" fill="#2a78d6"/>
+<text x="240" y="330" font-size="12" text-anchor="end" fill="#0b0b0b">Qwen3 0.6B giver, harrier 270m held out</text>
+<line x1="477.35" y1="326" x2="564.83" y2="326" stroke="#d9d8d4" stroke-width="3"/>
+<circle cx="477.35" cy="326" r="5" fill="#ffffff" stroke="#52514e" stroke-width="2"/>
+<circle cx="564.83" cy="326" r="5" fill="#2a78d6"/>
+<text x="240" y="354" font-size="12" text-anchor="end" fill="#0b0b0b">Qwen3 0.6B giver, harrier 0.6b held out</text>
+<line x1="614.06" y1="350" x2="651.23" y2="350" stroke="#d9d8d4" stroke-width="3"/>
+<circle cx="614.06" cy="350" r="5" fill="#ffffff" stroke="#52514e" stroke-width="2"/>
+<circle cx="651.23" cy="350" r="5" fill="#2a78d6"/>
+<text x="240" y="378" font-size="12" text-anchor="end" fill="#0b0b0b">Qwen3 0.6B giver, Gemma 2 held out</text>
+<line x1="439.97" y1="374" x2="589.78" y2="374" stroke="#d9d8d4" stroke-width="3"/>
+<circle cx="439.97" cy="374" r="5" fill="#ffffff" stroke="#52514e" stroke-width="2"/>
+<circle cx="589.78" cy="374" r="5" fill="#2a78d6"/>
+</svg>

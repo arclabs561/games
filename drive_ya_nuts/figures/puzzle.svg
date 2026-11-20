@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="460" height="410" viewBox="0 0 460 410" role="img" font-family="Helvetica, Arial, sans-serif">
+<title>The seven Drive Ya Nuts nuts in their one solution</title>
+<desc>Seven hexagons, one in the center and six around it, each with the numbers 1 to 6 on its sides. Every pair of touching sides shows the same number, and each matching pair is drawn in the same color.</desc>
+<rect width="460" height="410" fill="#ffffff"/>
+<polygon points="292,200 261,146.31 199,146.31 168,200 199,253.69 261,253.69" fill="#f4f3ef" stroke="#0b0b0b" stroke-width="2"/>
+<text x="265.44" y="185.54" font-size="17" fill="#2a78d6" font-weight="bold" text-anchor="middle">1</text>
+<text x="230" y="165.08" font-size="17" fill="#1baf7a" font-weight="bold" text-anchor="middle">3</text>
+<text x="194.56" y="185.54" font-size="17" fill="#d55181" font-weight="bold" text-anchor="middle">5</text>
+<text x="194.56" y="226.46" font-size="17" fill="#c98500" font-weight="bold" text-anchor="middle">4</text>
+<text x="230" y="246.92" font-size="17" fill="#d95926" font-weight="bold" text-anchor="middle">2</text>
+<text x="265.44" y="226.46" font-size="17" fill="#6250d6" font-weight="bold" text-anchor="middle">6</text>
+<circle cx="230" cy="200" r="9" fill="#ffffff" stroke="#52514e"/>
+<polygon points="385,146.31 354,92.61 292,92.61 261,146.31 292,200 354,200" fill="#f4f3ef" stroke="#0b0b0b" stroke-width="2"/>
+<text x="358.44" y="131.85" font-size="17" fill="#d95926" font-weight="bold" text-anchor="middle">2</text>
+<text x="323" y="111.39" font-size="17" fill="#6250d6" font-weight="bold" text-anchor="middle">6</text>
+<text x="287.56" y="131.85" font-size="17" fill="#c98500" font-weight="bold" text-anchor="middle">4</text>
+<text x="287.56" y="172.77" font-size="17" fill="#2a78d6" font-weight="bold" text-anchor="middle">1</text>
+<text x="323" y="193.23" font-size="17" fill="#d55181" font-weight="bold" text-anchor="middle">5</text>
+<text x="358.44" y="172.77" font-size="17" fill="#1baf7a" font-weight="bold" text-anchor="middle">3</text>
+<circle cx="323" cy="146.31" r="9" fill="#ffffff" stroke="#52514e"/>
+<polygon points="292,92.61 261,38.92 199,38.92 168,92.61 199,146.31 261,146.31" fill="#f4f3ef" stroke="#0b0b0b" stroke-width="2"/>
+<text x="265.44" y="78.15" font-size="17" fill="#d55181" font-weight="bold" text-anchor="middle">5</text>
+<text x="230" y="57.69" font-size="17" fill="#6250d6" font-weight="bold" text-anchor="middle">6</text>
+<text x="194.56" y="78.15" font-size="17" fill="#2a78d6" font-weight="bold" text-anchor="middle">1</text>
+<text x="194.56" y="119.07" font-size="17" fill="#d95926" font-weight="bold" text-anchor="middle">2</text>
+<text x="230" y="139.53" font-size="17" fill="#1baf7a" font-weight="bold" text-anchor="middle">3</text>
+<text x="265.44" y="119.07" font-size="17" fill="#c98500" font-weight="bold" text-anchor="middle">4</text>
+<circle cx="230" cy="92.61" r="9" fill="#ffffff" stroke="#52514e"/>
+<polygon points="199,146.31 168,92.61 106,92.61 75,146.31 106,200 168,200" fill="#f4f3ef" stroke="#0b0b0b" stroke-width="2"/>
+<text x="172.44" y="131.85" font-size="17" fill="#d95926" font-weight="bold" text-anchor="middle">2</text>
+<text x="137" y="111.39" font-size="17" fill="#c98500" font-weight="bold" text-anchor="middle">4</text>
+<text x="101.56" y="131.85" font-size="17" fill="#6250d6" font-weight="bold" text-anchor="middle">6</text>
+<text x="101.56" y="172.77" font-size="17" fill="#2a78d6" font-weight="bold" text-anchor="middle">1</text>
+<text x="137" y="193.23" font-size="17" fill="#1baf7a" font-weight="bold" text-anchor="middle">3</text>
+<text x="172.44" y="172.77" font-size="17" fill="#d55181" font-weight="bold" text-anchor="middle">5</text>
+<circle cx="137" cy="146.31" r="9" fill="#ffffff" stroke="#52514e"/>
+<polygon points="199,253.69 168,200 106,200 75,253.69 106,307.39 168,307.39" fill="#f4f3ef" stroke="#0b0b0b" stroke-width="2"/>
+<text x="172.44" y="239.23" font-size="17" fill="#c98500" font-weight="bold" text-anchor="middle">4</text>
+<text x="137" y="218.77" font-size="17" fill="#1baf7a" font-weight="bold" text-anchor="middle">3</text>
+<text x="101.56" y="239.23" font-size="17" fill="#d95926" font-weight="bold" text-anchor="middle">2</text>
+<text x="101.56" y="280.15" font-size="17" fill="#2a78d6" font-weight="bold" text-anchor="middle">1</text>
+<text x="137" y="300.61" font-size="17" fill="#6250d6" font-weight="bold" text-anchor="middle">6</text>
+<text x="172.44" y="280.15" font-size="17" fill="#d55181" font-weight="bold" text-anchor="middle">5</text>
+<circle cx="137" cy="253.69" r="9" fill="#ffffff" stroke="#52514e"/>
+<polygon points="292,307.39 261,253.69 199,253.69 168,307.39 199,361.08 261,361.08" fill="#f4f3ef" stroke="#0b0b0b" stroke-width="2"/>
+<text x="265.44" y="292.93" font-size="17" fill="#2a78d6" font-weight="bold" text-anchor="middle">1</text>
+<text x="230" y="272.47" font-size="17" fill="#d95926" font-weight="bold" text-anchor="middle">2</text>
+<text x="194.56" y="292.93" font-size="17" fill="#d55181" font-weight="bold" text-anchor="middle">5</text>
+<text x="194.56" y="333.85" font-size="17" fill="#6250d6" font-weight="bold" text-anchor="middle">6</text>
+<text x="230" y="354.31" font-size="17" fill="#1baf7a" font-weight="bold" text-anchor="middle">3</text>
+<text x="265.44" y="333.85" font-size="17" fill="#c98500" font-weight="bold" text-anchor="middle">4</text>
+<circle cx="230" cy="307.39" r="9" fill="#ffffff" stroke="#52514e"/>
+<polygon points="385,253.69 354,200 292,200 261,253.69 292,307.39 354,307.39" fill="#f4f3ef" stroke="#0b0b0b" stroke-width="2"/>
+<text x="358.44" y="239.23" font-size="17" fill="#1baf7a" font-weight="bold" text-anchor="middle">3</text>
+<text x="323" y="218.77" font-size="17" fill="#d55181" font-weight="bold" text-anchor="middle">5</text>
+<text x="287.56" y="239.23" font-size="17" fill="#6250d6" font-weight="bold" text-anchor="middle">6</text>
+<text x="287.56" y="280.15" font-size="17" fill="#2a78d6" font-weight="bold" text-anchor="middle">1</text>
+<text x="323" y="300.61" font-size="17" fill="#c98500" font-weight="bold" text-anchor="middle">4</text>
+<text x="358.44" y="280.15" font-size="17" fill="#d95926" font-weight="bold" text-anchor="middle">2</text>
+<circle cx="323" cy="253.69" r="9" fill="#ffffff" stroke="#52514e"/>
+<text x="10" y="398" font-size="12" fill="#52514e">Nuts read counterclockwise, as in solver.py. Touching sides match.</text>
+</svg>

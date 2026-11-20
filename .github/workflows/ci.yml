@@ -57,6 +57,7 @@ jobs:
           python-version: "3.14"
       - name: Rebuild the PDFs
         run: |
+          uv run tools/typst_vendor.py cannonballs/cannonballs.typ --all
           uv run tools/typst_vendor.py erase/paper/erase.typ --all
           uv run tools/typst_vendor.py peggle/peggle.typ
           uv run tools/typst_vendor.py tenzi/tenzi.typ
