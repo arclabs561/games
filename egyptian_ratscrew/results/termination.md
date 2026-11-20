@@ -84,7 +84,7 @@ One deal falls into such a class whatever the slaps: J 2 4 6 7 for player 0, who
 
 So random slaps can fail in two ways: a loop that never offers a slap (Theorem 2), and a loop whose slaps lead back into it whoever wins them. Theorem 1 covers both, since it asks only whether a trapped position can be reached.
 
-The census for eight cards and for nine was run on GitHub runners, in slices, and the slices merged. The other rows run here in about two minutes. Each count is exact. The nine-card census with three players was not run.
+The census for eight cards and for nine was run on GitHub runners, in slices, and the slices merged. The other rows run in about two minutes on a two-core computer. Each count is exact. The nine-card census with three players was not run.
 
 ## What the slap randomness buys
 

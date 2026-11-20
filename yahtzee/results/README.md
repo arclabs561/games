@@ -1,6 +1,6 @@
 # Notes on Yahtzee
 
-Detail behind the [Yahtzee README](../README.md), moved here from it. Every number is as it was in the README; a test checks that none was lost. The JSON and JSONL files here are written by the scripts named in the README's list of files.
+Detail behind the [Yahtzee README](../README.md). A test checks that no number was lost when this detail moved out of the README. The JSON and JSONL files here are written by the scripts named in the README's list of files.
 
 | Note | Question |
 |---|---|
