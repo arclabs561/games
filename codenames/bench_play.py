@@ -652,6 +652,15 @@ def collect(runs: list[Path], lora_compact: Path | None = None) -> dict:
         for p in sorted(r.glob("crossplay-*.json")):
             sl = json.loads(p.read_text())
             strict = sl.get("strict", p.name.startswith("crossplay-strict-"))
+            earlier = slices.get((strict, sl["giver"]))
+            if earlier is not None and not strict:  # a later run replaces it: do they agree?
+                same = [g["score"] for g in earlier["games"]] == [g["score"] for g in sl["games"]]
+                rerun = out["data"].setdefault(
+                    "reruns", {"slices": 0, "same_scores": 0, "games": 0}
+                )
+                rerun["slices"] += 1
+                rerun["same_scores"] += same
+                rerun["games"] += len(sl["games"])
             slices[(strict, sl["giver"])] = sl  # later runs replace
     cells, info = slice_cells(slices.values(), [p for (p, _) in slices])
     if lora_compact:
@@ -1133,6 +1142,16 @@ def report(summary: dict) -> str:
     return "\n".join(lines) + "\n"
 
 
+def rerun_note(d: dict) -> str:
+    r = d.get("reruns")
+    if not r:
+        return ""
+    return (
+        f" Of {r['slices']} givers' runs with every clue allowed that were repeated on other"
+        f" runners ({r['games']} games), {r['same_scores']} gave the same score in every game."
+    )
+
+
 def static_sections(summary: dict) -> list[str]:
     d = summary["data"]
     info = next(iter(summary["crossplay"]["info"].values()))
@@ -1152,7 +1171,7 @@ def static_sections(summary: dict) -> list[str]:
         f" {info['our_clue_pool']} of the 12,000 clue words that both GloVe and word2vec have, so"
         f" that the framework's guessers can read them ({info['clue_words_dropped']} dropped).",
         "- **The flag** (`codenames.legality`, for the second set of tables): any relation that"
-        " module calls illegal (a form of the word, a part of a compound, a spelling variant)"
+        " this module calls illegal (a form of the word, a part of a compound, a spelling variant)"
         " or borderline (a shared stem, affix stem, three-letter compound part or long prefix)."
         " It is stricter than both rules: it catches broken for BREAK and teaching for TEACHER,"
         " which both rules allow.",
@@ -1165,14 +1184,16 @@ def static_sections(summary: dict) -> list[str]:
         "- The port's games: computed exactly; compared move by move with the logs. The"
         " framework's own code was rerun on 90 games as a second method.",
         "- Cross-play: simulated games, 200 boards, board seeds 0 to 199; every bot is"
-        " deterministic, so each cell is one game per board. Intervals are 95% percentile"
+        " deterministic, so each cell is one game per board."
+        + rerun_note(d)
+        + " Intervals are 95% percentile"
         " bootstrap intervals over boards, 10,000 draws, seed 0; paired differences resample"
         " boards once for both givers.",
     ]
     if c3:
         lines.append(
-            "- The C3 givers were refit with codenames.rl (task: potion giver, EmbeddingGemma 2"
-            " held out, training seed 1); the largest difference from the θ in results/c3.json is"
+            "- The C3 givers were refit with codenames.rl on the task with the potion giver,"
+            " EmbeddingGemma 2 held out and training seed 1. The largest difference from the θ in results/c3.json is"
             f" {c3['theta_max_difference']['self']:.4f} (self-play) and"
             f" {c3['theta_max_difference']['population']:.4f} (population)."
         )
@@ -1219,7 +1240,7 @@ def static_sections(summary: dict) -> list[str]:
         " C3 givers, one seed for the C8 encoder. The comparison worth planning is named in the"
         " findings; a plan should fix its metric, guessers and board seeds before running.",
         "- The framework's guessers pick exactly the count; they never stop early or take the"
-        " extra pick the printed rules allow. This package's guessers do the same here.",
+        " extra pick that the printed rules allow. This package's guessers do the same here.",
         "- Our givers were built for expected turn value, not for the single-team score, which"
         " charges 25 for a loss; they take more risk than that score rewards.",
         "",
