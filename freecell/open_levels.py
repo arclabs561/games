@@ -6,15 +6,22 @@ table filled a 16 GB runner on eight levels. Two searches are run on them here:
 - **Solver C** (`solver_c.c`) searches every reachable position, one layer of foundations at
   a time, so only one layer is held in memory. It decides a level: lost when no layer is
   left, won when every card reaches home. It gives no line of moves.
+- **Solver B by layers** (`solver_b.c` with "layers"): the same plan of one foundation at a
+  time, written in Solver B's own code, with its own positions, moves and safe-card rule. On
+  a lost level it must count the same positions as Solver C, layer by layer.
+- **Solver C hunting a win** ("win="): the layer with most cards home first, and a line of
+  moves rebuilt at the end; every line is replayed by `rules.replay`.
 - **Solver B** with a larger budget and another seed for the order of its moves, to find a
-  line that wins; every line is replayed by `rules.replay`.
+  line that wins.
 
-A job is named `<solver>:<deal>:<cells>` or `b:<deal>:<cells>:<seed>`. Each writes
-`<out>/open-<job with '-' for ':'>.json`; Solver C also writes the positions of each layer
-to `<out>/layers-<deal>-<cells>.tsv` and its progress to `<out>/progress-<deal>-<cells>.log`.
+A job is named `<solver>-<deal>-<cells>`, with solver c, bl or w, or `b-<deal>-<cells>-<seed>`
+(':' also separates). Each writes `<out>/open-<job>.json`; the layered searches also write
+the positions of each layer to `<out>/layers-<solver>-<deal>-<cells>.tsv`, and Solver C its
+progress to `<out>/progress-<solver>-<deal>-<cells>.log`.
 
-    uv run python -m freecell.open_levels c:11982:4 --out runs/
-    uv run python -m freecell.open_levels b:9499:1:3 --budget 600000000 --out runs/
+    uv run python -m freecell.open_levels c-11982-4 bl-11982-4 --out runs/
+    uv run python -m freecell.open_levels w-164-0 --budget 50000000 --out runs/
+    uv run python -m freecell.open_levels b-9499-1-3 --budget 600000000 --out runs/
 """
 
 import argparse
@@ -45,10 +52,16 @@ OPEN = [
 
 
 def solve_c(
-    problems: list[str], folder: Path, cap: int = 0, layers: bool = False, log: Path | None = None
+    problems: list[str],
+    folder: Path,
+    cap: int = 0,
+    layers: bool = False,
+    log: Path | None = None,
+    memory: int = 1 << 30,
 ) -> list[dict]:
-    """Solver C on each problem; with `layers`, each answer lists its layers' positions."""
-    args = [str(native.binary(SOLVER_C)), str(folder), str(cap), str(1 << 30)]
+    """Solver C on each problem; with `layers`, each answer lists its layers' positions.
+    Waiting positions go to files in `folder` when they take more than `memory` bytes."""
+    args = [str(native.binary(SOLVER_C)), str(folder), str(cap), str(memory)]
     args += ["layers"] if layers else []
     env = dict(os.environ, SOLVER_C_PROGRESS="1") if log else None
     with open(log or os.devnull, "w") as err:
@@ -86,22 +99,80 @@ def solve_c(
     return out
 
 
+def solve_b_layers(problems: list[str]) -> list[dict]:
+    """Solver B, one foundation at a time, on each problem."""
+    proc = subprocess.run(
+        [str(native.binary()), "0", "0", "layers"],
+        input="".join(p + "\n" for p in problems),
+        capture_output=True,
+        text=True,
+    )
+    if proc.returncode:
+        raise RuntimeError(f"Solver B failed: {proc.stderr.strip()}")
+    lines = iter(proc.stdout.splitlines())
+    out = []
+    for text in lines:
+        w = text.split()
+        ans: dict = {"verdict": w[0], "states": int(w[1]), "layers": []}
+        if w[0] == "lost":
+            ans |= {"most_home": int(w[2]), "frozen": sorted(int(x) for x in w[3:])}
+        for row in lines:
+            if row == "end":
+                break
+            ans["layers"].append(tuple(map(int, row.split()[1:])))
+        out.append(ans)
+    return out
+
+
+def hunt_c(problem: str, folder: Path, budget: int, log: Path | None = None) -> native.Answer:
+    """Solver C's search for a win, as a Solver B answer (won, unknown or exhausted)."""
+    args = [str(native.binary(SOLVER_C)), str(folder), "0", str(1 << 30), f"win={budget}"]
+    env = dict(os.environ, SOLVER_C_PROGRESS="1") if log else None
+    with open(log or os.devnull, "w") as err:
+        proc = subprocess.run(
+            args, input=problem + "\n", stdout=subprocess.PIPE, stderr=err, text=True, env=env
+        )
+    if proc.returncode:
+        raise RuntimeError(f"Solver C failed with code {proc.returncode}")
+    words = proc.stdout.split()
+    if words[0] == "exhausted":
+        return native.Answer("exhausted", int(words[1]))
+    return native._parse(words)
+
+
 def run_job(job: str, out: Path, budget: int, cap: int) -> dict:
     """Run one job and write its record."""
-    solver, deal, cells, *rest = job.split(":")
+    solver, deal, cells, *rest = job.replace(":", "-").split("-")
     deal_n, cells_n = int(deal), int(cells)
+    tag = f"{solver}-{deal}-{cells}"
     t0 = time.time()
     rec: dict = {"job": job, "deal": deal_n, "cells": cells_n, "solver": solver}
-    if solver == "c":
-        log = out / f"progress-{deal}-{cells}.log"
-        with tempfile.TemporaryDirectory(dir=out) as tmp:
-            (ans,) = solve_c([native.ms_problem(deal_n, cells_n)], Path(tmp), cap, True, log)
+    if solver in ("c", "bl"):
+        problem = native.ms_problem(deal_n, cells_n)
+        if solver == "c":
+            with tempfile.TemporaryDirectory(dir=out) as tmp:
+                log = out / f"progress-{tag}.log"
+                (ans,) = solve_c([problem], Path(tmp), cap, True, log)
+        else:
+            (ans,) = solve_b_layers([problem])
         layers = ans.pop("layers")
         rows = "".join("\t".join(map(str, r)) + "\n" for r in layers)
-        (out / f"layers-{deal}-{cells}.tsv").write_text("home\tlayer positions\n" + rows)
+        (out / f"layers-{tag}.tsv").write_text("C\tD\tH\tS\tpositions\n" + rows)
         rec |= ans | {"layer_count": len(layers), "largest_layer": max(r[4] for r in layers)}
         if "frozen" in rec:
             rec["frozen"] = [name(c) for c in rec["frozen"]]
+    elif solver == "w":
+        with tempfile.TemporaryDirectory(dir=out) as tmp:
+            ans = hunt_c(
+                native.ms_problem(deal_n, cells_n), Path(tmp), budget, out / f"progress-{tag}.log"
+            )
+        rec |= {"budget": budget, "verdict": ans.verdict, "states": ans.states}
+        if ans.verdict == "won":
+            layout = ms_deal(deal_n)
+            rec["moves"] = len(ans.line)
+            rec["replay"] = replay(Rules(cells=cells_n), layout, ans.line)
+            rec["replay_four_cells"] = replay(Rules(cells=4), layout, ans.line)
+            rec["line"] = [[c, d] for c, d in ans.line]
     else:
         seed = int(rest[0]) if rest else 0
         (ans,) = native.run(
@@ -123,8 +194,12 @@ def run_job(job: str, out: Path, budget: int, cap: int) -> dict:
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("jobs", nargs="+", help="jobs such as c:982:2 or b:9499:1:3")
-    ap.add_argument("--budget", type=int, default=0, help="Solver B: most positions stored")
+    ap.add_argument(
+        "jobs", nargs="+", help="jobs such as c-982-2, bl-982-2, w-9499-1 or b-9499-1-3"
+    )
+    ap.add_argument(
+        "--budget", type=int, default=0, help="Solver B and the hunt: most positions stored"
+    )
     ap.add_argument("--cap", type=int, default=0, help="Solver C: most positions in a layer")
     ap.add_argument("--out", type=Path, default=Path("."))
     args = ap.parse_args()

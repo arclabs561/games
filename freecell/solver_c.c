@@ -310,48 +310,94 @@ static int safe(const Pos *p, int c) {
     }
     return 1;
 }
-static void autoplay(Pos *p, uint64_t *movedmask) {
+/* Play safe cards home until none is left; the cards played go to `played`. */
+static int autoplay(Pos *p, uint8_t *played) {
+    int n = 0;
     for (int again = 1; again;) {
         again = 0;
         for (int i = 0; i < ncols; i++)
             while (p->len[i] && safe(p, p->col[i][p->len[i] - 1])) {
                 int c = p->col[i][--p->len[i]];
                 p->home[suit_of(c)]++;
-                *movedmask |= 1ULL << c;
+                played[n++] = (uint8_t)c;
                 again = 1;
             }
         for (int a = 0; a < p->ncell; a++)
             if (safe(p, p->cell[a])) {
                 int c = p->cell[a];
                 p->home[suit_of(c)]++;
-                *movedmask |= 1ULL << c;
+                played[n++] = (uint8_t)c;
                 p->cell[a] = p->cell[--p->ncell];
                 a--;
                 again = 1;
             }
     }
+    return n;
+}
+static int home_total(const uint8_t *h) { return h[0] + h[1] + h[2] + h[3]; }
+
+enum { TO_HOME = -1, TO_CELL = -2, TO_EMPTY = -3 };
+/* Called with each position q one move after p, safe cards played: the card moved, where
+   it went (a card it went onto, or TO_HOME, TO_CELL, TO_EMPTY) and the cards played home
+   after it. A nonzero return stops the listing and is returned. */
+typedef int (*Visit)(void *ctx, Pos *q, int card, int dest, const uint8_t *played, int nplayed);
+
+static int successors(const Pos *p, Visit f, void *ctx) {
+    Pos q;
+    uint8_t played[52];
+    int empty = -1, r;
+    for (int i = 0; i < ncols; i++) if (!p->len[i]) { empty = i; break; }
+    for (int src = 0; src < ncols + p->ncell; src++) {
+        int c, fromcol = src < ncols;
+        if (fromcol) { if (!p->len[src]) continue; c = p->col[src][p->len[src] - 1]; }
+        else c = p->cell[src - ncols];
+#define LIFT() do { q = *p; if (fromcol) q.len[src]--; \
+                    else { q.cell[src - ncols] = q.cell[--q.ncell]; } } while (0)
+#define SEND(dest) do { int k_ = autoplay(&q, played); \
+                        if ((r = f(ctx, &q, c, (dest), played, k_))) return r; } while (0)
+        if (p->home[suit_of(c)] == rank_of(c) - 1) {
+            LIFT(); q.home[suit_of(c)]++; SEND(TO_HOME);
+        }
+        for (int t = 0; t < ncols; t++) {
+            if (t == src && fromcol) continue;
+            if (!p->len[t] || !fits(c, p->col[t][p->len[t] - 1])) continue;
+            int onto = p->col[t][p->len[t] - 1];
+            LIFT(); q.col[t][q.len[t]++] = (uint8_t)c; SEND(onto);
+        }
+        if (empty >= 0 && !(fromcol && p->len[src] == 1)) {
+            LIFT(); q.col[empty][0] = (uint8_t)c; q.len[empty] = 1; SEND(TO_EMPTY);
+        }
+        if (fromcol && p->ncell < ncells) {
+            LIFT(); q.cell[q.ncell++] = (uint8_t)c; SEND(TO_CELL);
+        }
+#undef SEND
+#undef LIFT
+    }
+    return 0;
 }
 
-/* ---- the search ---- */
+/* ---- deciding a level: layers in order of cards home ---- */
 static Table t16, t32;
-static uint64_t layer_cap;
-static int want_layers;
+static uint64_t layer_cap, budget;
+static int want_layers, win_mode;
 
 typedef struct { int id; uint64_t count; } LayerCount;
 static LayerCount *layerlog; static int nlayerlog, layercap;
 
-static int home_total(const uint8_t *h) { return h[0] + h[1] + h[2] + h[3]; }
+typedef struct { int cur, won, full; uint64_t moved; } Decide;
 
-/* Successor q of the position being expanded, in layer `cur`: 1 if q is won. */
-static int offer(Pos *q, int cur, uint64_t *movedmask, int *full) {
-    autoplay(q, movedmask);
-    if (home_total(q->home) == decksize) return 1;
+static int decide_visit(void *ctx, Pos *q, int card, int dest, const uint8_t *played, int n) {
+    Decide *d = ctx;
+    (void)dest;
+    d->moved |= 1ULL << card;
+    for (int i = 0; i < n; i++) d->moved |= 1ULL << played[i];
+    if (home_total(q->home) == decksize) { d->won = 1; return 1; }
     Code k;
     encode(q, &k);
     int id = layer_id(q->home);
-    if (id != cur) { wait_add(id, &k); return 0; }
+    if (id != d->cur) { wait_add(id, &k); return 0; }
     int r = k.n <= 128 ? table_add(&t16, k.w) : table_add(&t32, k.w);
-    if (r < 0) *full = 1;
+    if (r < 0) d->full = 1;
     return 0;
 }
 
@@ -383,56 +429,22 @@ static void load_waiting(int id, int *full) {
     pending[id] = 0;
 }
 
-/* Expand position p (of layer cur); 1 if a successor is won. */
-static int expand(const Pos *p, int cur, uint64_t *movedmask, int *full) {
-    Pos q;
-    int empty = -1;
-    for (int i = 0; i < ncols; i++) if (!p->len[i]) { empty = i; break; }
-    /* sources: column tops, then cells */
-    for (int src = 0; src < ncols + p->ncell; src++) {
-        int c, fromcol = src < ncols;
-        if (fromcol) { if (!p->len[src]) continue; c = p->col[src][p->len[src] - 1]; }
-        else c = p->cell[src - ncols];
-        uint64_t bit = 1ULL << c;
-#define LIFT() do { q = *p; if (fromcol) q.len[src]--; \
-                    else { q.cell[src - ncols] = q.cell[--q.ncell]; } } while (0)
-        if (p->home[suit_of(c)] == rank_of(c) - 1) {
-            LIFT(); q.home[suit_of(c)]++; *movedmask |= bit;
-            if (offer(&q, cur, movedmask, full)) return 1;
-        }
-        for (int t = 0; t < ncols; t++) {
-            if (t == src && fromcol) continue;
-            if (!p->len[t] || !fits(c, p->col[t][p->len[t] - 1])) continue;
-            LIFT(); q.col[t][q.len[t]++] = (uint8_t)c; *movedmask |= bit;
-            if (offer(&q, cur, movedmask, full)) return 1;
-        }
-        if (empty >= 0 && !(fromcol && p->len[src] == 1)) {
-            LIFT(); q.col[empty][0] = (uint8_t)c; q.len[empty] = 1; *movedmask |= bit;
-            if (offer(&q, cur, movedmask, full)) return 1;
-        }
-        if (fromcol && p->ncell < ncells) {
-            LIFT(); q.cell[q.ncell++] = (uint8_t)c; *movedmask |= bit;
-            if (offer(&q, cur, movedmask, full)) return 1;
-        }
-#undef LIFT
-    }
-    return 0;
-}
-
-static void solve(Pos *start) {
-    uint64_t movedmask = 0, total = 0;
-    int most = 0, full = 0, won = 0;
+static void decide(Pos *start) {
+    uint8_t played[52];
+    Decide d = {0, 0, 0, 0};
+    uint64_t total = 0;
+    int most = 0;
     nlayerlog = 0;
-    autoplay(start, &movedmask);
-    if (home_total(start->home) == decksize) won = 1;
+    int n = autoplay(start, played);
+    for (int i = 0; i < n; i++) d.moved |= 1ULL << played[i];
+    if (home_total(start->home) == decksize) d.won = 1;
     else {
         Code k;
         encode(start, &k);
         wait_add(layer_id(start->home), &k);
     }
     time_t t0 = time(0);
-    while (!won && !full) {
-        /* the waiting layer with fewest cards home */
+    while (!d.won && !d.full) {
         int cur = -1, best = 99;
         for (int id = 0; id < NLAYER; id++)
             if (pending[id]) {
@@ -444,15 +456,16 @@ static void solve(Pos *start) {
         layer_home(cur, home);
         if (home_total(home) > most) most = home_total(home);
         table_clear(&t16); table_clear(&t32);
-        load_waiting(cur, &full);
+        d.cur = cur;
+        load_waiting(cur, &d.full);
         Pos p;
         /* Each table is read in order of insertion; both grow while they are read. */
         uint64_t i16 = 0, i32 = 0;
-        while (!won && !full && (i16 < t16.n || i32 < t32.n)) {
+        while (!d.won && !d.full && (i16 < t16.n || i32 < t32.n)) {
             if (i16 < t16.n) decode(t16.keys + 2 * i16++, home, &p);
             else decode(t32.keys + 4 * i32++, home, &p);
-            if (expand(&p, cur, &movedmask, &full)) won = 1;
-            if (layer_cap && t16.n + t32.n > layer_cap) full = 1;
+            successors(&p, decide_visit, &d);
+            if (layer_cap && t16.n + t32.n > layer_cap) d.full = 1;
         }
         uint64_t count = t16.n + t32.n;
         total += count;
@@ -467,12 +480,12 @@ static void solve(Pos *start) {
                     (unsigned long long)total, (unsigned long long)(waiting_bytes >> 20),
                     (long)(time(0) - t0));
     }
-    if (won) printf("won %llu %d\n", (unsigned long long)total, decksize);
-    else if (full) printf("unknown %llu\n", (unsigned long long)total);
+    if (d.won) printf("won %llu %d\n", (unsigned long long)total, decksize);
+    else if (d.full) printf("unknown %llu\n", (unsigned long long)total);
     else {
         printf("lost %llu %d", (unsigned long long)total, most);
         for (int c = 0; c < 52; c++)
-            if (inplay[c] && !(movedmask >> c & 1)) printf(" %d", c);
+            if (inplay[c] && !(d.moved >> c & 1)) printf(" %d", c);
         printf("\n");
     }
     if (want_layers) {
@@ -485,6 +498,228 @@ static void solve(Pos *start) {
     }
     wait_clear_all();
     table_clear(&t16); table_clear(&t32);
+}
+
+/* ---- finding a win: the layer with most cards home first ----
+
+   The search visits layers again and again: a visit searches one layer from the positions
+   waiting for it, and a layer that gets more positions after its visit is visited again.
+   Every position reached is eventually searched, so the search also ends when the level is
+   lost, but positions can be searched more than once, and only "decide" counts them.
+
+   To give a line of moves, each waiting position keeps its parent: the visit it came from
+   and the parent's place in that visit's table. A visit writes its starting positions, with
+   their parents, to a file. A visit can be run again from that file and puts the same
+   positions in the same places, so a path within it can be found by running it again with
+   a parent for each position. Every code is kept at 32 bytes here. */
+
+typedef struct { uint64_t code[4]; uint32_t pvisit, pindex; } Seed;
+#define NOPARENT 0xFFFFFFFFu
+static Seed *wseed[NLAYER];
+static uint64_t wseedn[NLAYER], wseedcap[NLAYER];
+static int *visit_layer; static uint64_t nvisit, visitcap;
+static uint32_t *parent_of; static uint64_t parent_reserved;
+
+static void seed_path(char *buf, uint64_t v) {
+    snprintf(buf, 600, "%s/fc-c-%d-visit-%llu.bin", folder, (int)getpid(), (unsigned long long)v);
+}
+static void seed_push(int id, const Code *k, uint32_t pv, uint32_t pi) {
+    if (wseedn[id] == wseedcap[id]) {
+        wseedcap[id] = wseedcap[id] ? 2 * wseedcap[id] : 64;
+        wseed[id] = realloc(wseed[id], wseedcap[id] * sizeof(Seed));
+        if (!wseed[id]) { fprintf(stderr, "out of memory\n"); exit(2); }
+    }
+    Seed *s = &wseed[id][wseedn[id]++];
+    memcpy(s->code, k->w, 32);
+    s->pvisit = pv; s->pindex = pi;
+    pending[id] = 1;
+}
+
+typedef struct { int cur, won, full; uint32_t visit, index; int card, dest; } Hunt;
+
+static int hunt_visit(void *ctx, Pos *q, int card, int dest, const uint8_t *played, int n) {
+    Hunt *h = ctx;
+    (void)played; (void)n;
+    if (home_total(q->home) == decksize) { h->won = 1; h->card = card; h->dest = dest; return 1; }
+    Code k;
+    encode(q, &k);
+    int id = layer_id(q->home);
+    if (id != h->cur) { seed_push(id, &k, h->visit, h->index); return 0; }
+    if (table_add(&t32, k.w) < 0) h->full = 1;
+    return 0;
+}
+
+/* Run visit v again, with a parent for each position, until position `target` is placed.
+   Returns how many codes the path holds (written to `path`, starting position first) and
+   sets *seed to the starting position's place in the visit's file. */
+static uint64_t retrace_from;
+static int retrace_cur;
+static int retrace_visit(void *ctx, Pos *q, int card, int dest, const uint8_t *played, int n) {
+    (void)ctx; (void)card; (void)dest; (void)played; (void)n;
+    if (layer_id(q->home) != retrace_cur || home_total(q->home) == decksize) return 0;
+    Code k;
+    encode(q, &k);
+    if (table_add(&t32, k.w) == 1) parent_of[t32.n - 1] = (uint32_t)retrace_from;
+    return 0;
+}
+static uint64_t retrace(uint64_t v, uint32_t target, uint64_t **path, Seed *seed) {
+    char fp[600];
+    seed_path(fp, v);
+    FILE *f = fopen(fp, "rb");
+    if (!f) { fprintf(stderr, "cannot read %s\n", fp); exit(2); }
+    table_clear(&t32);
+    Seed s;
+    uint64_t nseeds = 0;
+    Seed *seeds = 0;
+    while (fread(&s, sizeof s, 1, f) == 1) {
+        seeds = realloc(seeds, (nseeds + 1) * sizeof s);
+        seeds[nseeds++] = s;
+        if (table_add(&t32, s.code) == 1) parent_of[t32.n - 1] = NOPARENT;
+    }
+    fclose(f);
+    retrace_cur = visit_layer[v];
+    uint8_t home[4];
+    layer_home(retrace_cur, home);
+    Pos p;
+    for (uint64_t i = 0; t32.n <= target && i < t32.n; i++) {
+        decode(t32.keys + 4 * i, home, &p);
+        retrace_from = i;
+        successors(&p, retrace_visit, 0);
+    }
+    if (target >= t32.n) { fprintf(stderr, "retrace failed\n"); exit(2); }
+    uint64_t len = 0;
+    for (uint64_t i = target; i != NOPARENT; i = parent_of[i]) len++;
+    *path = malloc(len * 32);
+    uint64_t at = len, i = target, first = 0;
+    for (; i != NOPARENT; i = parent_of[i]) { at--; memcpy(*path + 4 * at, t32.keys + 4 * i, 32); first = i; }
+    *seed = seeds[first]; /* seeds are placed first, in the order of the file */
+    free(seeds);
+    return len;
+}
+
+/* The move from p to the position with code `to` (or to the won position, if to is 0). */
+typedef struct { const uint64_t *to; int to_layer, found; } Step;
+static void print_move(int card, int dest, const uint8_t *played, int n) {
+    if (dest == TO_HOME) printf(" %d>h", card);
+    else if (dest == TO_CELL) printf(" %d>c", card);
+    else if (dest == TO_EMPTY) printf(" %d>e", card);
+    else printf(" %d>%d", card, dest);
+    for (int i = 0; i < n; i++) printf(" %d>h", played[i]);
+}
+static int step_visit(void *ctx, Pos *q, int card, int dest, const uint8_t *played, int n) {
+    Step *st = ctx;
+    int hit;
+    if (!st->to) hit = home_total(q->home) == decksize;
+    else {
+        Code k;
+        encode(q, &k);
+        hit = !memcmp(k.w, st->to, 32) && layer_id(q->home) == st->to_layer;
+    }
+    if (!hit) return 0;
+    print_move(card, dest, played, n);
+    st->found = 1;
+    return 1;
+}
+
+static void hunt(Pos *start) {
+    uint8_t played[52];
+    int n0 = autoplay(start, played);
+    Hunt h = {0, 0, 0, 0, 0, 0, 0};
+    uint64_t total = 0;
+    nvisit = 0;
+    if (home_total(start->home) == decksize) {
+        printf("won 1");
+        for (int i = 0; i < n0; i++) printf(" %d>h", played[i]);
+        printf("\n");
+        return;
+    }
+    Code k;
+    encode(start, &k);
+    seed_push(layer_id(start->home), &k, NOPARENT, NOPARENT);
+    time_t t0 = time(0);
+    while (!h.won && !h.full && (!budget || total < budget)) {
+        int cur = -1, best = -1;
+        for (int id = 0; id < NLAYER; id++)
+            if (pending[id]) {
+                uint8_t hh[4]; layer_home(id, hh);
+                if (home_total(hh) > best) { best = home_total(hh); cur = id; }
+            }
+        if (cur < 0) break;
+        if (nvisit == visitcap) {
+            visitcap = visitcap ? 2 * visitcap : 1024;
+            visit_layer = realloc(visit_layer, visitcap * sizeof *visit_layer);
+        }
+        uint64_t v = nvisit++;
+        visit_layer[v] = cur;
+        table_clear(&t32);
+        char fp[600];
+        seed_path(fp, v);
+        FILE *f = fopen(fp, "wb");
+        if (!f) { fprintf(stderr, "cannot write %s\n", fp); exit(2); }
+        for (uint64_t i = 0; i < wseedn[cur]; i++)
+            if (table_add(&t32, wseed[cur][i].code) == 1)
+                fwrite(&wseed[cur][i], sizeof(Seed), 1, f);
+        fclose(f);
+        free(wseed[cur]); wseed[cur] = 0; wseedn[cur] = wseedcap[cur] = 0;
+        pending[cur] = 0;
+        uint8_t home[4];
+        layer_home(cur, home);
+        h.cur = cur;
+        h.visit = (uint32_t)v;
+        Pos p;
+        for (uint64_t i = 0; i < t32.n && !h.won && !h.full; i++) {
+            decode(t32.keys + 4 * i, home, &p);
+            h.index = (uint32_t)i;
+            successors(&p, hunt_visit, &h);
+            if (layer_cap && t32.n > layer_cap) h.full = 1;
+        }
+        total += t32.n;
+        if (getenv("SOLVER_C_PROGRESS") && (v % 1000 == 0 || t32.n > 1000000))
+            fprintf(stderr, "visit %llu layer %d %d %d %d: %llu (total %llu, %lds)\n",
+                    (unsigned long long)v, home[0], home[1], home[2], home[3],
+                    (unsigned long long)t32.n, (unsigned long long)total, (long)(time(0) - t0));
+    }
+    if (h.won) {
+        /* the move that wins, after the path to the position it is made from */
+        /* Walk back from the position that wins, one visit at a time. */
+        uint64_t **paths = 0, *lens = 0, nseg = 0;
+        uint32_t *segv = 0, v = h.visit, idx = h.index;
+        for (;;) {
+            paths = realloc(paths, (nseg + 1) * sizeof *paths);
+            lens = realloc(lens, (nseg + 1) * sizeof *lens);
+            segv = realloc(segv, (nseg + 1) * sizeof *segv);
+            Seed s;
+            segv[nseg] = v;
+            lens[nseg] = retrace(v, idx, &paths[nseg], &s);
+            nseg++;
+            if (s.pvisit == NOPARENT) break;
+            v = s.pvisit; idx = s.pindex;
+        }
+        printf("won %llu", (unsigned long long)total);
+        for (int i = 0; i < n0; i++) printf(" %d>h", played[i]);
+        Pos p;
+        for (uint64_t sgi = nseg; sgi-- > 0;) {
+            uint8_t home[4];
+            layer_home(visit_layer[segv[sgi]], home);
+            for (uint64_t j = 0; j < lens[sgi]; j++) {
+                decode(paths[sgi] + 4 * j, home, &p);
+                Step st = {0, 0, 0};
+                if (j + 1 < lens[sgi]) { st.to = paths[sgi] + 4 * (j + 1); st.to_layer = visit_layer[segv[sgi]]; }
+                else if (sgi > 0) { st.to = paths[sgi - 1]; st.to_layer = visit_layer[segv[sgi - 1]]; }
+                successors(&p, step_visit, &st);
+                if (!st.found) { fprintf(stderr, "no move found\n"); exit(2); }
+            }
+        }
+        printf("\n");
+        for (uint64_t i = 0; i < nseg; i++) free(paths[i]);
+        free(paths); free(lens); free(segv);
+    } else if (h.full || (budget && total >= budget)) printf("unknown %llu\n", (unsigned long long)total);
+    else printf("exhausted %llu\n", (unsigned long long)total);
+    for (uint64_t v = 0; v < nvisit; v++) { char fp[600]; seed_path(fp, v); unlink(fp); }
+    for (int id = 0; id < NLAYER; id++) {
+        free(wseed[id]); wseed[id] = 0; wseedn[id] = wseedcap[id] = 0; pending[id] = 0;
+    }
+    table_clear(&t32);
 }
 
 /* The Microsoft deal, from the C runtime's rand() seeded with the deal number. */
@@ -505,13 +740,22 @@ int main(int argc, char **argv) {
     if (argc > 1) snprintf(folder, sizeof folder, "%s", argv[1]);
     layer_cap = argc > 2 ? strtoull(argv[2], 0, 10) : 0;
     if (argc > 3) memory_limit = strtoull(argv[3], 0, 10);
-    for (int i = 4; i < argc; i++) if (!strcmp(argv[i], "layers")) want_layers = 1;
+    for (int i = 4; i < argc; i++) {
+        if (!strcmp(argv[i], "layers")) want_layers = 1;
+        else if (!strncmp(argv[i], "win=", 4)) { win_mode = 1; budget = strtoull(argv[i] + 4, 0, 10); }
+    }
     /* address space for each table: as many codes as physical memory could hold */
     uint64_t phys = (uint64_t)sysconf(_SC_PHYS_PAGES) * (uint64_t)sysconf(_SC_PAGESIZE);
     uint64_t reserve = phys / 16 < (1ULL << 32) - 2 ? phys / 16 : (1ULL << 32) - 2;
     if (layer_cap && layer_cap + (1 << 20) < reserve) reserve = layer_cap + (1 << 20);
     table_init(&t16, 2, reserve);
     table_init(&t32, 4, reserve);
+    if (win_mode) {
+        parent_reserved = reserve;
+        parent_of = mmap(0, reserve * 4, PROT_READ | PROT_WRITE,
+                         MAP_PRIVATE | MAP_ANONYMOUS | MAP_NORESERVE, -1, 0);
+        if (parent_of == MAP_FAILED) { fprintf(stderr, "mmap failed\n"); exit(2); }
+    }
     char line[4096];
     while (fgets(line, sizeof line, stdin)) {
         char *tok = strtok(line, " \t\n");
@@ -549,9 +793,7 @@ int main(int argc, char **argv) {
             }
             start.len[i] = (uint8_t)dealtlen[i];
         }
-        /* cards absent from a small deck count as home if below every card in play */
-        for (int s = 0; s < 4; s++) start.home[s] = 0;
-        solve(&start);
+        if (win_mode) hunt(&start); else decide(&start);
         fflush(stdout);
     }
     return 0;

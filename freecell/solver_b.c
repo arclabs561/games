@@ -21,9 +21,17 @@
      unknown <states>
    Arguments, all optional: the budget (the most positions stored, 0 for no limit), a seed
    (0 for the fixed order; another number shuffles ties in the order of moves), then the
-   words "fence" and "auto". With "fence", a lost problem is followed by its positions, one
-   per line, each the 52 numbers of the array, and a line "end". With "auto", safe cards are
-   played home after every move (see settle), which makes the stored positions fewer.
+   words "fence", "auto" and "layers". With "fence", a lost problem is followed by its
+   positions, one per line, each the 52 numbers of the array, and a line "end". With "auto",
+   safe cards are played home after every move (see settle), which makes the stored
+   positions fewer.
+
+   With "layers" (which implies "auto" and ignores the budget and the seed), the positions
+   are taken one foundation at a time (solve_layers below): only the positions with the
+   foundations of the current layer are stored, and a position with more cards home waits in
+   a list for its own layer. Cards never leave the foundations, so a layer is complete once
+   every layer with fewer cards home is done. The output is as above, followed by one line
+   "layer <clubs> <diamonds> <hearts> <spades> <positions>" per layer and a line "end".
 */
 #include <stdint.h>
 #include <stdio.h>
@@ -356,6 +364,116 @@ static void solve(Pos *p, uint64_t budget, int want_fence) {
     }
 }
 
+/* ---- one foundation at a time ---- */
+static void unpack(const uint64_t *k, Pos *p) {
+    memset(p, 0, sizeof *p);
+    for (int c = 0; c < NCARD; c++) {
+        int bit = 6 * c;
+        uint64_t v = k[bit / 64] >> (bit % 64);
+        if (bit % 64 > 58) v |= k[bit / 64 + 1] << (64 - bit % 64);
+        p->under[c] = (uint8_t)(v & 63);
+    }
+    for (int c = 0; c < NCARD; c++) {
+        int u = p->under[c];
+        if (!present[c]) continue;
+        if (u < NCARD) p->covered[u] = 1;
+        else if (u == CELL) p->cells++;
+        else if (u == BASE) p->bases++;
+        else if (u == HOME) { p->home[st(c)]++; p->nhome++; }
+    }
+}
+static int foundation_id(const Pos *p) {
+    return p->home[0] + 14 * (p->home[1] + 14 * (p->home[2] + 14 * p->home[3]));
+}
+typedef struct { uint64_t *k; uint64_t n, cap; } List;
+static List waiting[14 * 14 * 14 * 14];
+
+static void wait_for(int id, const Pos *p) {
+    List *l = &waiting[id];
+    if (l->n == l->cap) {
+        l->cap = l->cap ? 2 * l->cap : 64;
+        l->k = realloc(l->k, l->cap * KEYW * 8);
+        if (!l->k) { fprintf(stderr, "out of memory\n"); exit(2); }
+    }
+    pack(p, l->k + l->n * KEYW);
+    l->n++;
+}
+
+static void solve_layers(Pos *p) {
+    use_auto = 1;
+    nau = 0;
+    memset(moved, 0, sizeof moved);
+    settle(p);
+    for (uint64_t i = 0; i < nau; i++) moved[au[i].card] = 1;
+    nau = 0;
+    int most = p->nhome, won = 0;
+    uint64_t total = 0, nlog = 0;
+    static int logid[14 * 14 * 14 * 14];
+    static uint64_t logn[14 * 14 * 14 * 14];
+    if (p->nhome == deck_size) won = 1;
+    else wait_for(foundation_id(p), p);
+    Move moves[1024];
+    while (!won) {
+        int cur = -1, fewest = 99;
+        for (int id = 0; id < 14 * 14 * 14 * 14; id++)
+            if (waiting[id].n) {
+                int h = id % 14 + id / 14 % 14 + id / 196 % 14 + id / 2744;
+                if (h < fewest) { fewest = h; cur = id; }
+            }
+        if (cur < 0) break;
+        reset();
+        Pos q;
+        for (uint64_t i = 0; i < waiting[cur].n; i++) {
+            unpack(waiting[cur].k + i * KEYW, &q);
+            insert(&q);
+        }
+        free(waiting[cur].k);
+        memset(&waiting[cur], 0, sizeof waiting[cur]);
+        if (fewest > most) most = fewest;
+        /* the stored positions, in the order stored, are the queue */
+        for (uint64_t i = 0; i < nkeys && !won; i++) {
+            unpack(keys + i * KEYW, &q);
+            int n = gen(&q, moves);
+            for (int j = 0; j < n && !won; j++) {
+                do_move(&q, moves[j]);
+                int k = settle(&q);
+                if (q.nhome == deck_size) won = 1;
+                else if (foundation_id(&q) != cur) {
+                    wait_for(foundation_id(&q), &q);
+                    moved[moves[j].card] = 1;
+                    for (uint64_t a = nau - k; a < nau; a++) moved[au[a].card] = 1;
+                } else if (insert(&q)) {
+                    moved[moves[j].card] = 1;
+                    for (uint64_t a = nau - k; a < nau; a++) moved[au[a].card] = 1;
+                }
+                unsettle(&q, k);
+                undo_move(&q, moves[j]);
+            }
+        }
+        total += nkeys;
+        logid[nlog] = cur; logn[nlog++] = nkeys;
+        if (getenv("SOLVER_B_PROGRESS"))
+            fprintf(stderr, "layer %d: %llu (total %llu)\n", cur, (unsigned long long)nkeys,
+                    (unsigned long long)total);
+    }
+    if (won) printf("won %llu\n", (unsigned long long)total);
+    else {
+        printf("lost %llu %d", (unsigned long long)total, most);
+        for (int c = 0; c < NCARD; c++)
+            if (present[c] && !moved[c]) printf(" %d", c);
+        printf("\n");
+    }
+    for (uint64_t i = 0; i < nlog; i++)
+        printf("layer %d %d %d %d %llu\n", logid[i] % 14, logid[i] / 14 % 14,
+               logid[i] / 196 % 14, logid[i] / 2744, (unsigned long long)logn[i]);
+    printf("end\n");
+    for (int id = 0; id < 14 * 14 * 14 * 14; id++) {
+        free(waiting[id].k);
+        memset(&waiting[id], 0, sizeof waiting[id]);
+    }
+    reset();
+}
+
 /* ---- setting up a problem ---- */
 static void setup(Pos *p, int cols[][NCARD], int *len) {
     memset(p, 0, sizeof *p);
@@ -386,10 +504,11 @@ static void ms_layout(long deal, int cols[][NCARD], int *len) {
 int main(int argc, char **argv) {
     uint64_t budget = argc > 1 ? strtoull(argv[1], 0, 10) : 0;
     uint64_t seed = argc > 2 ? strtoull(argv[2], 0, 10) : 0;
-    int want_fence = 0;
+    int want_fence = 0, by_layers = 0;
     for (int i = 3; i < argc; i++) {
         if (!strcmp(argv[i], "fence")) want_fence = 1;
         else if (!strcmp(argv[i], "auto")) use_auto = 1;
+        else if (!strcmp(argv[i], "layers")) by_layers = 1;
     }
     char line[4096];
     static int cols[16][NCARD];
@@ -422,7 +541,8 @@ int main(int argc, char **argv) {
             for (int j = 0; j < len[i]; j++) { present[cols[i][j]] = 1; deck_size++; }
         setup(&p, cols, len);
         rng = seed ? seed * 0x9E3779B97F4A7C15ULL : 0;
-        solve(&p, budget, want_fence);
+        if (by_layers) solve_layers(&p);
+        else solve(&p, budget, want_fence);
         fflush(stdout);
     }
     return 0;
