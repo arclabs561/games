@@ -1,0 +1,22 @@
+{
+ "experiment": "yahtzee-prune",
+ "run": "seed-3",
+ "commit": "9904fc53f1bdd417949590ce20dca4c6d160f449",
+ "platform": "actions",
+ "command": [
+  "python",
+  "-m",
+  "yahtzee.learn",
+  "prune",
+  "--start",
+  "yahtzee/results/learn-base-SEED.jsonl",
+  "--out",
+  "OUT"
+ ],
+ "returncode": 1,
+ "seconds": 1.0,
+ "job_id": "44677814315",
+ "hardware": "GitHub Actions 1000100083",
+ "gpu": null,
+ "python": "3.14.4"
+}
