@@ -90,9 +90,9 @@ TABLE_I = {
 # Part 1: the published games.
 
 
-def framework_players():
+def framework_players(strict: bool = False):
     tabs = bench_data.tables()
-    return bench.framework_bots(tabs, list(bench_data.cm_words()), bench_data.forms())
+    return bench.framework_bots(tabs, list(bench_data.cm_words()), bench_data.forms(), strict)
 
 
 def game_record(board: Board, result) -> dict:
@@ -105,11 +105,21 @@ def game_record(board: Board, result) -> dict:
         "loss": bench.loss_kind(result, board),
         "mean_count": float(np.mean(counts)) if counts else 0.0,
         "empty_turns": sum(1 for _, made in result.clues if not made),
+        "flagged_turns": bench.flagged_turns(result, board),
     }
 
 
 def digest(obj) -> str:
     return hashlib.sha256(json.dumps(obj).encode()).hexdigest()[:16]
+
+
+def published_flags(board: Board, published) -> int:
+    """Turns of a published game whose clue shares a form with an unrevealed word."""
+    left, n = set(board.words), 0
+    for clue, _, picks in published:
+        n += bench.flagged(clue, left)
+        left -= {p.lower() for p in picks}
+    return n
 
 
 def reproduce() -> dict:
@@ -148,6 +158,7 @@ def reproduce() -> dict:
                 "port": rec,
                 "same_transcript": same,
                 "first_different_turn": turn if not same else None,
+                "published_flagged_turns": published_flags(board, published),
                 "digest_published": digest([list(t) for t in published]),
                 "digest_port": digest(ours),
             }
@@ -205,16 +216,37 @@ def our_boards(tabs: dict[str, Vectors], n: int = N_BOARDS) -> tuple[list[Board]
     return [framework_deal(pool, s) for s in range(n)], pool
 
 
+def strict_pool(pool: tuple[str, ...], board: Board) -> tuple[str, ...]:
+    """The clues that share no form with an unrevealed word (bench.shares_form)."""
+    left = board.unrevealed()
+    return tuple(c for c in pool if not bench.flagged(c, left))
+
+
+class StrictGiver:
+    """An expected-value giver whose candidates exclude flagged clues on each board, so
+    that it gives its best remaining choice."""
+
+    def __init__(self, giver):
+        self.giver, self.pool = giver, giver.pool
+
+    def __call__(self, board: Board) -> Clue:
+        self.giver.pool = strict_pool(self.pool, board)
+        return self.giver(board)
+
+
 class PolicyGiver:
     """A plan-C3 policy as a giver: the action with the largest theta . phi."""
 
-    def __init__(self, params: np.ndarray, sp: Space, tau: float, pool: tuple[str, ...]):
+    def __init__(
+        self, params: np.ndarray, sp: Space, tau: float, pool: tuple[str, ...], strict=False
+    ):
         f = len(rl.FEATURES)
         self.theta, self.mu, self.sd = params[:f], params[f : 2 * f], params[2 * f :]
-        self.sp, self.tau, self.pool = sp, tau, pool
+        self.sp, self.tau, self.pool, self.strict = sp, tau, pool, strict
 
     def __call__(self, board: Board) -> Clue:
-        clues, phi = policy_actions(self.sp, self.tau, board, self.pool, 30)
+        pool = strict_pool(self.pool, board) if self.strict else self.pool
+        clues, phi = policy_actions(self.sp, self.tau, board, pool, 30)
         i = int(np.argmax(((phi - self.mu) / self.sd) @ self.theta))
         return Clue(*clues[i])
 
@@ -287,7 +319,10 @@ def lora_space(folder: Path, extra: tuple[str, ...]) -> tuple[Space, dict]:
     have = set(words)
     missing = sorted(w for w in extra if w not in have)
     st = importlib.import_module("sentence_transformers")
-    model = st.SentenceTransformer("Qwen/Qwen3-Embedding-0.6B", device="cpu")
+    torch = importlib.import_module("torch")
+    model = st.SentenceTransformer(
+        "Qwen/Qwen3-Embedding-0.6B", device="cpu", model_kwargs={"torch_dtype": torch.float32}
+    )
     model.load_adapter(str(folder / "adapter"))
     from codenames.embed import TEMPLATES, normalize
 
@@ -335,32 +370,38 @@ def our_guesser_spaces(names, extra: list[str], lora_dir: Path | None) -> tuple[
     return out, info
 
 
-def make_giver(name: str, tabs, pool_ours: tuple[str, ...], fw_givers, info: dict):
+def make_giver(name: str, tabs, pool_ours: tuple[str, ...], fw_givers, info: dict, strict=False):
     if name in FRAMEWORK:
         return fw_givers[name]
     cal = load("calibrate")
+    wrap = StrictGiver if strict else (lambda g: g)
     if name == "gemma2-first":
         b = cal[GEMMA]["best"]
-        return expected_giver(space(GEMMA, b["clue"], b["word"]), b["tau"], candidates=pool_ours)
+        return wrap(
+            expected_giver(space(GEMMA, b["clue"], b["word"]), b["tau"], candidates=pool_ours)
+        )
     if name == "potion-first":
         b = cal["potion"]["best"]
-        return expected_giver(space("potion", b["clue"], b["word"]), b["tau"], candidates=pool_ours)
+        return wrap(
+            expected_giver(space("potion", b["clue"], b["word"]), b["tau"], candidates=pool_ours)
+        )
     c3 = c3_policies()
     info["c3"] = {"task": C3_TASK, "theta_max_difference": c3["theta_max_difference"]}
     sp, tau = chosen_spaces(cal)["potion"]
     counts = eat_counts()
     pool = tuple(c for c in pool_ours if c in counts)
     kind = name.removeprefix("potion-c3-")
-    return PolicyGiver(np.array(c3["params"][kind]), sp, tau, pool)
+    return PolicyGiver(np.array(c3["params"][kind]), sp, tau, pool, strict)
 
 
 def crossplay_many(
-    givers, guessers, n_boards: int = N_BOARDS, lora_dir: Path | None = None
+    givers, guessers, n_boards: int = N_BOARDS, lora_dir: Path | None = None, strict: bool = False
 ) -> list[dict]:
-    """Every giver with every guesser on the same boards; one result per giver."""
+    """Every giver with every guesser on the same boards; one result per giver. With
+    strict, every giver skips clues that share a form with an unrevealed board word."""
     t0 = time.perf_counter()
     tabs = bench_data.tables()
-    fw_givers, fw_guessers = framework_players()
+    fw_givers, fw_guessers = framework_players(strict)
     boards, pool = our_boards(tabs, n_boards)
     pool_ours = tuple(c for c in clue_words() if readable(c, tabs))
     common: dict = {
@@ -378,7 +419,7 @@ def crossplay_many(
     for giver in givers:
         t1 = time.perf_counter()
         info = dict(common)
-        give = make_giver(giver, tabs, pool_ours, fw_givers, info)
+        give = make_giver(giver, tabs, pool_ours, fw_givers, info, strict)
         games = []
         for gname, guess in players.items():
             for seed, b in enumerate(boards):
@@ -400,8 +441,14 @@ def crossplay_many(
     return out
 
 
-def crossplay(giver: str, guessers, n_boards: int = N_BOARDS, lora_dir: Path | None = None) -> dict:
-    return crossplay_many([giver], guessers, n_boards, lora_dir)[0]
+def crossplay(
+    giver: str,
+    guessers,
+    n_boards: int = N_BOARDS,
+    lora_dir: Path | None = None,
+    strict: bool = False,
+) -> dict:
+    return crossplay_many([giver], guessers, n_boards, lora_dir, strict)[0]
 
 
 def lora_run(out: Path, n_boards: int = N_BOARDS) -> None:
@@ -446,9 +493,11 @@ def lora_run(out: Path, n_boards: int = N_BOARDS) -> None:
     )  # fmt: skip
     out.mkdir(parents=True, exist_ok=True)
     (out / "data.json").write_text(json.dumps(info, indent=1) + "\n")
-    for giver in GIVERS:
-        res = crossplay_many([giver], ["lora-c8"], n_boards, Path(c8) / LORA_RUN)[0]
-        (out / f"crossplay-lora-{giver}.json").write_text(json.dumps(res) + "\n")
+    for strict in (False, True):
+        for giver in GIVERS:
+            res = crossplay_many([giver], ["lora-c8"], n_boards, Path(c8) / LORA_RUN, strict)[0]
+            tag = "strict-" if strict else ""
+            (out / f"crossplay-lora-{tag}{giver}.json").write_text(json.dumps(res) + "\n")
 
 
 # Part 3: analysis.
@@ -500,15 +549,28 @@ REPORT_FILE = RESULTS / "bench.md"
 LOSS_CODE = {None: "-", "A": "A", "O": "O", "turns": "T"}
 
 
-def collect(runs: Path, lora: Path | None) -> dict:
-    """Compact the raw outputs of the workflow run (and of the C8 job) into one file."""
-    rep = json.loads((runs / "reproduce.json").read_text())["games"]
+def latest(runs: list[Path], name: str) -> Path | None:
+    found = [r / name for r in runs if (r / name).exists()]
+    return found[-1] if found else None
+
+
+def read_latest(runs: list[Path], name: str):
+    path = latest(runs, name)
+    if path is None:
+        raise FileNotFoundError(f"{name} is in none of {runs}")
+    return json.loads(path.read_text())
+
+
+def collect(runs: list[Path], lora: Path | None) -> dict:
+    """Compact the raw outputs of the workflow runs (later runs replace earlier ones) and
+    of the C8 job into one file."""
+    rep = read_latest(runs, "reproduce.json")["games"]
     out: dict = {
         "status": "exploratory: no plan was written before these runs",
-        "source": json.loads((runs / "source.json").read_text()),
+        "source": {"runs": [json.loads((r / "source.json").read_text()) for r in runs]},
         "data": {
-            "vectors": json.loads((runs / "vectors.json").read_text()),
-            "forms": json.loads((runs / "forms.json").read_text()),
+            "vectors": read_latest(runs, "vectors.json"),
+            "forms": read_latest(runs, "forms.json"),
         },
         "published": published_table(),
         "reproduce": [
@@ -523,12 +585,14 @@ def collect(runs: Path, lora: Path | None) -> dict:
                 g["published"]["turns"],
                 g["published"]["winner"],
                 g["published"]["A"],
+                g.get("published_flagged_turns"),
             ]
             for g in rep
         ],
     }
-    if (runs / "original.json").exists():
-        og = json.loads((runs / "original.json").read_text())["games"]
+    orig = latest(runs, "original.json")
+    if orig:
+        og = json.loads(orig.read_text())["games"]
         out["original"] = [
             [
                 g["codemaster"],
@@ -540,31 +604,45 @@ def collect(runs: Path, lora: Path | None) -> dict:
             ]
             for g in og
         ]
-        versions = sorted(runs.glob("original/*/versions.txt"))
+        versions = sorted(orig.parent.glob("original/*/versions.txt"))
         if versions:
             out["data"]["original_versions"] = versions[0].read_text().split()
-    slices = [json.loads(p.read_text()) for p in sorted(runs.glob("crossplay-*.json"))]
+    slices: dict[tuple[bool, str, str], dict] = {}
+    for r in runs:
+        for p in sorted(r.glob("crossplay-*.json")):
+            sl = json.loads(p.read_text())
+            slices[(sl.get("strict", False), sl["giver"], "games")] = sl  # later runs replace
     if lora:
-        slices += [json.loads(p.read_text()) for p in sorted(lora.glob("crossplay-lora-*.json"))]
+        for p in sorted(lora.glob("crossplay-lora-*.json")):
+            sl = json.loads(p.read_text())
+            slices[(sl.get("strict", False), sl["giver"], "lora")] = sl
         out["data"]["lora_job"] = json.loads((lora / "data.json").read_text())
         if (lora / "manifest.json").exists():
             out["source"]["lora_job"] = json.loads((lora / "manifest.json").read_text())
-    cells: dict[str, dict] = {}
+    variants: dict[str, dict] = {"all": {}, "strict": {}}
     info: dict[str, dict] = {}
-    for sl in slices:
-        info.setdefault(sl["giver"], {}).update(sl["info"])
+    for (strict, giver, kind), sl in sorted(slices.items()):
+        if kind == "info":
+            continue
+        info.setdefault(giver, {}).update(sl["info"])
+        cells = variants["strict" if strict else "all"]
         for g in sl["games"]:
             c = cells.setdefault(
-                f"{g['giver']}/{g['guesser']}", {"seeds": [], "score": [], "loss": "", "count": []}
+                f"{g['giver']}/{g['guesser']}",
+                {"seeds": [], "score": [], "loss": "", "count": [], "turns": [], "flagged": []},
             )
             c["seeds"].append(g["seed"])
             c["score"].append(g["score"])
             c["loss"] += LOSS_CODE[g.get("loss")] if "error" not in g else "E"
             c["count"].append(round(g.get("mean_count", 0.0), 3))
-    for c in cells.values():
-        assert c["seeds"] == list(range(len(c["seeds"])))
-        del c["seeds"]
-    out["crossplay"] = {"info": info, "cells": dict(sorted(cells.items()))}
+            c["turns"].append(g.get("turns", 0))
+            c["flagged"].append(g.get("flagged_turns"))
+    for cells in variants.values():
+        for c in cells.values():
+            assert c["seeds"] == list(range(len(c["seeds"])))
+            del c["seeds"]
+    out["crossplay"] = {"info": info, "all": dict(sorted(variants["all"].items()))}
+    out["crossplay"]["strict"] = dict(sorted(variants["strict"].items()))
     return out
 
 
@@ -576,7 +654,7 @@ def analyze(runs: dict) -> dict:
     out: dict = {"status": runs["status"], "source": runs["source"], "data": runs["data"]}
     # Reproduction.
     by: dict[str, list] = {}
-    for cm, gu, _seed, same, first, sc, sct, pturns, pwin, pa in runs["reproduce"]:
+    for cm, gu, _seed, same, first, sc, sct, pturns, pwin, pa, _flags in runs["reproduce"]:
         by.setdefault(f"{cm}/{gu}", []).append((same, first, sc, sct, pturns, pwin, pa))
     rep = {}
     for k, gs in by.items():
@@ -585,8 +663,10 @@ def analyze(runs: dict) -> dict:
             "games": len(gs),
             "same_transcript": sum(g[0] for g in gs),
             "same_score": sum(g[2] == p for g, p in zip(gs, pub_rule, strict=True)),
-            "port_mean": round(float(np.mean([g[2] for g in gs])), 2),
-            "port_mean_table_rule": round(float(np.mean([g[3] for g in gs])), 2),
+            "port_mean": round(float(np.mean([g[2] for g in gs if g[2] is not None])), 2),
+            "port_mean_table_rule": round(
+                float(np.mean([g[3] for g in gs if g[3] is not None])), 2
+            ),
             "first_different_turns": sorted(Counter(g[1] for g in gs if not g[0]).items()),
         } | runs["published"][k]
     out["reproduction"] = rep
@@ -600,8 +680,26 @@ def analyze(runs: dict) -> dict:
             "seeds": sorted({g[2] for g in og}),
             "seconds_per_game": round(float(np.mean([g[5] for g in og])), 1),
         }
-    # Cross-play.
-    cells = runs["crossplay"]["cells"]
+    # Cross-play, with every clue and with flagged clues replaced by the next choice.
+    out["crossplay"] = {"info": runs["crossplay"]["info"]}
+    for variant in ("all", "strict"):
+        if runs["crossplay"].get(variant):
+            out["crossplay"][variant] = crossplay_summary(runs["crossplay"][variant])
+    if runs["crossplay"].get("strict"):
+        out["crossplay"]["strict_minus_all"] = strict_effect(
+            runs["crossplay"]["all"], runs["crossplay"]["strict"]
+        )
+    flags = [r[10] for r in runs["reproduce"] if r[10] is not None]
+    if flags:
+        turns = [r[7] for r in runs["reproduce"] if r[10] is not None]
+        out["reproduction_flags"] = {"flagged_turns": sum(flags), "turns": sum(turns)}
+    return out
+
+
+GROUPS = {"framework guessers": FRAMEWORK, "our guessers": ("gemma2", "potion", "lora-c8")}
+
+
+def crossplay_summary(cells: dict) -> dict:
     scores = {k: np.array(v["score"], dtype=float) for k, v in cells.items()}
     matrix = {
         k: summarize(v["score"])
@@ -611,15 +709,16 @@ def analyze(runs: dict) -> dict:
             "opponent": v["loss"].count("O"),
             "other_losses": len(v["loss"]) - sum(v["loss"].count(x) for x in "-AO"),
             "mean_count": round(float(np.mean(v["count"])), 2),
+            "flagged_turns": sum(x or 0 for x in v["flagged"]),
+            "turns": sum(v["turns"]),
         }
         for k, v in cells.items()
     }
     givers = [g for g in GIVERS if any(k.startswith(g + "/") for k in cells)]
     guessers = [g for g in GUESSERS if any(k.endswith("/" + g) for k in cells)]
-    groups = {"framework guessers": FRAMEWORK, "our guessers": ("gemma2", "potion", "lora-c8")}
     means = {}
     for gv in givers:
-        for label, group in groups.items():
+        for label, group in GROUPS.items():
             members = [gu for gu in group if f"{gv}/{gu}" in cells and model_of(gv) != gu]
             if members:
                 m = np.mean([scores[f"{gv}/{gu}"] for gu in members], axis=0)
@@ -630,7 +729,7 @@ def analyze(runs: dict) -> dict:
             ka, kb = f"{a}/{gu}", f"{b}/{gu}"
             if ka in cells and kb in cells and gu not in (model_of(a), model_of(b)):
                 paired[f"{a} minus {b} / {gu}"] = summarize((scores[ka] - scores[kb]).tolist())
-        for label, group in groups.items():
+        for label, group in GROUPS.items():
             members = [
                 gu for gu in group
                 if f"{a}/{gu}" in cells and f"{b}/{gu}" in cells and gu not in (model_of(a), model_of(b))
@@ -638,14 +737,41 @@ def analyze(runs: dict) -> dict:
             if members:
                 d = np.mean([scores[f"{a}/{gu}"] - scores[f"{b}/{gu}"] for gu in members], axis=0)
                 paired[f"{a} minus {b} / {label}"] = summarize(d.tolist()) | {"guessers": members}
-    out["crossplay"] = {
+    return {
         "givers": givers,
         "guessers": guessers,
         "cells": matrix,
         "giver_means": means,
         "paired": paired,
-        "info": runs["crossplay"]["info"],
     }
+
+
+def strict_effect(all_cells: dict, strict_cells: dict) -> dict:
+    """Per giver: the share of its turns with a flagged clue (every guesser pooled), and
+    the change in its mean score over the guessers that are not its own model when
+    flagged clues are replaced, paired by board."""
+    out = {}
+    for gv in GIVERS:
+        keys = [k for k in all_cells if k.startswith(gv + "/") and k in strict_cells]
+        if not keys:
+            continue
+        flagged = sum(x or 0 for k in keys for x in all_cells[k]["flagged"])
+        turns = sum(t for k in keys for t in all_cells[k]["turns"])
+        others = [k for k in keys if model_of(gv) != k.split("/")[1]]
+        d = np.mean(
+            [
+                np.array(strict_cells[k]["score"], float) - np.array(all_cells[k]["score"], float)
+                for k in others
+            ],
+            axis=0,
+        )
+        out[gv] = {
+            "flagged_turns": flagged,
+            "turns": turns,
+            "share": round(flagged / turns, 4) if turns else None,
+            "strict_flagged_turns": sum(x or 0 for k in keys for x in strict_cells[k]["flagged"]),
+            "score_change": summarize(d.tolist()) | {"guessers": [k.split("/")[1] for k in others]},
+        }
     return out
 
 
@@ -659,9 +785,158 @@ PAIRED = (
 )
 
 
+NAMES = {
+    "w2v": "framework w2v",
+    "glove": "framework GloVe",
+    "w2vglove": "framework w2v+GloVe",
+    "gemma2-first": "EmbeddingGemma 2, first choice",
+    "potion-first": "potion, first choice",
+    "potion-c3-self": "potion, C3 self-play",
+    "potion-c3-population": "potion, C3 population",
+    "gemma2": "EmbeddingGemma 2",
+    "potion": "potion",
+    "lora-c8": "C8 LoRA encoder",
+}
+
+
+def fmt(s: dict, digits: int = 2) -> str:
+    lo, hi = s["ci"]
+    return f"{s['mean']:.{digits}f} ({lo:.{digits}f} to {hi:.{digits}f})"
+
+
 def report(summary: dict) -> str:
-    """bench.md, from bench.json."""
-    return json.dumps(summary["status"]) + "\n"
+    """bench.md, from bench.json alone."""
+    rep, cp = summary["reproduction"], summary["crossplay"]
+    lines = [
+        "# Codenames: the AI competition framework's word-vector bots",
+        "",
+        "Exploratory. No plan was written before these runs (experiments/METHOD.md); the numbers",
+        "motivate a planned comparison and are not its result. Written by",
+        "`python -m codenames.bench_play analyze` from `bench-runs.json`.",
+        "",
+        "## 1. The published games, replayed",
+        "",
+        "The 900 single-team games of Stephenson et al. (2025, Table I), replayed with",
+        "`codenames/bench.py` on the framework's boards (seeds 0 to 99) and compared move by",
+        "move with the published logs. A score is the number of turns to find the 9 red words,",
+        'or 25 for a loss. "Table I" is copied from arXiv 2412.11373v2. "Logs" is recomputed',
+        "here from the published logs, once by Table I's apparent rule (25 only for the",
+        "assassin) and once by the framework's rule (25 also for the last blue word).",
+        "",
+        "| Codemaster / guesser | Table I mean (loss %) | Logs, Table I's rule | Logs, framework rule"
+        " | Port: same moves | Port: same score | Port mean |",
+        "|---|---|---|---|---|---|---|",
+    ]
+    for k, r in rep.items():
+        t = r["table_i"]
+        ti = (
+            f"{t['mean']:.2f} ({t['loss_percent']}%)"
+            if t["mean"] is not None
+            else "not in the table"
+        )
+        lines.append(
+            f"| {k} | {ti} | {r['mean_table_rule']:.2f} | {r['mean_framework_rule']:.2f}"
+            f" ({r['losses']} losses) | {r['same_transcript']} of {r['games']}"
+            f" | {r['same_score']} of {r['games']} | {r['port_mean']:.2f} |"
+        )
+    oc = summary.get("original_code")
+    if oc:
+        lines += [
+            "",
+            f"The framework's own code, at the pinned commit, played {oc['games']} of these games"
+            f" ({oc['pairs']} pairs, seeds {oc['seeds'][0]} to {oc['seeds'][-1]}) on a GitHub-hosted"
+            f" runner: {oc['same_as_published']} have the published moves and {oc['same_as_port']}"
+            f" the port's ({oc['seconds_per_game']} s a game).",
+        ]
+    cp = summary["crossplay"]
+    lines += [
+        "",
+        "## 2. Cross-play on this package's words",
+        "",
+        "Mean score over 200 boards of `words.txt`, dealt as the framework deals them (seeds 0"
+        " to 199), with 95% bootstrap intervals over boards (10,000 draws, seed 0). Lower is"
+        " better; 25 is a loss. Rows are givers, columns guessers; a giver with its own model's"
+        " guesser is in bold.",
+    ]
+    lines += crossplay_tables(cp["all"], "Every clue that the giver's own rule allows")
+    if "strict" in cp:
+        lines += crossplay_tables(
+            cp["strict"],
+            "Clues that share a form with an unrevealed board word replaced by the giver's next choice",
+        )
+        lines += [
+            "",
+            "### Clues that share a form with a board word",
+            "",
+            "A clue is flagged when it and an unrevealed board word share their first five letters,"
+            " or one contains the other (`bench.shares_form`). Turns flagged with every clue"
+            " allowed, pooled over guessers, and the change in mean score over the guessers that"
+            " are not the giver's own model when flagged clues are replaced (paired by board):",
+            "",
+            "| Giver | Flagged turns | Share | Flagged after replacing | Change in mean score (95% interval) |",
+            "|---|---|---|---|---|",
+        ]
+        for gv, e in cp["strict_minus_all"].items():
+            lines.append(
+                f"| {NAMES[gv]} | {e['flagged_turns']} of {e['turns']} | {100 * e['share']:.1f}%"
+                f" | {e['strict_flagged_turns']} | {fmt(e['score_change'])} |"
+            )
+    return "\n".join(lines) + "\n"
+
+
+def crossplay_tables(cp: dict, title: str) -> list[str]:
+    lines = [
+        "",
+        f"### {title}",
+        "",
+        "| Giver \\ guesser | " + " | ".join(NAMES[g] for g in cp["guessers"]) + " |",
+        "|---|" + "---|" * len(cp["guessers"]),
+    ]
+    for gv in cp["givers"]:
+        row = []
+        for gu in cp["guessers"]:
+            c = cp["cells"].get(f"{gv}/{gu}")
+            cell = "" if c is None else fmt(c, 1)
+            row.append(f"**{cell}**" if c is not None and model_of(gv) == gu else cell)
+        lines.append(f"| {NAMES[gv]} | " + " | ".join(row) + " |")
+    lines += [
+        "",
+        "Games won of 200 (losses on the assassin / on the last opponent word):",
+        "",
+        "| Giver \\ guesser | " + " | ".join(NAMES[g] for g in cp["guessers"]) + " |",
+        "|---|" + "---|" * len(cp["guessers"]),
+    ]
+    for gv in cp["givers"]:
+        row = []
+        for gu in cp["guessers"]:
+            c = cp["cells"].get(f"{gv}/{gu}")
+            row.append("" if c is None else f"{c['wins']} ({c['assassin']} / {c['opponent']})")
+        lines.append(f"| {NAMES[gv]} | " + " | ".join(row) + " |")
+    lines += [
+        "",
+        "Each giver averaged, board by board, over the guessers of a group that are not its own model:",
+        "",
+        "| Giver | Group | Guessers | Mean score (95% interval) |",
+        "|---|---|---|---|",
+    ]
+    for k, m in cp["giver_means"].items():
+        gv, label = k.split(" with ")
+        lines.append(
+            f"| {NAMES[gv]} | {label} | {', '.join(NAMES[g] for g in m['guessers'])} | {fmt(m)} |"
+        )
+    lines += [
+        "",
+        "Paired differences in score, board by board (negative: the first giver finishes sooner):",
+        "",
+        "| Difference | Guesser | Mean (95% interval) |",
+        "|---|---|---|",
+    ]
+    for k, d in cp["paired"].items():
+        pair, gu = k.split(" / ")
+        a, b = pair.split(" minus ")
+        who = gu if gu in GROUPS else NAMES[gu]
+        lines.append(f"| {NAMES[a]} minus {NAMES[b]} | {who} | {fmt(d)} |")
+    return lines
 
 
 def main() -> None:
@@ -677,12 +952,17 @@ def main() -> None:
     c.add_argument("--guessers", nargs="+", default=[g for g in GUESSERS if g != "lora-c8"])
     c.add_argument("--boards", type=int, default=N_BOARDS)
     c.add_argument("--lora", type=Path, default=None, help="folder of the C8 run (private)")
+    c.add_argument(
+        "--strict", action="store_true", help="skip clues that share a form with a board word"
+    )
     c.add_argument("--out", type=Path, required=True)
     lr = sub.add_parser("lora-run", help="the C8 column, inside a Hugging Face Job")
     lr.add_argument("--boards", type=int, default=N_BOARDS)
     lr.add_argument("--out", type=Path, required=True)
     co = sub.add_parser("collect", help="compact a run's outputs into results/bench-runs.json")
-    co.add_argument("--runs", type=Path, required=True)
+    co.add_argument(
+        "--runs", type=Path, nargs="+", required=True, help="later runs replace earlier"
+    )
     co.add_argument("--lora", type=Path, default=None, help="outputs of the C8 job")
     sub.add_parser("analyze", help="results/bench.json and bench.md from bench-runs.json")
     args = parser.parse_args()
@@ -695,7 +975,7 @@ def main() -> None:
         res = compare_original(args.logs)
         args.out.write_text(json.dumps(res) + "\n")
     elif args.cmd == "crossplay":
-        res = crossplay(args.giver, args.guessers, args.boards, args.lora)
+        res = crossplay(args.giver, args.guessers, args.boards, args.lora, args.strict)
         args.out.write_text(json.dumps(res) + "\n")
     elif args.cmd == "lora-run":
         lora_run(args.out, args.boards)

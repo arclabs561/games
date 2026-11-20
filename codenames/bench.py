@@ -119,6 +119,34 @@ def framework_legal(clue: str, forms: tuple[str, str], board: Sequence[str]) -> 
     return not any(w in (lemma, stem) or clue in w or w in clue for w in board)
 
 
+# A stricter check than either rule: does a clue share a word form with a board word?
+
+FORM_PREFIX = 5
+
+
+def shares_form(clue: str, word: str, k: int = FORM_PREFIX) -> bool:
+    """A rough flag for a clue that is a form of a board word (residency and residence,
+    governing and governor): one contains the other, or they share a prefix of k or more
+    letters. It flags some unrelated pairs too (carpet and carpenter)."""
+    return (
+        clue in word or word in clue or (len(clue) >= k and len(word) >= k and clue[:k] == word[:k])
+    )
+
+
+def flagged(clue: str, words) -> bool:
+    return any(shares_form(clue, w) for w in words)
+
+
+def flagged_turns(result: Result, board: Board) -> int:
+    """Turns whose clue shares a form with a word still unrevealed when it was given."""
+    left = set(board.words)
+    n = 0
+    for clue, made in result.clues:
+        n += flagged(clue.word, left)
+        left -= set(made)
+    return n
+
+
 # The bots.
 
 
@@ -136,6 +164,7 @@ class FrameworkCodemaster:
     clues: list[str]
     forms: dict[str, tuple[str, str]]
     threshold: float = THRESHOLD
+    strict: bool = False  # also skip clues that share a form with a board word
     _boards: dict = field(default_factory=dict, repr=False)
 
     def __post_init__(self):
@@ -223,10 +252,15 @@ class FrameworkGuesser:
         ]
 
 
-def framework_bots(tables: dict[str, Vectors], clues: list[str], forms: dict[str, tuple[str, str]]):
+def framework_bots(
+    tables: dict[str, Vectors],
+    clues: list[str],
+    forms: dict[str, tuple[str, str]],
+    strict: bool = False,
+):
     """The three codemasters and three guessers, by the framework's names."""
     vecs = {name: Vectors.concat([tables[t] for t in parts]) for name, parts in BOTS.items()}
-    givers = {n: FrameworkCodemaster(n, v, clues, forms) for n, v in vecs.items()}
+    givers = {n: FrameworkCodemaster(n, v, clues, forms, strict=strict) for n, v in vecs.items()}
     guessers = {n: FrameworkGuesser(n, v) for n, v in vecs.items()}
     return givers, guessers
 

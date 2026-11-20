@@ -331,3 +331,25 @@ def test_bootstrap_interval_and_summary():
     x = np.r_[np.full(50, 4.0), np.full(50, 6.0)]
     lo, hi = bench_play.boot(x)
     assert lo < 5.0 < hi and hi - lo == pytest.approx(2 * 1.96 * 1.0 / 10, abs=0.06)
+
+
+def test_shares_form():
+    assert bench.shares_form("residency", "residence")
+    assert bench.shares_form("governing", "governor")
+    assert bench.shares_form("teaching", "teacher")
+    assert bench.shares_form("fire", "firefly")  # containment, at any length
+    assert not bench.shares_form("tiger", "tight")  # four letters in common
+    assert not bench.shares_form("ocean", "water")
+    assert bench.flagged("teaching", ["dog", "teacher"]) and not bench.flagged("teaching", ["dog"])
+
+
+def test_strict_codemaster_skips_flagged_clues():
+    pool, clues, vecs, forms = world(2)
+    board = bench.framework_deal(pool, 2)
+    loose = bench.FrameworkCodemaster("glove", as_vectors(vecs), clues, forms)
+    strict = bench.FrameworkCodemaster("glove", as_vectors(vecs), clues, forms, strict=True)
+    _, illegal_loose = loose.board_tables(board)
+    _, illegal_strict = strict.board_tables(board)
+    assert (illegal_strict >= illegal_loose).all()
+    clue = strict(board).word
+    assert not bench.flagged(clue, board.unrevealed())
