@@ -72,6 +72,12 @@ egyptian_ratscrew = [
     "numpy>=2.5",
     "seaborn>=0.13.2",
 ]
+maps = [
+    "matplotlib>=3.11",
+    "numpy>=2.5",
+    "scikit-learn>=1.9",
+    "scipy>=1.18",
+]
 mastermind = [
     "matplotlib>=3.11",
     "numpy>=2.5",
@@ -100,7 +106,7 @@ build-backend = "uv_build"
 
 [tool.uv.build-backend]
 module-root = ""
-module-name = ["boggle", "cannonballs", "codenames", "drive_ya_nuts", "egyptian_ratscrew", "ev_nova", "freecell", "hanabi", "mastermind", "peggle", "pokemon", "spot_it", "tenzi", "yahtzee", "yugioh"]
+module-name = ["boggle", "cannonballs", "codenames", "drive_ya_nuts", "egyptian_ratscrew", "ev_nova", "freecell", "hanabi", "maps", "mastermind", "peggle", "pokemon", "spot_it", "tenzi", "yahtzee", "yugioh"]
 
 [tool.ruff]
 line-length = 100
