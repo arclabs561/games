@@ -170,6 +170,13 @@ def test_digest_is_compact_and_reads_both_files(tmp_path):
     }
     assert rows["org/m @ novita : setup"]["status"] == ["exception"]
     assert d["pincheck"]["quantization"] == {"org/m": ["Novita: fp8"]}
+    from codenames.providers import COLUMNS, table_text
+
+    t = json.loads(table_text(d))
+    assert t["columns"] == list(COLUMNS) and len(t["logs"]) == 1
+    row = dict(zip(COLUMNS, t["logs"][0], strict=True))
+    assert row["experiment"] == "c10" and row["requested"] == "deepinfra 1" and row["calls"] == 1
+    assert t["pincheck"][1][:3] == ["org/m @ novita : suffix", "200 1", "None via novita 1"]
 
 
 class Served:

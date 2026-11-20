@@ -38,6 +38,8 @@ from collections import Counter
 from collections.abc import Iterable, Mapping
 from pathlib import Path
 
+from codenames.hosted import served_provider
+
 # --- reading what a reply says about who served it ----------------------------------------
 
 ID_SHAPES = (
@@ -93,7 +95,8 @@ def normalize(rec: Mapping) -> dict:
         "requested": rec.get("provider"),
         "model": rec.get("model"),
         "served_model": rec.get("served", rec.get("served_model")),
-        "served_provider": served.get("provider"),
+        "served_provider": served_provider(served) if served else None,
+        "pin_held": rec.get("pin_held"),
         "quantization": served.get("quantization"),
         "id_shape": id_shape(rec.get("id", served.get("id"))),
         "finish": rec.get("finish", rec.get("finish_reason")),
@@ -126,6 +129,7 @@ def summarize(calls: list[dict]) -> dict:
         "served_models": count("served_model"),
         "served_providers": count("served_provider"),
         "quantizations": count("quantization"),
+        "pin_held": count("pin_held"),
         "id_shapes": count("id_shape"),
         "finish": count("finish"),
         "empty": sum(c["empty"] for c in answered),
@@ -432,6 +436,52 @@ def digest(audit_file: Path, check_file: Path) -> dict:
     }
 
 
+COLUMNS = (
+    "experiment", "run", "log", "commit", "requested", "served_models", "served_providers",
+    "id_shapes", "calls", "answered", "empty", "empty_with_stop", "length", "retried",
+    "seconds_median", "seconds_median_empty", "tokens_intercept", "tokens_slope", "first",
+    "last",
+)  # fmt: skip
+
+
+def counts_text(counts: dict) -> str:
+    return "; ".join(f"{k} {v}" for k, v in counts.items())
+
+
+def table_text(d: dict) -> str:
+    """The digest as JSON with one line per log and per pinning check, for results/."""
+    rows = []
+    for experiment, by_run in d["runs"].items():
+        for run, r in by_run.items():
+            for name, log in r["logs"].items():
+                row = {"experiment": experiment, "run": run, "log": name, "commit": r["commit"]}
+                row |= {k: counts_text(v) if isinstance(v, dict) else v for k, v in log.items()}
+                rows.append([row[c] for c in COLUMNS])
+    checks = [
+        [key, counts_text(dict(Counter(map(str, v["status"])))), counts_text(dict(Counter(v["served"]))),
+         counts_text(dict(Counter(v["id_shapes"]))), v.get("error")]
+        for key, v in sorted(d["pincheck"]["rows"].items())
+    ]  # fmt: skip
+    head = {k: d[k] for k in ("what", "how_known", "unread")}
+    head["pincheck_time"], head["pincheck_spent"] = d["pincheck"]["time"], d["pincheck"]["spent"]
+    lines = ["{"] + [f" {json.dumps(k)}: {json.dumps(v)}," for k, v in head.items()]
+    lines.append(f' "columns": {json.dumps(list(COLUMNS))},')
+    lines.append(' "logs": [')
+    lines += [f"  {json.dumps(r)}," for r in rows[:-1]] + [f"  {json.dumps(rows[-1])}", " ],"]
+    lines.append(
+        ' "pincheck_columns": ["model @ provider : way", "status", "served", "ids", "error"],'
+    )
+    lines.append(' "pincheck": [')
+    lines += [f"  {json.dumps(r)}," for r in checks[:-1]] + [f"  {json.dumps(checks[-1])}", " ],"]
+    quant = d["pincheck"]["quantization"]
+    lines.append(' "openrouter_quantization": {')
+    items = [f"  {json.dumps(k)}: {json.dumps(v)}" for k, v in sorted(quant.items())]
+    lines += [x + "," for x in items[:-1]] + [items[-1], " }", "}"]
+    text = "\n".join(lines) + "\n"
+    json.loads(text)  # it parses
+    return text
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     sub = parser.add_subparsers(dest="command", required=True)
@@ -451,7 +501,7 @@ def main(argv: list[str] | None = None) -> int:
         import hashlib
 
         args.out.mkdir(parents=True, exist_ok=True)
-        text = json.dumps(digest(args.audit, args.check), indent=1, sort_keys=True) + "\n"
+        text = table_text(digest(args.audit, args.check))
         (args.out / "llm-providers.json").write_text(text)
         print("sha256", hashlib.sha256(text.encode()).hexdigest(), len(text))
         return 0
