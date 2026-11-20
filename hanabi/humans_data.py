@@ -1,10 +1,12 @@
 """The open human dataset of the AH2AC2 challenge, read with the standard library.
 
 Dizdarević et al. (2025) released 1,858 two-player and 1,221 three-player games played on
-hanab.live, each with its deck and its actions, under the Apache 2.0 license (the dataset
-card of `ah2ac2/datasets` on Hugging Face). They come as four `.safetensors` files: a
-training and a validation file for each number of players. This module downloads them,
-reads them without numpy, and turns each game into this package's vocabulary.
+hanab.live, each with its deck and its actions. The dataset card of `ah2ac2/datasets` on
+Hugging Face gives the license as `apache-2.0` and says nothing else; hanab.live publishes no
+terms for its game records. So this repository keeps only numbers derived from each game,
+never the decks or the actions (see the README). The games come as four `.safetensors`
+files: a training and a validation file for each number of players. This module downloads
+them, reads them without numpy, and turns each game into this package's vocabulary.
 
 The files store, for each game:
 
@@ -26,11 +28,8 @@ score it reaches must equal the recorded one.
 from __future__ import annotations
 
 import argparse
-import base64
-import gzip
 import json
 import struct
-import sys
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -118,23 +117,32 @@ def decode(action: int, player: int, rules: Rules) -> Action:
     raise ValueError(f"action id {action} is a no-op or out of range")
 
 
-def replay(game: HumanGame) -> tuple[State, list]:
-    """Play the recorded actions with the rules engine. Returns the final state and, for
-    each turn, (state before the turn as a copy-free summary, action, event)."""
+def encode(a: Action, player: int, rules: Rules) -> int:
+    """The JaxMARL action id of an action of `hanabi.rules`: the inverse of `decode`."""
+    h, p, nc, nr = rules.hand, rules.players, rules.colors, rules.ranks
+    if a.kind == "discard":
+        return a.index
+    if a.kind == "play":
+        return h + a.index
+    offset = (a.target - player - 1) % p
+    if a.attr == "color":
+        return 2 * h + offset * nc + a.value
+    return 2 * h + (p - 1) * nc + offset * nr + a.value - 1
+
+
+def replay(game: HumanGame) -> State:
+    """Play the recorded actions with the rules engine, checking that each is legal and
+    that the game does not end early, and return the final state."""
     rules = Rules(players=game.players)
     s = new_game(rules, list(game.deck))
-    log = []
     for a_id in game.actions:
         if s.over:
             raise ValueError(f"game {game.game_id}: actions after the end")
         a = decode(a_id, s.current, rules)
         if not legal(s, a):
-            raise ValueError(f"game {game.game_id}: illegal action {a} on turn {s.turn}")
-        before = (tuple(s.board), s.hints, s.lives, s.deck_left, tuple(s.discards))
-        hand = tuple(s.hands[s.current])
-        ev = step(s, a)
-        log.append((before, hand, a, ev))
-    return s, log
+            raise ValueError(f"game {game.game_id}: illegal action {a} on turn {s.turn + 1}")
+        step(s, a)
+    return s
 
 
 def download(cache: str | Path) -> list[Path]:
@@ -156,54 +164,20 @@ def load(cache: str | Path, players: int) -> list[HumanGame]:
     return out
 
 
-def dump(cache: str | Path, stream=sys.stdout) -> None:
-    """Write the four files to `stream` as gzip and base64 between marker lines, so that a
-    runner that can reach Hugging Face can hand them to a machine that cannot."""
-    for name in [f for pair in FILES.values() for f in pair]:
-        data = base64.b64encode(gzip.compress((Path(cache) / name).read_bytes(), mtime=0))
-        stream.write(f"BEGIN {name}\n")
-        for i in range(0, len(data), 1000):
-            stream.write(data[i : i + 1000].decode() + "\n")
-        stream.write(f"END {name}\n")
-
-
-def undump(text: str, cache: str | Path) -> list[Path]:
-    """Recover the files from a log written by `dump` (timestamps before each line allowed)."""
-    out, name, chunks = [], None, []
-    for line in text.splitlines():
-        word = line.split()[-1] if line.split() else ""
-        parts = line.split()
-        if len(parts) >= 2 and parts[-2] == "BEGIN":
-            name, chunks = word, []
-        elif len(parts) >= 2 and parts[-2] == "END" and name:
-            path = Path(cache) / name
-            path.write_bytes(gzip.decompress(base64.b64decode("".join(chunks))))
-            out.append(path)
-            name = None
-        elif name:
-            chunks.append(word)
-    return out
-
-
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("command", choices=["fetch", "dump", "undump", "check"])
+    ap.add_argument("command", choices=["fetch", "check"])
     ap.add_argument("--cache", default="data/ah2ac2", help="folder for the four files")
-    ap.add_argument("--log", help="for undump: a job log written by dump")
     args = ap.parse_args(argv)
     Path(args.cache).mkdir(parents=True, exist_ok=True)
-    if args.command in ("fetch", "dump"):
+    if args.command == "fetch":
         download(args.cache)
-    if args.command == "dump":
-        dump(args.cache)
-    if args.command == "undump":
-        for p in undump(Path(args.log).read_text(), args.cache):
-            print(p, p.stat().st_size)
-    if args.command in ("fetch", "check"):
-        for players in FILES:
-            games = load(args.cache, players)
-            bad = sum(replay(g)[0].score != g.score for g in games)
-            print(f"{players} players: {len(games)} games, {bad} replay to another score")
+    for players in FILES:
+        games = load(args.cache, players)
+        finals = [replay(g) for g in games]
+        bad = sum(s.score != g.score for s, g in zip(finals, games, strict=True))
+        over = sum(s.over for s in finals)
+        print(f"{players} players: {len(games)} games, {bad} replay to another score, {over} end")
 
 
 if __name__ == "__main__":
