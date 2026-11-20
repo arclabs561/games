@@ -2,6 +2,12 @@
 
 The notebook estimates three things about each word and keeps them apart: how often it appears on a random board, how many points it offers, and how common it is in English. It reproduces, count for count, the post [Common on the board, rare in English](https://attobop.net/posts/boggle-words/), which revisits the 2016 version of this notebook. That version missed every Q word, and it ranked words by a single TF-IDF-like score. **The notebook is [here](https://github.com/arclabs561/games/blob/main/boggle/boggle.ipynb)**.
 
+It also reproduces the three board scores in Peter Norvig's pytudes [Boggle notebook](https://github.com/norvig/pytudes/blob/main/ipynb/Boggle.ipynb), among them 10,112 points from 2,290 words for Boyan's 5 by 5 board, and shows that no change of one square improves that board.
+
+![A 4 by 4 Boggle board, I H R E / T Y V L / R A S E / O M N S, with the word "traveler" traced through eight of its cubes.](figures/random-board.svg)
+
+*One shake of the cubes (seed 0), drawn by `figures.py`. The line traces "traveler", the longest of its 183 words.*
+
 The official rules are in Hasbro's [Boggle instructions (PDF)](https://www.hasbro.com/common/instruct/boggle.pdf). Sixteen cubes are shaken into a 4 by 4 grid. A word is a path through neighboring cubes, at least three letters long, that uses no cube twice; the `Qu` face counts as two letters on one cube.
 
 ## Results
@@ -18,6 +24,10 @@ Unless a line says it is simulated, the number is exact. The simulated ones come
 | `perslatgsineters`, the best board for ENABLE2K (Vanderkam, 2025), scores 3,623 points from 1,044 words with `enable1.txt` and 3,625 from 1,045 with ENABLE2K, as he reports. The extra word is *tenge*. | Exact |
 | A shake of the new cubes shows that board, in some orientation, with chance 8 × 1,054,080 / (16! × 6<sup>16</sup>), about 1 in 7.0 × 10<sup>18</sup>. With the classic cubes it is 8 × 221,616 / (16! × 6<sup>16</sup>), about 1 in 3.3 × 10<sup>19</sup>. | Exact, as a permanent of face counts (Ryser's formula) |
 | Replacing one cube by a blank costs from 28 points (the Qu cube) to 45 points (E I O S S T) on average. | Simulated |
+| Norvig's three boards score as he reports: 449 points from 252 words, 245 from 125, and Boyan's 5 by 5 board 10,112 from 2,290. | Exact; agrees with a cited source |
+| Each of the 625 boards one square away from Boyan's scores less; the best of them 10,046. So the board is a strict local maximum for one-square changes. | Exact, every case |
+| With Big Boggle's minimum of four letters, Boyan's board scores 9,968 from 2,146 words. | Exact |
+| Hill climbing as Norvig describes it, from the board above with seed 1, reaches 3,102 points after 1,000 changes, against 3,623 for the best board. | One seeded run |
 
 **Which words are possible.** A word is possible if some shake of the cubes shows it along some path. Split it into faces, with "qu" as one face; a q followed by any other letter cannot be spelled. If each face can be given a different cube that carries it, lay those cubes along the path that runs through all 16 slots row by row, turning at each end. Each slot on that path neighbors the one before, so the word reads along it. If no such choice exists, no board shows the word. So only the matching of faces to cubes matters, not where the cubes land. When there is no matching, Hall's theorem gives a reason: some set of faces is needed more often than there are cubes carrying any of them. With the new cubes, 2,313 words are too long (more than 16 faces), 2,050 need two b's (only A B B J O O has a b), and 1,940 need two f's. The new set puts its only F and only K on one cube, so no word with an f and a k appears; the classic set has each of them on two cubes.
 
@@ -45,12 +55,27 @@ English word frequencies come from the `wordfreq` package (version 3.1.1, in the
 | Classic | AACIOT ABILTY ABJMOQu ACDEMP ACELRS ADENVZ AHMORS BIFORX DENOSW DKNOTU EEFHIY EGINTV EGKLUY EHINPS ELPSTU GILRUW |
 | New | AAEEGN ABBJOO ACHOPS AFFKPS AOOTTW CIMOTU DEILRX DELRVY DISTTY EEGHNW EEINSU EHRTVW EIOSST ELRTTY HIMNQuU HLNNRZ |
 
+## Norvig's Boggle and Inverse Boggle
+
+Norvig's notebook (January 2020, read at commit 3b4c5dd) searches a board with a set of word prefixes where `board.py` uses a trie, and scores words with the same table. All three of his scores are reproduced, word count included. His `enable1.txt` has 172,724 words of three or more letters, one more than the copy here, because it has *areole* where this copy repeats *are*; none of his boards can spell *areole*. Boyan's board is from Justin Boyan's PhD thesis (Carnegie Mellon, 1998), found by a learned search over boards.
+
+**Inverse Boggle** asks for the board with the highest score. Norvig changes one square at a time to a random letter and keeps changes that do not lower the score. His 500 changes from Boyan's board found nothing better. Here all 625 one-square changes were scored: every one is worse, so this kind of climb cannot leave the board. Whether some 5 by 5 board scores more is open; for 4 by 4 boards Vanderkam's search settled it.
+
+![The best 4 by 4 board for ENABLE2K, P E R S / L A T G / S I N E / T E R S, with "replastering" traced through twelve of its cubes.](figures/best-board.svg)
+
+*The best 4 by 4 board for ENABLE2K (Vanderkam, 2025), with its longest word.*
+
 ## Files and usage
 
-`board.py` has the cubes, the board, the word search, the sampler, the possible-word test and the roll counts; the notebook and the tests both import it.
+- `board.py` has the cubes, the board, the word search and the sampler.
+- It also has the test of which words are possible, the roll counts, and hill climbing.
+- `figures.py` draws boards for the notebook and writes the two SVGs here.
+
+The notebook and the tests import both modules.
 
 ```bash
 uv run --group boggle --with jupyter jupyter lab boggle/boggle.ipynb
+uv run --group boggle python -m boggle.figures   # the SVGs in figures/
 uv run pytest tests/test_boggle.py    # about a minute
 ```
 
@@ -60,4 +85,5 @@ uv run pytest tests/test_boggle.py    # about a minute
 - **Unseen words.** The exact count of possible words lets estimators of the number of unseen words (Good and Turing, Chao) be scored against the truth. That has not been done.
 - **Exact board probability of a word.** The chance of a whole board is a permanent. The chance that a board shows a given short word, such as "toe", is a finite sum over where the cubes carrying its letters land, but the paths overlap and the sum needs inclusion and exclusion. Only the simulated value is known here.
 - **Other editions.** Big Boggle (5 by 5) and Super Big Boggle (6 by 6) have other cubes and minimum lengths. The published listings of the 5 by 5 set disagree on one cube.
+- **The best 5 by 5 board.** Boyan's board resists every one-square change. Changes of two squares, swaps and restarts, which Norvig lists, have not been tried.
 - **The best board for `enable1.txt`.** Vanderkam's proof is for ENABLE2K. Whether `perslatgsineters` is also best for `enable1.txt` has not been checked.

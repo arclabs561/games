@@ -6,16 +6,20 @@ from fractions import Fraction
 from itertools import permutations, product
 from math import factorial, prod
 
+from boggle import figures
 from boggle.board import (
     CUBES,
     all_cube_losses,
     count_words,
     cube_losses,
     face_counts,
+    find_path,
     get_words,
+    hill_climb,
     hoeffding_boards,
     load_words,
     make_trie,
+    one_square_changes,
     orientations,
     parse_board,
     permanent,
@@ -27,8 +31,10 @@ from boggle.board import (
     sample_boards,
     sample_layouts,
     score,
+    show,
     wilson,
     word_slots,
+    words_by_paths,
 )
 
 
@@ -282,3 +288,74 @@ def test_best_board_scores_with_enable2k():
     trie = make_trie(w for w in load_words("boggle/enable2k.txt") if len(w) >= 3)
     best = parse_board("perslatgsineters")
     assert len(set(get_words(best, trie))) == 1045 and score(best, trie) == 3625
+
+
+def test_boards_of_any_size_and_show():
+    board = parse_board("abcde fghij klmno pqrst uvwxy")
+    assert len(board) == 5 and board[3][1] == "qu"
+    assert set(get_words(board, make_trie(["agm", "ysx", "eij"]))) == {"agm", "ysx", "eij"}
+    assert set(get_words(board, make_trie(["ay", "abc"]), min_len=2)) == {"abc"}  # no wrapping
+    assert show(parse_board("qest ansi xweo yrsn")).splitlines()[0] == "Qu E  S  T"
+
+
+def test_find_path_spells_the_word_along_neighbors():
+    board = parse_board("qest ansi xweo yrsn")
+    path = find_path(board, "quest")
+    assert path == [(0, 0), (0, 1), (0, 2), (0, 3)]
+    assert find_path(board, "tsetse") is None  # would need a cube twice
+    for word in ("swan", "wrens", "session"):
+        path = find_path(board, word)
+        assert path is not None and len(set(path)) == len(path)
+        assert "".join(board[i][j] for i, j in path) == word
+        assert all(
+            max(abs(a - c), abs(b - d)) == 1 for (a, b), (c, d) in zip(path, path[1:], strict=False)
+        )
+
+
+def test_words_by_paths_agrees_with_get_words():
+    words = load_words("boggle/enable1.txt")
+    trie = make_trie(w for w in words if len(w) >= 3)
+    for seed in range(3):
+        board = rand_board(random.Random(seed))
+        fast = {w for w in get_words(board, trie) if len(w) <= 6}
+        assert words_by_paths(board, {w for w in words if len(w) >= 3}, 6) == fast
+
+
+def test_norvig_boards_score_as_he_reports():
+    # Norvig, pytudes ipynb/Boggle.ipynb (commit 3b4c5dd): points and words per board.
+    trie = make_trie(w for w in load_words("boggle/enable1.txt") if len(w) >= 3)
+    for letters, expected in {
+        "PUZZL WORDE BOGGL SEARC FINDH": (449, 252),
+        "QEST ANSI XWEO YRSN": (245, 125),
+        "RSTCS DEIAE GNLRP EATES MSSID": (10_112, 2_290),
+    }.items():
+        found = set(get_words(parse_board(letters), trie))
+        assert (sum(map(points, found)), len(found)) == expected
+
+
+def test_hill_climb_never_loses_points_and_is_seeded():
+    trie = make_trie(["tea", "tee", "ten", "net", "toe", "eaten", "teen"])
+    start = rand_board(random.Random(3))
+    board, history = hill_climb(start, trie, 60, random.Random(5))
+    assert history == sorted(history) and len(history) == 61
+    assert history[-1] == score(board, trie)
+    assert (board, history) == hill_climb(start, trie, 60, random.Random(5))
+    assert start == rand_board(random.Random(3))  # the start is not changed
+
+
+def test_one_square_changes_rescore_each_variant():
+    trie = make_trie(["cat", "cot", "act", "tact"])
+    board = parse_board("catx xxxx xxxx xxxx")
+    changes = one_square_changes(board, trie, processes=2)
+    assert len(changes) == 16 * 25
+    assert changes[(0, 0, "t")] == score(parse_board("tatx xxxx xxxx xxxx"), trie)
+    assert changes[(0, 3, "y")] == score(board, trie)
+    assert changes[(1, 0, "o")] == score(parse_board("catx oxxx xxxx xxxx"), trie)
+
+
+def test_committed_svgs_are_what_the_script_writes(tmp_path):
+    figures.main(tmp_path)
+    for name in figures.FIGURES:
+        assert (tmp_path / name).read_bytes() == (figures.HERE / "figures" / name).read_bytes(), (
+            name
+        )
