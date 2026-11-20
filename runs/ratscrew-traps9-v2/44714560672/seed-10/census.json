@@ -1,0 +1,15 @@
+[
+ {
+  "cards": 9,
+  "players": 2,
+  "slice": [
+   10,
+   16
+  ],
+  "deck_types": 84,
+  "with_traps": [],
+  "positions": 25036469,
+  "all_traps_slap_free": true,
+  "closed_classes_with_slap": 0
+ }
+]

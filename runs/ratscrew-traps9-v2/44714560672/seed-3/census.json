@@ -1,0 +1,36 @@
+[
+ {
+  "cards": 9,
+  "players": 2,
+  "slice": [
+   3,
+   16
+  ],
+  "deck_types": 85,
+  "with_traps": [
+   {
+    "deck": "2 2 3 3 4 4 5 J J",
+    "positions": 260694,
+    "trapped_positions": 276,
+    "trapped_orders": 384,
+    "trapped_with_slap": 0,
+    "closed_classes": 2,
+    "closed_classes_with_slap": 0,
+    "all_traps_slap_free": true
+   },
+   {
+    "deck": "2 3 4 5 6 J J K A",
+    "positions": 1809000,
+    "trapped_positions": 13920,
+    "trapped_orders": 2880,
+    "trapped_with_slap": 0,
+    "closed_classes": 240,
+    "closed_classes_with_slap": 0,
+    "all_traps_slap_free": true
+   }
+  ],
+  "positions": 25175122,
+  "all_traps_slap_free": true,
+  "closed_classes_with_slap": 0
+ }
+]

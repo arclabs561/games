@@ -1,0 +1,66 @@
+[
+ {
+  "cards": 9,
+  "players": 2,
+  "slice": [
+   1,
+   16
+  ],
+  "deck_types": 85,
+  "with_traps": [
+   {
+    "deck": "2 3 4 5 6 7 8 J Q",
+    "positions": 3522960,
+    "trapped_positions": 221760,
+    "trapped_orders": 20160,
+    "trapped_with_slap": 0,
+    "closed_classes": 1680,
+    "closed_classes_with_slap": 0,
+    "all_traps_slap_free": true
+   },
+   {
+    "deck": "2 2 3 4 5 6 7 Q Q",
+    "positions": 987480,
+    "trapped_positions": 43800,
+    "trapped_orders": 12480,
+    "trapped_with_slap": 0,
+    "closed_classes": 240,
+    "closed_classes_with_slap": 0,
+    "all_traps_slap_free": true
+   },
+   {
+    "deck": "2 2 3 4 5 6 J J J",
+    "positions": 332976,
+    "trapped_positions": 2160,
+    "trapped_orders": 2592,
+    "trapped_with_slap": 0,
+    "closed_classes": 72,
+    "closed_classes_with_slap": 0,
+    "all_traps_slap_free": true
+   },
+   {
+    "deck": "2 3 4 5 6 J J Q K",
+    "positions": 1833480,
+    "trapped_positions": 13920,
+    "trapped_orders": 2880,
+    "trapped_with_slap": 0,
+    "closed_classes": 240,
+    "closed_classes_with_slap": 0,
+    "all_traps_slap_free": true
+   },
+   {
+    "deck": "2 2 3 3 4 J J K A",
+    "positions": 501018,
+    "trapped_positions": 232,
+    "trapped_orders": 192,
+    "trapped_with_slap": 0,
+    "closed_classes": 4,
+    "closed_classes_with_slap": 0,
+    "all_traps_slap_free": true
+   }
+  ],
+  "positions": 26651972,
+  "all_traps_slap_free": true,
+  "closed_classes_with_slap": 0
+ }
+]
