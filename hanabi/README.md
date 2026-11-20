@@ -26,6 +26,7 @@ Intervals are 95% intervals. The last column links the note in [`results/`](resu
 |---|---|---|
 | The information strategy scores 24.680 ± 0.004 with five players, 76.31% ± 0.26% perfect; the paper gives 24.68 and 76% | Simulated, 100,000 games on HanSim's decks; game by game equal to HanSim on its first 10,000 | [information](results/information.md) |
 | With three and four players (a generalization made here) it scores 22.254 ± 0.032 and 24.564 ± 0.016 | Simulated, 10,000 seeded deals each | [information](results/information.md) |
+| With three players hanabi.rs (Wu) scores 24.7946, 2.54 points more; held to the same 4 hint values it still scores 24.5037. The gap is in what a hint asks, not in the rules | Simulated: hanabi.rs built from its repository, its seeds 0 to 19,999; here 10,000 seeded deals | [hat-gap](results/hat-gap.md) |
 | Winnable orderings of small decks, such as 5,934 of 75,600 for one color, one player and a hand of one card | Exact, every deal; matches van den Bergh's Appendix A to all four digits | [open-game](results/open-game.md) |
 | Two-player deals that can reach 25: 0.9862 (0.9845 to 0.9877); 276 of 20,000 lost | Two solvers on seeded deals 0 to 19,999 (plan H1), with certificates added after the plan; Wilson interval | [h1](results/h1.md) |
 | Three, four and five players: 0.9988 to 0.9992, 0.99965 to 0.99985 and 0.99935 to 0.99995; 23 deals still undecided | Same | [h1](results/h1.md) |
@@ -55,6 +56,19 @@ Yes. A hint is read as a number from 0 to 7, and each player learns which of eig
 | Cox et al. (2015), Figure 8 | 24.68 | 76% | their simulation, 10⁶ games |
 | HanSim, compiled from their repository | 24.668 | 75.44% | its first 10,000 games |
 | This implementation, the same decks | 24.680 ± 0.004 | 76.31% ± 0.26% | 100,000 games |
+
+## Why does the three-player strategy trail hanabi.rs?
+
+Because of what a hint asks, not because of the rules. hanabi.rs is J. Wu's simulator, built here from its repository. With three players its information strategy averages 24.7946 points, against 22.254 for `information.py`. The two programs play the same rules except one, which never comes into play: hanabi.rs keeps the board when the last life is lost, and neither strategy loses all three lives in any three-player game measured. They differ in two ways. hanabi.rs reads which cards a hint touches, which gives it 6 to 8 hint values against 4 here. And it asks whether several cards are playable or dead, where Cox et al.'s design splits one card's identities into sets.
+
+| Three players | Hint values | Mean score | How it is known |
+|---|---:|---:|---|
+| hanabi.rs, as published | 6 to 8 | 24.7946 | simulated, its seeds 0 to 19,999; equal to its README |
+| hanabi.rs, held to 2 values per other player | 4 | 24.5037 | same seeds, one function changed |
+| `information.py` | 4 | 22.254 ± 0.032 | simulated, 10,000 seeded deals |
+| `information.py`, relaxed to 8 values (not legal) | 8 | 23.774 ± 0.025 | same deals |
+
+Fewer values cost hanabi.rs 0.29 points; more values gain Cox et al.'s design 1.52 and leave it 1.02 short. The three- and four-player rows above measure a weak generalization of the strategy, not the limit of hat-guessing strategies. Detail, with the other player counts: [hat-gap.md](results/hat-gap.md).
 
 ## Which deals can reach 25?
 
@@ -130,6 +144,7 @@ Because the dataset's license comes from a metadata tag alone and the site state
 - M. Ramesh et al., "Sparks of Cooperative Reasoning: LLMs as Strategic Hanabi Agents", arXiv:2601.18077; F. Liang et al., "LLM-Hanabi", arXiv:2510.04980; T. Dizdarević et al., "Ad-Hoc Human-AI Coordination Challenge", ICML 2025, arXiv:2506.21490, with its open dataset and documentation (docs.ah2ac2.com).
 - hanab.live: the game format's description and the changelog of github.com/Hanabi-Live/hanabi-live, for the deal order and the starting player.
 - W. D. Harvey, M. L. Ginsberg, "Limited Discrepancy Search", IJCAI 1995.
+- J. Wu, hanabi.rs, github.com/WuTheFWasThat/hanabi.rs, commit `ef77311`. The repository has no license file; it was built and run here, and none of its code is copied.
 - A. Rutherford et al., "JaxMARL: Multi-Agent RL Environments and Algorithms in JAX", NeurIPS 2024 Datasets and Benchmarks; `jaxmarl` 0.2.0 (Apache 2.0), whose IPPO baseline builds on PureJaxRL (C. Lu et al., "Discovered Policy Optimisation", NeurIPS 2022).
 
 ## Open questions
@@ -151,6 +166,7 @@ uv run python -m hanabi.upper_bound --exact --check 200   # small decks (about 5
 uv run python -m hanabi.upper_bound --sample 2 2000       # about 1 min; 4 or 5 players take 2
 uv run python -m hanabi.ceiling --players 2 --seed 161    # one deck's ceiling, under a second
 uv run python -m hanabi.figures                           # the picture of a deal
+uv run python -m hanabi.hat_gap -n 10000 --out hanabi/results   # three players, more hint values, about 25 min
 ```
 
 ## Files
@@ -159,6 +175,7 @@ uv run python -m hanabi.figures                           # the picture of a dea
 |---|---|
 | `rules.py` | Cards, decks, the rules as small functions, seeded deals, HanSim's shuffle |
 | `information.py`, `hansim_check.py` | The information strategy of Cox et al.; the game-by-game comparison with HanSim |
+| `hat_gap.py` | The same strategy with more hint values than the rules allow, to measure the gap to hanabi.rs |
 | `solver.py`, `dfs_solver.py`, `solver_cp.py` | Solver A, Solver B with the last-card and free-order certificates, and a constraint model for small decks |
 | `upper_bound.py`, `h1.py` | Exact counts on small decks, sampled verdicts on the full game, plan H1's summary |
 | `humans_data.py`, `humans.py`, `ceiling.py` | The human games, their ceilings and the command line |
