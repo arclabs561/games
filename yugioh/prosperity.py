@@ -274,27 +274,45 @@ def report() -> str:
     return "\n".join(lines) + "\n"
 
 
+def simulation(trials: int = 200_000, seed: int = 1) -> str:
+    """The text of results/prosperity_simulation.md: seeded decks against the exact chances."""
+    from yugioh.odds import wilson
+
+    lines = [
+        "# Pot of Prosperity: simulation",
+        "",
+        "Written by `uv run python -m yugioh.prosperity --write`. The example deck with Pot of",
+        f"Prosperity (revealing 6) and 3 draw-2 cards, going first, a starter. Seed {seed},",
+        f"{trials:,} shuffled decks per row, Wilson 95% intervals.",
+        "",
+        "| Fixed choice | Hits | 95% interval | Exact | Exact in interval |",
+        "|---|---:|---|---:|---|",
+    ]
+    for preferred in ("prosperity", "draw2"):
+        hits = simulate(EXAMPLE, FIRST, starter, 6, 3, preferred, trials, seed)
+        lo, hi = wilson(hits, trials)
+        exact = p_prosperity(EXAMPLE, FIRST, starter, 6, 3, preferred)
+        inside = "yes" if lo <= exact <= hi else "no"
+        lines.append(f"| {preferred} first | {hits:,} | {lo:.2%} to {hi:.2%} | "
+                     f"{float(exact):.2%} | {inside} |")  # fmt: skip
+    return "\n".join(lines) + "\n"
+
+
 def main() -> None:
+    from pathlib import Path
+
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--trials", type=int, default=200_000)
     ap.add_argument("--seed", type=int, default=1)
-    ap.add_argument("--write", action="store_true", help="write results/prosperity.md")
+    ap.add_argument("--write", action="store_true", help="write results/prosperity*.md")
     args = ap.parse_args()
-    text = report()
+    text, sim = report(), simulation(args.trials, args.seed)
     print(text)
+    print(sim)
     if args.write:
-        from pathlib import Path
-
-        (Path(__file__).parent / "results" / "prosperity.md").write_text(text)
-    from yugioh.odds import wilson
-
-    for preferred in ("prosperity", "draw2"):
-        hits = simulate(EXAMPLE, FIRST, starter, 6, 3, preferred, args.trials, args.seed)
-        lo, hi = wilson(hits, args.trials)
-        exact = p_prosperity(EXAMPLE, FIRST, starter, 6, 3, preferred)
-        inside = "inside" if lo <= exact <= hi else "OUTSIDE"
-        print(f"simulated, {preferred} first, seed {args.seed}, {args.trials:,} decks: "
-              f"{lo:.4%} to {hi:.4%}; exact {float(exact):.4%} {inside}")  # fmt: skip
+        results = Path(__file__).parent / "results"
+        (results / "prosperity.md").write_text(text)
+        (results / "prosperity_simulation.md").write_text(sim)
 
 
 if __name__ == "__main__":

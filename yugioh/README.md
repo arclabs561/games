@@ -109,7 +109,7 @@ Real cards of these kinds have costs and limits that are left out, so these numb
 
 ## One real card: Pot of Prosperity
 
-The generic looker above is an upper bound. One real card of that kind, Pot of Prosperity, gives 87.57% for a starter going first in the example deck, 2.51 points above the deck without it and 3.93 points below the three generic lookers. Most of that gap is the card's limit of one copy. Its other costs take less: revealing 3 cards instead of 6 costs 0.56 points, and the rule against drawing costs 0.25 points in a deck that also holds three draw-2 cards. All exact ([`results/prosperity.md`](results/prosperity.md)).
+The generic looker above is an upper bound. One real card of that kind, Pot of Prosperity, gives 87.57% for a starter going first in the example deck, 2.51 points above the deck without it and 3.93 points below the three generic lookers. Most of that gap is the card's limit of one copy. Its other costs take less: revealing 3 cards instead of 6 costs 0.56 points, and the rule against drawing costs 0.25 points in a deck that also holds three draw-2 cards. All exact ([`results/prosperity.md`](results/prosperity.md), simulation in [`results/prosperity_simulation.md`](results/prosperity_simulation.md)).
 
 The card's text, as Yugipedia gives it from Konami's card database (entry 15756), read 2026-11-20, paraphrased:
 
