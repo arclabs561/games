@@ -1,0 +1,24 @@
+{
+ "experiment": "dyn-difficulty-sample",
+ "run": "seed-7",
+ "commit": "75258119ae48029bbd1642fc155dcf43bc2c3632",
+ "platform": "actions",
+ "command": [
+  "python",
+  "-m",
+  "drive_ya_nuts.difficulty",
+  "sample",
+  "--samples",
+  "20000",
+  "--seed",
+  "SEED",
+  "--out",
+  "OUT"
+ ],
+ "returncode": 0,
+ "seconds": 29.0,
+ "job_id": "44790600897",
+ "hardware": "GitHub Actions 1000101509",
+ "gpu": null,
+ "python": "3.14.4"
+}
