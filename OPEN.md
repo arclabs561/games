@@ -1,6 +1,6 @@
 # Open questions
 
-76 open questions from 18 games' READMEs, collected by `tools/open_questions.py`. Edit the READMEs, not this file, then run `python3 tools/open_questions.py`; a test checks that this file is current.
+78 open questions from 18 games' READMEs, collected by `tools/open_questions.py`. Edit the READMEs, not this file, then run `python3 tools/open_questions.py`; a test checks that this file is current.
 
 Each status comes from the question's wording, by the rules in the script's docstring. It guides the choice of what to work on next and is not itself a finding.
 
@@ -9,7 +9,7 @@ Each status comes from the question's wording, by the rules in the script's docs
 | blocked on data | 8 |
 | blocked on compute | 3 |
 | partly answered | 10 |
-| open | 55 |
+| open | 57 |
 
 | Game | Question | Status |
 |---|---|---|
@@ -66,8 +66,10 @@ Each status comes from the question's wording, by the rules in the script's docs
 | [Mastermind](mastermind/README.md) | How does the game choose a screen's words, and are duds chosen to share letters with the password? A list of real screens would settle whether the ENABLE screens here are easier or harder than the game's. | blocked on data |
 | [Mastermind](mastermind/README.md) | ENABLE has many words that a game would not use, such as JAUK and WHIT. Would screens of common words change the table? | open |
 | [Mastermind](mastermind/README.md) | Is there a rule for the first guess that keeps more of the best possible chance than minimax's 99.41%? | open |
-| [Peggle: who is the better player?](peggle/README.md) | Who shoots first in a Peggle duel, and how large is that edge? The first-shooter edges here are assumed values, not measurements. | blocked on data |
-| [Peggle: who is the better player?](peggle/README.md) | A player whose chance rises from 0.45 to 0.55 halfway through 1,000 games is usually declared the worse player by the 95% rule. Does some rule that looks only at wins and games avoid this, or does it need the order of the games? | open |
+| [Peggle: who is the better player?](peggle/README.md) | **The first-shooter edge in Peggle.** Who shoots first in a Peggle duel, and how large is that edge? The first-shooter edges here are assumed values, not measurements. Their size in actual duels, and whether it depends on the board, would need recorded duels. | blocked on data |
+| [Peggle: who is the better player?](peggle/README.md) | **Drift and stopping.** A player whose chance rises from 0.45 to 0.55 halfway through 1,000 games is usually declared the worse player by the 95% rule. Does some rule that looks only at wins and games avoid this, or does it need the order of the games? For skill that changes smoothly, is there a stopping rule whose verdict keeps a clear meaning, such as "better over the last 100 games", with a guarantee like Ville's inequality? | open |
+| [Peggle: who is the better player?](peggle/README.md) | **Other boundaries.** A threshold that changes with n could keep the 5% for equal players and declare the better player better more often at p = 0.55 than one fixed threshold does. Which boundary does this best for a given cap is not worked out here. | open |
+| [Peggle: who is the better player?](peggle/README.md) | **The Kiefer–Weiss test for 0.45 against 0.55.** Weiss gives a scheme for the test that minimizes the largest mean length over all p. Computing it with the dynamic program here, and comparing its length at p = 1/2 with the 225 games of Wald's test, is left undone. | open |
 | [Pokémon](pokemon/README.md) | **Schmitz's typing duel.** His matchup table is an image; reading it would settle whether his game or his solver differs from the one here. | blocked on data |
 | [Pokémon](pokemon/README.md) | **Weighted scores.** Weighting the notebook's sums by Showdown usage would change which typings and Pokémon rank first. | open |
 | [Pokémon](pokemon/README.md) | **Sets beyond damage.** Setup moves, recovery, hazards, items, Terastallization, and a policy that switches by choice. The six most used Pokémon do far better in full battles than under perfect switching. | open |

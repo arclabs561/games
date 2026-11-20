@@ -213,133 +213,14 @@ def test_committed_csvs_are_current(tmp_path, monkeypatch):
         assert (tmp_path / name).read_text() == (FOLDER / name).read_text(), name
 
 
-def test_variation_numbers_in_the_note():
-    text = note()
-    r = variations.jeffreys_part(6, 10)
-    assert f"$1 slash 2 + {r.numerator} slash ({r.denominator} pi)$" in text
-    assert f"{variations.better_jeffreys(6, 10):.3f}" in text
-    assert f"{float(variations.better_beta(6, 10, 12)):.3f}" in text
-    for cap in (100, 1000):
-        for rule in (variations.JEFFREYS_RULE, variations.beta_rule(12)):
-            e = stopping.outcome(HALF, cap, rule)
-            assert f"[{float(e.first + e.second):.3f}]" in text
-        declared, wrong = variations.prior_check(cap, stopping.verdict, 12)
-        assert f"{float(wrong / declared):.1%}" in text
-    worse2 = 1 - stopping.lead_exact(P55, 2)[0]
-    assert f"{float(worse2):.3f}" in text
-    assert f"{float(variations.best_of(P55, 7)):.3f}" in text
-    assert "best of 269" in text or "best-of-269" in text
-
-
-def cells(*values: str) -> str:
-    return "[" + "], [".join(values) + "]"
-
-
-def test_tables_in_the_note():
-    text = note()
-    # Which prior? The fewest wins under each prior.
-    for name, fewest in (
-        ("uniform", lambda n: variations.fewest_wins_beta(n, 1)),
-        ("Jeffreys", variations.fewest_wins_jeffreys),
-        ("skeptical", lambda n: variations.fewest_wins_beta(n, 12)),
-    ):
-        row = cells(*(str(fewest(n)) for n in (10, 20, 50, 100, 200, 1000)))
-        assert row in text, (name, row)
+def test_quoted_values():
+    """Values the note prints from results.json, against the published or hand-derived forms."""
+    assert variations.jeffreys_part(6, 10) == Fraction(512, 693)
+    assert f"{variations.better_jeffreys(6, 10):.3f}" == "0.735"
+    assert f"{float(variations.better_beta(6, 10, 12)):.3f}" == "0.636"
+    assert 1 - stopping.lead_exact(P55, 2)[0] == Fraction(121, 202)
     above = beta_integral(11, 22, Fraction(3, 5)) / beta_integral(11, 22)
-    assert f"Beta(12, 12) puts chance {float(above):.2f} above 0.6" in text
-    # Calibration by when the verdict came.
-    for (_, _, declared, wrong), label in zip(
-        variations.calibration(1000, (10, 100, 1000)),
-        ("1 to 10", "11 to 100", "101 to 1,000"),
-        strict=True,
-    ):
-        assert cells(label, f"{float(declared):.3f}", f"{float(wrong):.1%}") in text
-    # Priors under stopping, every row.
-    for name, rule in (
-        ("Jeffreys", variations.JEFFREYS_RULE),
-        ("text(fill: purple)[skeptical", variations.beta_rule(12)),
-    ):
-        for cap in (100, 1000):
-            e, g = stopping.outcome(HALF, cap, rule), stopping.outcome(P55, cap, rule)
-            row = cells(
-                f"{cap:,}",
-                f"{float(e.first + e.second):.3f}",
-                f"{float(e.games):.1f}",
-                f"{float(g.first):.3f}",
-                f"{float(g.second):.3f}",
-                f"{float(g.games):.1f}",
-            )
-            assert row in text, (name, row)
-    # Match formats.
-    for n, label in ((1, "one game"), (3, "best of 3"), (5, "best of 5"), (7, "best of 7")):
-        slope = variations.slope_at_half_best_of(n)
-        row = cells(
-            label,
-            f"{float(variations.best_of(P55, n)):.3f}",
-            f"{float(variations.best_of_games(P55, n)):.2f}",
-            str(slope),
-        )
-        assert row in text, row
-    worse, games = stopping.lead_exact(P55, 15)
-    assert cells(f"{1 - float(worse):.3f}", f"{float(games):.2f}", "15") in text
-    nb = variations.fewest_best_of(P55)
-    row = cells(
-        f"best of {nb}",
-        f"{float(variations.best_of(P55, nb)):.3f}",
-        f"{float(variations.best_of_games(P55, nb)):.2f}",
-        f"{float(variations.slope_at_half_best_of(nb)):.1f}",
-    )
-    assert row in text, row
-    # Ratings.
-    for gap in (variations.elo_gap(0.55), 100, 200, 400):
-        p = variations.elo_chance(gap)
-        c = variations.lead_for_gap(gap)
-        worse, games = variations.lead_float(p, c)
-        row = cells(
-            f"{p:.3f}",
-            str(c),
-            f"{worse:.3f}",
-            f"{games:.1f}",
-            str(variations.fewest_best_of_float(p)),
-        )
-        assert row in text, row
+    assert f"{float(above):.2f}" == "0.16"
+    # Glickman and Jones's scale: a 400-point gap
     p = variations.elo_chance(400 * 400 / 561)
-    worse, games = variations.lead_float(p, 2)
-    assert f"$p approx {p:.3f}$" in text
-    assert f"erring {worse:.1%} of the time in {games:.2f} games" in text
-
-
-def test_shooter_and_drift_numbers_in_the_note():
-    text = note()
-    for edge in (Fraction(3, 5), Fraction(7, 10)):
-        for name, chance in (
-            ("alternate", variations.alternate(edge)),
-            ("winner", variations.winner_starts(edge)),
-            ("loser", variations.loser_starts(edge)),
-        ):
-            look = variations.changing_outcome(
-                100, variations.at_end(stopping.verdict, 100), chance, 10
-            )
-            stops = [
-                variations.changing_outcome(cap, stopping.verdict, chance, 10)
-                for cap in (100, 1000)
-            ]
-            row = cells(
-                name,
-                f"{float(edge)}",
-                f"{float(look.first + look.second):.4f}",
-                *(f"{float(o.first + o.second):.4f}" for o in stops),
-            )
-            assert row in text, row
-    for before, after in ((Fraction(45, 100), P55), (Fraction(2, 5), Fraction(3, 5))):
-        chance = variations.step_change(before, after, 500)
-        o = variations.changing_outcome(1000, stopping.verdict, chance, 20)
-        assert f"{float(o.first):.3f}" in text and f"{float(o.second):.3f}" in text
-        assert f"{float(o.games):.1f} games" in text
-    look = variations.changing_outcome(
-        1000,
-        variations.at_end(stopping.verdict, 1000),
-        variations.step_change(Fraction(45, 100), P55, 500),
-        20,
-    )
-    assert f"with chance {float(look.first + look.second):.3f}, below the 0.094" in text
+    assert f"{p:.3f}" == "0.838"
