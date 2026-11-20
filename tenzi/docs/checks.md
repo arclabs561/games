@@ -1,0 +1,5 @@
+- Each exact mean lies inside the 95% interval of a seeded simulation of {{simulated.games}} games, and the race of four players inside that of {{race_simulated.races}} simulated races<!--raw-typst  (@tab-checks)-->. Each simulation draws its games from its own generator, with seeds 1 to 5 in `tenzi.SEEDS`, so the simulations share no random numbers and are independent checks.
+- The decision process agrees with value iteration over every ordered roll and every subset of dice to keep, on small games up to four dice on three faces. The deadline programs agree with brute force on small games.
+- `maximum.py` checks the harmonic-number formula and its Fourier remainder in 60-digit arithmetic.
+- Bacinski and Pennings report the same distribution with the first roll left out<!--raw-typst  (@sec-named)-->.
+- `report.py` writes every number quoted in the README and the paper to `results.json`. The tests recompute its exact parts and its simulations, and check that the README's shared sections are what `tools/sync_docs.py` writes from `docs/` and `results.json`, and that the committed figures are what `figures.py` draws. CI runs them.

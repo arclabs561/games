@@ -1,0 +1,5 @@
+- Each player rolls ten dice, keeps the dice that show one face, and rerolls the rest until all ten match. A **turn** is one roll, and every turn count includes the first roll.
+- **Fixed face:** keep the face that is most common after the first roll, and never change it. If two faces tie, either will do.
+- **Switching:** switch faces whenever the rerolled dice show more of another face than are kept.
+- **Face named first:** name the face before the first roll, as some players do.
+- **A race:** players roll together and play independently, and the game ends on the first turn on which someone finishes. Two or more players tie on that turn unless exactly one finishes.
