@@ -70,4 +70,6 @@ Maia3-5M runs on Hugging Face Jobs, cpu-upgrade (8 vCPU), as before: `python -m 
 
 ## Amendments
 
-None yet.
+### 2026-11-20, before the stratified pilot sample was read: hardware
+
+The population pilot ran on cpu-upgrade as planned (598 player-games in 2,419 seconds). The stratified pilot job then timed out at 2 hours, and three jobs that split it by band were cancelled before they finished. A timing job found Maia-3 at 20 to 50 queries a second on cpu-upgrade, against about 230 earlier in the day, with the same torch (2.15.0) and code. So the stratified pilot sample and the test samples run on one Nvidia T4 (t4-small, $0.40 an hour) instead, with `MAIA_DEVICE=cuda`, in 32-bit floats and no mixed precision. Nothing else changes: the same games, grid, salts and arms. No output of the stopped jobs was stored or read. The cap stays at $0.50; about $0.17 of cpu-upgrade time was used by then.

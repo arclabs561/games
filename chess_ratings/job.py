@@ -71,8 +71,11 @@ def write(out: Path, name: str, obj) -> None:
 
 
 def load_maia(model: str) -> tuple[Maia, dict]:
+    """The checkpoint on the CPU, or on the device named by MAIA_DEVICE (e.g. cuda)."""
     path = Path(model) / "maia3-5m.pt"
-    return Maia(str(path), threads=8), {"checkpoint_sha256": sha256(path)}
+    device = os.environ.get("MAIA_DEVICE", "cpu")
+    meta = {"checkpoint_sha256": sha256(path), "device": device}
+    return Maia(str(path), threads=8, device=device), meta
 
 
 def sample(data: str, numbers, per_band: int, salt: str = SALT, population: int = 0) -> list[dict]:
