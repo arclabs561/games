@@ -26,13 +26,13 @@ Four questions about drawing data so that neighbors stay neighbors.
 | Shortest total jump, 139 CSS colors | 8.133 | exact (integer program with subtour cuts, HiGHS at zero gap) |
 | Same shelf, other methods | greedy + 2-opt 8.342, 1D SOM 8.975, 1D t-SNE 9.262, Hilbert curve 12.51, HSV hue 24.89, Oklab hue 25.65 | computed (seed 0 for the SOM and t-SNE) |
 | Continuity C(5) on that shelf | 1D t-SNE 0.964, 1D SOM 0.948, shortest 0.908, greedy 0.890 | computed |
-| 100 random 10-book shelves, mean excess over shortest | greedy + 2-opt 0.1% (solves 91%), 1D SOM 2.5%, 1D t-SNE 18.3%, Hilbert 32.7%, hue 57% | exact optimum per shelf; methods computed; seeds 0 to 99 |
+| 100 random 10-book shelves, mean excess over shortest | greedy + 2-opt 0.1% (solves 91%), 1D SOM 2.5%, 1D t-SNE 22.5% (17.6% to 22.5% over t-SNE seeds 0 to 9), Hilbert 32.7%, hue 57% | exact optimum per shelf; methods computed; shelf seeds 0 to 99 |
 | Worst distortion, 400 words, k = 256 | 0.409 (Gaussian), 0.410 (±1), 0.412 (sparse) | simulated, median of 20 maps (seeds 0 to 19) |
 | Same, k = 1,024 | 0.193, 0.198, 0.201; exact union bound 0.258; Achlioptas's bound 0.296 | simulated (20 maps); bounds exact |
 | Variance of one pair's ratio, Shuckle and Blissey, k = 16 | ±1 map 0.0764 (formula 0.0768), Gaussian 0.127 (formula 0.125) | simulated, 20,000 maps, standard error 0.0015 or less; formula exact |
 | t-SNE cost on the Pokémon map | 0.932; scikit-learn's exact t-SNE reaches 0.93 | computed (seed 0; scikit-learn random_state 0) |
 | Pokémon, T(10) / C(10) | t-SNE 0.966 / 0.952, SNE 0.886 / 0.968, PCA 0.865 / 0.957, SOM 0.967 / 0.917 | computed |
-| Words, T(10) / C(10) | t-SNE 0.767 / 0.745, SNE 0.677 / 0.787, PCA 0.630 / 0.680 | computed |
+| Words, T(10) / C(10) | t-SNE 0.766 / 0.744, SNE 0.677 / 0.787, PCA 0.630 / 0.680 | computed |
 | SOM on random colors, 20 × 20 | quantization error 0.083, topographic error 0.091 | computed (seeds 0 and 1) |
 
 ## How the results are checked
@@ -44,7 +44,7 @@ Four questions about drawing data so that neighbors stay neighbors.
 - **SNE and t-SNE.** The perplexity search hits its target to 10⁻⁶. All three gradients (SNE, symmetric SNE, t-SNE) match finite differences. P matches scikit-learn's to 10⁻⁶, and the t-SNE cost and gradient match its `_kl_divergence` to 10⁻¹⁴.
 - **Random projections.** For Gaussian maps one pair's ratio follows χ²ₖ/k exactly; the notebook compares a histogram of 20,000 maps with that density. The variance formula (2 + (m₄ − 3) Σ aᵢ⁴/|a|⁴)/k is checked by hand on a single coordinate and by simulation on two pairs.
 - **Results file.** `python -m maps.study` writes `results/maps.json` and `results/maps.npz`. A test recomputes the quick sections (12-book shelf, projections, SOMs) and compares them with the file. Each notebook's last cell compares the slow sections it computes. Another test redraws every figure from the results and compares the SVG bytes. CI reruns the notebooks and compares their text and figures.
-- **Reproducible bits.** The SNE, t-SNE and SOM loops use elementwise numpy operations only, without BLAS. Test runs gave identical bits with numpy's AVX-512 and AVX2 code paths turned off and on.
+- **Reproducible bits.** SNE and t-SNE magnify last-bit differences. numpy picks a different exp and log for each CPU, and the SVD and matrix products of OpenBLAS differ the same way. Before `portable.py`, the 1D t-SNE's mean excess on the 100 shelves came out anywhere from 18.3% to 21.4%, depending on the machine. `portable.py` now computes these functions and the principal axes from IEEE basic operations, which give the same bits on every machine. The SNE, t-SNE and SOM code writes its matrix products as elementwise sums. A test pins the bits of these functions and of short SNE, t-SNE and SOM runs. Every computation behind the table gave the same bits on 20 GitHub runner jobs, which had seven CPU models from AMD, Intel, Apple and Arm, some with AVX-512 and some without. It gave the same bits on a Hugging Face Jobs CPU and on the machine that wrote the results. The random projections still use BLAS; CI reruns them with one BLAS thread.
 
 ## Ordering books by color ([`shelf.ipynb`](shelf.ipynb))
 
@@ -56,7 +56,7 @@ Hue sorts fail for three reasons, all visible in the picture above. Grays have n
 
 The two scores disagree. The shortest shelf has the least total jump and the best T(2) (0.993). But its C(5) is 0.908, against 0.964 for the 1D t-SNE and 0.948 for the 1D SOM. A shortest path visits each region of color once and leaves by its cheapest exit, so two close colors visited at different times end up far apart. Its largest single jump (0.407) is also larger than the SOM's (0.322) and t-SNE's (0.330).
 
-On 100 random shelves of 10 books, greedy + 2-opt finds the shortest ordering 91 times, and is never more than 4.2% longer. The 1D t-SNE is worse on 10 books (18.3% over) than on 139 (13.9%): on a line, points cannot pass each other, so an early wrong order can stay. With the paper's learning rate of 100, ten books fly hundreds of units apart; the package uses 10.
+On 100 random shelves of 10 books, greedy + 2-opt finds the shortest ordering 91 times, and is never more than 4.2% longer. The 1D t-SNE is worse on 10 books (22.5% over) than on 139 (13.9%): on a line, points cannot pass each other, so an early wrong order can stay. The 10-book number depends on the random start; over t-SNE seeds 0 to 9 it runs from 17.6% to 22.5%. With the paper's learning rate of 100, ten books fly hundreds of units apart; the package uses 10.
 
 ## Random projections ([`jl.ipynb`](jl.ipynb))
 
@@ -131,7 +131,7 @@ A 16 × 16 map of the Pokémon stats uses 240 of its 256 units, so about three P
 
 ```bash
 uv run python -m maps.shelf     # every shelf method on the 139 CSS colors (about a minute)
-uv run python -m maps.study     # results/maps.json and maps.npz (about four minutes)
+uv run python -m maps.study     # results/maps.json and maps.npz (about five minutes)
 uv run python -m maps.figures   # figures/*.svg from the results (seconds)
 uv run --group maps --with jupyter jupyter lab maps/shelf.ipynb
 ```
@@ -139,7 +139,7 @@ uv run --group maps --with jupyter jupyter lab maps/shelf.ipynb
 ```text
 $ uv run python -m maps.shelf
 HSV hue         jump 24.894  max_jump 0.940  T2 0.759  C2 0.833  T5 0.747  C5 0.815  (0.0 s)
-Oklab hue       jump 26.678  max_jump 0.692  T2 0.727  C2 0.840  T5 0.725  C5 0.834  (0.0 s)
+Oklab hue       jump 25.655  max_jump 0.578  T2 0.744  C2 0.836  T5 0.736  C5 0.830  (0.0 s)
 Hilbert curve   jump 12.510  max_jump 0.461  T2 0.944  C2 0.885  T5 0.914  C5 0.849  (0.0 s)
 ```
 
@@ -154,6 +154,7 @@ Hilbert curve   jump 12.510  max_jump 0.461  T2 0.944  C2 0.885  T5 0.914  C5 0.
 | `sne.py` | perplexity search, SNE, symmetric SNE and t-SNE costs and gradients, the optimizer |
 | `jl.py` | random matrices, distortion, the bounds, the exact χ² tail, the variance formula |
 | `som.py` | Kohonen's online SOM, quantization and topographic error, U-matrix |
+| `portable.py` | exp, log, cube root, power, atan2 and principal axes that give the same bits on every machine |
 | `data.py` | the three point sets |
 | `study.py`, `results/` | every quoted number, cached for the notebooks |
 | `draw.py`, `figures.py`, `figures/` | shelves of spines and the README's figures |

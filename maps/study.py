@@ -1,6 +1,6 @@
 """Every number the README quotes, computed once and written to results/maps.json.
 
-    uv run python -m maps.study          # all sections (about four minutes on one core)
+    uv run python -m maps.study          # all sections (about five minutes on one core)
     uv run python -m maps.study jl som   # some of them
 
 The notebooks call the same cached functions, so they show the same runs. A test reruns
@@ -15,7 +15,7 @@ from pathlib import Path
 
 import numpy as np
 
-from maps import colors, data, jl, ranks, shelf, sne, som
+from maps import colors, data, jl, paths, portable, ranks, shelf, sne, som
 
 RESULTS = Path(__file__).parent / "results" / "maps.json"
 MAPS = Path(__file__).parent / "results" / "maps.npz"  # the maps that the figures draw
@@ -113,11 +113,29 @@ def benchmark_scores() -> dict[str, list[dict[str, float]]]:
     return out
 
 
+TSNE_SEEDS = 10
+
+
+@cache
+def tsne_seed_excess() -> list[float]:
+    """The 1D t-SNE's mean excess over the shortest on the same 100 shelves, for t-SNE
+    seeds 0 to 9: how far its benchmark number moves with the starting map alone."""
+    best = np.array([s["jump"] for s in benchmark_scores()["shortest"]])
+    jumps = np.zeros((TSNE_SEEDS, BENCH_SHELVES))
+    for s in range(BENCH_SHELVES):
+        _, hexes = data.random_shelf(BENCH_BOOKS, s)
+        dist = colors.distances(colors.oklab(hexes))
+        for seed, order in enumerate(shelf.tsne_lines(hexes, list(range(TSNE_SEEDS)))):
+            jumps[seed, s] = paths.total_jump(order, dist)
+    return [float(e) for e in (jumps / best - 1).mean(axis=1)]
+
+
 def benchmark_section() -> dict:
-    """Mean excess jump over the shortest, share of shelves solved, mean T(2) and C(2)."""
+    """Mean excess jump over the shortest, share of shelves solved, mean T(2) and C(2), and
+    the 1D t-SNE's mean excess for each of seeds 0 to 9."""
     scores = benchmark_scores()
     best = np.array([s["jump"] for s in scores["shortest"]])
-    out = {}
+    out: dict[str, dict[str, float | list[float]]] = {}
     for name, rows in scores.items():
         excess = np.array([s["jump"] for s in rows]) / best - 1
         out[name] = {
@@ -127,6 +145,7 @@ def benchmark_section() -> dict:
             "T2": float(np.mean([s["T2"] for s in rows])),
             "C2": float(np.mean([s["C2"] for s in rows])),
         }
+    out["1D t-SNE"]["mean_excess_by_seed"] = tsne_seed_excess()
     return out
 
 
@@ -236,11 +255,10 @@ def embeddings(name: str) -> dict[str, np.ndarray]:
 
 
 def pca(x: np.ndarray, dims: int = 2) -> np.ndarray:
-    """Coordinates on the leading principal components, each signed so its largest loading is positive."""
-    xc = x - x.mean(axis=0)
-    _, _, vt = np.linalg.svd(xc, full_matrices=False)
-    vt = vt[:dims] * np.sign(vt[np.arange(dims), np.abs(vt[:dims]).argmax(axis=1)])[:, None]
-    return xc @ vt.T
+    """Coordinates on the leading principal components, each signed so its largest loading
+    is positive (Jacobi's method and fixed-order sums, so the same bits on any machine)."""
+    _, axes = portable.principal_axes(x, dims)
+    return portable.dot_rows(x - x.mean(axis=0), axes)
 
 
 def map_scores(x: np.ndarray, y: np.ndarray, p: np.ndarray) -> dict[str, list[float] | float]:
