@@ -671,6 +671,9 @@ def collect(runs: list[Path], lora_compact: Path | None = None) -> dict:
             info.setdefault(giver, {}).update(i)
         out["data"]["lora_jobs"] = extra["data"]
         out["source"]["lora_jobs"] = extra["source"]
+        rerun = out["data"].setdefault("reruns", {"slices": 0, "same_scores": 0, "games": 0})
+        for k in rerun:
+            rerun[k] += extra["reruns"][k]
     out["crossplay"] = {"info": info}
     for variant in ("all", "strict"):
         out["crossplay"][variant] = encode_cells(dict(sorted(cells[variant].items())))
@@ -746,23 +749,33 @@ def decode_cells(cells: dict) -> dict:
 
 def compact_lora(folders: list[Path]) -> dict:
     """The C8 jobs' outputs in the encoding of bench-runs.json, to copy out of the
-    private dataset (the games' outcomes only)."""
-    slices, stricts = [], []
+    private dataset (the games' outcomes only). Later folders replace earlier ones; a
+    repeated giver's scores are compared."""
+    slices: dict[tuple[bool, str], dict] = {}
     data, source = [], []
+    reruns = {"slices": 0, "same_scores": 0, "games": 0}
     for folder in folders:
         for p in sorted(folder.glob("crossplay-lora-*.json")):
             sl = json.loads(p.read_text())
-            slices.append(sl)
-            stricts.append(sl.get("strict", p.name.startswith("crossplay-lora-strict-")))
+            key = (sl.get("strict", p.name.startswith("crossplay-lora-strict-")), sl["giver"])
+            if key in slices and not key[0]:
+                same = [g["score"] for g in slices[key]["games"]] == [
+                    g["score"] for g in sl["games"]
+                ]
+                reruns["slices"] += 1
+                reruns["same_scores"] += same
+                reruns["games"] += len(sl["games"])
+            slices[key] = sl
         data.append(json.loads((folder / "data.json").read_text()))
         if (folder / "manifest.json").exists():
             source.append(json.loads((folder / "manifest.json").read_text()))
-    cells, info = slice_cells(slices, stricts)
+    cells, info = slice_cells(slices.values(), [strict for strict, _ in slices])
     return {
         "cells": {v: encode_cells(c) for v, c in cells.items()},
         "info": info,
         "data": data,
         "source": source,
+        "reruns": reruns,
     }
 
 
@@ -1155,7 +1168,9 @@ def rerun_note(d: dict) -> str:
 def static_sections(summary: dict) -> list[str]:
     d = summary["data"]
     info = next(iter(summary["crossplay"]["info"].values()))
-    lora = (d.get("lora_jobs") or [{}])[0]
+    lora = next(
+        (v["lora-c8"] for v in summary["crossplay"]["info"].values() if "lora-c8" in v), None
+    )
     c3 = next((v["c3"] for v in summary["crossplay"]["info"].values() if "c3" in v), None)
     lines = [
         "",
@@ -1200,7 +1215,8 @@ def static_sections(summary: dict) -> list[str]:
     if lora:
         lines.append(
             f"- The C8 encoder (arm B, seed 1, clue template {lora.get('template', '?')}) encoded"
-            f" {lora.get('extra_words', '?')} words that its stored vectors lack, on a CPU in float32;"
+            f" {lora.get('extra_words', '?')} words that its stored vectors lack, on a CPU in float32"
+            f" ({lora.get('seconds', '?')} s);"
             " on 200 stored words the largest difference from the stored float16 vectors is"
             f" {lora.get('max_abs_difference_bare', float('nan')):.4f} (bare) and"
             f" {lora.get('max_abs_difference_' + str(lora.get('template')), float('nan')):.4f} ({lora.get('template')})."
