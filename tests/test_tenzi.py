@@ -254,3 +254,16 @@ def test_note_reads_its_numbers_from_results():
         "34.46 k",
     ):
         assert stale not in note, stale
+
+
+def test_published_means_for_two_to_seven_dice():
+    """Puzzling Stack Exchange question 99181 (2020): the least mean number of rolls for 2 to 7
+    dice by linear programming, as fractions for up to five dice and to 12 places beyond."""
+    from tenzi import optimal
+
+    published = {2: Fraction(6), 3: Fraction(63, 8), 4: Fraction(1388, 143)}
+    published[5] = Fraction(191283, 17248)
+    for dice, value in published.items():
+        assert optimal.solve(dice, 6)[1] == value
+    assert abs(float(optimal.solve(6, 6)[1]) - 12.2178200960107) < 1e-12
+    assert abs(float(optimal.solve(7, 6)[1]) - 13.155830198755) < 1e-10

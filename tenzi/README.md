@@ -2,7 +2,7 @@
 
 <!-- shared:summary -->
 
-How many turns does a game of Tenzi take, and what is the best way to play? Keeping the face that is most common after the first roll, a game takes 15.35 turns on average; switching faces when another group grows larger lowers that to 15.29. No strategy does better, either on average or in the chance of being done by any given turn, so switching also wins races most often. Exact, by a Markov chain and a Markov decision process, and checked by simulation.
+How many turns does a game of Tenzi take, and what is the best way to play? Keeping the face that is most common after the first roll, a game takes 15.35 turns on average; switching faces when another group grows larger lowers that to 15.29. No strategy does better on average, and none is more likely to be done by any turn up to 163, after which no strategy can gain more than 10<sup>−12</sup>. So in a race at equal pace against players who do not react to our dice, switching wins most often, to within 10<sup>−12</sup>. Exact, by a Markov chain and a Markov decision process, and checked by simulation. That keeping the most common face is best on average was found before for one to seven dice (Puzzling Stack Exchange, 2020); the proof for ten dice, the deadlines and the race are added here.
 
 <!-- /shared -->
 
@@ -10,7 +10,7 @@ How many turns does a game of Tenzi take, and what is the best way to play? Keep
 
 *The first two turns of a seeded game. Shaded dice show the kept face and stay put; the rest are rolled again.*
 
-The analysis is written up in [`tenzi.pdf`](tenzi.pdf), with a narrow edition for phones in [`tenzi-phone.pdf`](tenzi-phone.pdf). Its section "A formula good to ten decimals" explains why H₁₀ / ln(6/5) + 1/2 is so close to the mean with the face named first, and compares the distribution with the MathFest slides of Bacinski and Pennings. "The race" has the race of 2 to 30 players against the slides, "The best strategy" the decision process, and "Is switching also best in a race?" the programs over deadlines.
+The analysis is written up in [`tenzi.pdf`](tenzi.pdf), with a narrow edition for phones in [`tenzi-phone.pdf`](tenzi-phone.pdf). Its section "A formula good to nine decimals" explains why H₁₀ / ln(6/5) + 1/2 is so close to the mean with the face named first, and compares the distribution with the MathFest slides of Bacinski and Pennings. "The race" has the race of 2 to 30 players against the slides, "The best strategy" the decision process, and "Is switching also best in a race?" the programs over deadlines.
 
 ## Rules as modeled
 
@@ -20,7 +20,9 @@ The analysis is written up in [`tenzi.pdf`](tenzi.pdf), with a narrow edition fo
 - **Fixed face:** keep the face that is most common after the first roll, and never change it. If two faces tie, either will do.
 - **Switching:** switch faces whenever the rerolled dice show more of another face than are kept.
 - **Face named first:** name the face before the first roll, as some players do.
-- **A race:** players roll together and play independently, and the game ends on the first turn on which someone finishes. Two or more players tie on that turn unless exactly one finishes.
+- **A race:** players roll in lockstep, at the same pace, and play independently, and the game ends on the first turn on which someone finishes. If two or more finish on that turn, they tie.
+
+The [official rules](https://www.ilovetenzi.com/rules) say to decide after the first roll which number to go for, and are silent on changing it later, so switching is a reading they leave open. They also have everyone roll together only on the first roll and then each at their own pace, with the first to finish winning. The lockstep race is a model of equal-speed players, and its ties belong to the model, not to the game.
 
 <!-- /shared -->
 
@@ -62,17 +64,20 @@ All results are exact unless marked.
 
 ## Sources
 
-- S. Bacinski and T. Pennings, [How to win at Tenzi](http://sigmaa.maa.org/mcst/documents/TenziforMathfest.pdf), MathFest slides: the face named first, the race, and the tables compared in the write-up.
+- S. Bacinski and T. Pennings, [How to win at Tenzi](http://sigmaa.maa.org/mcst/documents/TenziforMathfest.pdf), MathFest slides: the face named first, the race, and the tables compared in the write-up. Their article of the same title, *The College Mathematics Journal* 51(4), 2020, 242–253 ([doi](https://doi.org/10.1080/07468342.2020.1774296)), was not read.
+- [How many rolls on average to get N dice to all show the same value?](https://puzzling.stackexchange.com/questions/99181), Puzzling Stack Exchange, 2020: one answer solves the decision process by linear programming for one to seven dice and finds keeping the most common face optimal; another gives that strategy's mean for up to 100 dice, 15.29440 for ten. Both agree with `optimal.py` (a test checks two to seven dice).
+- [Rules for Tenzi](https://www.ilovetenzi.com/rules), the publisher's page.
 - B. Eisenberg, [On the expectation of the maximum of IID geometric random variables](https://doi.org/10.1016/j.spl.2007.05.011), *Statistics and Probability Letters* (2008): the Fourier analysis of the remainder, and the periodic term of Szpankowski and Rego.
 
 ## Open questions
 
 <!-- shared:open -->
 
-- **A proof for every deadline.** Switching is best for every deadline up to turn 163, by computation. An argument that covers every deadline, and every number of dice and faces, is still missing.
+- **A proof for every deadline.** Is switching best for every deadline? It is up to turn 163, by computation; an argument that covers every deadline, and every number of dice and faces, is still missing.
 - **Speed.** The slides ask how much a faster player gains; in a lockstep race every player rolls at the same pace. Their chart of a player who rolls faster gives a jump of 0.0235 at equal speeds, about half the exact chance of a tie between two players, 0.048. Where does 0.0235 come from?
 - **Players who react.** What is the best strategy in a race against players who watch our dice and react to them? The argument that switching is best assumes that the others' choices do not depend on our dice.
-- **Other sizes.** The same chain and decision process work for any number of dice and faces. Every deadline has been checked only for ten dice on six faces and for two to six dice on two to six faces.
+- **Other sizes.** Is switching best for every deadline with other numbers of dice and faces? The same chain and decision process work for any size, but every deadline has been checked only for ten dice on six faces and for two to six dice on two to six faces.
+- **A real race.** In the game each player rolls at their own pace. Does switching cost time, since kept dice must be set aside again, and is it still worth it then?
 
 <!-- /shared -->
 

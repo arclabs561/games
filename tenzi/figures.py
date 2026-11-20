@@ -128,7 +128,7 @@ def rolls(seed: int = 4) -> str:
 
 def turns(upto: int = 50) -> str:
     rules = [
-        ("target first", "face named before the first roll", "#6250d6"),
+        ("target first", "face named before the first roll", "#3d3d3d"),
         ("fixed face", "keep the most common face", "#2a78d6"),
         ("switching", "switch to a larger group (dashed)", "#d95926"),
     ]

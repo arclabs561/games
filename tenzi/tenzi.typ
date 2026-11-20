@@ -106,16 +106,23 @@
 // ---------- title ----------
 #context if target() == "html" {
   html.elem("h1")[How Many Turns Does Tenzi Take?]
+  html.elem("p", attrs: (class: "date"))[November 2026]
 } else [
-  #align(center, text(17pt, weight: "bold")[How Many Turns Does Tenzi Take?])
+  #align(center)[
+    #text(17pt, weight: "bold")[How Many Turns Does Tenzi Take?]
+    #v(4pt)
+    #text(size: 9.5pt, fill: luma(90))[November 2026]
+  ]
   #v(0.8em)
 ]
 
 In *Tenzi* each player has ten dice. Everyone rolls at once; then each player keeps the dice that show one face and rerolls the rest, again and again, until all ten dice show that face. The first player done wins. How many rolls does that take, and is there a better way to choose the face?
 
+Keeping the face that is most common after the first roll, a game takes #fix(S.at("fixed face").mean, 2) turns on average, and more than 30 turns #pct(S.at("fixed face").over_30, 1) of the time. Switching to another face whenever it shows on more dice than are kept lowers the mean to #fix(S.switching.mean, 2). No strategy does better on average, and none is more likely to be done by any turn up to #R.deadline.last, after which no strategy can gain more than $10^(-12)$; so in a race at equal pace against players who do not react to our dice, switching wins most often, to within $10^(-12)$. All of these are exact. That keeping the most common face is best on average was found before for one to seven dice @pse; the proof for ten dice, the deadlines and the race are added here.
+
 = Two strategies
 
-The obvious plan is to keep whichever face came up most often. Call the number of dice showing the chosen face the *matched* count, $m$. The note compares the following ways to play.
+The natural plan is to keep whichever face came up most often. Call the number of dice showing the chosen face the *matched* count, $m$. The note compares the following ways to play.
 
 #shared(readme, "rules")
 
@@ -200,9 +207,9 @@ and summing over $k$ gives the mean,
 $ E[T] = sum_(k >= 0) P(T > k) = sum_(j=1)^10 (-1)^(j+1) binom(10, j) / (1 - q^j) = #fix(S.at("target first").mean, 3) "turns," $
 with standard deviation #fix(S.at("target first").sd, 3). The chain started from no matched dice gives the same mean exactly. Choosing the face after the first roll is worth #fix(S.at("target first").mean - S.at("fixed face").mean, 1) turns.
 
-Bacinski and Pennings @slides play this way and report a mean of 15.565 with standard deviation 6.834. Their mean is the exact one less one: their table of finishing times puts, beside each roll $k$, the exact chance of finishing on roll $k + 1$, to within 0.0006. Their state vectors do count the first roll: $S_4$ gives #fix(R.target_first_shifted.done_by_4, 4) for ten matched dice, which is $P(T <= 4)$, and $S_20 - S_19 = #fix(R.target_first_shifted.on_20, 4) = P(T = 20)$. A shift changes the mean but not the spread, so their standard deviation is exact.
+In their MathFest slides @slides, Bacinski and Pennings play this way and report a mean of 15.565 with standard deviation 6.834. Their mean is the exact one less one. Their table of finishing times puts, beside each roll $k$, the exact chance of finishing on roll $k + 1$, to within 0.0006; the slides do not say whether the mean was taken from that table or from a sum that leaves out the first roll. Their state vectors do count the first roll: $S_4$ gives #fix(R.target_first_shifted.done_by_4, 4) for ten matched dice, which is $P(T <= 4)$, and $S_20 - S_19 = #fix(R.target_first_shifted.on_20, 4) = P(T = 20)$. A shift changes the mean but not the spread, so their standard deviation is exact.
 
-= A formula good to ten decimals <sec-harmonic>
+= A formula good to nine decimals <sec-harmonic>
 
 The alternating sum hides a much simpler answer. Let $H_n$ be the $n$th harmonic number, $1 + 1 slash 2 + dots.c + 1 slash n$, and let $lambda = ln(6 slash 5) approx #fix(H.rate, 4)$. Then
 $ H_10 / lambda + 1 / 2 = #spaced(H.approx_10), $
@@ -212,7 +219,7 @@ while the exact mean is #spaced(H.exact_10). The two differ by #sci(H.gap_10, 2)
 
 *The largest time averages $H_n slash lambda$.* Of $n$ independent exponential times, the first ends after an exponential time with rate $n lambda$. The other $n - 1$ forget how long they have run, so the next gap is exponential with rate $(n - 1) lambda$, and so on down to rate $lambda$ (Rényi's representation). The gaps are independent, and their means add up to $E[M] = H_n slash lambda$.
 
-*Rounding up adds about a half.* Rounding up adds $1 - {M}$, where ${M} = M - floor(M)$ is the fractional part of $M$. If ${M}$ were spread evenly over $[0, 1)$, rounding would add exactly $1 slash 2$ on average. The remainder is therefore $1 slash 2 - E[{M}]$, which measures how far the fractional part of $M$ is from even.
+*Rounding up adds about a half.* Rounding up adds $1 - {M}$, where ${M} = M - floor(M)$ is the fractional part of $M$. If ${M}$ were spread evenly over $[0, 1)$, rounding would add exactly $1 slash 2$ on average. The remainder is therefore $1 slash 2 - E[{M}]$, which measures how far the fractional part of $M$ is from being spread evenly.
 
 For a real number $s$, write $phi(s) = E[e^(i s M)]$ for the characteristic function of $M$. Fourier series turn the unevenness of ${M}$ into values of $phi$.
 
@@ -225,7 +232,7 @@ _Proof._ A single exponential gap with rate $j lambda$ has characteristic functi
 
 The terms for $k$ and $-k$ are complex conjugates. Together they have size at most
 $ 2 / (lambda y_k) product_(j = 1)^n (1 + y_k^2 / j^2)^(-1 slash 2), quad y_k = (2 pi k) / lambda approx #fix(H.y, 2) k. $
-Each die multiplies the bound by $j slash sqrt(j^2 + y_k^2)$, which is at most #fix(H.largest_factor, 2) when $j <= 10$. Each exponential gap smooths the distribution of $M$, and ten of them leave a fractional part that is even to ten decimals. For ten dice the terms with $k = plus.minus 1$ come to #sci(H.size_k1, 3), nearly all of the remainder, and those with $k = plus.minus 2$ come to #sci(H.size_k2, 1). `maximum.py` adds the first 200 pairs in 60-digit arithmetic. For 10, 20 and 50 dice the sum agrees with the exact remainder to 30 digits or more (@tab-harmonic).
+Each die multiplies the bound by $j slash sqrt(j^2 + y_k^2)$, which is at most #fix(H.largest_factor, 2) when $j <= 10$. Each exponential gap smooths the distribution of $M$, and ten of them leave a fractional part spread evenly to within about $10^(-9)$. For ten dice the terms with $k = plus.minus 1$ come to #sci(H.size_k1, 3), nearly all of the remainder, and those with $k = plus.minus 2$ come to #sci(H.size_k2, 1). `maximum.py` adds the first 200 pairs in 60-digit arithmetic. For 10, 20 and 50 dice the sum agrees with the exact remainder to 30 digits or more (@tab-harmonic).
 
 #figure(
   text(10.5pt, table(
@@ -246,7 +253,7 @@ The remainder does not shrink forever. As $n$ grows, the product of the factors 
 
 = The race
 
-With $n$ players who roll together, the game ends on the first turn on which someone finishes. If one player is still going after turn $t$ with chance $S(t)$, the first finish comes on turn $t$ with chance $S(t-1)^n - S(t)^n$. Taking away the chance that exactly one player finishes then gives the chance of a tie. The chain also gives the chance of nine matched dice after each turn, and from it the expected number of players left one die short when the game ends (@tab-race).
+The race here is a lockstep race: $p$ players roll together on every turn, as if they rolled at the same pace, and the game ends on the first turn on which someone finishes. The official rules @rules have everyone roll together only on the first roll and then each at their own pace, so the ties counted below belong to this model of equal-speed players, not to the game. If one player is still going after turn $t$ with chance $S(t)$, the first finish comes on turn $t$ with chance $S(t-1)^p - S(t)^p$. Taking away the chance that exactly one player finishes then gives the chance of a tie. The chain also gives the chance of nine matched dice after each turn, and from it the expected number of players left one die short when the game ends (@tab-race).
 
 #figure(
   placement: auto,
@@ -272,7 +279,7 @@ The slides' figures differ from the exact ones by up to 0.1 turns and 0.05 playe
 
 = The best strategy <sec-best>
 
-Is there anything better than switching? After a roll, all that matters is how many dice show each face, such as $(4, 3, 2, 1)$. The player keeps some dice and rerolls the rest, and each roll costs a turn. This is a Markov decision process with #R.optimal.kinds_of_roll kinds of roll, small enough to solve with exact fractions. Policy iteration starts from switching and stops at once: no keep improves on it. That holds when the kept dice must share one face, as the rules require, and also when any dice may be kept. So #fix(R.optimal.mean, 4) turns is the best possible mean.
+Is there anything better than switching? After a roll, all that matters is how many dice show each face, such as $(4, 3, 2, 1)$. The player keeps some dice and rerolls the rest, and each roll costs a turn. This is a Markov decision process with #R.optimal.kinds_of_roll kinds of roll, small enough to solve with exact fractions. For one to seven dice the same process was solved by linear programming in an answer on Puzzling Stack Exchange @pse, which found keeping the most common face optimal; another answer there gives that strategy's mean for up to 100 dice, 15.29440 for ten, and argues that it is optimal for many dice. The values agree with `optimal.py` for two to seven dice. Policy iteration starts from switching and stops at once: no keep improves on it. That holds when the kept dice must share one face, as the rules require, and also when any dice may be kept. So #fix(R.optimal.mean, 4) turns is the best possible mean.
 
 #together[
 After keeping $k$ dice of one face, the expected turns still to come are
@@ -287,11 +294,11 @@ These fall as $k$ grows, so keeping more is always better, and every other keep 
 
 = Is switching also best in a race? <sec-deadline>
 
-A race rewards finishing before the others, not finishing in few turns on average. A strategy with a slightly larger mean could still finish by turn 10 more often. So fix a deadline $t$ and ask for the largest chance of being done by turn $t$. It solves a finite-horizon program. Let $V_0("roll")$ be 1 if all ten dice match and 0 otherwise, and let $V_s ("roll")$ be the largest, over the keeps allowed after the roll, of $sum P("keep" -> "next") V_(s - 1)("next")$. The best chance of being done by turn $t$ is then the average of $V_(t - 1)$ over the first roll. The values are whole numbers divided by $6^(10 s)$, so `optimal.py` computes them exactly with whole numbers, for every $s$ and every one of the #R.optimal.kinds_of_roll kinds of roll.
+A race rewards finishing before the others, not finishing in few turns on average. A strategy with a slightly larger mean could still finish by turn 10 more often. So fix a deadline $t$ and ask for the largest chance of being done by turn $t$. This is a finite-horizon dynamic program. Let $V_0("roll")$ be 1 if all ten dice match and 0 otherwise, and let $V_s ("roll")$ be the largest, over the keeps allowed after the roll, of $sum P("keep" -> "next") V_(s - 1)("next")$. The best chance of being done by turn $t$ is then the average of $V_(t - 1)$ over the first roll. The values are whole numbers divided by $6^(10 s)$, so `optimal.py` computes them exactly with whole numbers, for every $s$ and every one of the #R.optimal.kinds_of_roll kinds of roll.
 
 The answer is yes, at every deadline that matters. *For every deadline up to turn #R.deadline.last and every roll, keeping every die of the most common face is among the best keeps*, both when the kept dice must share one face and when any dice may be kept. Turn #R.deadline.last is where the chance of being done reaches $1 - 10^(-12)$, so after it no strategy can gain more than $10^(-12)$. The best chance of being done by turn 5, 10, 14, 20 and 30 is #("5", "10", "14", "20", "30").map(t => fix(R.deadline.chances.at(t), 4)).join(", ", last: " and "), and these are the switching strategy's own chances. On small games, up to four dice on three faces, the program agrees with value iteration over every ordered roll and every subset of dice to keep. In every game of two to six dice on two to six faces, switching is again best for every deadline.
 
-A strategy that is best for every deadline is best for any race. Suppose the other players' choices do not depend on our dice, though they may be anything else and we may watch them. Fix everything the others roll and choose. Then the turn $tau$ on which the first of them finishes is fixed, and we win outright exactly when we are done by turn $tau - 1$. Whatever we do, even reacting to the others, is then a strategy for our own dice alone, and no strategy beats switching's chance of being done by that turn (a strategy that remembers the past or flips coins does no better than the program's best). Averaging over the others' play keeps the inequality. The same holds for winning or tying (done by turn $tau$), and for any mix of the two, such as counting a tie as half a win. So in a lockstep race, switching gives the largest chance of winning against any opponents who do not react to our dice.
+A strategy that is best for every deadline is best for any race. Suppose the other players' choices do not depend on our dice, though they may be anything else and we may watch them. Fix everything the others roll and choose. Then the turn $tau$ on which the first of them finishes is fixed, and we win outright exactly when we are done by turn $tau - 1$. Whatever we do, even reacting to the others, is then a strategy for our own dice alone, and no strategy beats switching's chance of being done by that turn (a strategy that remembers the past or flips coins does no better than the program's best). Averaging over the others' play keeps the inequality. The same holds for winning or tying (done by turn $tau$), and for any mix of the two, such as counting a tie as half a win. So in a lockstep race, switching gives the largest chance of winning against any opponents who do not react to our dice, exactly for races decided by turn #R.deadline.last and to within $10^(-12)$ in all.
 
 = Checks
 

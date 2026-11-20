@@ -20,3 +20,14 @@ eisenberg:
     issue: 2
   serial-number:
     doi: 10.1016/j.spl.2007.05.011
+pse:
+  type: web
+  title: How many rolls on average to get N dice to all show the same value?
+  organization: Puzzling Stack Exchange, question 99181
+  date: 2020
+  url: https://puzzling.stackexchange.com/questions/99181
+rules:
+  type: web
+  title: Rules for TENZI
+  organization: ilovetenzi.com
+  url: https://www.ilovetenzi.com/rules
