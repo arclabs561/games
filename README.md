@@ -25,7 +25,7 @@ Each folder's README gives the rest of its results, its files and how to run the
 The repository is a [uv](https://docs.astral.sh/uv/) project and needs Python 3.12 or later.
 
 ```bash
-uv sync --all-groups --no-group codenames-gpu   # every game's packages, plus pytest, ruff and ty (codenames-gpu is CUDA torch, for GPU jobs)
+uv sync --all-groups --no-group codenames-gpu --no-group hanabi-jax   # every game's packages, plus pytest, ruff and ty (the two groups left out are CUDA builds, for GPU jobs)
 uv run pytest
 uv run ruff check
 TY_UV=scripts uv run ty check    # also checks each Erase script in its own environment

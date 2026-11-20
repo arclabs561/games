@@ -27,7 +27,7 @@ jobs:
           python-version: ${{ matrix.python }}
       - name: Install the locked environment
         # The CUDA build of torch (codenames-gpu) is for Hugging Face Jobs only.
-        run: uv sync --locked --all-groups --no-group codenames-gpu
+        run: uv sync --locked --all-groups --no-group codenames-gpu --no-group hanabi-jax
       - name: Lint
         run: uv run ruff check
       - name: Format check
