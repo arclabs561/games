@@ -8,6 +8,10 @@ Sources (read 2026-11-18):
 - MONEY: "Nova:Making Money", https://evnova.miraheze.org/wiki/Nova:Making_Money, the list of
   "short, profitable runs used by veteran pilots", standard commodities only.
 
+The route data below are adapted from those pages, which are under CC BY-SA 4.0
+(https://creativecommons.org/licenses/by-sa/4.0/), with credit to the wiki's editors; this
+file's data are under the same license.
+
 Each route is its stops in order, the jumps the source gives for each leg, and for each leg the
 commodities with the price levels the source names. The sources give one jump count for a
 two-stop route; it is read as the jumps each way.

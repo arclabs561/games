@@ -10,9 +10,10 @@ In *Escape Velocity Nova* (Ambrosia Software, 2002) and in [Naev](https://naev.o
 
 ## Rules as modeled
 
-- A **stop** is a planet or station with a commodity exchange. Each commodity it trades has one price there. In both games the price is the same whether the player buys or sells.
+- A **stop** is a planet or station with a commodity exchange; Naev's data call it a spob (space object). Each commodity it trades has one price there. In both games the price is the same whether the player buys or sells.
 - A **leg** goes from one stop to the next by the fewest jumps. It carries the one commodity whose price gains the most between the two stops, or nothing if none gains. Profit is linear in the load, so a full hold of the best commodity is optimal unless credits run short.
-- A **route** is a cycle of stops, flown over and over. Its **rate** is the gain per ton of one pass divided by its **cost**: the jumps, plus a fixed cost for each landing, counted in jumps.
+- A **route** is a cycle of stops, flown over and over. Its **rate** is the gain per ton of one pass divided by its **cost**: the jumps, plus a fixed cost for each landing, counted in jumps. Finding the route with the best rate is the classical problem of a cycle with the best ratio of gain to time (G. B. Dantzig, W. O. Blattner and M. R. Rao, 1967), which Howard's policy iteration solves.
+- Naev counts time in **periods**, its unit of game time.
 
 The cost of a landing matters. Both games have two stops in one system with a price gap, so with free landings the gain per jump has no upper bound. Two ways around this are used below. One counts jumps only, but lets the ship land once per visit to a system. The other charges each landing a cost x, and follows the best route as x changes.
 
@@ -48,7 +49,7 @@ CI runs the tests on a small made-up galaxy and on Naev's committed data. The EV
 
 ## Naev: what is the best route?
 
-The data are Naev's XML files at commit `65cf3a39b892` (November 13, 2026). Prices come from Naev's price model, described under Data. Every rate here is in credits per ton at the mean prices, and every number is exact unless it says otherwise.
+The data are Naev's XML files at commit `65cf3a39b892` (2026-11-13). Prices come from Naev's price model, described under Data. Every rate here is in credits per ton at the mean prices, and every number is exact unless it says otherwise.
 
 - The map has 554 systems and 331 stops. All of them trade the same eight commodities. With hidden jumps left out, it has 689 two-way links in 12 connected parts. The largest part has 542 systems, and its diameter is 44 jumps.
 - The best round trip between two systems is Burnan (Scarlet) and Lora-Mor (Druss), one jump apart. Ore gains 117 one way and Medicine 671 the other, for 394 per jump.
@@ -79,7 +80,7 @@ EV Nova's data are not in this repository (see Data). These results come from a 
 - Counting jumps only, with one landing per visit, no route beats 217.
 - With a landing cost x, the best route is Ver'ar Shan and Ver'ar Sho, two stations in Ver'ashan, up to x = 167/77. It gains 334 per pass with no jumps. From there to x = 943/304, the best route is Earth, then Port Kane, then Europa: 809 per pass in four jumps. Above that it is Earth and New Ireland (Tuatha), 742 per pass in six jumps.
 - Fuel does not change the answer at x = 1, for the same reason as in Naev. Neither do the special commodities, if they cost 80% of their base price where sold and fetch 125% where bought (an assumption; see below).
-- A new player has a 10-ton Shuttle and 25,000 credits, which fill the hold; the best rate at x = 1 is 1,670 credits per unit of cost. A 125-ton Terrapin with the same credits can fill only part of its hold. The best route is the same, but its rate is 10,004.5, against 20,875 with 100,000 credits.
+- A new player has a 10-ton Shuttle and 25,000 credits, which fill the hold. Among trades, the best rate at x = 1 is 1,670 credits per unit of cost. That compares trades only: the wiki's guides for new pilots point to cargo missions and rescues, which pay for delivery and need no capital, and which are not modeled here. A 125-ton Terrapin with the same credits can fill only part of its hold. The best route is the same, but its rate is 10,004.5, against 20,875 with 100,000 credits.
 
 ## Do the published EV Nova routes hold up?
 
@@ -94,16 +95,14 @@ The EV Nova wiki lists recommended routes on its [Trade Routes](https://evnova.m
 
 | Source | What | License | Committed |
 |---|---|---|---|
-| [naev/naev](https://github.com/naev/naev) XML data, commit `65cf3a39b892` | systems with their map positions, jumps, spobs, commodities | CC BY-SA 4.0 | yes, as `naev.json` and `figures/naev_map.svg` (CC BY-SA 4.0) |
+| [naev/naev](https://github.com/naev/naev) XML data, commit `65cf3a39b892` | systems with their map positions, jumps, spobs, commodities | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) | yes, as `naev.json` and `figures/naev_map.svg` (CC BY-SA 4.0) |
 | Naev's `src/economy.c` | the price model | GPL-3 | no; reimplemented in `naev.py` |
 | EV Nova 1.1.1, ConText export from [vasi/evnova-utils](https://github.com/vasi/evnova-utils) | systems, stops, prices | Ambrosia Software's copyright | no |
-| EV Nova wiki | recommended routes, price levels, the 80% and 125% rule | not checked | the routes' stops, jumps and price levels, in `guides.py` |
+| [EV Nova wiki](https://evnova.miraheze.org/wiki/Nova:Trade_Routes) | recommended routes, price levels, the 80% and 125% rule | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) (the wiki's footer, checked 2026-11-20) | the routes' stops, jumps and price levels, in `guides.py`, adapted under the same license with credit to the wiki's editors |
 
-**Naev.** Naev's `LICENSE` puts its source code under GPL-3 and, except where noted, every other file, XML files included, under CC BY-SA 4.0 or later. The system positions are in the XML files, so they fall under CC BY-SA, not the GPL. That license allows copying and adapting them, with credit and under the same license. So `naev.json` keeps the positions, and the map above, drawn from them, is under CC BY-SA 4.0 with credit to the Naev developers. Rebuilding `naev.json` with the positions added leaves every other line as it was.
+**Naev.** Naev's `LICENSE` puts its source code under GPL-3 and, except where noted, every other file, XML files included, under CC BY-SA 4.0 or later. The system positions are in the XML files, so they fall under CC BY-SA, not the GPL. That license allows copying and adapting them, with credit and under the same license. `naev.json` is derived from the XML files at commit `65cf3a39b892614c003ac13d24e43855e98fa36b`, so it and the map drawn from it are under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/), with credit to the Naev developers. `uv run python -m ev_nova.naev --checkout PATH` rebuilds it from a checkout.
 
-`naev.json` is derived from the XML files in [naev/naev](https://github.com/naev/naev) at commit `65cf3a39b892614c003ac13d24e43855e98fa36b`. Naev's `LICENSE` puts its XML data under the Creative Commons Attribution-ShareAlike 4.0 license, so `naev.json` is under CC BY-SA 4.0 too, with credit to the Naev developers. `uv run python -m ev_nova.naev --checkout PATH` rebuilds it from a checkout.
-
-The prices follow `economy_initialiseCommodityPrices` in Naev's `src/economy.c`, which is under GPL-3. `naev.py` is a separate implementation of the same arithmetic. Each spob's price starts from the commodity's base price, times modifiers for the spob's class, population, faction and presence range. The system's radius, nebula volatility and interference raise it. Then each price is averaged with the others in its system, and each system's average with its neighbors'. Over time a price swings around this mean as the sum of two sine waves. One wave, of 3% to 8% of the price, has a period of 2,000/(jumps + 1) periods and is shared by all stops in a system. The other wave's period comes from the length of the spob's landscape image name minus 19. Naev computes that length in unsigned arithmetic, so names shorter than 19 characters (all of them) give a period near 10^17 periods, and that wave never moves. This is read from the code, not observed in the game. Only the eight standard commodities are modeled; one spob also trades Neblaze, which no other spob trades.
+The prices follow `economy_initialiseCommodityPrices` in Naev's `src/economy.c`, which is under GPL-3. `naev.py` is a separate implementation of the same arithmetic. Each spob's price starts from the commodity's base price, times modifiers for the spob's class, population, faction and presence range. The system's radius, nebula volatility and interference raise it. Then each price is averaged with the others in its system, and each system's average with its neighbors'. Over time a price swings around this mean as the sum of two sine waves. One wave, of 3% to 8% of the price, repeats every 2,000/(jumps + 1) periods and is shared by all stops in a system. How often the other wave repeats comes from the length of the spob's landscape image name minus 19. Naev computes that length in unsigned arithmetic, so names shorter than 19 characters (all of them) make it repeat only every 10^17 periods or so, and that wave never moves. This is read from the code, not observed in the game. Only the eight standard commodities are modeled; one spob also trades Neblaze, which no other spob trades.
 
 **EV Nova.** The game's data files are Ambrosia Software's copyright and are not committed. `evnova.py` reads a ConText export, a tab-separated dump of the game's resources made by the ConText/ResStore tool. Its docstring gives the sections and fields it uses. [vasi/evnova-utils](https://github.com/vasi/evnova-utils) publishes such an export of EV Nova 1.1.1 (`Context/NovaConText.txt`). Its license states that the file was generated from Ambrosia's data, which remain Ambrosia's copyright. The numbers above come from that file. Field meanings come from the Nova Bible, Ambrosia's resource documentation, as transcribed on the [EV Nova wiki](https://evnova.miraheze.org/wiki/Sp%C3%B6b). The base prices (75, 350, 750, 900, 200 and 550) are in the data. The rule that low is 80% and high is 125% of base, rounded down, comes from the wiki's [commodity table](https://evnova.miraheze.org/wiki/Commodities); the Nova Bible does not state it.
 
@@ -118,13 +117,13 @@ The tests use a small made-up galaxy. Set `EV_NOVA_CONTEXT` to the path of an ex
 
 ## Open questions
 
-- Whether Naev's mean prices match the game. A running copy of Naev could check a few spobs.
-- Time. A jump in Naev takes flying time that depends on the system, and the source comments put a jump at about three periods and a landing at about one. Rates per period would need a model of flight time. The map positions in `naev.json` are a first step: a jump point marked `autopos` lies at the system's radius, in the direction of the target system (`src/space.c`), so the distance flown inside a system between two such points can be computed. Ship speeds and the time of the jump itself are still needed.
-- Missions against trading. Cargo missions in both games pay for delivery and need no capital. They are not modeled.
-- Price drift in Naev, used on purpose. Prices in a system rise and fall together, with periods of a few hundred periods, so waiting for a good phase may beat flying at once.
-- Story changes. EV Nova's galaxy changes with control bits, and Naev's with its campaign. Only the start of an EV Nova game and Naev's base data are studied. EV Nova's disasters (`öops`), which shift one price for a while, are left out, as are hypergates and wormholes.
-- The prices of EV Nova's special commodities, and whether a player's rank changes commodity prices.
-- Legal limits. Some special commodities are contraband, and a player without enough standing with a Naev spob's faction cannot land there.
+- Do Naev's mean prices match the game? A running copy of Naev could check a few stops.
+- What are the best rates per period of game time? A jump in Naev takes flying time that depends on the system, and the source comments put a jump at about three periods and a landing at about one. Rates per period would need a model of flight time. The map positions in `naev.json` are a first step: a jump point marked `autopos` lies at the system's radius, in the direction of the target system (`src/space.c`), so the distance flown inside a system between two such points can be computed. Ship speeds and the time of the jump itself are still needed.
+- How do cargo missions compare with trading? In both games they pay for delivery and need no capital. They are not modeled.
+- Can a trader gain by timing Naev's price drift? Prices in a system rise and fall together, repeating every few hundred periods, so waiting for a good phase may beat flying at once.
+- How do story changes move the best routes? EV Nova's galaxy changes with control bits, and Naev's with its campaign. Only the start of an EV Nova game and Naev's base data are studied. EV Nova's disasters (`öops`), which shift one price for a while, are left out, as are hypergates and wormholes.
+- What do EV Nova's special commodities cost, and does a player's rank change commodity prices?
+- How do legal limits change the best routes? Some special commodities are contraband, and a player without enough standing with a Naev stop's faction cannot land there.
 
 ## Usage
 
