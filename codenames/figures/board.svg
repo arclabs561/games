@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="784" height="374" viewBox="0 0 784 374" role="img" font-family="Helvetica, Arial, sans-serif">
+<title>A Codenames board dealt from this folder&#x27;s word list</title>
+<desc>25 WordNet nouns from words.txt dealt by game.deal with seed 0: 9 team words, 8 opponent words, 7 neutral words and the assassin, each cell labeled with its kind.</desc>
+<rect width="784" height="374" fill="#ffffff"/>
+<rect x="10" y="10" width="148" height="58" rx="4" fill="#d95926"/>
+<text x="84" y="43" font-size="16" fill="#ffffff" text-anchor="middle" font-weight="bold">layer</text>
+<text x="152" y="62" font-size="9" fill="#ffffff" text-anchor="end">opponent</text>
+<rect x="164" y="10" width="148" height="58" rx="4" fill="#2a78d6"/>
+<text x="238" y="43" font-size="16" fill="#ffffff" text-anchor="middle" font-weight="bold">wine</text>
+<text x="306" y="62" font-size="9" fill="#ffffff" text-anchor="end">team</text>
+<rect x="318" y="10" width="148" height="58" rx="4" fill="#ebe7dc"/>
+<text x="392" y="43" font-size="16" fill="#0b0b0b" text-anchor="middle" font-weight="bold">middle</text>
+<text x="460" y="62" font-size="9" fill="#0b0b0b" text-anchor="end">neutral</text>
+<rect x="472" y="10" width="148" height="58" rx="4" fill="#d95926"/>
+<text x="546" y="43" font-size="16" fill="#ffffff" text-anchor="middle" font-weight="bold">bar</text>
+<text x="614" y="62" font-size="9" fill="#ffffff" text-anchor="end">opponent</text>
+<rect x="626" y="10" width="148" height="58" rx="4" fill="#2a78d6"/>
+<text x="700" y="43" font-size="16" fill="#ffffff" text-anchor="middle" font-weight="bold">field</text>
+<text x="768" y="62" font-size="9" fill="#ffffff" text-anchor="end">team</text>
+<rect x="10" y="74" width="148" height="58" rx="4" fill="#d95926"/>
+<text x="84" y="107" font-size="16" fill="#ffffff" text-anchor="middle" font-weight="bold">pope</text>
+<text x="152" y="126" font-size="9" fill="#ffffff" text-anchor="end">opponent</text>
+<rect x="164" y="74" width="148" height="58" rx="4" fill="#2a78d6"/>
+<text x="238" y="107" font-size="16" fill="#ffffff" text-anchor="middle" font-weight="bold">pet</text>
+<text x="306" y="126" font-size="9" fill="#ffffff" text-anchor="end">team</text>
+<rect x="318" y="74" width="148" height="58" rx="4" fill="#2a78d6"/>
+<text x="392" y="107" font-size="16" fill="#ffffff" text-anchor="middle" font-weight="bold">mask</text>
+<text x="460" y="126" font-size="9" fill="#ffffff" text-anchor="end">team</text>
+<rect x="472" y="74" width="148" height="58" rx="4" fill="#ebe7dc"/>
+<text x="546" y="107" font-size="16" fill="#0b0b0b" text-anchor="middle" font-weight="bold">guard</text>
+<text x="614" y="126" font-size="9" fill="#0b0b0b" text-anchor="end">neutral</text>
+<rect x="626" y="74" width="148" height="58" rx="4" fill="#2a78d6"/>
+<text x="700" y="107" font-size="16" fill="#ffffff" text-anchor="middle" font-weight="bold">park</text>
+<text x="768" y="126" font-size="9" fill="#ffffff" text-anchor="end">team</text>
+<rect x="10" y="138" width="148" height="58" rx="4" fill="#2a78d6"/>
+<text x="84" y="171" font-size="16" fill="#ffffff" text-anchor="middle" font-weight="bold">jacket</text>
+<text x="152" y="190" font-size="9" fill="#ffffff" text-anchor="end">team</text>
+<rect x="164" y="138" width="148" height="58" rx="4" fill="#ebe7dc"/>
+<text x="238" y="171" font-size="16" fill="#0b0b0b" text-anchor="middle" font-weight="bold">sea</text>
+<text x="306" y="190" font-size="9" fill="#0b0b0b" text-anchor="end">neutral</text>
+<rect x="318" y="138" width="148" height="58" rx="4" fill="#ebe7dc"/>
+<text x="392" y="171" font-size="16" fill="#0b0b0b" text-anchor="middle" font-weight="bold">duke</text>
+<text x="460" y="190" font-size="9" fill="#0b0b0b" text-anchor="end">neutral</text>
+<rect x="472" y="138" width="148" height="58" rx="4" fill="#d95926"/>
+<text x="546" y="171" font-size="16" fill="#ffffff" text-anchor="middle" font-weight="bold">player</text>
+<text x="614" y="190" font-size="9" fill="#ffffff" text-anchor="end">opponent</text>
+<rect x="626" y="138" width="148" height="58" rx="4" fill="#2a78d6"/>
+<text x="700" y="171" font-size="16" fill="#ffffff" text-anchor="middle" font-weight="bold">chamber</text>
+<text x="768" y="190" font-size="9" fill="#ffffff" text-anchor="end">team</text>
+<rect x="10" y="202" width="148" height="58" rx="4" fill="#d95926"/>
+<text x="84" y="235" font-size="16" fill="#ffffff" text-anchor="middle" font-weight="bold">fruit</text>
+<text x="152" y="254" font-size="9" fill="#ffffff" text-anchor="end">opponent</text>
+<rect x="164" y="202" width="148" height="58" rx="4" fill="#d95926"/>
+<text x="238" y="235" font-size="16" fill="#ffffff" text-anchor="middle" font-weight="bold">web</text>
+<text x="306" y="254" font-size="9" fill="#ffffff" text-anchor="end">opponent</text>
+<rect x="318" y="202" width="148" height="58" rx="4" fill="#2b2b2b"/>
+<text x="392" y="235" font-size="16" fill="#ffffff" text-anchor="middle" font-weight="bold">bridge</text>
+<text x="460" y="254" font-size="9" fill="#ffffff" text-anchor="end">assassin</text>
+<rect x="472" y="202" width="148" height="58" rx="4" fill="#ebe7dc"/>
+<text x="546" y="235" font-size="16" fill="#0b0b0b" text-anchor="middle" font-weight="bold">soldier</text>
+<text x="614" y="254" font-size="9" fill="#0b0b0b" text-anchor="end">neutral</text>
+<rect x="626" y="202" width="148" height="58" rx="4" fill="#d95926"/>
+<text x="700" y="235" font-size="16" fill="#ffffff" text-anchor="middle" font-weight="bold">fat</text>
+<text x="768" y="254" font-size="9" fill="#ffffff" text-anchor="end">opponent</text>
+<rect x="10" y="266" width="148" height="58" rx="4" fill="#d95926"/>
+<text x="84" y="299" font-size="16" fill="#ffffff" text-anchor="middle" font-weight="bold">queen</text>
+<text x="152" y="318" font-size="9" fill="#ffffff" text-anchor="end">opponent</text>
+<rect x="164" y="266" width="148" height="58" rx="4" fill="#ebe7dc"/>
+<text x="238" y="299" font-size="16" fill="#0b0b0b" text-anchor="middle" font-weight="bold">total</text>
+<text x="306" y="318" font-size="9" fill="#0b0b0b" text-anchor="end">neutral</text>
+<rect x="318" y="266" width="148" height="58" rx="4" fill="#2a78d6"/>
+<text x="392" y="299" font-size="16" fill="#ffffff" text-anchor="middle" font-weight="bold">shower</text>
+<text x="460" y="318" font-size="9" fill="#ffffff" text-anchor="end">team</text>
+<rect x="472" y="266" width="148" height="58" rx="4" fill="#ebe7dc"/>
+<text x="546" y="299" font-size="16" fill="#0b0b0b" text-anchor="middle" font-weight="bold">chest</text>
+<text x="614" y="318" font-size="9" fill="#0b0b0b" text-anchor="end">neutral</text>
+<rect x="626" y="266" width="148" height="58" rx="4" fill="#2a78d6"/>
+<text x="700" y="299" font-size="16" fill="#ffffff" text-anchor="middle" font-weight="bold">gun</text>
+<text x="768" y="318" font-size="9" fill="#ffffff" text-anchor="end">team</text>
+<rect x="10" y="337" width="14" height="14" rx="2" fill="#2a78d6" stroke="#52514e"/>
+<text x="30" y="348" font-size="13" fill="#52514e">team (9)</text>
+<rect x="160" y="337" width="14" height="14" rx="2" fill="#d95926" stroke="#52514e"/>
+<text x="180" y="348" font-size="13" fill="#52514e">opponent (8)</text>
+<rect x="310" y="337" width="14" height="14" rx="2" fill="#ebe7dc" stroke="#52514e"/>
+<text x="330" y="348" font-size="13" fill="#52514e">neutral (7)</text>
+<rect x="460" y="337" width="14" height="14" rx="2" fill="#2b2b2b" stroke="#52514e"/>
+<text x="480" y="348" font-size="13" fill="#52514e">assassin (1)</text>
+</svg>
