@@ -149,8 +149,8 @@ def check_vectors(name: str) -> None:
     if missing:
         raise SystemExit(
             f"results/{name}.json has rows for {', '.join(missing)}, whose vectors are not in "
-            f"{COMPUTED}. Copy them from the branch compute/codenames-embed first:\n"
-            "    git fetch origin compute/codenames-embed\n"
+            f"{COMPUTED}. Copy them from the branch outputs/codenames-embed first:\n"
+            "    git fetch origin outputs/codenames-embed\n"
             "    git restore --source=FETCH_HEAD --worktree -- codenames/vectors/"
         )
 

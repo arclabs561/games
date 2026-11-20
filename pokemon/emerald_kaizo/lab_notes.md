@@ -7,9 +7,9 @@ Emerald Kaizo. The useful output is not a universal "good IV" percentile. It
 is a decision model for a particular species, role, encounter method, and
 play style.
 
-The current analysis is intentionally conservative about what is known from
-the downloaded ROM. The analyzed file has a verified Emerald base header,
-but its Kaizo build identity is unresolved.
+The analysis uses the documented Gen III IV model. It reads no ROM file, and
+it assumes no Kaizo-specific behavior beyond what the hack's published listing
+and its creator describe.
 
 ## Better Questions
 
@@ -88,8 +88,8 @@ selecting the wrong battle profile.
   movement, NPCs, lead abilities, and encounter timing change the RNG state.
 - Repeating a soft reset with the same timing can repeat the same candidate.
   The independent geometric model is not a frame-accurate model.
-- The Kaizo creator documents removed EV gains, but the local ROM has not been
-  disassembled enough to prove that behavior for this specific build.
+- The Kaizo creator documents removed EV gains; this lab has not checked that
+  behavior in the game's code.
 - The published ROMHacking.net entry describes Emerald Kaizo v2.1, released on
   14 March 2020.
 - The public SHF-Kaizo-Patches repository contains an `Emerald Kaizo 1.1.bps`
@@ -101,20 +101,6 @@ selecting the wrong battle profile.
   page did not expose complete raw slot tables or percentages for the early
   routes during this research pass.
 
-## Local ROM Evidence
-
-The local file is recorded in `rom_fingerprint.md`.
-
-- Local filename: `kaizo-emerald.gba`.
-- Size: 16 MiB.
-- Header: `POKEMON EMER`, game code `BPEE01`.
-- SHA-256: `ceb218cf629343dff7fc284f8c2de246fbc7f3e817a24f8b096b8d7102cbac4b`.
-- The adjacent vanilla ROM matches the published Emerald base checksums.
-- Applying the public 1.1 BPS patch to that base produces a different ROM.
-- The local file has no readable version marker in the GBA header.
-- The official v2.1 download endpoint was exposed by ROMHacking.net but
-  returned HTTP 403 when fetched directly, so the official patched output hash
-  is not yet available.
 
 ## Validation Log
 

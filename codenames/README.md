@@ -214,11 +214,11 @@ Only Cultural Codes and EAT are used in the numbers above. Prompts, replies, ada
 
 ## Usage
 
-The `codenames` dependency group holds the third-party packages. The four Hugging Face models' vectors are computed on a runner that can reach the Hub and kept on the branch `compute/codenames-embed`. Without them `study calibrate` stops, rather than rewrite `calibrate.json` without their rows. Times are from a fresh clone on a machine with two CPUs at a load of about 2; at a load of 4 to 6 they can be twice as long. [results/README.md](results/README.md) has the commands for every experiment, including the GPU and Inference Providers jobs.
+The `codenames` dependency group holds the third-party packages. The four Hugging Face models' vectors are computed on a runner that can reach the Hub and kept on the branch `outputs/codenames-embed`. Without them `study calibrate` stops, rather than rewrite `calibrate.json` without their rows. Times are from a fresh clone on a machine with two CPUs at a load of about 2; at a load of 4 to 6 they can be twice as long. [results/README.md](results/README.md) has the commands for every experiment, including the GPU and Inference Providers jobs.
 
 ```bash
 uv run python -m codenames.fetch all              # models and data, 184 MB on disk (10 to 20 s)
-git fetch origin compute/codenames-embed          # the Hugging Face models' vectors, about 240 MB
+git fetch origin outputs/codenames-embed          # the Hugging Face models' vectors, about 240 MB
 git restore --source=FETCH_HEAD --worktree -- codenames/vectors/
 uv run python -m codenames.study calibrate        # guessers.md (7 min from an empty cache, most of it encoding granite and bge)
 uv run python -m codenames.c1                     # c1.md, split by game (2 min)
