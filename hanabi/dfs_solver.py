@@ -55,14 +55,16 @@ type Holding = tuple[tuple[int, ...], ...]  # each player's hand, sorted
 class Game:
     """One deal, seen by the second solver. Cards are pairs folded into ints c * R + r."""
 
-    def __init__(self, rules: Rules, deck: list[int]):
+    def __init__(self, rules: Rules, deck: list[int], goal: int = 0):
         self.rules = rules
         self.deck = tuple(deck)
         self.R = rules.ranks
         self.C = rules.colors
         self.P = rules.players
         self.H = rules.hand
-        self.goal = rules.max_score
+        # The score to reach. Below the maximum only the free-order and one-hand games use
+        # it, and the missing-card test is off, since a lower score can do without a card.
+        self.goal = goal or rules.max_score
 
     def needed(self, card: int, pile: Pile) -> bool:
         return card != GONE and card % self.R >= pile[card // self.R]
@@ -92,7 +94,9 @@ class Game:
 
 
 def missing_card(g: Game, pile: Pile, hands: Holding, pos: int) -> bool:
-    """Is every copy of some needed card gone?"""
+    """Is every copy of some needed card gone? (Never, for a goal below the maximum.)"""
+    if g.goal < g.C * g.R:
+        return False
     left = set(g.deck[pos:])
     for h in hands:
         left.update(h)
@@ -149,7 +153,7 @@ def one_hand_winnable(g: Game, pile: Pile, pool: tuple[int, ...], pos: int, memo
                 progress = True
                 break
     pile = tuple(pile_l)
-    if sum(pile) == g.goal:
+    if sum(pile) >= g.goal:
         return True
     if p == len(g.deck):
         tops = list(pile)
@@ -158,7 +162,7 @@ def one_hand_winnable(g: Game, pile: Pile, pool: tuple[int, ...], pos: int, memo
                 if tops[c] < g.R and c * g.R + tops[c] in cards:
                     tops[c] += 1
                     break
-        return sum(tops) == g.goal
+        return sum(tops) >= g.goal
     seen: set[int] = set()
     tidy = []
     for c in cards:
@@ -207,7 +211,7 @@ def free_order_winnable(
     budget (a `Budget`, or None for no limit) runs out. `left` is the number of turns after
     the last draw still to come, or -1 while the deck has cards; `cur` matters only then.
     `memo` holds the states already settled."""
-    if sum(pile) == g.goal:
+    if sum(pile) >= g.goal:
         return True
     if left >= 0:
         return final_round(g, pile, hands, cur, left)
@@ -262,7 +266,7 @@ def free_order_winnable(
 def final_round(g: Game, pile: Pile, hands: Holding, cur: int, left: int) -> bool:
     """With no cards left to draw, `left` turns in order from player `cur`, each player
     playing at most one card from their own hand: can the goal be reached?"""
-    if sum(pile) == g.goal:
+    if sum(pile) >= g.goal:
         return True
     if left == 0:
         return False
