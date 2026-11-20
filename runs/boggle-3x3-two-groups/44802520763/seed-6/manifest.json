@@ -1,0 +1,28 @@
+{
+ "experiment": "boggle-3x3-two-groups",
+ "run": "seed-6",
+ "commit": "7fe38376ff2497beedba94f9b498f4f90d87f777",
+ "platform": "actions",
+ "command": [
+  "python",
+  "-m",
+  "boggle.bound",
+  "run",
+  "--shard",
+  "SEED",
+  "--shards",
+  "20",
+  "--out",
+  "OUT",
+  "--groups",
+  "aeiosuy,bcdfghjklmnpqrtvwxz",
+  "--lists",
+  "enable2k"
+ ],
+ "returncode": 0,
+ "seconds": 240.0,
+ "job_id": "44802520763",
+ "hardware": "GitHub Actions 1000101615",
+ "gpu": null,
+ "python": "3.14.4"
+}

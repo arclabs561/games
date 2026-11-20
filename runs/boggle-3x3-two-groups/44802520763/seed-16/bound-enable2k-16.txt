@@ -1,0 +1,1 @@
+classes 5 nodes 32444233 pruned 27195493 boards 3290572 found 0
