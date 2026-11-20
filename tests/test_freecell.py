@@ -1,10 +1,14 @@
 """FreeCell: the deal generator, the rules, both solvers, brute force, fences and certificates."""
 
+import json
+import re
+from pathlib import Path
+
 import pytest
 
 from freecell import native
 from freecell.brute import brute_winnable, reachable
-from freecell.certificates import blocked_at_start, static_stuck
+from freecell.certificates import blocked_at_start, explain, static_stuck
 from freecell.deals import (
     deal_columns,
     ms_deal,
@@ -15,6 +19,7 @@ from freecell.deals import (
     parse_layout,
     show,
 )
+from freecell.draw import figures
 from freecell.fence import check, fence_a, fence_b
 from freecell.report import FAQ_ZERO_CELLS, published_least
 from freecell.rules import Rules, apply, autoplay, can_stack, replay, safe, start
@@ -22,6 +27,7 @@ from freecell.small import orders
 from freecell.solver import run_moves, solve
 from freecell.survey import survey_a, survey_b
 
+HERE = Path(__file__).parent.parent / "freecell"
 needs_cc = pytest.mark.skipif(native.compiler() is None, reason="Solver B needs a C compiler")
 
 # Rosetta Code, "Deal cards for FreeCell": the cards of games 1 and 617 in the order dealt.
@@ -191,3 +197,45 @@ def test_survey_b_on_the_first_deals():
     won = {r["deal"]: r["cells"] for r in recs if r["verdict"] == "won"}
     assert won == {d: pub[d] for d in range(1, 13)}
     assert all(r["replay"] for r in recs if r["verdict"] == "won")
+
+
+def test_swapping_two_aces_of_11982_makes_it_won_with_three_cells():
+    # FreeCell FAQ: 11982 is won with three free cells if the A♠ and A♦ change places.
+    ace_s, ace_d = parse_card("AS"), parse_card("AD")
+    swap = {ace_s: ace_d, ace_d: ace_s}
+    layout = tuple(tuple(swap.get(c, c) for c in col) for col in ms_deal(11982))
+    assert solve(Rules(cells=2), layout).verdict == "lost"
+    won = solve(Rules(cells=3), layout)
+    assert won.verdict == "won" and replay(Rules(cells=3), layout, won.line)
+
+
+def test_readme_transcript_is_what_the_commands_print():
+    text = (HERE / "README.md").read_text()
+    blocks = re.findall(r"```console\n(.*?)```", text, re.S)
+    assert blocks
+    for block in blocks:
+        lines = block.strip().splitlines()
+        for command, output in zip(lines[::2], lines[1::2], strict=True):
+            deal, cells = command.split("freecell.certificates ")[1].split()
+            assert explain(int(deal), int(cells)) == output
+
+
+def test_committed_pictures_are_what_the_script_writes():
+    for file, svg in figures().items():
+        assert (HERE / "results" / file).read_text() == svg, file
+
+
+def test_summary_files_agree_with_each_other_and_the_readme():
+    summary = json.loads((HERE / "results" / "f1.json").read_text())
+    rows = [line.split("\t") for line in (HERE / "results" / "least_cells.tsv").open()][1:]
+    assert len(rows) == 32000
+    pub = published_least()
+    for deal, a, b, p in rows:
+        assert int(p) == pub[int(deal)]
+        assert b == "?" or int(b) == int(p)
+        assert a == "?" or b == "?" or a == b
+    assert summary["A and B"]["disagree"] == [] == summary["A and B"]["frozen cards differ"]
+    readme = (HERE / "README.md").read_text()
+    for cells, row in summary["either solver"].items():
+        line = f"| {cells} | {row['lost']:,} | {row['won']:,} | {row['undecided']:,} |"
+        assert line in readme
