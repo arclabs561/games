@@ -60,8 +60,14 @@ def test_committed_census_is_consistent():
     rows = json.loads(traps.RESULTS.read_text())
     for r in rows:
         assert r["deck_types"] == len(traps.deck_types(r["cards"]))
-        assert r["all_traps_slap_free"]
         assert all(t["trapped_positions"] > 0 for t in r["with_traps"])
+        # Up to eight cards every trap is a slap-free loop (Theorem 2's kind).
+        assert r["all_traps_slap_free"] == (r["cards"] < 9)
+        with_slap = [t["deck"] for t in r["with_traps"] if t["closed_classes_with_slap"]]
+        assert with_slap == (["2 2 3 4 5 6 7 J J"] if r["cards"] == 9 else [])
+    counts = {(r["cards"], r["players"]): len(r["with_traps"]) for r in rows}
+    assert counts[6, 2] == counts[6, 3] == counts[8, 2] == counts[8, 3] == 3
+    assert counts[9, 2] == 31
 
 
 def test_a_deal_that_never_ends_though_slaps_happen():
