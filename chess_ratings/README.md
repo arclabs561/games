@@ -1,6 +1,6 @@
 # Chess: what a rating says, and what a player at a rating plays
 
-A new Lichess blitz rating loses its question mark after 10 or 11 games, both in Lichess's own formulas and in the rating changes of real new players (September 2025). But it needs about 35 to 48 games to be within 100 points of a player's strength nine times in ten, and real players take longer than that model. Once settled, a rating still wanders, with a standard deviation of about 31 points. Maia-3, an open model of human moves published at ICLR 2026, says what players at each rating play in a position. From one game it guesses a player's rating with a mean error of 199 points, against 451 for guessing the average (500 player-games), and it rates players below 1400 about 200 points too high. It expects more blunders from players below 1800 than they make. The rating results are exact or simulated with seeds; everything that uses Maia-3 is exploratory.
+A new Lichess blitz rating loses its question mark after 10 or 11 games, both in Lichess's own formulas and in the rating changes of real new players (September 2025). But it needs about 35 to 48 games to be within 100 points of a player's strength nine times in ten, and real players take longer than that model. Once settled, a rating still wanders, with a standard deviation of about 31 points. Maia-3, an open model of human moves published at ICLR 2026, says what players at each rating play in a position. From one game it guesses a player's rating with a mean error of 199 points, against 451 for guessing the average (500 player-games), and it rates players below 1400 about 200 points too high. The bias is in Maia-3's likelihood, not in the prior: weaker players' moves look stronger to it, more so at five-minute time controls. On 1,000 player-games from August 2025, scored once, a map of the rating scale fitted on pilot games halves that bias (+166 to +88). Raising the likelihood to the power 0.56 brings the 95% intervals' coverage from 89% to 97%. Both cost a little accuracy. It expects more blunders from players below 1800 than they make. The rating results are exact or simulated with seeds; everything that uses Maia-3 is exploratory.
 
 ![Two chess boards drawn with letters for pieces, the position after 1. e4 e5 2. Qh5 Nc6 3. Bc4 with Black to move. Arrows show Maia-3's likeliest replies: for players rated 1100, g6 71%, Nh6 9% and Nf6 6%; for players rated 1900, g6 58%, Qf6 21% and Qe7 15%. Nf6, which allows mate on f7, falls from 6.1% to 3.2%.](figures/board.svg)
 
@@ -29,6 +29,9 @@ A new Lichess blitz rating loses its question mark after 10 or 11 games, both in
 | Maia-3, top move matches the move played, pilot games | 55.5% (1,266 of 2,281 positions) | exploratory; the paper reports 55.4% on other games |
 | Rating from one game: mean absolute error; guessing the mean | 199 (183 to 215); 451 points | exploratory; 500 player-games, bootstrap interval |
 | Rating from one game: 95% intervals that hold the rating | 86% | exploratory; same games |
+| Rating from one game, mean error below 1400, August 2025: old method; rating map | +166 (142 to 190); +88 (62 to 114) | 400 player-games, scored once, bootstrap over games; plan committed, not merged |
+| Rating from one game, 95% intervals that hold the rating, August 2025: old method; tempered likelihood | 88.9% (86.8 to 90.7); 96.7% (95.4 to 97.6) | 1,000 player-games, Wilson intervals; same plan |
+| Rating from one game, mean absolute error, August 2025: old method; rating map; tempered | 189; 195; 205 | same games; bootstrap intervals in the text |
 | Blunders in the 24 most common opening positions, below 1400 | played 1.03%, Maia-3 expected 1.74% | exploratory; 9,805 moves |
 
 ## How the results are checked
@@ -100,7 +103,43 @@ Bootstrap intervals, 10,000 resamples of player-games, seeds 7 to 10. The maximu
 
 How many moves it needs: with a player's first 5 moves the error is 331, with 10 it is 263, with 20 215, with 30 193 (319 players with 30 or more) and with 40 174 (151 players). Longer games are easier: the same 151 players' estimates from all their moves are off by 172. The intervals are too narrow because a player's moves are not independent given the positions, which the likelihood assumes. Their median width is 720 points.
 
-The bias below 1400 is the largest error. Maia-3 finds weaker players' moves likelier for stronger players than for players at their own rating. These games come two months after Maia-3's training data ends, and both players were given the same rating, so a shift in Lichess's lower ratings or the opponent's role could explain it. This was not tested. As a check on the model itself, its top move matched the move played in 8,541 of 15,186 positions (56.2%) at the players' own ratings, on Maia-3's protocol. That is 51.6% in the lowest band and 59.2% in the 1800 to 2200 band. The paper reports 55.4% for this model on 2022 games.
+The bias below 1400 is the largest error. Maia-3 finds weaker players' moves likelier for stronger players than for players at their own rating. The next section tests why, and repairs part of it. As a check on the model itself, its top move matched the move played in 8,541 of 15,186 positions (56.2%) at the players' own ratings, on Maia-3's protocol. That is 51.6% in the lowest band and 59.2% in the 1800 to 2200 band. The paper reports 55.4% for this model on 2022 games.
+
+## Why the estimate is biased and overconfident, and a repair
+
+On August 2025 games, which neither Maia-3 nor any choice here had seen, a rating map halves the bias below 1400, and a tempered likelihood brings the 95% intervals to 97% coverage. Neither removes the error. The plan, written before the test games were read, is [`results/calibration-plan.md`](results/calibration-plan.md). It was committed on a branch, not merged, so under `experiments/METHOD.md` the result is exploratory. The diagnosis is in [`results/calibration.md`](results/calibration.md).
+
+![Two panels of bars by rating band, for the old method, the tempered likelihood and the rating map with tempering. Left, mean error: +174, +158, +43, -1 and -31 for the old method; +202, +182, +53, +19 and +30 tempered; +81, +95, -4, -24 and -2 with the rating map. Right, coverage of the 95% intervals: 85%, 84%, 92%, 89% and 96% for the old method; 96%, 94%, 98%, 97% and 100% tempered; 99%, 96%, 96%, 95% and 100% with the rating map.](figures/calibration.svg)
+
+*Left: the rating map removes about half of the bias below 1400 and none of it is left above. Right: the tempered intervals, fitted for 95% on pilot games, hold the rating 97% of the time on new ones.*
+
+**The diagnosis**, on 998 player-games from September 2025 (files 32 to 39), each scored at ratings 400 to 3000:
+
+- **The likelihood is shifted, not the prior.** The likelihood's maximum, with no prior, keeps 85% to 92% of the bias. Players rated 650 to 950 make moves that Maia-3 finds likeliest at a rating 120 to 170 points higher.
+- **Bins and clipping are not the cause.** Maia-3 takes a rating as a continuous input, and it tells low ratings apart more sharply than middle ones, not less.
+- **Longer games show more of it.** Below 1400, the old method is off by +120 at 3 minutes and +260 at 5 minutes plus 3 seconds a move. Maia-3 does not see the clock, and players with more time play like stronger ones.
+- **Not opening moves, and not improving players.** The shift appears in every phase of the game, and players whose rating later rose are biased only a little more than the rest.
+- **The intervals are too narrow because moves are not independent.** Godambe's ratio of information to score variance is 0.58, close to the power 0.56 fitted for 95% coverage. The bias costs only about 2 points of coverage.
+
+**The repairs.** Eight were fitted on the pilot games and compared by twofold cross-validation. The plan's rule picked the tempered likelihood (F2): the likelihood raised to the power 0.56. A dated amendment, written before the test, scored the bias question with the rating map (F7), the arm with the best cross-validated log score. It queries Maia-3 at h(R) instead of R, where h is fitted on the pilot by isotonic regression, and then tempers by 0.68. A correction applied after the fact removed the mean bias on the pilot but had the worst log score, so it was not used.
+
+**The test.** August 2025 is the first month after Maia-3's training data. 100 games in each band came from file 40, 500 games and 1,000 player-games in all, and 300 games of the whole population came from file 41. The old method is recomputed on the same games.
+
+| Band | Old: mean error | Rating map: mean error | Old: coverage | Tempered: coverage | Rating map: coverage |
+|---|---:|---:|---:|---:|---:|
+| 600 to 1000 | +174 | +81 | 85% | 96% | 99% |
+| 1000 to 1400 | +158 | +95 | 84% | 94% | 96% |
+| 1400 to 1800 | +43 | −4 | 92% | 98% | 96% |
+| 1800 to 2200 | −1 | −24 | 89% | 97% | 95% |
+| 2200 to 2700 | −31 | −2 | 96% | 100% | 100% |
+| all | +69 | +29 | 88.9% | 96.7% | 97.0% |
+
+- **Primary 1, bias below 1400:** +166 (142 to 190) with the old method, +88 (62 to 114) with the rating map. The bias falls by 78 points (74 to 82), with Holm-adjusted p = 0.0001. That is half of it; the other half remains.
+- **Primary 2, coverage:** 88.9% (86.8 to 90.7) for the old method, 96.7% (95.4 to 97.6) tempered. 78 player-games are held only by the new intervals and none only by the old ones, so McNemar's test gives p below 10⁻²⁰. The new intervals are a little too wide on these games: their median width is 1,030 points, against 730.
+- **Accuracy:** the mean absolute error is 189 (179 to 200) for the old method, 195 (185 to 205) with the rating map and 205 (194 to 216) tempered. The repairs cost 5.5 (1 to 10) and 16 (12 to 19) points. The old grid stops at 600 and 2600, which keeps estimates for players near its ends close to them. Guessing the mean rating is off by 451.
+- **Population prior.** On 600 player-games drawn without regard to rating, the tempered likelihood with Lichess's rating distribution for the time control has a mean error of 163, against 189 for the old method, with 97.2% coverage. It pulls the ends toward the middle: players in games above 2200 by −259 and below 1000 by +274, 28 and 26 player-games. It helps for a random player and hurts at the ends, the fault being fixed here.
+
+Maia-3's top move matched the move played 55.0% of the time at the players' own ratings, as on the September games.
 
 ## Blunder odds
 
@@ -116,7 +155,7 @@ In the middle of real games the comparison is small and noisy. One position per 
 
 | Source | What it is | License | Committed |
 |---|---|---|---|
-| [Lichess open database](https://database.lichess.org), as the Hugging Face dataset `Lichess/standard-chess-games`, September 2025 | rated games with ratings, rating changes, clocks and moves | "Database exports are released under the Creative Commons CC0 license." The dataset is tagged cc0-1.0. | aggregates only, in `results/` |
+| [Lichess open database](https://database.lichess.org), as the Hugging Face dataset `Lichess/standard-chess-games`, August and September 2025 | rated games with ratings, rating changes, clocks and moves | "Database exports are released under the Creative Commons CC0 license." The dataset is tagged cc0-1.0. | aggregates only, in `results/` |
 | Maia3-5M (`UofTCSSLab/Maia3-5M`) and the `maia3` package (github.com/CSSLab/maia3, commit 1e13597) | the model and its inference code | code AGPL-3.0; the 5M card says "see repo for code/weights license", and the 79M card says "AGPLv3" | no; installed and downloaded only inside the job |
 | Stockfish 17.1 (Debian package) | engine evaluations | GPL-3.0 | no; run as a separate program inside the job |
 | python-chess | moves, PGN parsing, the UCI client | GPL-3.0-or-later | no; a dependency from PyPI |
@@ -139,6 +178,7 @@ Maia-3's paper reports it ahead of every model it compares with, Allie among the
 
 - How much of the gap between real and model settling comes from players who improve, and how much from strong players on new accounts? Splitting real players by their rating at game 61 against their first results would separate them.
 - Does Maia-3 expect fewer opening blunders when it sees the moves that led to a position? Running the common positions with each occurrence's history would tell.
+- Does a rating map fitted separately for each time control remove the rest of the bias below 1400? The pilot's bias was twice as large at 5 minutes plus 3 seconds as at 3 minutes, and the map here was fitted on all time controls together.
 - Would Maia3-79M or Allie 2.1 estimate a rating from one game better than Maia3-5M, and is the error floor set by the model or by the noise in the rating itself (about 31 points)?
 - With one game a day instead of back to back, the deviation grows between games by 0.21436 σ² per day. How does that change the games needed to settle?
 
@@ -159,6 +199,8 @@ uv pip install "maia3 @ git+https://github.com/CSSLab/maia3@1e13597c42d4858b7cfd
 
 The jobs ran on Hugging Face Jobs (cpu-upgrade, 8 vCPU) with the September 2025 Parquet files and the model mounted read-only: `python -m chess_ratings.job pilot`, then `trajectories`, `whatwould,middlegame,estimate` and `common --nodes 1000000`, and `compact` to shorten the outputs for `results/`. The jobs used about 70 minutes of cpu-upgrade ($0.03 an hour) and a few minutes of cpu-basic, about $0.04 in all.
 
+The calibration study ran `calib-records` for each split and sample, then `calib-diagnose` on cpu-basic and `calib-test` once. Maia-3's speed on cpu-upgrade fell from about 230 to 20 to 50 queries a second during the day, so the stratified pilot and the test ran on one T4 (`MAIA_DEVICE=cuda`, about 1,750 queries a second), by a dated amendment. The study used about 5.9 hours of cpu-upgrade, much of it in jobs that timed out or were stopped, and about 40 minutes of T4, about $0.45 in all.
+
 ## Files
 
 - `glicko.py`: Lichess's Glicko-2 for one game.
@@ -166,6 +208,7 @@ The jobs ran on Hugging Face Jobs (cpu-upgrade, 8 vCPU) with the September 2025 
 - `trajectories.py`: new players' records from the Lichess Parquet files, reduced to aggregates.
 - `maia.py`, `whatwould.py`: Maia-3's move probabilities and the command line.
 - `games.py`, `estimate.py`, `blunders.py`: parsing and sampling games, the rating estimate from one game, and Lichess's blunder rule with Stockfish.
+- `calibrate.py`, `calibration.py`: the diagnosis, the eight repairs, cross-validation and the test's scoring, on stored log-probabilities.
 - `job.py`: the parts that ran on Hugging Face Jobs.
 - `board_svg.py`, `figures.py`: the figures in `figures/`.
-- `results/`: `settle.json` and `compare.json` (written here); `trajectories.json`, `whatwould.txt`, `common.json`, `estimate.json` and `middlegame.json` (copied from the jobs, checked by SHA-256).
+- `results/`: `settle.json` and `compare.json` (written here); `trajectories.json`, `whatwould.txt`, `common.json`, `estimate.json`, `middlegame.json`, `calibration-pilot.json`, `calibration-fit.json` and `calibration-test.json` (copied from the jobs, checked by SHA-256); `calibration-plan.md` and `calibration.md`, the plan and the diagnosis.

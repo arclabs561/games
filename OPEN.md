@@ -1,6 +1,6 @@
 # Open questions
 
-74 open questions from 18 games' READMEs, collected by `tools/open_questions.py`. Edit the READMEs, not this file, then run `python3 tools/open_questions.py`; a test checks that this file is current.
+75 open questions from 18 games' READMEs, collected by `tools/open_questions.py`. Edit the READMEs, not this file, then run `python3 tools/open_questions.py`; a test checks that this file is current.
 
 Each status comes from the question's wording, by the rules in the script's docstring. It guides the choice of what to work on next and is not itself a finding.
 
@@ -9,7 +9,7 @@ Each status comes from the question's wording, by the rules in the script's docs
 | blocked on data | 8 |
 | blocked on compute | 3 |
 | partly answered | 10 |
-| open | 53 |
+| open | 54 |
 
 | Game | Question | Status |
 |---|---|---|
@@ -25,6 +25,7 @@ Each status comes from the question's wording, by the rules in the script's docs
 | [Cannonballs](cannonballs/README.md) | **Other packings.** The piles here are pieces of the face-centered cubic packing. A pile can also be built with each new layer turned the other way, as in the hexagonal close packing, which is equally dense. Which pile shapes stay stable then, and how do their counts and touching pairs change? | open |
 | [Chess: what a rating says, and what a player at a rating plays](chess_ratings/README.md) | How much of the gap between real and model settling comes from players who improve, and how much from strong players on new accounts? Splitting real players by their rating at game 61 against their first results would separate them. | open |
 | [Chess: what a rating says, and what a player at a rating plays](chess_ratings/README.md) | Does Maia-3 expect fewer opening blunders when it sees the moves that led to a position? Running the common positions with each occurrence's history would tell. | open |
+| [Chess: what a rating says, and what a player at a rating plays](chess_ratings/README.md) | Does a rating map fitted separately for each time control remove the rest of the bias below 1400? The pilot's bias was twice as large at 5 minutes plus 3 seconds as at 3 minutes, and the map here was fitted on all time controls together. | open |
 | [Chess: what a rating says, and what a player at a rating plays](chess_ratings/README.md) | Would Maia3-79M or Allie 2.1 estimate a rating from one game better than Maia3-5M, and is the error floor set by the model or by the noise in the rating itself (about 31 points)? | open |
 | [Chess: what a rating says, and what a player at a rating plays](chess_ratings/README.md) | With one game a day instead of back to back, the deviation grows between games by 0.21436 σ² per day. How does that change the games needed to settle? | open |
 | [Codenames](codenames/README.md) | Does the single-peak property of the value of a turn hold for every weighting? | open |

@@ -318,7 +318,108 @@ def estimate() -> str:
     return svg.render()
 
 
-FIGURES = {"board": board, "settle": settle, "blunders": blunders, "estimate": estimate}
+CALIBRATION_ARMS = (
+    ("F0", "old method", ORANGE),
+    ("F2", "likelihood tempered", BLUE),
+    ("F7", "rating map, tempered", "#1a9a6c"),
+)
+
+
+def calibration() -> str:
+    """Test games: mean error and 95% interval coverage by band, for the old method and two
+    repairs fitted on pilot games."""
+    t = load("calibration-test.json")["secondary"]["arms"]
+    pw, ph, top = 300, 200, 70
+    bands = list(BANDS)
+    slot = pw / len(bands)
+    svg = Svg(
+        2 * pw + 170,
+        ph + top + 70,
+        "The rating from one game on held-out August 2025 games: bias and coverage by band",
+        "Left: by rating band, the mean error (estimate minus rating) of the old method, of the "
+        "tempered likelihood and of the rating map with tempering. Right: the share of 95% "
+        "intervals that hold the rating, with a dashed line at 95%. "
+        + "; ".join(
+            f"{label}: errors "
+            + ", ".join(f"{t[a][b]['mean_error']:+.0f}" for b in bands)
+            + ", coverage "
+            + ", ".join(f"{100 * t[a][b]['coverage']:.0f}%" for b in bands)
+            for a, label, _ in CALIBRATION_ARMS
+        ),
+    )
+    left = 70
+    x0 = left + 10
+    for i, (_, label, color) in enumerate(CALIBRATION_ARMS):
+        x = x0 + i * 210
+        svg.add("rect", x=x, y=42, width=12, height=12, fill=color)
+        svg.text(x + 18, 52, label, 12)
+
+    def by(v: float) -> float:
+        return top + ph / 2 - v / 300 * (ph / 2)
+
+    svg.text(left, 26, "Mean error by rating band", 14, font_weight="bold")
+    for v in (-300, -150, 0, 150, 300):
+        svg.add("line", x1=left, y1=by(v), x2=left + pw, y2=by(v), stroke=GRID)
+        svg.text(left - 8, by(v) + 4, f"{v:+d}" if v else "0", 11, fill=MUTED, text_anchor="end")
+    width = slot * 0.8 / len(CALIBRATION_ARMS)
+    for i, b in enumerate(bands):
+        for k, (a, _, color) in enumerate(CALIBRATION_ARMS):
+            v = max(-300.0, min(300.0, t[a][b]["mean_error"]))
+            x = left + i * slot + slot * 0.1 + k * width
+            y0, y1 = sorted((by(0), by(v)))
+            svg.add("rect", x=x, y=y0, width=width - 1, height=max(y1 - y0, 0.5), fill=color)
+        svg.text(left + (i + 0.5) * slot, top + ph + 16, b, 10, fill=MUTED, text_anchor="middle")
+    svg.text(
+        left + pw / 2,
+        top + ph + 40,
+        "estimate minus rating, 200 player-games a band",
+        12,
+        fill=MUTED,
+        text_anchor="middle",
+    )
+
+    left2 = left + pw + 90
+
+    def cy(v: float) -> float:
+        return top + ph - (v - 0.6) / 0.4 * ph
+
+    svg.text(left2, 26, "95% intervals that hold the rating", 14, font_weight="bold")
+    for v in (0.6, 0.7, 0.8, 0.9, 1.0):
+        svg.add("line", x1=left2, y1=cy(v), x2=left2 + pw, y2=cy(v), stroke=GRID)
+        svg.text(left2 - 8, cy(v) + 4, f"{100 * v:.0f}%", 11, fill=MUTED, text_anchor="end")
+    svg.add(
+        "line",
+        x1=left2,
+        y1=cy(0.95),
+        x2=left2 + pw,
+        y2=cy(0.95),
+        stroke=INK,
+        stroke_dasharray="5 4",
+    )
+    for i, b in enumerate(bands):
+        for k, (a, _, color) in enumerate(CALIBRATION_ARMS):
+            v = max(0.6, t[a][b]["coverage"])
+            x = left2 + i * slot + slot * 0.1 + k * width
+            svg.add("rect", x=x, y=cy(v), width=width - 1, height=cy(0.6) - cy(v), fill=color)
+        svg.text(left2 + (i + 0.5) * slot, top + ph + 16, b, 10, fill=MUTED, text_anchor="middle")
+    svg.text(
+        left2 + pw / 2,
+        top + ph + 40,
+        "rating band of the game",
+        12,
+        fill=MUTED,
+        text_anchor="middle",
+    )
+    return svg.render()
+
+
+FIGURES = {
+    "board": board,
+    "settle": settle,
+    "blunders": blunders,
+    "estimate": estimate,
+    "calibration": calibration,
+}
 
 
 def main() -> None:

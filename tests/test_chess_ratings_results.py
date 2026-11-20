@@ -94,3 +94,39 @@ def test_blunder_totals_quoted_in_the_readme():
         sum(b["observed"] for b in m.values()) == 40
         and round(sum(b["maia_expected"] for b in m.values())) == 52
     )
+
+
+def test_calibration_numbers_quoted_in_the_readme():
+    readme = (HERE / "README.md").read_text()
+    t = load("calibration-test.json")
+    p, arms = t["primary"], t["secondary"]["arms"]
+    assert (p["chosen"], p["bias_arm"]) == ("F2", "F7")
+    assert (p["player_games"], p["games"], p["player_games_lower_bands"]) == (1000, 500, 400)
+    assert [round(x) for x in (p["bias_lower_bands_old"], *p["bias_lower_bands_old_interval"])] == [
+        166,
+        142,
+        190,
+    ]
+    assert [round(x) for x in (p["bias_lower_bands_new"], *p["bias_lower_bands_new_interval"])] == [
+        88,
+        62,
+        114,
+    ]
+    assert [round(x) for x in (p["bias_reduction"], *p["bias_reduction_interval"])] == [78, 74, 82]
+    assert round(p["holm"]["bias"], 4) == 0.0001
+    assert (p["covered_by_new_only"], p["covered_by_old_only"]) == (78, 0)
+    assert f"{100 * p['coverage_old']:.1f}" == "88.9" and f"{100 * p['coverage_new']:.1f}" == "96.7"
+    assert [f"{100 * x:.1f}" for x in p["coverage_new_wilson"]] == ["95.4", "97.6"]
+    assert [round(arms[a]["all"]["mae"]) for a in ("F0", "F7", "F2")] == [189, 195, 205]
+    for a, row in (("F0", "+174, +158, +43, -1 and -31"), ("F7", "+81, +95, -4, -24 and -2")):
+        bands = ("600-1000", "1000-1400", "1400-1800", "1800-2200", "2200-2700")
+        assert ", ".join(f"{arms[a][b]['mean_error']:+.0f}" for b in bands[:4]) + (
+            f" and {arms[a][bands[4]]['mean_error']:+.0f}"
+        ) == row.replace("-0", "+0")
+        assert row in readme
+    pop = t["secondary"]["population"]
+    assert round(pop["F2+P"]["all"]["mae"]) == 163 and round(pop["F0"]["all"]["mae"]) == 189
+    assert "+166 (142 to 190)" in readme and "96.7% (95.4 to 97.6)" in readme
+    pilot = load("calibration-pilot.json")
+    assert pilot["chosen"] == "F2" and pilot["fitted_constants"]["F2"]["tau"] == 0.56
+    assert round(pilot["diagnosis"]["h7_sandwich"]["tau_centered"], 2) == 0.58
