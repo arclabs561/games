@@ -1,4 +1,5 @@
-"""Write every number the README and the note quote to results.json, and the figure data.
+"""Write every number the README, its fragments in docs/ and the note quote to results.json,
+and the figure data.
 
     uv run python -m cannonballs.report     # about half a minute; writes results.json, gaps.csv
 
@@ -79,6 +80,7 @@ def results(quick: bool = False) -> dict:
         "square_pile_cubes": lucas.square_piles_that_are_cubes(b["cubes"]),
         "cube_cases": {"".join(map(str, c)): lucas.first_block(c, k=3) for c in lucas.CASES},
         "truncated": [list(row) for row in tops],
+        "truncated_found": [n for n, status, _ in tops if status == "found"],
         "runs_of_25": lucas.runs_with_square_layers(5),
         "oblong_smallest": {str(a): (list(r) if r else None) for a, r in oblong_rows.items()},
         "oblong_rule_agrees_with_residues": residue_agree,
