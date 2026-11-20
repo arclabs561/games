@@ -245,60 +245,139 @@ static int table_add(Table *t, const uint64_t *k) {
 static int layer_id(const uint8_t *h) { return h[0] + 14 * (h[1] + 14 * (h[2] + 14 * h[3])); }
 static void layer_home(int id, uint8_t *h) { for (int s = 0; s < 4; s++) { h[s] = id % 14; id /= 14; } }
 
-typedef struct { uint64_t *buf; uint64_t n, cap; int on_disk; } Wait;
-static Wait wait16[NLAYER], wait32[NLAYER];
-static uint64_t waiting_bytes, memory_limit = 1ULL << 30;
+/* A layer is split further, into **sublayers**. In each dealt column, the cards still in
+   their dealt places end, at the top, in a run where each card fits on the one below it (it
+   may be a single card). Where that run starts, K, never rises: when the top card of the
+   kept cards leaves, K stays or falls, and a card can only come back to its dealt place by
+   fitting on the card below it, which lengthens the run. So a position's sublayer, its
+   foundations and the eight K, can only change to one with more cards home or a lower K,
+   and the number of cards home minus the sum of the K grows at each change of sublayer.
+   Sublayers are searched in order of that number; each is complete when its turn comes.
+   Without the word "fine", the K are left out and a sublayer is a whole layer. */
+static int fine;
 static char folder[512] = "/tmp";
-static uint8_t pending[NLAYER];
+static uint64_t waiting_bytes, memory_limit = 1ULL << 30;
+static uint8_t pending[NLAYER]; /* used by the hunt for a win */
 
-static void wait_path(char *buf, int id, int words) {
-    snprintf(buf, 600, "%s/fc-c-%d-%d-%d.bin", folder, (int)getpid(), id, words);
+typedef struct {
+    uint64_t key, *buf16, *buf32, n16, n32, cap16, cap32;
+    int disk16, disk32, queued;
+} Wait;
+static Wait *waits; static uint64_t nwaits, capwaits;
+static uint64_t *wmap, wmapsize; /* index + 1 */
+#define NPRIO 160
+static uint64_t *bucket[NPRIO], nbucket[NPRIO], capbucket[NPRIO];
+
+static int sub_prio(uint64_t key) {
+    int lid = (int)(key >> 24), k = 0;
+    uint8_t h[4];
+    layer_home(lid, h);
+    for (int j = 0; j < 8; j++) k += (int)(key >> (3 * j) & 7);
+    return h[0] + h[1] + h[2] + h[3] - k + 64;
 }
-static void flush_all(void) {
+static uint64_t sub_key(const Pos *p) {
+    uint64_t key = (uint64_t)layer_id(p->home) << 24;
+    if (!fine) return key;
+    for (int i = 0; i < ncols; i++) {
+        if (!p->len[i]) continue;
+        int j = bottom_of[p->col[i][0]];
+        if (j < 0) continue;
+        int m = 0;
+        while (m < p->len[i] && m < dealtlen[j] && p->col[i][m] == dealt[j][m]) m++;
+        int K = m - 1;
+        while (K >= 1 && fits(dealt[j][K], dealt[j][K - 1])) K--;
+        key |= (uint64_t)K << (3 * j);
+    }
+    return key;
+}
+static uint64_t mixkey(uint64_t k) { k *= 0x9E3779B97F4A7C15ULL; return k ^ (k >> 31); }
+static Wait *find_wait(uint64_t key) {
+    if (2 * (nwaits + 1) > wmapsize) {
+        uint64_t n2 = wmapsize ? 2 * wmapsize : 1 << 12;
+        uint64_t *m2 = calloc(n2, 8);
+        for (uint64_t i = 0; i < nwaits; i++) {
+            uint64_t j = mixkey(waits[i].key) & (n2 - 1);
+            while (m2[j]) j = (j + 1) & (n2 - 1);
+            m2[j] = i + 1;
+        }
+        free(wmap); wmap = m2; wmapsize = n2;
+    }
+    uint64_t j = mixkey(key) & (wmapsize - 1);
+    while (wmap[j]) {
+        if (waits[wmap[j] - 1].key == key) return &waits[wmap[j] - 1];
+        j = (j + 1) & (wmapsize - 1);
+    }
+    if (nwaits == capwaits) {
+        capwaits = capwaits ? 2 * capwaits : 1024;
+        waits = realloc(waits, capwaits * sizeof *waits);
+        if (!waits) { fprintf(stderr, "out of memory\n"); exit(2); }
+    }
+    memset(&waits[nwaits], 0, sizeof *waits);
+    waits[nwaits].key = key;
+    wmap[j] = ++nwaits;
+    return &waits[nwaits - 1];
+}
+static void wait_path(char *buf, uint64_t key, int words) {
+    snprintf(buf, 600, "%s/fc-c-%d-%llx-%d.bin", folder, (int)getpid(), (unsigned long long)key,
+             words);
+}
+static void spill(Wait *q, int words) {
+    uint64_t **buf = words == 2 ? &q->buf16 : &q->buf32;
+    uint64_t *n = words == 2 ? &q->n16 : &q->n32, *cap = words == 2 ? &q->cap16 : &q->cap32;
+    if (!*n) return;
     char path[600];
-    for (int w = 0; w < 2; w++)
-        for (int id = 0; id < NLAYER; id++) {
-            Wait *q = w ? &wait32[id] : &wait16[id];
-            int words = w ? 4 : 2;
-            if (!q->n) continue;
-            wait_path(path, id, words);
-            FILE *f = fopen(path, "ab");
-            if (!f || fwrite(q->buf, 8 * words, q->n, f) != q->n) {
-                fprintf(stderr, "cannot write %s\n", path); exit(2);
-            }
-            fclose(f);
-            q->on_disk = 1;
-            waiting_bytes -= q->n * 8 * words;
-            q->n = 0;
-            free(q->buf); q->buf = 0; q->cap = 0;
+    wait_path(path, q->key, words);
+    FILE *f = fopen(path, "ab");
+    if (!f || fwrite(*buf, 8 * words, *n, f) != *n) { fprintf(stderr, "cannot write %s\n", path); exit(2); }
+    fclose(f);
+    if (words == 2) q->disk16 = 1; else q->disk32 = 1;
+    waiting_bytes -= *n * 8 * words;
+    free(*buf); *buf = 0; *n = 0; *cap = 0;
+}
+/* Write the larger waiting lists to files until half the limit is left in memory. */
+static void flush_some(void) {
+    for (uint64_t least = 1 << 20; waiting_bytes > memory_limit / 2 && least >= 1; least /= 16)
+        for (uint64_t i = 0; i < nwaits && waiting_bytes > memory_limit / 2; i++) {
+            if (waits[i].n16 * 16 >= least) spill(&waits[i], 2);
+            if (waits[i].n32 * 32 >= least) spill(&waits[i], 4);
         }
 }
-static void wait_add(int id, const Code *k) {
+static void wait_add(uint64_t key, const Code *k) {
     int words = k->n <= 128 ? 2 : 4;
-    Wait *q = words == 2 ? &wait16[id] : &wait32[id];
-    if (q->n == q->cap) {
-        q->cap = q->cap ? 2 * q->cap : 256;
-        q->buf = realloc(q->buf, q->cap * 8 * words);
-        if (!q->buf) { fprintf(stderr, "out of memory\n"); exit(2); }
+    Wait *q = find_wait(key);
+    uint64_t **buf = words == 2 ? &q->buf16 : &q->buf32;
+    uint64_t *n = words == 2 ? &q->n16 : &q->n32, *cap = words == 2 ? &q->cap16 : &q->cap32;
+    if (*n == *cap) {
+        *cap = *cap ? 2 * *cap : 16;
+        *buf = realloc(*buf, *cap * 8 * words);
+        if (!*buf) { fprintf(stderr, "out of memory\n"); exit(2); }
     }
-    memcpy(q->buf + q->n * words, k->w, 8 * words);
-    q->n++;
-    pending[id] = 1;
+    memcpy(*buf + *n * words, k->w, 8 * words);
+    (*n)++;
     waiting_bytes += 8 * words;
-    if (waiting_bytes > memory_limit) flush_all();
+    if (!q->queued) {
+        int pr = sub_prio(key);
+        q->queued = 1;
+        if (nbucket[pr] == capbucket[pr]) {
+            capbucket[pr] = capbucket[pr] ? 2 * capbucket[pr] : 64;
+            bucket[pr] = realloc(bucket[pr], capbucket[pr] * 8);
+        }
+        bucket[pr][nbucket[pr]++] = (uint64_t)(q - waits);
+    }
+    if (waiting_bytes > memory_limit) flush_some();
 }
 static void wait_clear_all(void) {
     char path[600];
-    for (int id = 0; id < NLAYER; id++) {
-        for (int w = 0; w < 2; w++) {
-            Wait *q = w ? &wait32[id] : &wait16[id];
-            if (q->on_disk) { wait_path(path, id, w ? 4 : 2); unlink(path); }
-            free(q->buf);
-            memset(q, 0, sizeof *q);
-        }
-        pending[id] = 0;
+    for (uint64_t i = 0; i < nwaits; i++) {
+        if (waits[i].disk16) { wait_path(path, waits[i].key, 2); unlink(path); }
+        if (waits[i].disk32) { wait_path(path, waits[i].key, 4); unlink(path); }
+        free(waits[i].buf16); free(waits[i].buf32);
     }
+    nwaits = 0;
+    if (wmap) memset(wmap, 0, wmapsize * 8);
+    for (int p = 0; p < NPRIO; p++) nbucket[p] = 0;
     waiting_bytes = 0;
+    memset(pending, 0, sizeof pending);
 }
 
 /* ---- moves ---- */
@@ -394,10 +473,8 @@ static Table t16, t32;
 static uint64_t layer_cap, budget;
 static int want_layers, win_mode;
 
-typedef struct { int id; uint64_t count; } LayerCount;
-static LayerCount *layerlog; static int nlayerlog, layercap;
 
-typedef struct { int cur, won, full; uint64_t moved; } Decide;
+typedef struct { uint64_t cur; int won, full; uint64_t moved; } Decide;
 
 static int decide_visit(void *ctx, Pos *q, int card, int dest, const uint8_t *played, int n) {
     Decide *d = ctx;
@@ -407,21 +484,20 @@ static int decide_visit(void *ctx, Pos *q, int card, int dest, const uint8_t *pl
     if (home_total(q->home) == decksize) { d->won = 1; return 1; }
     Code k;
     encode(q, &k);
-    int id = layer_id(q->home);
-    if (id != d->cur) { wait_add(id, &k); return 0; }
+    uint64_t key = sub_key(q);
+    if (key != d->cur) { wait_add(key, &k); return 0; }
     int r = k.n <= 128 ? table_add(&t16, k.w) : table_add(&t32, k.w);
     if (r < 0) d->full = 1;
     return 0;
 }
 
-static void load_waiting(int id, int *full) {
+static void load_waiting(Wait *q, int *full) {
     char path[600];
     for (int w = 0; w < 2; w++) {
-        int words = w ? 4 : 2;
-        Wait *q = w ? &wait32[id] : &wait16[id];
+        int words = w ? 4 : 2, disk = w ? q->disk32 : q->disk16;
         Table *t = w ? &t32 : &t16;
-        if (q->on_disk) {
-            wait_path(path, id, words);
+        if (disk) {
+            wait_path(path, q->key, words);
             FILE *f = fopen(path, "rb");
             if (!f) { fprintf(stderr, "cannot read %s\n", path); exit(2); }
             uint64_t buf[4 * 4096];
@@ -431,68 +507,72 @@ static void load_waiting(int id, int *full) {
                     if (table_add(t, buf + i * words) < 0) *full = 1;
             fclose(f);
             unlink(path);
-            q->on_disk = 0;
         }
-        for (uint64_t i = 0; i < q->n; i++)
-            if (table_add(t, q->buf + i * words) < 0) *full = 1;
-        waiting_bytes -= q->n * 8 * words;
-        free(q->buf);
-        memset(q, 0, sizeof *q);
+        uint64_t n = w ? q->n32 : q->n16, *buf = w ? q->buf32 : q->buf16;
+        for (uint64_t i = 0; i < n; i++)
+            if (table_add(t, buf + i * words) < 0) *full = 1;
+        waiting_bytes -= n * 8 * words;
+        free(buf);
     }
-    pending[id] = 0;
+    q->buf16 = q->buf32 = 0;
+    q->n16 = q->n32 = q->cap16 = q->cap32 = 0;
+    q->disk16 = q->disk32 = 0;
 }
+
+static uint64_t layer_count[NLAYER];
+static uint8_t layer_seen[NLAYER];
 
 static void decide(Pos *start) {
     uint8_t played[52];
     Decide d = {0, 0, 0, 0};
-    uint64_t total = 0;
+    uint64_t total = 0, sublayers = 0, largest = 0;
     int most = 0;
-    nlayerlog = 0;
+    memset(layer_count, 0, sizeof layer_count);
+    memset(layer_seen, 0, sizeof layer_seen);
     int n = autoplay(start, played);
     for (int i = 0; i < n; i++) d.moved |= 1ULL << played[i];
     if (home_total(start->home) == decksize) d.won = 1;
     else {
         Code k;
         encode(start, &k);
-        wait_add(layer_id(start->home), &k);
+        wait_add(sub_key(start), &k);
     }
-    time_t t0 = time(0);
-    while (!d.won && !d.full) {
-        int cur = -1, best = 99;
-        for (int id = 0; id < NLAYER; id++)
-            if (pending[id]) {
-                uint8_t h[4]; layer_home(id, h);
-                if (home_total(h) < best) { best = home_total(h); cur = id; }
+    time_t t0 = time(0), last = t0;
+    for (int pr = 0; pr < NPRIO && !d.won && !d.full; pr++)
+        for (uint64_t b = 0; b < nbucket[pr] && !d.won && !d.full; b++) {
+            Wait *q = &waits[bucket[pr][b]];
+            uint64_t cur = q->key;
+            int lid = (int)(cur >> 24);
+            uint8_t home[4];
+            layer_home(lid, home);
+            if (home_total(home) > most) most = home_total(home);
+            table_clear(&t16); table_clear(&t32);
+            d.cur = cur;
+            load_waiting(q, &d.full);
+            q = 0; /* waits may move while the layer is searched */
+            Pos p;
+            /* Each table is read in order of insertion; both grow while they are read. */
+            uint64_t i16 = 0, i32 = 0;
+            while (!d.won && !d.full && (i16 < t16.n || i32 < t32.n)) {
+                if (i16 < t16.n) decode(t16.keys + 2 * i16++, home, &p);
+                else decode(t32.keys + 4 * i32++, home, &p);
+                successors(&p, decide_visit, &d);
+                if (layer_cap && t16.n + t32.n > layer_cap) d.full = 1;
             }
-        if (cur < 0) break;
-        uint8_t home[4];
-        layer_home(cur, home);
-        if (home_total(home) > most) most = home_total(home);
-        table_clear(&t16); table_clear(&t32);
-        d.cur = cur;
-        load_waiting(cur, &d.full);
-        Pos p;
-        /* Each table is read in order of insertion; both grow while they are read. */
-        uint64_t i16 = 0, i32 = 0;
-        while (!d.won && !d.full && (i16 < t16.n || i32 < t32.n)) {
-            if (i16 < t16.n) decode(t16.keys + 2 * i16++, home, &p);
-            else decode(t32.keys + 4 * i32++, home, &p);
-            successors(&p, decide_visit, &d);
-            if (layer_cap && t16.n + t32.n > layer_cap) d.full = 1;
+            uint64_t count = t16.n + t32.n;
+            total += count;
+            sublayers++;
+            if (count > largest) largest = count;
+            layer_count[lid] += count;
+            layer_seen[lid] = 1;
+            if (getenv("SOLVER_C_PROGRESS") && (count > 1000000 || time(0) - last >= 60)) {
+                last = time(0);
+                fprintf(stderr, "layer %d %d %d %d: %llu (total %llu, waiting %llu MB, %lds)\n",
+                        home[0], home[1], home[2], home[3], (unsigned long long)count,
+                        (unsigned long long)total, (unsigned long long)(waiting_bytes >> 20),
+                        (long)(time(0) - t0));
+            }
         }
-        uint64_t count = t16.n + t32.n;
-        total += count;
-        if (nlayerlog == layercap) {
-            layercap = layercap ? 2 * layercap : 1024;
-            layerlog = realloc(layerlog, layercap * sizeof *layerlog);
-        }
-        layerlog[nlayerlog++] = (LayerCount){cur, count};
-        if (getenv("SOLVER_C_PROGRESS"))
-            fprintf(stderr, "layer %d %d %d %d: %llu (total %llu, waiting %llu MB, %lds)\n",
-                    home[0], home[1], home[2], home[3], (unsigned long long)count,
-                    (unsigned long long)total, (unsigned long long)(waiting_bytes >> 20),
-                    (long)(time(0) - t0));
-    }
     if (d.won) printf("won %llu %d\n", (unsigned long long)total, decksize);
     else if (d.full) printf("unknown %llu\n", (unsigned long long)total);
     else {
@@ -502,11 +582,16 @@ static void decide(Pos *start) {
         printf("\n");
     }
     if (want_layers) {
-        for (int i = 0; i < nlayerlog; i++) {
-            uint8_t h[4]; layer_home(layerlog[i].id, h);
-            printf("layer %d %d %d %d %llu\n", h[0], h[1], h[2], h[3],
-                   (unsigned long long)layerlog[i].count);
-        }
+        /* whole layers, in order of cards home and then of number, as Solver B lists them */
+        for (int h = 0; h <= 52; h++)
+            for (int id = 0; id < NLAYER; id++) {
+                uint8_t hh[4];
+                layer_home(id, hh);
+                if (layer_seen[id] && home_total(hh) == h)
+                    printf("layer %d %d %d %d %llu\n", hh[0], hh[1], hh[2], hh[3],
+                           (unsigned long long)layer_count[id]);
+            }
+        printf("sublayers %llu %llu\n", (unsigned long long)sublayers, (unsigned long long)largest);
         printf("end\n");
     }
     wait_clear_all();
@@ -756,6 +841,7 @@ int main(int argc, char **argv) {
     for (int i = 4; i < argc; i++) {
         if (!strcmp(argv[i], "layers")) want_layers = 1;
         else if (!strcmp(argv[i], "horne")) horne = 1;
+        else if (!strcmp(argv[i], "fine")) fine = 1;
         else if (!strncmp(argv[i], "win=", 4)) { win_mode = 1; budget = strtoull(argv[i] + 4, 0, 10); }
     }
     /* address space for each table: as many codes as physical memory could hold */

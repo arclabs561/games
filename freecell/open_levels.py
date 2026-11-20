@@ -70,12 +70,15 @@ def solve_c(
     log: Path | None = None,
     memory: int = 1 << 30,
     horne: bool = False,
+    fine: bool = False,
 ) -> list[dict]:
     """Solver C on each problem; with `layers`, each answer lists its layers' positions.
     Waiting positions go to files in `folder` when they take more than `memory` bytes.
-    With `horne`, cards go home by Horne's rule."""
+    With `horne`, cards go home by Horne's rule; with `fine`, layers are split into
+    sublayers."""
     args = [str(native.binary(SOLVER_C)), str(folder), str(cap), str(memory)]
     args += (["layers"] if layers else []) + (["horne"] if horne else [])
+    args += ["fine"] if fine else []
     env = dict(os.environ, SOLVER_C_PROGRESS="1") if log else None
     with open(log or os.devnull, "w") as err:
         proc = subprocess.run(
@@ -104,8 +107,11 @@ def solve_c(
             for row in lines:
                 if row == "end":
                     break
-                _, *nums = row.split()
-                ans["layers"].append(tuple(map(int, nums)))
+                word, *nums = row.split()
+                if word == "sublayers":
+                    ans["sublayers"], ans["largest_sublayer"] = map(int, nums)
+                else:
+                    ans["layers"].append(tuple(map(int, nums)))
         out.append(ans)
     if len(out) != len(problems):
         raise RuntimeError("Solver C gave too few answers")
@@ -166,7 +172,7 @@ def run_job(job: str, out: Path, budget: int, cap: int) -> dict:
         if solver.startswith("c"):
             with tempfile.TemporaryDirectory(dir=out) as tmp:
                 log = out / f"progress-{tag}.log"
-                (ans,) = solve_c([problem], Path(tmp), cap, True, log, horne=horne)
+                (ans,) = solve_c([problem], Path(tmp), cap, True, log, horne=horne, fine=True)
         else:
             (ans,) = solve_b_layers([problem], horne)
         layers = ans.pop("layers")
