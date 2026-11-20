@@ -104,6 +104,41 @@ def call_cost(usage: dict, price: Price | None = None) -> tuple[float, str]:
     return (p * tokens_in + c * tokens_out) / 1e6, "listed price" if price else "fallback price"
 
 
+def field_of(obj: Any, name: str) -> Any:
+    """A field of a reply, which is a dict in the stubs and a dict subclass in
+    huggingface_hub (whose extra keys, such as OpenRouter's, are kept)."""
+    if isinstance(obj, dict):
+        return obj.get(name)
+    return getattr(obj, name, None)
+
+
+def served_by(out: Any) -> dict:
+    """What a reply says about who served it: the model id, the provider (OpenRouter adds
+    `provider` to the body, and `openrouter_metadata` when the metadata header is sent),
+    the response id, the system fingerprint, the service tier and any quantization field.
+    Fields the reply lacks are None; the quantization is None on every provider seen so
+    far, so a model's quantization is read from OpenRouter's endpoint list instead
+    (codenames.providers pincheck)."""
+    meta = field_of(out, "openrouter_metadata") or {}
+    selected = [e for e in (field_of(field_of(meta, "endpoints") or {}, "available") or []) if e]
+    selected = [e for e in selected if field_of(e, "selected")]
+    quant = next(
+        (v for k, v in (out.items() if isinstance(out, dict) else []) if "quant" in str(k).lower()),
+        None,
+    )
+    return {
+        "model": field_of(out, "model"),
+        "provider": field_of(out, "provider")
+        or (field_of(selected[0], "provider") if selected else None),
+        "id": field_of(out, "id"),
+        "system_fingerprint": field_of(out, "system_fingerprint"),
+        "service_tier": field_of(out, "service_tier"),
+        "quantization": quant,
+        "routing": field_of(meta, "summary"),
+        "attempt": field_of(meta, "attempt"),
+    }
+
+
 def visible(text: str) -> str:
     """The reply without a <think> block, for models that put their reasoning in the text."""
     return THINK.sub("", text).strip()
