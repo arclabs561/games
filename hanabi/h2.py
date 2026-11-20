@@ -307,7 +307,10 @@ def harness(args) -> int:
         "how_known": "computed exactly by replaying the recorded moves on the seeded decks",
         "arms": arms,
     }
-    Path(args.out).write_text(json.dumps(result, indent=1, sort_keys=True) + "\n")
+    out = Path(args.out)
+    if out.is_dir():  # a job's output folder
+        out = out / "h2-harness.json"
+    out.write_text(json.dumps(result, indent=1, sort_keys=True) + "\n")
     print(json.dumps(result))
     return 0
 

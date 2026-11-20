@@ -170,3 +170,75 @@ def test_digest_is_compact_and_reads_both_files(tmp_path):
     }
     assert rows["org/m @ novita : setup"]["status"] == ["exception"]
     assert d["pincheck"]["quantization"] == {"org/m": ["Novita: fp8"]}
+
+
+class Served:
+    """A router stub whose replies name a provider, the pinned one after `wrong` replies."""
+
+    def __init__(self, provider="DeepInfra", wrong=0, header=None, replies=("a", "b")):
+        self.provider, self.wrong, self.header = provider, wrong, header
+        self.replies, self.calls = list(replies), 0
+
+    def chat_completion(self, messages, model, extra_body=None, **params):
+        self.calls += 1
+        who = "Parasail" if self.calls <= self.wrong else self.provider
+        return {
+            "model": model.split(":")[0],
+            "provider": who,
+            "_router_header": self.header,
+            "choices": [
+                {"message": {"content": self.replies[self.calls % len(self.replies)]},
+                 "finish_reason": "stop"}
+            ],
+            "usage": {"prompt_tokens": 10, "completion_tokens": 2, "cost": 1e-5},
+        }  # fmt: skip
+
+
+def test_pinning_requests_and_quantization_filter():
+    from codenames.hosted import Model, pinned
+
+    mid, extra = pinned(Model("org/m", "deepinfra", {"x": 1}, quantizations=("fp8",)))
+    assert mid == "org/m:deepinfra"
+    assert extra == {
+        "x": 1,
+        "provider": {"order": ["deepinfra"], "allow_fallbacks": False, "quantizations": ["fp8"]},
+    }
+    with pytest.raises(ValueError):
+        pinned(Model("org/m", "auto"))
+
+
+def test_a_reply_from_another_provider_is_sent_again_and_paid_for(tmp_path):
+    from codenames.hosted import Hosted, Meter, Model
+
+    meter = Meter(1.0)
+    stub = Served(wrong=1)
+    h = Hosted(Model("org/m", "deepinfra"), meter, tmp_path / "c.jsonl", client=stub,
+               sleep=lambda s: None)  # fmt: skip
+    rec = h.call("p")
+    assert rec["pin_held"] is True and rec["attempts"] == 2 and stub.calls == 2
+    assert rec["errors"] == ["served by Parasail"] and rec["served_by"]["provider"] == "DeepInfra"
+    assert meter.spent == pytest.approx(2e-5)  # both replies cost money
+    stuck = Hosted(Model("org/m", "deepinfra"), Meter(1.0), client=Served(wrong=99),
+                   sleep=lambda s: None)  # fmt: skip
+    assert stuck("p") == ""
+
+
+def test_served_provider_from_the_header_and_name_matching():
+    from codenames.hosted import Model, pin_held, provider_key, served_provider
+
+    assert served_provider({"provider": None, "router_header": "novita"}) == "novita"
+    assert served_provider({"provider": None, "router_header": "openrouter"}) is None
+    assert provider_key("Featherless") == provider_key("featherless-ai")
+    assert provider_key("DeepInfra") == "deepinfra"
+    assert pin_held(Model("m", "novita"), {"router_header": "novita"}) is True
+    assert pin_held(Model("m", "novita"), {}) is None
+
+
+def test_repeat_check_counts_changed_replies_and_providers():
+    from codenames.hosted import Hosted, Meter, Model, repeat_check
+
+    same = Hosted(Model("m", "deepinfra"), Meter(1.0), client=Served(replies=("a",)))
+    r = repeat_check(same, ["p", "q"], times=3)
+    assert r["changed"] == 0 and r["served"] == {"DeepInfra": 6} and r["pin"]["held"] == 6
+    flip = Hosted(Model("m", "deepinfra"), Meter(1.0), client=Served(replies=("a", "b")))
+    assert repeat_check(flip, ["p"], times=2)["changed_share"] == 1.0
