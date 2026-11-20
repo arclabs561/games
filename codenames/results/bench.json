@@ -1,0 +1,3001 @@
+{
+ "crossplay": {
+  "all": {
+   "cells": {
+    "gemma2-first/gemma2": {
+     "assassin": 0,
+     "ci": [
+      6.27,
+      6.61
+     ],
+     "flagged_turns": 172,
+     "mean": 6.44,
+     "mean_count": 1.5,
+     "n": 200,
+     "opponent": 0,
+     "other_losses": 0,
+     "turns": 1288,
+     "turns_in_wins": 6.44,
+     "wins": 200
+    },
+    "gemma2-first/glove": {
+     "assassin": 60,
+     "ci": [
+      12.8,
+      14.935
+     ],
+     "flagged_turns": 237,
+     "mean": 13.865,
+     "mean_count": 1.67,
+     "n": 200,
+     "opponent": 0,
+     "other_losses": 0,
+     "turns": 1735,
+     "turns_in_wins": 9.09,
+     "wins": 140
+    },
+    "gemma2-first/lora-c8": {
+     "assassin": 41,
+     "ci": [
+      10.575,
+      12.595
+     ],
+     "flagged_turns": 199,
+     "mean": 11.56,
+     "mean_count": 1.66,
+     "n": 200,
+     "opponent": 1,
+     "other_losses": 0,
+     "turns": 1551,
+     "turns_in_wins": 7.99,
+     "wins": 158
+    },
+    "gemma2-first/potion": {
+     "assassin": 33,
+     "ci": [
+      9.99,
+      11.815
+     ],
+     "flagged_turns": 217,
+     "mean": 10.87,
+     "mean_count": 1.63,
+     "n": 200,
+     "opponent": 1,
+     "other_losses": 0,
+     "turns": 1561,
+     "turns_in_wins": 7.98,
+     "wins": 166
+    },
+    "gemma2-first/w2v": {
+     "assassin": 53,
+     "ci": [
+      12.61,
+      14.61
+     ],
+     "flagged_turns": 249,
+     "mean": 13.595,
+     "mean_count": 1.65,
+     "n": 200,
+     "opponent": 0,
+     "other_losses": 0,
+     "turns": 1807,
+     "turns_in_wins": 9.48,
+     "wins": 147
+    },
+    "gemma2-first/w2vglove": {
+     "assassin": 61,
+     "ci": [
+      12.65,
+      14.82
+     ],
+     "flagged_turns": 231,
+     "mean": 13.73,
+     "mean_count": 1.67,
+     "n": 200,
+     "opponent": 0,
+     "other_losses": 0,
+     "turns": 1691,
+     "turns_in_wins": 8.78,
+     "wins": 139
+    },
+    "glove/gemma2": {
+     "assassin": 91,
+     "ci": [
+      15.715,
+      17.91
+     ],
+     "flagged_turns": 15,
+     "mean": 16.82,
+     "mean_count": 2.34,
+     "n": 200,
+     "opponent": 3,
+     "other_losses": 0,
+     "turns": 1606,
+     "turns_in_wins": 9.57,
+     "wins": 106
+    },
+    "glove/glove": {
+     "assassin": 0,
+     "ci": [
+      4.525,
+      4.705
+     ],
+     "flagged_turns": 14,
+     "mean": 4.615,
+     "mean_count": 1.99,
+     "n": 200,
+     "opponent": 0,
+     "other_losses": 0,
+     "turns": 923,
+     "turns_in_wins": 4.62,
+     "wins": 200
+    },
+    "glove/lora-c8": {
+     "assassin": 90,
+     "ci": [
+      15.06,
+      17.295
+     ],
+     "flagged_turns": 15,
+     "mean": 16.18,
+     "mean_count": 2.34,
+     "n": 200,
+     "opponent": 0,
+     "other_losses": 0,
+     "turns": 1473,
+     "turns_in_wins": 8.96,
+     "wins": 110
+    },
+    "glove/potion": {
+     "assassin": 85,
+     "ci": [
+      14.885,
+      17.13
+     ],
+     "flagged_turns": 17,
+     "mean": 16.0,
+     "mean_count": 2.38,
+     "n": 200,
+     "opponent": 1,
+     "other_losses": 0,
+     "turns": 1512,
+     "turns_in_wins": 9.21,
+     "wins": 114
+    },
+    "glove/w2v": {
+     "assassin": 33,
+     "ci": [
+      8.955,
+      10.91
+     ],
+     "flagged_turns": 14,
+     "mean": 9.885,
+     "mean_count": 2.14,
+     "n": 200,
+     "opponent": 1,
+     "other_losses": 0,
+     "turns": 1267,
+     "turns_in_wins": 6.79,
+     "wins": 166
+    },
+    "glove/w2vglove": {
+     "assassin": 2,
+     "ci": [
+      4.645,
+      5.245
+     ],
+     "flagged_turns": 15,
+     "mean": 4.895,
+     "mean_count": 2.01,
+     "n": 200,
+     "opponent": 0,
+     "other_losses": 0,
+     "turns": 934,
+     "turns_in_wins": 4.69,
+     "wins": 198
+    },
+    "potion-c3-population/gemma2": {
+     "assassin": 26,
+     "ci": [
+      11.28,
+      12.81
+     ],
+     "flagged_turns": 83,
+     "mean": 12.025,
+     "mean_count": 1.05,
+     "n": 200,
+     "opponent": 1,
+     "other_losses": 0,
+     "turns": 2007,
+     "turns_in_wins": 10.0,
+     "wins": 173
+    },
+    "potion-c3-population/glove": {
+     "assassin": 48,
+     "ci": [
+      13.98,
+      15.76
+     ],
+     "flagged_turns": 90,
+     "mean": 14.86,
+     "mean_count": 1.03,
+     "n": 200,
+     "opponent": 2,
+     "other_losses": 0,
+     "turns": 2288,
+     "turns_in_wins": 11.48,
+     "wins": 150
+    },
+    "potion-c3-population/lora-c8": {
+     "assassin": 41,
+     "ci": [
+      12.815,
+      14.565
+     ],
+     "flagged_turns": 89,
+     "mean": 13.685,
+     "mean_count": 1.05,
+     "n": 200,
+     "opponent": 1,
+     "other_losses": 0,
+     "turns": 2139,
+     "turns_in_wins": 10.68,
+     "wins": 158
+    },
+    "potion-c3-population/potion": {
+     "assassin": 0,
+     "ci": [
+      8.6,
+      8.76
+     ],
+     "flagged_turns": 76,
+     "mean": 8.685,
+     "mean_count": 1.04,
+     "n": 200,
+     "opponent": 0,
+     "other_losses": 0,
+     "turns": 1737,
+     "turns_in_wins": 8.69,
+     "wins": 200
+    },
+    "potion-c3-population/w2v": {
+     "assassin": 49,
+     "ci": [
+      13.67,
+      15.47
+     ],
+     "flagged_turns": 85,
+     "mean": 14.58,
+     "mean_count": 1.05,
+     "n": 200,
+     "opponent": 0,
+     "other_losses": 0,
+     "turns": 2239,
+     "turns_in_wins": 11.2,
+     "wins": 151
+    },
+    "potion-c3-population/w2vglove": {
+     "assassin": 40,
+     "ci": [
+      13.255,
+      14.94
+     ],
+     "flagged_turns": 85,
+     "mean": 14.09,
+     "mean_count": 1.04,
+     "n": 200,
+     "opponent": 2,
+     "other_losses": 0,
+     "turns": 2245,
+     "turns_in_wins": 11.19,
+     "wins": 158
+    },
+    "potion-c3-self/gemma2": {
+     "assassin": 33,
+     "ci": [
+      10.23,
+      12.1
+     ],
+     "flagged_turns": 47,
+     "mean": 11.135,
+     "mean_count": 1.75,
+     "n": 200,
+     "opponent": 2,
+     "other_losses": 0,
+     "turns": 1572,
+     "turns_in_wins": 8.19,
+     "wins": 165
+    },
+    "potion-c3-self/glove": {
+     "assassin": 54,
+     "ci": [
+      12.47,
+      14.515
+     ],
+     "flagged_turns": 36,
+     "mean": 13.495,
+     "mean_count": 1.78,
+     "n": 200,
+     "opponent": 2,
+     "other_losses": 0,
+     "turns": 1665,
+     "turns_in_wins": 9.02,
+     "wins": 144
+    },
+    "potion-c3-self/lora-c8": {
+     "assassin": 49,
+     "ci": [
+      11.665,
+      13.73
+     ],
+     "flagged_turns": 41,
+     "mean": 12.68,
+     "mean_count": 1.75,
+     "n": 200,
+     "opponent": 1,
+     "other_losses": 0,
+     "turns": 1667,
+     "turns_in_wins": 8.57,
+     "wins": 150
+    },
+    "potion-c3-self/potion": {
+     "assassin": 0,
+     "ci": [
+      5.795,
+      6.085
+     ],
+     "flagged_turns": 41,
+     "mean": 5.94,
+     "mean_count": 1.62,
+     "n": 200,
+     "opponent": 0,
+     "other_losses": 0,
+     "turns": 1188,
+     "turns_in_wins": 5.94,
+     "wins": 200
+    },
+    "potion-c3-self/w2v": {
+     "assassin": 59,
+     "ci": [
+      12.415,
+      14.565
+     ],
+     "flagged_turns": 45,
+     "mean": 13.49,
+     "mean_count": 1.8,
+     "n": 200,
+     "opponent": 0,
+     "other_losses": 0,
+     "turns": 1633,
+     "turns_in_wins": 8.67,
+     "wins": 141
+    },
+    "potion-c3-self/w2vglove": {
+     "assassin": 48,
+     "ci": [
+      11.81,
+      13.845
+     ],
+     "flagged_turns": 40,
+     "mean": 12.82,
+     "mean_count": 1.75,
+     "n": 200,
+     "opponent": 2,
+     "other_losses": 0,
+     "turns": 1678,
+     "turns_in_wins": 8.76,
+     "wins": 150
+    },
+    "potion-first/gemma2": {
+     "assassin": 35,
+     "ci": [
+      9.88,
+      11.845
+     ],
+     "flagged_turns": 66,
+     "mean": 10.845,
+     "mean_count": 2.22,
+     "n": 200,
+     "opponent": 2,
+     "other_losses": 0,
+     "turns": 1448,
+     "turns_in_wins": 7.63,
+     "wins": 163
+    },
+    "potion-first/glove": {
+     "assassin": 55,
+     "ci": [
+      11.605,
+      13.815
+     ],
+     "flagged_turns": 60,
+     "mean": 12.685,
+     "mean_count": 2.26,
+     "n": 200,
+     "opponent": 0,
+     "other_losses": 0,
+     "turns": 1476,
+     "turns_in_wins": 8.01,
+     "wins": 145
+    },
+    "potion-first/lora-c8": {
+     "assassin": 45,
+     "ci": [
+      10.615,
+      12.725
+     ],
+     "flagged_turns": 50,
+     "mean": 11.655,
+     "mean_count": 2.25,
+     "n": 200,
+     "opponent": 1,
+     "other_losses": 0,
+     "turns": 1435,
+     "turns_in_wins": 7.67,
+     "wins": 154
+    },
+    "potion-first/potion": {
+     "assassin": 0,
+     "ci": [
+      4.88,
+      5.12
+     ],
+     "flagged_turns": 69,
+     "mean": 5.0,
+     "mean_count": 1.91,
+     "n": 200,
+     "opponent": 0,
+     "other_losses": 0,
+     "turns": 1000,
+     "turns_in_wins": 5.0,
+     "wins": 200
+    },
+    "potion-first/w2v": {
+     "assassin": 55,
+     "ci": [
+      11.55,
+      13.725
+     ],
+     "flagged_turns": 55,
+     "mean": 12.62,
+     "mean_count": 2.27,
+     "n": 200,
+     "opponent": 0,
+     "other_losses": 0,
+     "turns": 1495,
+     "turns_in_wins": 7.92,
+     "wins": 145
+    },
+    "potion-first/w2vglove": {
+     "assassin": 51,
+     "ci": [
+      11.18,
+      13.315
+     ],
+     "flagged_turns": 65,
+     "mean": 12.235,
+     "mean_count": 2.21,
+     "n": 200,
+     "opponent": 0,
+     "other_losses": 0,
+     "turns": 1474,
+     "turns_in_wins": 7.87,
+     "wins": 149
+    },
+    "w2v/gemma2": {
+     "assassin": 48,
+     "ci": [
+      12.26,
+      14.25
+     ],
+     "flagged_turns": 39,
+     "mean": 13.255,
+     "mean_count": 1.64,
+     "n": 200,
+     "opponent": 1,
+     "other_losses": 0,
+     "turns": 1751,
+     "turns_in_wins": 9.44,
+     "wins": 151
+    },
+    "w2v/glove": {
+     "assassin": 21,
+     "ci": [
+      8.34,
+      9.91
+     ],
+     "flagged_turns": 26,
+     "mean": 9.095,
+     "mean_count": 1.6,
+     "n": 200,
+     "opponent": 0,
+     "other_losses": 0,
+     "turns": 1385,
+     "turns_in_wins": 7.23,
+     "wins": 179
+    },
+    "w2v/lora-c8": {
+     "assassin": 51,
+     "ci": [
+      12.43,
+      14.425
+     ],
+     "flagged_turns": 30,
+     "mean": 13.42,
+     "mean_count": 1.64,
+     "n": 200,
+     "opponent": 0,
+     "other_losses": 0,
+     "turns": 1712,
+     "turns_in_wins": 9.46,
+     "wins": 149
+    },
+    "w2v/potion": {
+     "assassin": 64,
+     "ci": [
+      13.285,
+      15.4
+     ],
+     "flagged_turns": 22,
+     "mean": 14.34,
+     "mean_count": 1.71,
+     "n": 200,
+     "opponent": 1,
+     "other_losses": 0,
+     "turns": 1670,
+     "turns_in_wins": 9.21,
+     "wins": 135
+    },
+    "w2v/w2v": {
+     "assassin": 0,
+     "ci": [
+      5.77,
+      6.01
+     ],
+     "flagged_turns": 27,
+     "mean": 5.89,
+     "mean_count": 1.56,
+     "n": 200,
+     "opponent": 0,
+     "other_losses": 0,
+     "turns": 1178,
+     "turns_in_wins": 5.89,
+     "wins": 200
+    },
+    "w2v/w2vglove": {
+     "assassin": 14,
+     "ci": [
+      7.42,
+      8.76
+     ],
+     "flagged_turns": 27,
+     "mean": 8.045,
+     "mean_count": 1.6,
+     "n": 200,
+     "opponent": 0,
+     "other_losses": 0,
+     "turns": 1307,
+     "turns_in_wins": 6.77,
+     "wins": 186
+    },
+    "w2vglove/gemma2": {
+     "assassin": 76,
+     "ci": [
+      14.24,
+      16.52
+     ],
+     "flagged_turns": 25,
+     "mean": 15.36,
+     "mean_count": 2.13,
+     "n": 200,
+     "opponent": 4,
+     "other_losses": 0,
+     "turns": 1608,
+     "turns_in_wins": 8.93,
+     "wins": 120
+    },
+    "w2vglove/glove": {
+     "assassin": 4,
+     "ci": [
+      5.075,
+      5.875
+     ],
+     "flagged_turns": 20,
+     "mean": 5.435,
+     "mean_count": 1.89,
+     "n": 200,
+     "opponent": 0,
+     "other_losses": 0,
+     "turns": 993,
+     "turns_in_wins": 5.04,
+     "wins": 196
+    },
+    "w2vglove/lora-c8": {
+     "assassin": 69,
+     "ci": [
+      13.07,
+      15.315
+     ],
+     "flagged_turns": 24,
+     "mean": 14.195,
+     "mean_count": 2.13,
+     "n": 200,
+     "opponent": 0,
+     "other_losses": 0,
+     "turns": 1471,
+     "turns_in_wins": 8.5,
+     "wins": 131
+    },
+    "w2vglove/potion": {
+     "assassin": 90,
+     "ci": [
+      15.265,
+      17.53
+     ],
+     "flagged_turns": 15,
+     "mean": 16.38,
+     "mean_count": 2.19,
+     "n": 200,
+     "opponent": 2,
+     "other_losses": 0,
+     "turns": 1517,
+     "turns_in_wins": 9.04,
+     "wins": 108
+    },
+    "w2vglove/w2v": {
+     "assassin": 23,
+     "ci": [
+      7.655,
+      9.345
+     ],
+     "flagged_turns": 24,
+     "mean": 8.465,
+     "mean_count": 1.96,
+     "n": 200,
+     "opponent": 0,
+     "other_losses": 0,
+     "turns": 1193,
+     "turns_in_wins": 6.32,
+     "wins": 177
+    },
+    "w2vglove/w2vglove": {
+     "assassin": 0,
+     "ci": [
+      4.825,
+      5.025
+     ],
+     "flagged_turns": 22,
+     "mean": 4.925,
+     "mean_count": 1.87,
+     "n": 200,
+     "opponent": 0,
+     "other_losses": 0,
+     "turns": 985,
+     "turns_in_wins": 4.92,
+     "wins": 200
+    }
+   },
+   "giver_means": {
+    "gemma2-first with framework guessers": {
+     "ci": [
+      12.837,
+      14.635
+     ],
+     "guessers": [
+      "w2v",
+      "glove",
+      "w2vglove"
+     ],
+     "mean": 13.73,
+     "n": 200
+    },
+    "gemma2-first with our guessers": {
+     "ci": [
+      10.447,
+      12.025
+     ],
+     "guessers": [
+      "potion",
+      "lora-c8"
+     ],
+     "mean": 11.215,
+     "n": 200
+    },
+    "glove with framework guessers": {
+     "ci": [
+      8.955,
+      10.91
+     ],
+     "guessers": [
+      "w2v"
+     ],
+     "mean": 9.885,
+     "n": 200
+    },
+    "glove with our guessers": {
+     "ci": [
+      15.667,
+      16.983
+     ],
+     "guessers": [
+      "gemma2",
+      "potion",
+      "lora-c8"
+     ],
+     "mean": 16.333,
+     "n": 200
+    },
+    "potion-c3-population with framework guessers": {
+     "ci": [
+      13.733,
+      15.283
+     ],
+     "guessers": [
+      "w2v",
+      "glove",
+      "w2vglove"
+     ],
+     "mean": 14.51,
+     "n": 200
+    },
+    "potion-c3-population with our guessers": {
+     "ci": [
+      12.193,
+      13.55
+     ],
+     "guessers": [
+      "gemma2",
+      "lora-c8"
+     ],
+     "mean": 12.855,
+     "n": 200
+    },
+    "potion-c3-self with framework guessers": {
+     "ci": [
+      12.415,
+      14.137
+     ],
+     "guessers": [
+      "w2v",
+      "glove",
+      "w2vglove"
+     ],
+     "mean": 13.268,
+     "n": 200
+    },
+    "potion-c3-self with our guessers": {
+     "ci": [
+      11.147,
+      12.71
+     ],
+     "guessers": [
+      "gemma2",
+      "lora-c8"
+     ],
+     "mean": 11.908,
+     "n": 200
+    },
+    "potion-first with framework guessers": {
+     "ci": [
+      11.707,
+      13.35
+     ],
+     "guessers": [
+      "w2v",
+      "glove",
+      "w2vglove"
+     ],
+     "mean": 12.513,
+     "n": 200
+    },
+    "potion-first with our guessers": {
+     "ci": [
+      10.495,
+      12.005
+     ],
+     "guessers": [
+      "gemma2",
+      "lora-c8"
+     ],
+     "mean": 11.25,
+     "n": 200
+    },
+    "w2v with framework guessers": {
+     "ci": [
+      8.34,
+      9.91
+     ],
+     "guessers": [
+      "glove"
+     ],
+     "mean": 9.095,
+     "n": 200
+    },
+    "w2v with our guessers": {
+     "ci": [
+      13.027,
+      14.315
+     ],
+     "guessers": [
+      "gemma2",
+      "potion",
+      "lora-c8"
+     ],
+     "mean": 13.672,
+     "n": 200
+    },
+    "w2vglove with our guessers": {
+     "ci": [
+      14.627,
+      16.027
+     ],
+     "guessers": [
+      "gemma2",
+      "potion",
+      "lora-c8"
+     ],
+     "mean": 15.312,
+     "n": 200
+    }
+   },
+   "givers": [
+    "w2v",
+    "glove",
+    "w2vglove",
+    "gemma2-first",
+    "potion-first",
+    "potion-c3-self",
+    "potion-c3-population"
+   ],
+   "guessers": [
+    "w2v",
+    "glove",
+    "w2vglove",
+    "gemma2",
+    "potion",
+    "lora-c8"
+   ],
+   "paired": {
+    "gemma2-first minus glove / framework guessers": {
+     "ci": [
+      2.36,
+      5.025
+     ],
+     "guessers": [
+      "w2v"
+     ],
+     "mean": 3.71,
+     "n": 200
+    },
+    "gemma2-first minus glove / lora-c8": {
+     "ci": [
+      -6.12,
+      -3.115
+     ],
+     "mean": -4.62,
+     "n": 200
+    },
+    "gemma2-first minus glove / our guessers": {
+     "ci": [
+      -6.005,
+      -3.717
+     ],
+     "guessers": [
+      "potion",
+      "lora-c8"
+     ],
+     "mean": -4.875,
+     "n": 200
+    },
+    "gemma2-first minus glove / potion": {
+     "ci": [
+      -6.62,
+      -3.61
+     ],
+     "mean": -5.13,
+     "n": 200
+    },
+    "gemma2-first minus glove / w2v": {
+     "ci": [
+      2.36,
+      5.025
+     ],
+     "mean": 3.71,
+     "n": 200
+    },
+    "gemma2-first minus potion-first / framework guessers": {
+     "ci": [
+      0.172,
+      2.272
+     ],
+     "guessers": [
+      "w2v",
+      "glove",
+      "w2vglove"
+     ],
+     "mean": 1.217,
+     "n": 200
+    },
+    "gemma2-first minus potion-first / glove": {
+     "ci": [
+      -0.27,
+      2.63
+     ],
+     "mean": 1.18,
+     "n": 200
+    },
+    "gemma2-first minus potion-first / lora-c8": {
+     "ci": [
+      -1.42,
+      1.275
+     ],
+     "mean": -0.095,
+     "n": 200
+    },
+    "gemma2-first minus potion-first / our guessers": {
+     "ci": [
+      -1.42,
+      1.275
+     ],
+     "guessers": [
+      "lora-c8"
+     ],
+     "mean": -0.095,
+     "n": 200
+    },
+    "gemma2-first minus potion-first / w2v": {
+     "ci": [
+      -0.26,
+      2.24
+     ],
+     "mean": 0.975,
+     "n": 200
+    },
+    "gemma2-first minus potion-first / w2vglove": {
+     "ci": [
+      0.02,
+      2.935
+     ],
+     "mean": 1.495,
+     "n": 200
+    },
+    "gemma2-first minus w2v / framework guessers": {
+     "ci": [
+      3.605,
+      5.98
+     ],
+     "guessers": [
+      "glove"
+     ],
+     "mean": 4.77,
+     "n": 200
+    },
+    "gemma2-first minus w2v / glove": {
+     "ci": [
+      3.605,
+      5.98
+     ],
+     "mean": 4.77,
+     "n": 200
+    },
+    "gemma2-first minus w2v / lora-c8": {
+     "ci": [
+      -3.195,
+      -0.495
+     ],
+     "mean": -1.86,
+     "n": 200
+    },
+    "gemma2-first minus w2v / our guessers": {
+     "ci": [
+      -3.725,
+      -1.585
+     ],
+     "guessers": [
+      "potion",
+      "lora-c8"
+     ],
+     "mean": -2.665,
+     "n": 200
+    },
+    "gemma2-first minus w2v / potion": {
+     "ci": [
+      -4.83,
+      -2.09
+     ],
+     "mean": -3.47,
+     "n": 200
+    },
+    "potion-c3-population minus glove / framework guessers": {
+     "ci": [
+      3.375,
+      5.95
+     ],
+     "guessers": [
+      "w2v"
+     ],
+     "mean": 4.695,
+     "n": 200
+    },
+    "potion-c3-population minus glove / gemma2": {
+     "ci": [
+      -6.06,
+      -3.48
+     ],
+     "mean": -4.795,
+     "n": 200
+    },
+    "potion-c3-population minus glove / lora-c8": {
+     "ci": [
+      -3.845,
+      -1.145
+     ],
+     "mean": -2.495,
+     "n": 200
+    },
+    "potion-c3-population minus glove / our guessers": {
+     "ci": [
+      -4.638,
+      -2.645
+     ],
+     "guessers": [
+      "gemma2",
+      "lora-c8"
+     ],
+     "mean": -3.645,
+     "n": 200
+    },
+    "potion-c3-population minus glove / w2v": {
+     "ci": [
+      3.375,
+      5.95
+     ],
+     "mean": 4.695,
+     "n": 200
+    },
+    "potion-c3-population minus potion-c3-self / framework guessers": {
+     "ci": [
+      0.477,
+      2.0
+     ],
+     "guessers": [
+      "w2v",
+      "glove",
+      "w2vglove"
+     ],
+     "mean": 1.242,
+     "n": 200
+    },
+    "potion-c3-population minus potion-c3-self / gemma2": {
+     "ci": [
+      0.045,
+      1.7
+     ],
+     "mean": 0.89,
+     "n": 200
+    },
+    "potion-c3-population minus potion-c3-self / glove": {
+     "ci": [
+      0.36,
+      2.355
+     ],
+     "mean": 1.365,
+     "n": 200
+    },
+    "potion-c3-population minus potion-c3-self / lora-c8": {
+     "ci": [
+      0.075,
+      1.915
+     ],
+     "mean": 1.005,
+     "n": 200
+    },
+    "potion-c3-population minus potion-c3-self / our guessers": {
+     "ci": [
+      0.292,
+      1.57
+     ],
+     "guessers": [
+      "gemma2",
+      "lora-c8"
+     ],
+     "mean": 0.948,
+     "n": 200
+    },
+    "potion-c3-population minus potion-c3-self / w2v": {
+     "ci": [
+      0.065,
+      2.105
+     ],
+     "mean": 1.09,
+     "n": 200
+    },
+    "potion-c3-population minus potion-c3-self / w2vglove": {
+     "ci": [
+      0.3,
+      2.235
+     ],
+     "mean": 1.27,
+     "n": 200
+    },
+    "potion-c3-population minus potion-first / framework guessers": {
+     "ci": [
+      1.055,
+      2.912
+     ],
+     "guessers": [
+      "w2v",
+      "glove",
+      "w2vglove"
+     ],
+     "mean": 1.997,
+     "n": 200
+    },
+    "potion-c3-population minus potion-first / gemma2": {
+     "ci": [
+      0.035,
+      2.32
+     ],
+     "mean": 1.18,
+     "n": 200
+    },
+    "potion-c3-population minus potion-first / glove": {
+     "ci": [
+      0.99,
+      3.325
+     ],
+     "mean": 2.175,
+     "n": 200
+    },
+    "potion-c3-population minus potion-first / lora-c8": {
+     "ci": [
+      0.895,
+      3.165
+     ],
+     "mean": 2.03,
+     "n": 200
+    },
+    "potion-c3-population minus potion-first / our guessers": {
+     "ci": [
+      0.787,
+      2.438
+     ],
+     "guessers": [
+      "gemma2",
+      "lora-c8"
+     ],
+     "mean": 1.605,
+     "n": 200
+    },
+    "potion-c3-population minus potion-first / w2v": {
+     "ci": [
+      0.69,
+      3.21
+     ],
+     "mean": 1.96,
+     "n": 200
+    },
+    "potion-c3-population minus potion-first / w2vglove": {
+     "ci": [
+      0.585,
+      3.075
+     ],
+     "mean": 1.855,
+     "n": 200
+    }
+   }
+  },
+  "info": {
+   "gemma2-first": {
+    "board_words": 400,
+    "board_words_dropped": [],
+    "clue_words_dropped": 206,
+    "lora-c8": {
+     "extra_words": 1307,
+     "max_abs_difference_bare": 0.00555419921875,
+     "max_abs_difference_query": 0.00604248046875,
+     "seconds": 203,
+     "template": "query",
+     "threads": 8
+    },
+    "our_clue_pool": 11794
+   },
+   "glove": {
+    "board_words": 400,
+    "board_words_dropped": [],
+    "clue_words_dropped": 206,
+    "lora-c8": {
+     "extra_words": 1307,
+     "max_abs_difference_bare": 0.00555419921875,
+     "max_abs_difference_query": 0.00604248046875,
+     "seconds": 203,
+     "template": "query",
+     "threads": 8
+    },
+    "our_clue_pool": 11794
+   },
+   "potion-c3-population": {
+    "board_words": 400,
+    "board_words_dropped": [],
+    "c3": {
+     "task": [
+      "potion",
+      "google/embeddinggemma-2",
+      1
+     ],
+     "theta_max_difference": {
+      "population": 0.0,
+      "self": 0.0
+     }
+    },
+    "clue_words_dropped": 206,
+    "lora-c8": {
+     "extra_words": 1307,
+     "max_abs_difference_bare": 0.00555419921875,
+     "max_abs_difference_query": 0.00604248046875,
+     "seconds": 203,
+     "template": "query",
+     "threads": 8
+    },
+    "our_clue_pool": 11794
+   },
+   "potion-c3-self": {
+    "board_words": 400,
+    "board_words_dropped": [],
+    "c3": {
+     "task": [
+      "potion",
+      "google/embeddinggemma-2",
+      1
+     ],
+     "theta_max_difference": {
+      "population": 0.0,
+      "self": 0.0
+     }
+    },
+    "clue_words_dropped": 206,
+    "lora-c8": {
+     "extra_words": 1307,
+     "max_abs_difference_bare": 0.00555419921875,
+     "max_abs_difference_query": 0.00604248046875,
+     "seconds": 203,
+     "template": "query",
+     "threads": 8
+    },
+    "our_clue_pool": 11794
+   },
+   "potion-first": {
+    "board_words": 400,
+    "board_words_dropped": [],
+    "clue_words_dropped": 206,
+    "lora-c8": {
+     "extra_words": 1307,
+     "max_abs_difference_bare": 0.00555419921875,
+     "max_abs_difference_query": 0.00604248046875,
+     "seconds": 203,
+     "template": "query",
+     "threads": 8
+    },
+    "our_clue_pool": 11794
+   },
+   "w2v": {
+    "board_words": 400,
+    "board_words_dropped": [],
+    "clue_words_dropped": 206,
+    "lora-c8": {
+     "extra_words": 1307,
+     "max_abs_difference_bare": 0.00555419921875,
+     "max_abs_difference_query": 0.00604248046875,
+     "seconds": 203,
+     "template": "query",
+     "threads": 8
+    },
+    "our_clue_pool": 11794
+   },
+   "w2vglove": {
+    "board_words": 400,
+    "board_words_dropped": [],
+    "clue_words_dropped": 206,
+    "lora-c8": {
+     "extra_words": 1307,
+     "max_abs_difference_bare": 0.00555419921875,
+     "max_abs_difference_query": 0.00604248046875,
+     "seconds": 203,
+     "template": "query",
+     "threads": 8
+    },
+    "our_clue_pool": 11794
+   }
+  },
+  "strict": {
+   "cells": {
+    "gemma2-first/gemma2": {
+     "assassin": 0,
+     "ci": [
+      6.22,
+      6.56
+     ],
+     "flagged_turns": 0,
+     "mean": 6.39,
+     "mean_count": 1.52,
+     "n": 200,
+     "opponent": 0,
+     "other_losses": 0,
+     "turns": 1278,
+     "turns_in_wins": 6.39,
+     "wins": 200
+    },
+    "gemma2-first/glove": {
+     "assassin": 59,
+     "ci": [
+      12.84,
+      14.955
+     ],
+     "flagged_turns": 0,
+     "mean": 13.885,
+     "mean_count": 1.67,
+     "n": 200,
+     "opponent": 0,
+     "other_losses": 0,
+     "turns": 1754,
+     "turns_in_wins": 9.23,
+     "wins": 141
+    },
+    "gemma2-first/lora-c8": {
+     "assassin": 49,
+     "ci": [
+      11.275,
+      13.37
+     ],
+     "flagged_turns": 0,
+     "mean": 12.31,
+     "mean_count": 1.69,
+     "n": 200,
+     "opponent": 1,
+     "other_losses": 0,
+     "turns": 1571,
+     "turns_in_wins": 8.08,
+     "wins": 150
+    },
+    "gemma2-first/potion": {
+     "assassin": 29,
+     "ci": [
+      9.665,
+      11.425
+     ],
+     "flagged_turns": 0,
+     "mean": 10.525,
+     "mean_count": 1.63,
+     "n": 200,
+     "opponent": 1,
+     "other_losses": 0,
+     "turns": 1551,
+     "turns_in_wins": 7.97,
+     "wins": 170
+    },
+    "gemma2-first/w2v": {
+     "assassin": 52,
+     "ci": [
+      12.5,
+      14.49
+     ],
+     "flagged_turns": 0,
+     "mean": 13.48,
+     "mean_count": 1.7,
+     "n": 200,
+     "opponent": 0,
+     "other_losses": 0,
+     "turns": 1782,
+     "turns_in_wins": 9.43,
+     "wins": 148
+    },
+    "gemma2-first/w2vglove": {
+     "assassin": 58,
+     "ci": [
+      12.655,
+      14.775
+     ],
+     "flagged_turns": 0,
+     "mean": 13.69,
+     "mean_count": 1.66,
+     "n": 200,
+     "opponent": 0,
+     "other_losses": 0,
+     "turns": 1726,
+     "turns_in_wins": 9.07,
+     "wins": 142
+    },
+    "glove/gemma2": {
+     "assassin": 92,
+     "ci": [
+      15.885,
+      18.045
+     ],
+     "flagged_turns": 0,
+     "mean": 16.98,
+     "mean_count": 2.34,
+     "n": 200,
+     "opponent": 3,
+     "other_losses": 0,
+     "turns": 1619,
+     "turns_in_wins": 9.72,
+     "wins": 105
+    },
+    "glove/glove": {
+     "assassin": 0,
+     "ci": [
+      4.525,
+      4.705
+     ],
+     "flagged_turns": 0,
+     "mean": 4.615,
+     "mean_count": 1.99,
+     "n": 200,
+     "opponent": 0,
+     "other_losses": 0,
+     "turns": 923,
+     "turns_in_wins": 4.62,
+     "wins": 200
+    },
+    "glove/lora-c8": {
+     "assassin": 92,
+     "ci": [
+      15.255,
+      17.49
+     ],
+     "flagged_turns": 0,
+     "mean": 16.375,
+     "mean_count": 2.35,
+     "n": 200,
+     "opponent": 0,
+     "other_losses": 0,
+     "turns": 1471,
+     "turns_in_wins": 9.03,
+     "wins": 108
+    },
+    "glove/potion": {
+     "assassin": 86,
+     "ci": [
+      15.015,
+      17.27
+     ],
+     "flagged_turns": 0,
+     "mean": 16.13,
+     "mean_count": 2.38,
+     "n": 200,
+     "opponent": 1,
+     "other_losses": 0,
+     "turns": 1516,
+     "turns_in_wins": 9.3,
+     "wins": 113
+    },
+    "glove/w2v": {
+     "assassin": 33,
+     "ci": [
+      8.945,
+      10.905
+     ],
+     "flagged_turns": 0,
+     "mean": 9.88,
+     "mean_count": 2.14,
+     "n": 200,
+     "opponent": 1,
+     "other_losses": 0,
+     "turns": 1266,
+     "turns_in_wins": 6.78,
+     "wins": 166
+    },
+    "glove/w2vglove": {
+     "assassin": 2,
+     "ci": [
+      4.65,
+      5.255
+     ],
+     "flagged_turns": 0,
+     "mean": 4.9,
+     "mean_count": 2.01,
+     "n": 200,
+     "opponent": 0,
+     "other_losses": 0,
+     "turns": 934,
+     "turns_in_wins": 4.7,
+     "wins": 198
+    },
+    "potion-c3-population/gemma2": {
+     "assassin": 28,
+     "ci": [
+      11.43,
+      13.015
+     ],
+     "flagged_turns": 0,
+     "mean": 12.21,
+     "mean_count": 1.05,
+     "n": 200,
+     "opponent": 1,
+     "other_losses": 0,
+     "turns": 2006,
+     "turns_in_wins": 10.04,
+     "wins": 171
+    },
+    "potion-c3-population/glove": {
+     "assassin": 50,
+     "ci": [
+      14.02,
+      15.825
+     ],
+     "flagged_turns": 0,
+     "mean": 14.925,
+     "mean_count": 1.04,
+     "n": 200,
+     "opponent": 2,
+     "other_losses": 0,
+     "turns": 2267,
+     "turns_in_wins": 11.39,
+     "wins": 148
+    },
+    "potion-c3-population/lora-c8": {
+     "assassin": 42,
+     "ci": [
+      12.81,
+      14.585
+     ],
+     "flagged_turns": 0,
+     "mean": 13.685,
+     "mean_count": 1.05,
+     "n": 200,
+     "opponent": 1,
+     "other_losses": 0,
+     "turns": 2117,
+     "turns_in_wins": 10.59,
+     "wins": 157
+    },
+    "potion-c3-population/potion": {
+     "assassin": 0,
+     "ci": [
+      8.58,
+      8.745
+     ],
+     "flagged_turns": 0,
+     "mean": 8.665,
+     "mean_count": 1.04,
+     "n": 200,
+     "opponent": 0,
+     "other_losses": 0,
+     "turns": 1733,
+     "turns_in_wins": 8.66,
+     "wins": 200
+    },
+    "potion-c3-population/w2v": {
+     "assassin": 51,
+     "ci": [
+      13.76,
+      15.57
+     ],
+     "flagged_turns": 0,
+     "mean": 14.675,
+     "mean_count": 1.05,
+     "n": 200,
+     "opponent": 0,
+     "other_losses": 0,
+     "turns": 2232,
+     "turns_in_wins": 11.14,
+     "wins": 149
+    },
+    "potion-c3-population/w2vglove": {
+     "assassin": 45,
+     "ci": [
+      13.465,
+      15.225
+     ],
+     "flagged_turns": 0,
+     "mean": 14.34,
+     "mean_count": 1.04,
+     "n": 200,
+     "opponent": 2,
+     "other_losses": 0,
+     "turns": 2230,
+     "turns_in_wins": 11.07,
+     "wins": 153
+    },
+    "potion-c3-self/gemma2": {
+     "assassin": 34,
+     "ci": [
+      10.35,
+      12.245
+     ],
+     "flagged_turns": 0,
+     "mean": 11.275,
+     "mean_count": 1.75,
+     "n": 200,
+     "opponent": 2,
+     "other_losses": 0,
+     "turns": 1580,
+     "turns_in_wins": 8.26,
+     "wins": 164
+    },
+    "potion-c3-self/glove": {
+     "assassin": 57,
+     "ci": [
+      12.685,
+      14.775
+     ],
+     "flagged_turns": 0,
+     "mean": 13.73,
+     "mean_count": 1.79,
+     "n": 200,
+     "opponent": 2,
+     "other_losses": 0,
+     "turns": 1680,
+     "turns_in_wins": 9.01,
+     "wins": 141
+    },
+    "potion-c3-self/lora-c8": {
+     "assassin": 50,
+     "ci": [
+      11.68,
+      13.755
+     ],
+     "flagged_turns": 0,
+     "mean": 12.695,
+     "mean_count": 1.76,
+     "n": 200,
+     "opponent": 1,
+     "other_losses": 0,
+     "turns": 1651,
+     "turns_in_wins": 8.48,
+     "wins": 149
+    },
+    "potion-c3-self/potion": {
+     "assassin": 0,
+     "ci": [
+      5.79,
+      6.07
+     ],
+     "flagged_turns": 0,
+     "mean": 5.93,
+     "mean_count": 1.62,
+     "n": 200,
+     "opponent": 0,
+     "other_losses": 0,
+     "turns": 1186,
+     "turns_in_wins": 5.93,
+     "wins": 200
+    },
+    "potion-c3-self/w2v": {
+     "assassin": 60,
+     "ci": [
+      12.44,
+      14.6
+     ],
+     "flagged_turns": 0,
+     "mean": 13.525,
+     "mean_count": 1.8,
+     "n": 200,
+     "opponent": 0,
+     "other_losses": 0,
+     "turns": 1631,
+     "turns_in_wins": 8.61,
+     "wins": 140
+    },
+    "potion-c3-self/w2vglove": {
+     "assassin": 50,
+     "ci": [
+      11.895,
+      13.955
+     ],
+     "flagged_turns": 0,
+     "mean": 12.92,
+     "mean_count": 1.75,
+     "n": 200,
+     "opponent": 2,
+     "other_losses": 0,
+     "turns": 1673,
+     "turns_in_wins": 8.68,
+     "wins": 148
+    },
+    "potion-first/gemma2": {
+     "assassin": 37,
+     "ci": [
+      10.04,
+      12.02
+     ],
+     "flagged_turns": 0,
+     "mean": 11.025,
+     "mean_count": 2.23,
+     "n": 200,
+     "opponent": 2,
+     "other_losses": 0,
+     "turns": 1449,
+     "turns_in_wins": 7.64,
+     "wins": 161
+    },
+    "potion-first/glove": {
+     "assassin": 59,
+     "ci": [
+      11.99,
+      14.235
+     ],
+     "flagged_turns": 0,
+     "mean": 13.095,
+     "mean_count": 2.25,
+     "n": 200,
+     "opponent": 0,
+     "other_losses": 0,
+     "turns": 1482,
+     "turns_in_wins": 8.11,
+     "wins": 141
+    },
+    "potion-first/lora-c8": {
+     "assassin": 49,
+     "ci": [
+      10.96,
+      13.09
+     ],
+     "flagged_turns": 0,
+     "mean": 12.005,
+     "mean_count": 2.26,
+     "n": 200,
+     "opponent": 1,
+     "other_losses": 0,
+     "turns": 1448,
+     "turns_in_wins": 7.67,
+     "wins": 150
+    },
+    "potion-first/potion": {
+     "assassin": 0,
+     "ci": [
+      4.85,
+      5.09
+     ],
+     "flagged_turns": 0,
+     "mean": 4.97,
+     "mean_count": 1.92,
+     "n": 200,
+     "opponent": 0,
+     "other_losses": 0,
+     "turns": 994,
+     "turns_in_wins": 4.97,
+     "wins": 200
+    },
+    "potion-first/w2v": {
+     "assassin": 55,
+     "ci": [
+      11.68,
+      13.87
+     ],
+     "flagged_turns": 0,
+     "mean": 12.75,
+     "mean_count": 2.28,
+     "n": 200,
+     "opponent": 0,
+     "other_losses": 0,
+     "turns": 1521,
+     "turns_in_wins": 8.1,
+     "wins": 145
+    },
+    "potion-first/w2vglove": {
+     "assassin": 50,
+     "ci": [
+      11.275,
+      13.39
+     ],
+     "flagged_turns": 0,
+     "mean": 12.31,
+     "mean_count": 2.2,
+     "n": 200,
+     "opponent": 0,
+     "other_losses": 0,
+     "turns": 1504,
+     "turns_in_wins": 8.08,
+     "wins": 150
+    },
+    "w2v/gemma2": {
+     "assassin": 49,
+     "ci": [
+      12.385,
+      14.385
+     ],
+     "flagged_turns": 0,
+     "mean": 13.385,
+     "mean_count": 1.64,
+     "n": 200,
+     "opponent": 1,
+     "other_losses": 0,
+     "turns": 1761,
+     "turns_in_wins": 9.51,
+     "wins": 150
+    },
+    "w2v/glove": {
+     "assassin": 23,
+     "ci": [
+      8.51,
+      10.125
+     ],
+     "flagged_turns": 0,
+     "mean": 9.285,
+     "mean_count": 1.6,
+     "n": 200,
+     "opponent": 0,
+     "other_losses": 0,
+     "turns": 1390,
+     "turns_in_wins": 7.24,
+     "wins": 177
+    },
+    "w2v/lora-c8": {
+     "assassin": 51,
+     "ci": [
+      12.425,
+      14.42
+     ],
+     "flagged_turns": 0,
+     "mean": 13.415,
+     "mean_count": 1.64,
+     "n": 200,
+     "opponent": 0,
+     "other_losses": 0,
+     "turns": 1711,
+     "turns_in_wins": 9.45,
+     "wins": 149
+    },
+    "w2v/potion": {
+     "assassin": 65,
+     "ci": [
+      13.41,
+      15.525
+     ],
+     "flagged_turns": 0,
+     "mean": 14.46,
+     "mean_count": 1.71,
+     "n": 200,
+     "opponent": 1,
+     "other_losses": 0,
+     "turns": 1681,
+     "turns_in_wins": 9.27,
+     "wins": 134
+    },
+    "w2v/w2v": {
+     "assassin": 0,
+     "ci": [
+      5.77,
+      6.01
+     ],
+     "flagged_turns": 0,
+     "mean": 5.89,
+     "mean_count": 1.56,
+     "n": 200,
+     "opponent": 0,
+     "other_losses": 0,
+     "turns": 1178,
+     "turns_in_wins": 5.89,
+     "wins": 200
+    },
+    "w2v/w2vglove": {
+     "assassin": 14,
+     "ci": [
+      7.42,
+      8.76
+     ],
+     "flagged_turns": 0,
+     "mean": 8.045,
+     "mean_count": 1.59,
+     "n": 200,
+     "opponent": 0,
+     "other_losses": 0,
+     "turns": 1307,
+     "turns_in_wins": 6.77,
+     "wins": 186
+    },
+    "w2vglove/gemma2": {
+     "assassin": 76,
+     "ci": [
+      14.26,
+      16.545
+     ],
+     "flagged_turns": 0,
+     "mean": 15.39,
+     "mean_count": 2.13,
+     "n": 200,
+     "opponent": 4,
+     "other_losses": 0,
+     "turns": 1607,
+     "turns_in_wins": 8.98,
+     "wins": 120
+    },
+    "w2vglove/glove": {
+     "assassin": 4,
+     "ci": [
+      5.075,
+      5.88
+     ],
+     "flagged_turns": 0,
+     "mean": 5.435,
+     "mean_count": 1.89,
+     "n": 200,
+     "opponent": 0,
+     "other_losses": 0,
+     "turns": 993,
+     "turns_in_wins": 5.04,
+     "wins": 196
+    },
+    "w2vglove/lora-c8": {
+     "assassin": 71,
+     "ci": [
+      13.245,
+      15.495
+     ],
+     "flagged_turns": 0,
+     "mean": 14.37,
+     "mean_count": 2.13,
+     "n": 200,
+     "opponent": 0,
+     "other_losses": 0,
+     "turns": 1467,
+     "turns_in_wins": 8.52,
+     "wins": 129
+    },
+    "w2vglove/potion": {
+     "assassin": 90,
+     "ci": [
+      15.295,
+      17.56
+     ],
+     "flagged_turns": 0,
+     "mean": 16.415,
+     "mean_count": 2.19,
+     "n": 200,
+     "opponent": 2,
+     "other_losses": 0,
+     "turns": 1526,
+     "turns_in_wins": 9.1,
+     "wins": 108
+    },
+    "w2vglove/w2v": {
+     "assassin": 25,
+     "ci": [
+      7.82,
+      9.56
+     ],
+     "flagged_turns": 0,
+     "mean": 8.655,
+     "mean_count": 1.97,
+     "n": 200,
+     "opponent": 0,
+     "other_losses": 0,
+     "turns": 1188,
+     "turns_in_wins": 6.32,
+     "wins": 175
+    },
+    "w2vglove/w2vglove": {
+     "assassin": 0,
+     "ci": [
+      4.825,
+      5.025
+     ],
+     "flagged_turns": 0,
+     "mean": 4.925,
+     "mean_count": 1.87,
+     "n": 200,
+     "opponent": 0,
+     "other_losses": 0,
+     "turns": 985,
+     "turns_in_wins": 4.92,
+     "wins": 200
+    }
+   },
+   "giver_means": {
+    "gemma2-first with framework guessers": {
+     "ci": [
+      12.808,
+      14.565
+     ],
+     "guessers": [
+      "w2v",
+      "glove",
+      "w2vglove"
+     ],
+     "mean": 13.685,
+     "n": 200
+    },
+    "gemma2-first with our guessers": {
+     "ci": [
+      10.635,
+      12.21
+     ],
+     "guessers": [
+      "potion",
+      "lora-c8"
+     ],
+     "mean": 11.418,
+     "n": 200
+    },
+    "glove with framework guessers": {
+     "ci": [
+      8.945,
+      10.905
+     ],
+     "guessers": [
+      "w2v"
+     ],
+     "mean": 9.88,
+     "n": 200
+    },
+    "glove with our guessers": {
+     "ci": [
+      15.848,
+      17.138
+     ],
+     "guessers": [
+      "gemma2",
+      "potion",
+      "lora-c8"
+     ],
+     "mean": 16.495,
+     "n": 200
+    },
+    "potion-c3-population with framework guessers": {
+     "ci": [
+      13.847,
+      15.447
+     ],
+     "guessers": [
+      "w2v",
+      "glove",
+      "w2vglove"
+     ],
+     "mean": 14.647,
+     "n": 200
+    },
+    "potion-c3-population with our guessers": {
+     "ci": [
+      12.28,
+      13.645
+     ],
+     "guessers": [
+      "gemma2",
+      "lora-c8"
+     ],
+     "mean": 12.947,
+     "n": 200
+    },
+    "potion-c3-self with framework guessers": {
+     "ci": [
+      12.503,
+      14.282
+     ],
+     "guessers": [
+      "w2v",
+      "glove",
+      "w2vglove"
+     ],
+     "mean": 13.392,
+     "n": 200
+    },
+    "potion-c3-self with our guessers": {
+     "ci": [
+      11.217,
+      12.783
+     ],
+     "guessers": [
+      "gemma2",
+      "lora-c8"
+     ],
+     "mean": 11.985,
+     "n": 200
+    },
+    "potion-first with framework guessers": {
+     "ci": [
+      11.903,
+      13.548
+     ],
+     "guessers": [
+      "w2v",
+      "glove",
+      "w2vglove"
+     ],
+     "mean": 12.718,
+     "n": 200
+    },
+    "potion-first with our guessers": {
+     "ci": [
+      10.73,
+      12.297
+     ],
+     "guessers": [
+      "gemma2",
+      "lora-c8"
+     ],
+     "mean": 11.515,
+     "n": 200
+    },
+    "w2v with framework guessers": {
+     "ci": [
+      8.51,
+      10.125
+     ],
+     "guessers": [
+      "glove"
+     ],
+     "mean": 9.285,
+     "n": 200
+    },
+    "w2v with our guessers": {
+     "ci": [
+      13.108,
+      14.397
+     ],
+     "guessers": [
+      "gemma2",
+      "potion",
+      "lora-c8"
+     ],
+     "mean": 13.753,
+     "n": 200
+    },
+    "w2vglove with our guessers": {
+     "ci": [
+      14.702,
+      16.105
+     ],
+     "guessers": [
+      "gemma2",
+      "potion",
+      "lora-c8"
+     ],
+     "mean": 15.392,
+     "n": 200
+    }
+   },
+   "givers": [
+    "w2v",
+    "glove",
+    "w2vglove",
+    "gemma2-first",
+    "potion-first",
+    "potion-c3-self",
+    "potion-c3-population"
+   ],
+   "guessers": [
+    "w2v",
+    "glove",
+    "w2vglove",
+    "gemma2",
+    "potion",
+    "lora-c8"
+   ],
+   "paired": {
+    "gemma2-first minus glove / framework guessers": {
+     "ci": [
+      2.28,
+      4.86
+     ],
+     "guessers": [
+      "w2v"
+     ],
+     "mean": 3.6,
+     "n": 200
+    },
+    "gemma2-first minus glove / lora-c8": {
+     "ci": [
+      -5.57,
+      -2.515
+     ],
+     "mean": -4.065,
+     "n": 200
+    },
+    "gemma2-first minus glove / our guessers": {
+     "ci": [
+      -5.957,
+      -3.7
+     ],
+     "guessers": [
+      "potion",
+      "lora-c8"
+     ],
+     "mean": -4.835,
+     "n": 200
+    },
+    "gemma2-first minus glove / potion": {
+     "ci": [
+      -7.06,
+      -4.155
+     ],
+     "mean": -5.605,
+     "n": 200
+    },
+    "gemma2-first minus glove / w2v": {
+     "ci": [
+      2.28,
+      4.86
+     ],
+     "mean": 3.6,
+     "n": 200
+    },
+    "gemma2-first minus potion-first / framework guessers": {
+     "ci": [
+      -0.09,
+      2.033
+     ],
+     "guessers": [
+      "w2v",
+      "glove",
+      "w2vglove"
+     ],
+     "mean": 0.967,
+     "n": 200
+    },
+    "gemma2-first minus potion-first / glove": {
+     "ci": [
+      -0.655,
+      2.245
+     ],
+     "mean": 0.79,
+     "n": 200
+    },
+    "gemma2-first minus potion-first / lora-c8": {
+     "ci": [
+      -1.025,
+      1.67
+     ],
+     "mean": 0.305,
+     "n": 200
+    },
+    "gemma2-first minus potion-first / our guessers": {
+     "ci": [
+      -1.025,
+      1.67
+     ],
+     "guessers": [
+      "lora-c8"
+     ],
+     "mean": 0.305,
+     "n": 200
+    },
+    "gemma2-first minus potion-first / w2v": {
+     "ci": [
+      -0.545,
+      2.02
+     ],
+     "mean": 0.73,
+     "n": 200
+    },
+    "gemma2-first minus potion-first / w2vglove": {
+     "ci": [
+      -0.12,
+      2.875
+     ],
+     "mean": 1.38,
+     "n": 200
+    },
+    "gemma2-first minus w2v / framework guessers": {
+     "ci": [
+      3.395,
+      5.82
+     ],
+     "guessers": [
+      "glove"
+     ],
+     "mean": 4.6,
+     "n": 200
+    },
+    "gemma2-first minus w2v / glove": {
+     "ci": [
+      3.395,
+      5.82
+     ],
+     "mean": 4.6,
+     "n": 200
+    },
+    "gemma2-first minus w2v / lora-c8": {
+     "ci": [
+      -2.49,
+      0.295
+     ],
+     "mean": -1.105,
+     "n": 200
+    },
+    "gemma2-first minus w2v / our guessers": {
+     "ci": [
+      -3.558,
+      -1.49
+     ],
+     "guessers": [
+      "potion",
+      "lora-c8"
+     ],
+     "mean": -2.52,
+     "n": 200
+    },
+    "gemma2-first minus w2v / potion": {
+     "ci": [
+      -5.29,
+      -2.57
+     ],
+     "mean": -3.935,
+     "n": 200
+    },
+    "potion-c3-population minus glove / framework guessers": {
+     "ci": [
+      3.485,
+      6.02
+     ],
+     "guessers": [
+      "w2v"
+     ],
+     "mean": 4.795,
+     "n": 200
+    },
+    "potion-c3-population minus glove / gemma2": {
+     "ci": [
+      -6.025,
+      -3.48
+     ],
+     "mean": -4.77,
+     "n": 200
+    },
+    "potion-c3-population minus glove / lora-c8": {
+     "ci": [
+      -4.025,
+      -1.335
+     ],
+     "mean": -2.69,
+     "n": 200
+    },
+    "potion-c3-population minus glove / our guessers": {
+     "ci": [
+      -4.713,
+      -2.742
+     ],
+     "guessers": [
+      "gemma2",
+      "lora-c8"
+     ],
+     "mean": -3.73,
+     "n": 200
+    },
+    "potion-c3-population minus glove / w2v": {
+     "ci": [
+      3.485,
+      6.02
+     ],
+     "mean": 4.795,
+     "n": 200
+    },
+    "potion-c3-population minus potion-c3-self / framework guessers": {
+     "ci": [
+      0.498,
+      2.018
+     ],
+     "guessers": [
+      "w2v",
+      "glove",
+      "w2vglove"
+     ],
+     "mean": 1.255,
+     "n": 200
+    },
+    "potion-c3-population minus potion-c3-self / gemma2": {
+     "ci": [
+      0.08,
+      1.765
+     ],
+     "mean": 0.935,
+     "n": 200
+    },
+    "potion-c3-population minus potion-c3-self / glove": {
+     "ci": [
+      0.19,
+      2.185
+     ],
+     "mean": 1.195,
+     "n": 200
+    },
+    "potion-c3-population minus potion-c3-self / lora-c8": {
+     "ci": [
+      0.035,
+      1.915
+     ],
+     "mean": 0.99,
+     "n": 200
+    },
+    "potion-c3-population minus potion-c3-self / our guessers": {
+     "ci": [
+      0.272,
+      1.6
+     ],
+     "guessers": [
+      "gemma2",
+      "lora-c8"
+     ],
+     "mean": 0.963,
+     "n": 200
+    },
+    "potion-c3-population minus potion-c3-self / w2v": {
+     "ci": [
+      0.13,
+      2.165
+     ],
+     "mean": 1.15,
+     "n": 200
+    },
+    "potion-c3-population minus potion-c3-self / w2vglove": {
+     "ci": [
+      0.435,
+      2.395
+     ],
+     "mean": 1.42,
+     "n": 200
+    },
+    "potion-c3-population minus potion-first / framework guessers": {
+     "ci": [
+      0.972,
+      2.865
+     ],
+     "guessers": [
+      "w2v",
+      "glove",
+      "w2vglove"
+     ],
+     "mean": 1.928,
+     "n": 200
+    },
+    "potion-c3-population minus potion-first / gemma2": {
+     "ci": [
+      0.1,
+      2.28
+     ],
+     "mean": 1.185,
+     "n": 200
+    },
+    "potion-c3-population minus potion-first / glove": {
+     "ci": [
+      0.595,
+      3.04
+     ],
+     "mean": 1.83,
+     "n": 200
+    },
+    "potion-c3-population minus potion-first / lora-c8": {
+     "ci": [
+      0.535,
+      2.82
+     ],
+     "mean": 1.68,
+     "n": 200
+    },
+    "potion-c3-population minus potion-first / our guessers": {
+     "ci": [
+      0.623,
+      2.24
+     ],
+     "guessers": [
+      "gemma2",
+      "lora-c8"
+     ],
+     "mean": 1.433,
+     "n": 200
+    },
+    "potion-c3-population minus potion-first / w2v": {
+     "ci": [
+      0.625,
+      3.215
+     ],
+     "mean": 1.925,
+     "n": 200
+    },
+    "potion-c3-population minus potion-first / w2vglove": {
+     "ci": [
+      0.74,
+      3.305
+     ],
+     "mean": 2.03,
+     "n": 200
+    }
+   }
+  },
+  "strict_minus_all": {
+   "gemma2-first": {
+    "flagged_turns": 1305,
+    "illegal_turns": 753,
+    "score_change": {
+     "ci": [
+      -0.364,
+      0.474
+     ],
+     "guessers": [
+      "glove",
+      "lora-c8",
+      "potion",
+      "w2v",
+      "w2vglove"
+     ],
+     "mean": 0.054,
+     "n": 200
+    },
+    "share": 0.1355,
+    "strict_flagged_turns": 0,
+    "turns": 9633
+   },
+   "glove": {
+    "flagged_turns": 90,
+    "illegal_turns": 70,
+    "score_change": {
+     "ci": [
+      -0.003,
+      0.25
+     ],
+     "guessers": [
+      "gemma2",
+      "lora-c8",
+      "potion",
+      "w2v"
+     ],
+     "mean": 0.12,
+     "n": 200
+    },
+    "share": 0.0117,
+    "strict_flagged_turns": 0,
+    "turns": 7715
+   },
+   "potion-c3-population": {
+    "flagged_turns": 508,
+    "illegal_turns": 415,
+    "score_change": {
+     "ci": [
+      -0.007,
+      0.279
+     ],
+     "guessers": [
+      "gemma2",
+      "glove",
+      "lora-c8",
+      "w2v",
+      "w2vglove"
+     ],
+     "mean": 0.119,
+     "n": 200
+    },
+    "share": 0.0401,
+    "strict_flagged_turns": 0,
+    "turns": 12655
+   },
+   "potion-c3-self": {
+    "flagged_turns": 250,
+    "illegal_turns": 195,
+    "score_change": {
+     "ci": [
+      -0.051,
+      0.285
+     ],
+     "guessers": [
+      "gemma2",
+      "glove",
+      "lora-c8",
+      "w2v",
+      "w2vglove"
+     ],
+     "mean": 0.105,
+     "n": 200
+    },
+    "share": 0.0266,
+    "strict_flagged_turns": 0,
+    "turns": 9403
+   },
+   "potion-first": {
+    "flagged_turns": 365,
+    "illegal_turns": 291,
+    "score_change": {
+     "ci": [
+      0.072,
+      0.406
+     ],
+     "guessers": [
+      "gemma2",
+      "glove",
+      "lora-c8",
+      "w2v",
+      "w2vglove"
+     ],
+     "mean": 0.229,
+     "n": 200
+    },
+    "share": 0.0438,
+    "strict_flagged_turns": 0,
+    "turns": 8328
+   },
+   "w2v": {
+    "flagged_turns": 171,
+    "illegal_turns": 110,
+    "score_change": {
+     "ci": [
+      0.025,
+      0.223
+     ],
+     "guessers": [
+      "gemma2",
+      "glove",
+      "lora-c8",
+      "potion"
+     ],
+     "mean": 0.109,
+     "n": 200
+    },
+    "share": 0.019,
+    "strict_flagged_turns": 0,
+    "turns": 9003
+   },
+   "w2vglove": {
+    "flagged_turns": 130,
+    "illegal_turns": 89,
+    "score_change": {
+     "ci": [
+      -0.047,
+      0.213
+     ],
+     "guessers": [
+      "gemma2",
+      "lora-c8",
+      "potion"
+     ],
+     "mean": 0.08,
+     "n": 200
+    },
+    "share": 0.0167,
+    "strict_flagged_turns": 0,
+    "turns": 7767
+   }
+  }
+ },
+ "data": {
+  "forms": {
+   "nltk": "3.10.4",
+   "words": 7192
+  },
+  "lora_jobs": [
+   {
+    "forms_sha256": "e29e1773f18afd62fa4e4c7e52ca7c46e0928e222bf2a8fe634591bf57bd8610",
+    "glove300_sha256": "ce302d5de4e020b1f70ae9700453e92833de0de4e99210c4e6bcc837d9802ad5",
+    "glove_words": 13349,
+    "glove_zip_sha256": "6471382cdd837544bf3ac72497a38715e845897d265b2b424b4761832009c837",
+    "nltk": "3.10.4",
+    "w2v_gz_sha256": "cdd97c3b73abcd8e1437ad3837b8faf98fc21258f61f031721fe3e2096ed89d9",
+    "w2v_npz_sha256": "ae1c8519d8df985435974087e1d4421e8b014cd26afcc8988b74ea782d28fdfd",
+    "w2v_words": 13147,
+    "words_wanted": 13351
+   },
+   {
+    "forms_sha256": "e29e1773f18afd62fa4e4c7e52ca7c46e0928e222bf2a8fe634591bf57bd8610",
+    "glove300_sha256": "ce302d5de4e020b1f70ae9700453e92833de0de4e99210c4e6bcc837d9802ad5",
+    "glove_words": 13349,
+    "glove_zip_sha256": "6471382cdd837544bf3ac72497a38715e845897d265b2b424b4761832009c837",
+    "nltk": "3.10.4",
+    "w2v_gz_sha256": "cdd97c3b73abcd8e1437ad3837b8faf98fc21258f61f031721fe3e2096ed89d9",
+    "w2v_npz_sha256": "ae1c8519d8df985435974087e1d4421e8b014cd26afcc8988b74ea782d28fdfd",
+    "w2v_words": 13147,
+    "words_wanted": 13351
+   }
+  ],
+  "reruns": {
+   "games": 13400,
+   "same_scores": 19,
+   "slices": 19
+  },
+  "vectors": {
+   "glove300_sha256": "ce302d5de4e020b1f70ae9700453e92833de0de4e99210c4e6bcc837d9802ad5",
+   "glove_words": 13349,
+   "glove_zip_sha256": "6471382cdd837544bf3ac72497a38715e845897d265b2b424b4761832009c837",
+   "w2v_gz_sha256": "cdd97c3b73abcd8e1437ad3837b8faf98fc21258f61f031721fe3e2096ed89d9",
+   "w2v_npz_sha256": "ae1c8519d8df985435974087e1d4421e8b014cd26afcc8988b74ea782d28fdfd",
+   "w2v_words": 13147,
+   "words_wanted": 13351
+  }
+ },
+ "original_code": {
+  "games": 90,
+  "pairs": 9,
+  "same_as_port": 90,
+  "same_as_published": 90,
+  "seconds_per_game": 79.6,
+  "seeds": [
+   0,
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9
+  ]
+ },
+ "reproduction": {
+  "glove/glove": {
+   "assassin_losses": 0,
+   "first_different_turns": [],
+   "games": 100,
+   "losses": 0,
+   "mean_framework_rule": 5.24,
+   "mean_table_rule": 5.24,
+   "port_mean": 5.24,
+   "port_mean_table_rule": 5.24,
+   "same_score": 100,
+   "same_transcript": 100,
+   "sd_framework_rule": 0.79,
+   "sd_table_rule": 0.79,
+   "seeds": [
+    0,
+    99
+   ],
+   "table_i": {
+    "loss_percent": 0,
+    "mean": 5.24,
+    "sd": 0.79
+   }
+  },
+  "glove/w2v": {
+   "assassin_losses": 24,
+   "first_different_turns": [],
+   "games": 100,
+   "losses": 24,
+   "mean_framework_rule": 12.21,
+   "mean_table_rule": 12.21,
+   "port_mean": 12.21,
+   "port_mean_table_rule": 12.21,
+   "same_score": 100,
+   "same_transcript": 100,
+   "sd_framework_rule": 7.52,
+   "sd_table_rule": 7.52,
+   "seeds": [
+    0,
+    99
+   ],
+   "table_i": {
+    "loss_percent": 24,
+    "mean": 12.21,
+    "sd": 7.52
+   }
+  },
+  "glove/w2vglove": {
+   "assassin_losses": 0,
+   "first_different_turns": [],
+   "games": 100,
+   "losses": 0,
+   "mean_framework_rule": 5.42,
+   "mean_table_rule": 5.42,
+   "port_mean": 5.42,
+   "port_mean_table_rule": 5.42,
+   "same_score": 100,
+   "same_transcript": 100,
+   "sd_framework_rule": 0.88,
+   "sd_table_rule": 0.88,
+   "seeds": [
+    0,
+    99
+   ],
+   "table_i": {
+    "loss_percent": 0,
+    "mean": 5.42,
+    "sd": 0.89
+   }
+  },
+  "w2v/glove": {
+   "assassin_losses": 22,
+   "first_different_turns": [],
+   "games": 100,
+   "losses": 24,
+   "mean_framework_rule": 12.53,
+   "mean_table_rule": 12.35,
+   "port_mean": 12.53,
+   "port_mean_table_rule": 12.35,
+   "same_score": 100,
+   "same_transcript": 100,
+   "sd_framework_rule": 7.34,
+   "sd_table_rule": 7.14,
+   "seeds": [
+    0,
+    99
+   ],
+   "table_i": {
+    "loss_percent": 22,
+    "mean": 12.35,
+    "sd": 7.14
+   }
+  },
+  "w2v/w2v": {
+   "assassin_losses": 0,
+   "first_different_turns": [],
+   "games": 100,
+   "losses": 0,
+   "mean_framework_rule": 6.18,
+   "mean_table_rule": 6.18,
+   "port_mean": 6.18,
+   "port_mean_table_rule": 6.18,
+   "same_score": 100,
+   "same_transcript": 100,
+   "sd_framework_rule": 0.97,
+   "sd_table_rule": 0.97,
+   "seeds": [
+    0,
+    99
+   ],
+   "table_i": {
+    "loss_percent": 0,
+    "mean": 6.81,
+    "sd": 0.97
+   }
+  },
+  "w2v/w2vglove": {
+   "assassin_losses": 16,
+   "first_different_turns": [],
+   "games": 100,
+   "losses": 16,
+   "mean_framework_rule": 10.64,
+   "mean_table_rule": 10.64,
+   "port_mean": 10.64,
+   "port_mean_table_rule": 10.64,
+   "same_score": 100,
+   "same_transcript": 100,
+   "sd_framework_rule": 6.72,
+   "sd_table_rule": 6.72,
+   "seeds": [
+    0,
+    99
+   ],
+   "table_i": {
+    "loss_percent": 16,
+    "mean": 10.64,
+    "sd": 6.72
+   }
+  },
+  "w2vglove/glove": {
+   "assassin_losses": 1,
+   "first_different_turns": [],
+   "games": 100,
+   "losses": 1,
+   "mean_framework_rule": 5.86,
+   "mean_table_rule": 5.86,
+   "port_mean": 5.86,
+   "port_mean_table_rule": 5.86,
+   "same_score": 100,
+   "same_transcript": 100,
+   "sd_framework_rule": 2.13,
+   "sd_table_rule": 2.13,
+   "seeds": [
+    0,
+    99
+   ],
+   "table_i": {
+    "loss_percent": 1,
+    "mean": 5.86,
+    "sd": 2.18
+   }
+  },
+  "w2vglove/w2v": {
+   "assassin_losses": 21,
+   "first_different_turns": [],
+   "games": 100,
+   "losses": 21,
+   "mean_framework_rule": 11.18,
+   "mean_table_rule": 11.18,
+   "port_mean": 11.18,
+   "port_mean_table_rule": 11.18,
+   "same_score": 100,
+   "same_transcript": 100,
+   "sd_framework_rule": 7.37,
+   "sd_table_rule": 7.37,
+   "seeds": [
+    0,
+    99
+   ],
+   "table_i": {
+    "loss_percent": 21,
+    "mean": 11.18,
+    "sd": 7.37
+   }
+  },
+  "w2vglove/w2vglove": {
+   "assassin_losses": 0,
+   "first_different_turns": [],
+   "games": 100,
+   "losses": 0,
+   "mean_framework_rule": 5.53,
+   "mean_table_rule": 5.53,
+   "port_mean": 5.53,
+   "port_mean_table_rule": 5.53,
+   "same_score": 100,
+   "same_transcript": 100,
+   "sd_framework_rule": 0.83,
+   "sd_table_rule": 0.83,
+   "seeds": [
+    0,
+    99
+   ],
+   "table_i": {
+    "loss_percent": null,
+    "mean": null,
+    "sd": null
+   }
+  }
+ },
+ "reproduction_flags": {
+  "flagged_turns": 137,
+  "turns": 5847
+ },
+ "source": {
+  "lora_jobs": [
+   {
+    "command": [
+     "python",
+     "-m",
+     "codenames.bench_play",
+     "lora-run",
+     "--variants",
+     "all",
+     "--out",
+     "OUT"
+    ],
+    "commit": "8ca2839cb5369a22db3ac0518e7f35e92ae5c0bc",
+    "experiment": "bench",
+    "gpu": null,
+    "hardware": "cpu",
+    "job_id": "6affcf2f4fdc5ab3c55add38",
+    "platform": "hf-jobs",
+    "python": "3.12.12",
+    "returncode": 0,
+    "run": "lora-c8-b-s1-all",
+    "seconds": 4162.3
+   },
+   {
+    "command": [
+     "python",
+     "-m",
+     "codenames.bench_play",
+     "lora-run",
+     "--variants",
+     "all",
+     "strict",
+     "--out",
+     "OUT"
+    ],
+    "commit": "b8f4a3711e346f5b1446c5795ce2195ae9eb5ad7",
+    "experiment": "bench",
+    "gpu": null,
+    "hardware": "cpu",
+    "job_id": "6affde56efaf5e14f4b2c1da",
+    "platform": "hf-jobs",
+    "python": "3.12.12",
+    "returncode": 0,
+    "run": "lora-c8-b-s1-legality",
+    "seconds": 4046.1
+   }
+  ],
+  "runs": [
+   {
+    "commit": "ea9b2606c14082b24f057eb31f51fd064c17cd24",
+    "platform": "github-hosted ubuntu-latest",
+    "run_id": "44661074661"
+   },
+   {
+    "commit": "a6e9685bbbf9a3638b3d8ba06d8f66f7d9fa055d",
+    "platform": "github-hosted ubuntu-latest",
+    "run_id": "44668292164"
+   },
+   {
+    "commit": "3038def5b88f4b07d67fbc343b87cd31fbec81aa",
+    "platform": "github-hosted ubuntu-latest",
+    "run_id": "44679894479"
+   },
+   {
+    "commit": "1107b16d40f07776d84a3b02fc6eb580fb0eaa10",
+    "platform": "github-hosted ubuntu-latest",
+    "run_id": "44681377596"
+   },
+   {
+    "commit": "99ebd79490f6a4b0d931172df1ca736d46439bb1",
+    "platform": "github-hosted ubuntu-latest",
+    "run_id": "44683131499"
+   }
+  ]
+ },
+ "status": "exploratory: no plan was written before these runs"
+}

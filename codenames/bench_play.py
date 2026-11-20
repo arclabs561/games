@@ -4,7 +4,7 @@ No plan was written before these runs (experiments/METHOD.md); they are explorat
 meant to motivate a planned comparison. Three parts:
 
 1. **Reproduce.** The 900 published single-team games of the framework's word-vector
-   bots (Stephenson et al. 2025, Table I; 9 pairs, seeds 0 to 99, the framework's word
+   bots (Stephenson et al., arXiv 2412.11373, Table I; 9 pairs, seeds 0 to 99, the framework's word
    pool), replayed with the port in codenames.bench and compared move by move with the
    published logs. The workflow on the compute branch also runs the framework's own
    code, at the pinned commit, on a subset of the same games; `original` compares its
@@ -74,7 +74,7 @@ C3_TASK = ("potion", GEMMA, 1)  # giver, held-out model, training seed
 LORA_RUN = "runs/c8/b-s1"
 DRAWS, BOOT_SEED = 10_000, 0
 
-# Table I of Stephenson et al. (2025), arXiv 2412.11373v2, the eight word-vector rows:
+# Table I of Stephenson et al., arXiv 2412.11373v2, the eight word-vector rows:
 # (codemaster, guesser): mean score, standard deviation, loss percentage.
 TABLE_I = {
     ("w2v", "w2v"): (6.81, 0.97, 0),
@@ -950,7 +950,10 @@ NAMES = {
 
 
 def num(x: float, digits: int = 2) -> str:
-    return f"{x:.{digits}f}".replace("-", "\u2212")
+    text = f"{x:.{digits}f}"
+    if float(text) == 0:
+        text = text.lstrip("-")
+    return text.replace("-", "\u2212")
 
 
 def fmt(s: dict, digits: int = 2) -> str:
@@ -1054,7 +1057,7 @@ def findings(summary: dict) -> list[str]:
         e = cp["strict_minus_all"]
         shares = ", ".join(f"{NAMES[g]} {100 * v['share']:.1f}%" for g, v in e.items())
         lines.append(
-            "- **Clues that share a form with a board word are rare, and replacing them changes little.**"
+            "- **Replacing the clues that a strict reading of the rules flags changes little.**"
             f" Share of turns flagged by `codenames.legality` (illegal or borderline): {shares}. Replacing them with each"
             " giver's next legal choice changes no giver's mean score over its strangers by more"
             f" than {max(abs(v['score_change']['mean']) for v in e.values()):.2f} turns; the widest"
@@ -1078,7 +1081,7 @@ def report(summary: dict) -> str:
         "",
         "## 1. The published games, replayed",
         "",
-        "The 900 single-team games of Stephenson et al. (2025, Table I), replayed with",
+        "The 900 single-team games of Stephenson et al. (arXiv 2412.11373v2, Table I), replayed with",
         "`codenames/bench.py` on the framework's boards (seeds 0 to 99) and compared move by",
         "move with the published logs. A score is the number of turns to find the 9 red words,",
         'or 25 for a loss. "Table I" is copied from arXiv 2412.11373v2. "Logs" is recomputed',
@@ -1124,11 +1127,11 @@ def report(summary: dict) -> str:
     if "strict" in cp:
         lines += crossplay_tables(
             cp["strict"],
-            "Clues that share a form with an unrevealed board word replaced by the giver's next choice",
+            "Clues that codenames.legality flags replaced by the giver's next legal choice",
         )
         lines += [
             "",
-            "### Clues that share a form with a board word",
+            "### Clues that codenames.legality flags",
             "",
             "A clue is flagged when `codenames.legality` finds an illegal or borderline relation"
             " between it and an unrevealed board word (a form of the word, a part of a compound,"
@@ -1193,7 +1196,7 @@ def static_sections(summary: dict) -> list[str]:
         "",
         "## How each number is known",
         "",
-        "- Table I values: taken from Stephenson et al. (2025), arXiv 2412.11373v2, Table I.",
+        "- Table I values: taken from Stephenson, Sidji and Ronval, arXiv 2412.11373v2, Table I.",
         "- Values from the published logs: computed exactly from bot_results_new_style.txt and"
         " move_log.txt in stepmat/Codenames_GPT at commit fc28bc9.",
         "- The port's games: computed exactly; compared move by move with the logs. The"
@@ -1227,7 +1230,7 @@ def static_sections(summary: dict) -> list[str]:
         "",
         "| Source | What | License | Committed |",
         "|---|---|---|---|",
-        "| stepmat/Codenames_GPT, commit fc28bc9 (Stephenson et al. 2025) | the framework's code,"
+        "| stepmat/Codenames_GPT, commit fc28bc9 (Stephenson et al., arXiv 2412.11373) | the framework's code,"
         " clue list and published logs | MIT | no; downloaded and pinned by SHA-256 |",
         "| CodenamesAICompetition/Game (Summerville et al. 2019) | the original framework; the same"
         " bots and word pool | MIT | no |",

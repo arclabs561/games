@@ -1,7 +1,7 @@
 """The single-team game of the Codenames AI competition framework, and its word-vector bots.
 
 The framework is the one of Summerville et al. (2019), CodenamesAICompetition/Game, as
-revised by Stephenson et al. (2025, arXiv 2412.11373) in stepmat/Codenames_GPT. Its
+revised by Stephenson et al. (arXiv 2412.11373) in stepmat/Codenames_GPT. Its
 single-team version is the game of codenames.game: only the red team plays, a turn
 ends at the first pick that is not red, and the game is lost on the assassin or on the
 last blue word. The **score** of a game is the number of turns (clues) it took to find

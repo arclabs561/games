@@ -3,7 +3,7 @@
 Nothing fetched here is committed. Files go to codenames/.cache/bench/.
 
 From stepmat/Codenames_GPT at commit fc28bc9 (branch ToG_2025, the code of
-Stephenson et al. 2025; MIT license, copyright 2024 CodenamesAICompetition), pinned by
+Stephenson et al., arXiv 2412.11373; MIT license, copyright 2024 CodenamesAICompetition), pinned by
 SHA-256:
 
 - players/cm_wordlist.txt: the 7,191 clue words of the word-vector codemasters.
