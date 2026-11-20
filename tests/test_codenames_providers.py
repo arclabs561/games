@@ -131,3 +131,42 @@ def test_router_listing_shapes():
     assert router_providers({"data": [{"id": "m", "providers": [entry]}]}) == [entry]
     assert router_providers({"id": "m", "providers": [entry]}) == [entry]
     assert router_providers({"error_text": "HTTPError: 404"}) is None
+
+
+def test_digest_is_compact_and_reads_both_files(tmp_path):
+    from codenames.providers import digest
+
+    run = tmp_path / "runs" / "c10" / "val"
+    run.mkdir(parents=True)
+    (run / "calls-m.jsonl").write_text(json.dumps(codenames_record("x" * 100, "a")) + "\n")
+    (tmp_path / "audit.json").write_text(json.dumps(audit(tmp_path / "runs")))
+    check = {
+        "time": "t",
+        "spent": 0.001,
+        "calls": [
+            {
+                "repo": "org/m",
+                "provider": "novita",
+                "variant": "suffix",
+                "status": 200,
+                "served_by": {"provider": None, "id": "39892c3aa1bbcd74c58035332ca31258"},
+                "headers": {"x-inference-provider": "novita"},
+            },
+            {"repo": "org/m", "provider": "novita", "error": "Traceback"},
+        ],
+        "listings": {
+            "org/m": {"openrouter_endpoints": [{"provider_name": "Novita", "quantization": "fp8"}]}
+        },
+    }
+    (tmp_path / "check.json").write_text(json.dumps(check))
+    d = digest(tmp_path / "audit.json", tmp_path / "check.json")
+    log = d["runs"]["c10"]["val"]["logs"]["m"]
+    assert log["calls"] == 1 and log["requested"] == {"deepinfra": 1}
+    rows = d["pincheck"]["rows"]
+    assert rows["org/m @ novita : suffix"] == {
+        "status": [200],
+        "served": ["None via novita"],
+        "id_shapes": ["hex32"],
+    }
+    assert rows["org/m @ novita : setup"]["status"] == ["exception"]
+    assert d["pincheck"]["quantization"] == {"org/m": ["Novita: fp8"]}

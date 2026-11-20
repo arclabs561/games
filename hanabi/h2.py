@@ -3,6 +3,7 @@
     python -m hanabi.h2 play --model openai/gpt-oss-120b --provider crusoe --players 2 \
         --seeds 0-29 --deduction on --cap 1.0 --out OUT
     python -m hanabi.h2 report --runs RUNS --out hanabi/results/h2.json
+    python -m hanabi.h2 harness --runs RUNS --out hanabi/results/h2-harness.json
 
 `play` plays each seeded deal once, with the same model in every seat, and writes
 `games.jsonl` (one line per game: score, lives lost, fallbacks, the moves, token counts and
@@ -13,6 +14,15 @@ prices, spending, where it stopped) and `calls/seed-N.jsonl` (every prompt and r
 deal with `upper_bound.verdict` and `upper_bound.best_score`, plays the information strategy
 on the three-player deals, and writes the gaps with bootstrap intervals. The plan is
 `experiments/plans/H2.md`.
+
+`harness` replays each recorded game in `rules.py` and counts what the fallback moves did:
+how many were plays and discards, and how many lives they lost, against the lives lost by
+the model's own moves. It writes counts only.
+
+The reply cap is `--max-tokens` (16,384 by default; the published runs used 4,096) and the
+reasoning setting is `--reasoning-effort` (low, medium or high, for models that take one).
+gpt-oss-120b counts its reasoning against the cap: at 4,096 tokens and medium effort, 24%
+of its turns reached the cap before writing a move (results/h2-harness.md).
 """
 
 from __future__ import annotations
@@ -226,6 +236,79 @@ def run_games(args, models: list[dict] | None = None, client=None) -> int:
     }
     (out / "summary.json").write_text(json.dumps(summary, indent=1) + "\n")
     print(json.dumps(summary), flush=True)
+    return 0
+
+
+# --- what the fallbacks did -------------------------------------------------------------
+
+
+def fallback_effect(rules: Rules, deck: list[int], moves: list[str], fallbacks) -> dict:
+    """Replay one recorded game and split the lives lost between fallback turns and the
+    model's own moves. Raises if a move is illegal in the replay."""
+    state = new_game(rules, deck)
+    fell_back = set(fallbacks)
+    out = {"fallback_plays": 0, "fallback_discards": 0, "fallback_hints": 0}
+    out |= {"lives_lost_by_fallbacks": 0, "lives_lost_by_model": 0, "third_life_by_fallback": 0}
+    for i, text in enumerate(moves):
+        action = parse_action(text, state)
+        if action is None:
+            raise ValueError(f"move {i} ({text}) is not legal in the replay")
+        before = state.lives
+        step(state, action)
+        lost = before - state.lives
+        if i in fell_back:
+            out[f"fallback_{action.kind}s"] += 1
+            out["lives_lost_by_fallbacks"] += lost
+            out["third_life_by_fallback"] += int(lost > 0 and state.lives == 0)
+        else:
+            out["lives_lost_by_model"] += lost
+    out["score"] = state.score
+    return out
+
+
+def harness(args) -> int:
+    """The `harness` command: fallback counts per run, from each run's games.jsonl."""
+    arms = []
+    for path in sorted(Path(args.runs).rglob("games.jsonl")):
+        summary = json.loads((path.parent / "summary.json").read_text())
+        rules = Rules(players=summary["players"])
+        totals: dict = {}
+        games = 0
+        for line in path.read_text().splitlines():
+            g = json.loads(line)
+            if g["status"] != "complete":
+                continue
+            e = fallback_effect(
+                rules, seeded_deck(rules, g["seed"]), g["moves"], g["fallback_turns"]
+            )
+            if e["score"] != g["score"]:
+                raise ValueError(f"{path}: seed {g['seed']} replays to {e['score']}")
+            games += 1
+            for k, v in e.items():
+                totals[k] = totals.get(k, 0) + v
+            totals["turns"] = totals.get("turns", 0) + g["turns"]
+            totals["truncated"] = totals.get("truncated", 0) + g["truncated"]
+            totals["games_with_a_fallback"] = totals.get("games_with_a_fallback", 0) + bool(
+                g["fallback_turns"]
+            )
+        arms.append(
+            {
+                "run": path.parent.name,
+                "model": summary["model"],
+                "max_tokens": summary["max_tokens"],
+                "reasoning_effort": summary["reasoning_effort"],
+                "deduction": summary["deduction"],
+                "games": games,
+                **totals,
+            }
+        )
+    result = {
+        "what": "fallback moves of H2, replayed in rules.py; counts over the complete games",
+        "how_known": "computed exactly by replaying the recorded moves on the seeded decks",
+        "arms": arms,
+    }
+    Path(args.out).write_text(json.dumps(result, indent=1, sort_keys=True) + "\n")
+    print(json.dumps(result))
     return 0
 
 
@@ -461,8 +544,8 @@ def main(argv=None) -> int:
     p.add_argument("--players", type=int, default=2)
     p.add_argument("--seeds", default="0-29")
     p.add_argument("--deduction", choices=["on", "off"], default="on")
-    p.add_argument("--max-tokens", type=int, default=512)
-    p.add_argument("--reasoning-effort", default=None)
+    p.add_argument("--max-tokens", type=int, default=16384, help="reply cap; H2 used 4,096")
+    p.add_argument("--reasoning-effort", choices=["low", "medium", "high"], default=None)
     p.add_argument("--cap", type=float, required=True, help="dollars this run may spend")
     p.add_argument("--workers", type=int, default=8, help="games played at once")
     p.add_argument("--stop-after", type=float, default=300, help="minutes; no new games after")
@@ -473,8 +556,11 @@ def main(argv=None) -> int:
     r = sub.add_parser("report")
     r.add_argument("--runs", required=True)
     r.add_argument("--out", required=True)
+    h = sub.add_parser("harness")
+    h.add_argument("--runs", required=True)
+    h.add_argument("--out", required=True)
     args = parser.parse_args(argv)
-    return run_games(args) if args.command == "play" else report(args)
+    return {"play": run_games, "report": report, "harness": harness}[args.command](args)
 
 
 if __name__ == "__main__":

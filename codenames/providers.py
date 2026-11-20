@@ -352,6 +352,86 @@ def pincheck(cap: float, out: Path, repeats: int = 2) -> dict:
     return report
 
 
+def compact_log(log: dict) -> dict:
+    """The fields of one audited log that the note quotes."""
+    fit = log.get("prompt_tokens_on_chars") or {}
+    return {
+        "calls": log["calls"],
+        "answered": log["answered"],
+        "requested": log["requested_providers"],
+        "served_models": log["served_models"],
+        "served_providers": log["served_providers"],
+        "id_shapes": log["id_shapes"],
+        "empty": log["empty"],
+        "empty_with_stop": log["empty_with_stop"],
+        "length": log["finish"].get("length", 0),
+        "retried": log["retried"],
+        "seconds_median": log["seconds_median"],
+        "seconds_median_empty": log["seconds_median_empty"],
+        "tokens_intercept": fit.get("intercept"),
+        "tokens_slope": fit.get("slope"),
+        "first": log["first"],
+        "last": log["last"],
+    }
+
+
+def compact_check(report: dict) -> dict:
+    """One row per model, provider and way of pinning: statuses and who served."""
+    rows: dict[str, dict] = {}
+    for c in report["calls"]:
+        key = f"{c['repo']} @ {c['provider']} : {c.get('variant', 'setup')}"
+        row = rows.setdefault(key, {"status": [], "served": [], "id_shapes": []})
+        if "error" in c and "status" not in c:
+            row["status"].append("exception")
+            continue
+        if "skipped" in c:
+            row["status"].append("skipped")
+            continue
+        row["status"].append(c["status"])
+        served = c["served_by"]
+        header = c["headers"].get("x-inference-provider")
+        row["served"].append(f"{served['provider']} via {header}")
+        row["id_shapes"].append(id_shape(served["id"]))
+        if c["status"] != 200:
+            row["error"] = str(c.get("error"))[:160]
+    quant = {
+        repo: sorted(
+            {
+                f"{e.get('provider_name')}: {e.get('quantization')}"
+                for e in v["openrouter_endpoints"]
+            }
+        )
+        if isinstance(v["openrouter_endpoints"], list)
+        else v["openrouter_endpoints"]
+        for repo, v in report["listings"].items()
+    }
+    return {"time": report["time"], "spent": report["spent"], "rows": rows, "quantization": quant}
+
+
+def digest(audit_file: Path, check_file: Path) -> dict:
+    """The audit and the pinning check in the compact form committed to results/."""
+    audited = json.loads(audit_file.read_text())
+    runs = {
+        experiment: {
+            run: {
+                "commit": (r.get("commit") or "")[:7],
+                "job": r.get("job_id"),
+                "logs": {name: compact_log(log) for name, log in r["logs"].items()},
+            }
+            for run, r in sorted(by_run.items())
+        }
+        for experiment, by_run in sorted(audited.items())
+        if experiment != "unread"
+    }
+    return {
+        "what": "who served the hosted calls of C4, C6, C8, C10 and H2, from their logs",
+        "how_known": "counted from every logged call (codenames.providers audit); aggregates only",
+        "unread": audited.get("unread", []),
+        "runs": runs,
+        "pincheck": compact_check(json.loads(check_file.read_text())),
+    }
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     sub = parser.add_subparsers(dest="command", required=True)
@@ -362,7 +442,19 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--cap", type=float, default=0.05)
     p.add_argument("--out", type=Path, required=True)
     p.add_argument("--runs", type=Path, default=None, help="also audit these logs into OUT")
+    d = sub.add_parser("digest")
+    d.add_argument("--audit", type=Path, required=True, help="providers.json from audit")
+    d.add_argument("--check", type=Path, required=True, help="pincheck.json")
+    d.add_argument("--out", type=Path, required=True)
     args = parser.parse_args(argv)
+    if args.command == "digest":
+        import hashlib
+
+        args.out.mkdir(parents=True, exist_ok=True)
+        text = json.dumps(digest(args.audit, args.check), indent=1, sort_keys=True) + "\n"
+        (args.out / "llm-providers.json").write_text(text)
+        print("sha256", hashlib.sha256(text.encode()).hexdigest(), len(text))
+        return 0
     if args.command == "audit":
         result = audit(args.runs)
         args.out.write_text(json.dumps(result, indent=1, sort_keys=True) + "\n")

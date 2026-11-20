@@ -10,6 +10,7 @@ from hanabi.h2 import (
     bootstrap,
     ceiling,
     complete_prefix,
+    fallback_effect,
     main,
     paired,
     parse_seeds,
@@ -223,3 +224,33 @@ def test_provider_failure_replays_the_game_once(tmp_path):
     row = json.loads((tmp_path / "scores.jsonl").read_text())
     assert row["status"] == "complete" and row["attempts"] == 2
     assert (tmp_path / "calls" / "seed-0-replay1.jsonl").exists()
+
+
+def test_fallback_effect_splits_the_lives_lost():
+    # every third reply is unreadable, so those turns get the fallback
+    rules = Rules(players=2)
+    deck = seeded_deck(rules, 3)
+    turn = {"n": 0}
+
+    def complete(prompt: str) -> str:
+        turn["n"] += 1
+        return "no move here" if turn["n"] % 3 == 0 else first_discard_or_last(prompt)
+
+    state, record = play_game(rules, deck, complete, deduction=False)
+    e = fallback_effect(rules, deck, record["moves"], record["fallback_turns"])
+    assert e["score"] == state.score
+    assert e["lives_lost_by_fallbacks"] + e["lives_lost_by_model"] == record["lives_lost"]
+    kinds = e["fallback_plays"] + e["fallback_discards"] + e["fallback_hints"]
+    assert kinds == record["fallbacks"] == len(record["fallback_turns"]) > 0
+    with pytest.raises(ValueError):
+        fallback_effect(rules, deck, ["PLAY 9"], [])
+
+
+def test_harness_report_counts_over_complete_games(tmp_path):
+    runs = tmp_path / "runs"
+    run_games(args_for(runs / "on"), MODELS, FakeClient())
+    out = tmp_path / "harness.json"
+    main(["harness", "--runs", str(runs), "--out", str(out)])
+    arm = json.loads(out.read_text())["arms"][0]
+    assert arm["games"] == 3 and arm["max_tokens"] == 512
+    assert arm["lives_lost_by_fallbacks"] == 0 and arm["truncated"] == 0
