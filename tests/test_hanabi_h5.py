@@ -23,3 +23,15 @@ def test_replay_reproduces_a_stub_models_game():
         assert b["fireworks"] == sum(rec["board"])
         assert b["lives_lost_by_model"] == 0
         assert sum(sum(c.values()) - c.get("misplays", 0) for c in b["seats"]) == rec["turns"]
+
+
+def test_last_move_and_first_prompts(tmp_path):
+    assert h5.last_move("I think PLAY 2... no, hint 1 red") == "HINT 1 RED"
+    assert h5.last_move("no move here") is None
+    import json
+
+    for seed, prompts in ((1001, ["c", "d"]), (1000, ["a", "b"])):
+        (tmp_path / f"seed-{seed}.jsonl").write_text(
+            "".join(json.dumps({"prompt": p}) + "\n" for p in prompts)
+        )
+    assert h5.first_prompts(tmp_path, 3) == ["a", "b", "c"]
