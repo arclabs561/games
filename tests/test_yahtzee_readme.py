@@ -28,6 +28,7 @@ NEW = {
     "139",  # digits of the numerator on Verhoeff's page
     "2017",  # the page's date for that fraction
     "205",  # the paper's first page
+    "243.17",  # the sum of the scorecard's rounded rows
 }
 
 
