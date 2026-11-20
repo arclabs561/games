@@ -34,7 +34,7 @@
    "layer <clubs> <diamonds> <hearts> <spades> <positions>" per layer and a line "end". The
    word "horne" plays cards home by Horne's rule instead: a card of rank r goes when the
    foundations of the other color are at r - 2 or more and the other one of its color at
-   r - 3 or more.
+   r - 3 or more. The word "fine" splits each layer into sublayers (see solve_layers).
 */
 #include <stdint.h>
 #include <stdio.h>
@@ -400,18 +400,85 @@ static void unpack(const uint64_t *k, Pos *p) {
 static int foundation_id(const Pos *p) {
     return p->home[0] + 14 * (p->home[1] + 14 * (p->home[2] + 14 * p->home[3]));
 }
-typedef struct { uint64_t *k; uint64_t n, cap; } List;
-static List waiting[14 * 14 * 14 * 14];
+/* A layer is split into sublayers, as in Solver C: for each dealt column, K is where the run
+   at the top of its cards still in their dealt places starts (each card of the run fits on
+   the one below it). K never rises, so a move goes to a sublayer with more cards home or a
+   lower K, and cards home minus the sum of the K grows. Sublayers are taken in order of that
+   number. With "fine" off, K is left out and a sublayer is a layer. */
+static int fine;
+static int dealt_cols[16][NCARD], dealt_len[16], dealt_n;
 
-static void wait_for(int id, const Pos *p) {
-    List *l = &waiting[id];
+static uint64_t sublayer(const Pos *p) {
+    uint64_t key = (uint64_t)foundation_id(p) << 24;
+    if (!fine) return key;
+    for (int j = 0; j < dealt_n; j++) {
+        int m = 0;
+        if (dealt_len[j] && p->under[dealt_cols[j][0]] == BASE) {
+            m = 1;
+            while (m < dealt_len[j] && p->under[dealt_cols[j][m]] == dealt_cols[j][m - 1]) m++;
+        }
+        int k = m ? m - 1 : 0;
+        while (k >= 1 && stacks(dealt_cols[j][k], dealt_cols[j][k - 1])) k--;
+        key |= (uint64_t)k << (3 * j);
+    }
+    return key;
+}
+static int order_of(uint64_t key) {
+    int id = (int)(key >> 24), h = id % 14 + id / 14 % 14 + id / 196 % 14 + id / 2744, k = 0;
+    for (int j = 0; j < 8; j++) k += (int)(key >> (3 * j) & 7);
+    return h - k + 64;
+}
+
+typedef struct { uint64_t key, *k, n, cap; int queued; } List;
+static List *lists; static uint64_t nlists, caplists;
+static uint64_t *index_of, nindex; /* list number + 1, by hash of key */
+static uint64_t *queue[160], nqueue[160], capqueue[160];
+
+static List *list_for(uint64_t key) {
+    if (2 * (nlists + 1) > nindex) {
+        uint64_t n2 = nindex ? 2 * nindex : 4096;
+        uint64_t *x = calloc(n2, 8);
+        for (uint64_t i = 0; i < nlists; i++) {
+            uint64_t j = (lists[i].key * 0xBF58476D1CE4E5B9ULL >> 17) & (n2 - 1);
+            while (x[j]) j = (j + 1) & (n2 - 1);
+            x[j] = i + 1;
+        }
+        free(index_of); index_of = x; nindex = n2;
+    }
+    uint64_t j = (key * 0xBF58476D1CE4E5B9ULL >> 17) & (nindex - 1);
+    while (index_of[j]) {
+        if (lists[index_of[j] - 1].key == key) return &lists[index_of[j] - 1];
+        j = (j + 1) & (nindex - 1);
+    }
+    if (nlists == caplists) {
+        caplists = caplists ? 2 * caplists : 1024;
+        lists = realloc(lists, caplists * sizeof *lists);
+        if (!lists) { fprintf(stderr, "out of memory\n"); exit(2); }
+    }
+    memset(&lists[nlists], 0, sizeof *lists);
+    lists[nlists].key = key;
+    index_of[j] = ++nlists;
+    return &lists[nlists - 1];
+}
+
+static void wait_for(uint64_t key, const Pos *p) {
+    List *l = list_for(key);
     if (l->n == l->cap) {
-        l->cap = l->cap ? 2 * l->cap : 64;
+        l->cap = l->cap ? 2 * l->cap : 16;
         l->k = realloc(l->k, l->cap * KEYW * 8);
         if (!l->k) { fprintf(stderr, "out of memory\n"); exit(2); }
     }
     pack(p, l->k + l->n * KEYW);
     l->n++;
+    if (!l->queued) {
+        int o = order_of(key);
+        l->queued = 1;
+        if (nqueue[o] == capqueue[o]) {
+            capqueue[o] = capqueue[o] ? 2 * capqueue[o] : 64;
+            queue[o] = realloc(queue[o], capqueue[o] * 8);
+        }
+        queue[o][nqueue[o]++] = (uint64_t)(l - lists);
+    }
 }
 
 static void solve_layers(Pos *p) {
@@ -422,55 +489,58 @@ static void solve_layers(Pos *p) {
     for (uint64_t i = 0; i < nau; i++) moved[au[i].card] = 1;
     nau = 0;
     int most = p->nhome, won = 0;
-    uint64_t total = 0, nlog = 0;
-    static int logid[14 * 14 * 14 * 14];
-    static uint64_t logn[14 * 14 * 14 * 14];
+    uint64_t total = 0, parts = 0, largest = 0;
+    static uint64_t per_layer[14 * 14 * 14 * 14];
+    static uint8_t seen[14 * 14 * 14 * 14];
+    memset(per_layer, 0, sizeof per_layer);
+    memset(seen, 0, sizeof seen);
     if (p->nhome == deck_size) won = 1;
-    else wait_for(foundation_id(p), p);
+    else wait_for(sublayer(p), p);
     Move moves[1024];
-    while (!won) {
-        int cur = -1, fewest = 99;
-        for (int id = 0; id < 14 * 14 * 14 * 14; id++)
-            if (waiting[id].n) {
-                int h = id % 14 + id / 14 % 14 + id / 196 % 14 + id / 2744;
-                if (h < fewest) { fewest = h; cur = id; }
+    for (int o = 0; o < 160 && !won; o++)
+        for (uint64_t b = 0; b < nqueue[o] && !won; b++) {
+            uint64_t li = queue[o][b], cur = lists[li].key;
+            int id = (int)(cur >> 24);
+            reset();
+            Pos q;
+            for (uint64_t i = 0; i < lists[li].n; i++) {
+                unpack(lists[li].k + i * KEYW, &q);
+                insert(&q);
             }
-        if (cur < 0) break;
-        reset();
-        Pos q;
-        for (uint64_t i = 0; i < waiting[cur].n; i++) {
-            unpack(waiting[cur].k + i * KEYW, &q);
-            insert(&q);
-        }
-        free(waiting[cur].k);
-        memset(&waiting[cur], 0, sizeof waiting[cur]);
-        if (fewest > most) most = fewest;
-        /* the stored positions, in the order stored, are the queue */
-        for (uint64_t i = 0; i < nkeys && !won; i++) {
-            unpack(keys + i * KEYW, &q);
-            int n = gen(&q, moves);
-            for (int j = 0; j < n && !won; j++) {
-                do_move(&q, moves[j]);
-                int k = settle(&q);
-                if (q.nhome == deck_size) won = 1;
-                else if (foundation_id(&q) != cur) {
-                    wait_for(foundation_id(&q), &q);
-                    moved[moves[j].card] = 1;
-                    for (uint64_t a = nau - k; a < nau; a++) moved[au[a].card] = 1;
-                } else if (insert(&q)) {
-                    moved[moves[j].card] = 1;
-                    for (uint64_t a = nau - k; a < nau; a++) moved[au[a].card] = 1;
+            free(lists[li].k);
+            lists[li].k = 0; lists[li].n = lists[li].cap = 0;
+            int h = id % 14 + id / 14 % 14 + id / 196 % 14 + id / 2744;
+            if (h > most) most = h;
+            /* the stored positions, in the order stored, are the queue */
+            for (uint64_t i = 0; i < nkeys && !won; i++) {
+                unpack(keys + i * KEYW, &q);
+                int n = gen(&q, moves);
+                for (int j = 0; j < n && !won; j++) {
+                    do_move(&q, moves[j]);
+                    int k = settle(&q);
+                    uint64_t to = sublayer(&q);
+                    if (q.nhome == deck_size) won = 1;
+                    else if (to != cur) {
+                        wait_for(to, &q);
+                        moved[moves[j].card] = 1;
+                        for (uint64_t a = nau - k; a < nau; a++) moved[au[a].card] = 1;
+                    } else if (insert(&q)) {
+                        moved[moves[j].card] = 1;
+                        for (uint64_t a = nau - k; a < nau; a++) moved[au[a].card] = 1;
+                    }
+                    unsettle(&q, k);
+                    undo_move(&q, moves[j]);
                 }
-                unsettle(&q, k);
-                undo_move(&q, moves[j]);
             }
+            total += nkeys;
+            parts++;
+            if (nkeys > largest) largest = nkeys;
+            per_layer[id] += nkeys;
+            seen[id] = 1;
+            if (getenv("SOLVER_B_PROGRESS") && nkeys > 1000000)
+                fprintf(stderr, "layer %d: %llu (total %llu)\n", id, (unsigned long long)nkeys,
+                        (unsigned long long)total);
         }
-        total += nkeys;
-        logid[nlog] = cur; logn[nlog++] = nkeys;
-        if (getenv("SOLVER_B_PROGRESS"))
-            fprintf(stderr, "layer %d: %llu (total %llu)\n", cur, (unsigned long long)nkeys,
-                    (unsigned long long)total);
-    }
     if (won) printf("won %llu\n", (unsigned long long)total);
     else {
         printf("lost %llu %d", (unsigned long long)total, most);
@@ -478,14 +548,17 @@ static void solve_layers(Pos *p) {
             if (present[c] && !moved[c]) printf(" %d", c);
         printf("\n");
     }
-    for (uint64_t i = 0; i < nlog; i++)
-        printf("layer %d %d %d %d %llu\n", logid[i] % 14, logid[i] / 14 % 14,
-               logid[i] / 196 % 14, logid[i] / 2744, (unsigned long long)logn[i]);
+    for (int h = 0; h <= 52; h++)
+        for (int id = 0; id < 14 * 14 * 14 * 14; id++)
+            if (seen[id] && id % 14 + id / 14 % 14 + id / 196 % 14 + id / 2744 == h)
+                printf("layer %d %d %d %d %llu\n", id % 14, id / 14 % 14, id / 196 % 14, id / 2744,
+                       (unsigned long long)per_layer[id]);
+    printf("sublayers %llu %llu\n", (unsigned long long)parts, (unsigned long long)largest);
     printf("end\n");
-    for (int id = 0; id < 14 * 14 * 14 * 14; id++) {
-        free(waiting[id].k);
-        memset(&waiting[id], 0, sizeof waiting[id]);
-    }
+    for (uint64_t i = 0; i < nlists; i++) free(lists[i].k);
+    nlists = 0;
+    if (index_of) memset(index_of, 0, nindex * 8);
+    for (int o = 0; o < 160; o++) nqueue[o] = 0;
     reset();
 }
 
@@ -525,6 +598,7 @@ int main(int argc, char **argv) {
         else if (!strcmp(argv[i], "auto")) use_auto = 1;
         else if (!strcmp(argv[i], "layers")) by_layers = 1;
         else if (!strcmp(argv[i], "horne")) use_horne = 1;
+        else if (!strcmp(argv[i], "fine")) fine = 1;
     }
     char line[4096];
     static int cols[16][NCARD];
@@ -556,6 +630,11 @@ int main(int argc, char **argv) {
         for (int i = 0; i < ncols; i++)
             for (int j = 0; j < len[i]; j++) { present[cols[i][j]] = 1; deck_size++; }
         setup(&p, cols, len);
+        dealt_n = ncols;
+        for (int i = 0; i < ncols; i++) {
+            dealt_len[i] = len[i];
+            for (int j = 0; j < len[i]; j++) dealt_cols[i][j] = cols[i][j];
+        }
         rng = seed ? seed * 0x9E3779B97F4A7C15ULL : 0;
         if (by_layers) solve_layers(&p);
         else solve(&p, budget, want_fence);

@@ -197,6 +197,16 @@ def test_solver_c_on_microsoft_deals(tmp_path):
     # of one byte every one does, and the count stays the same.
     (small,) = solve_c(problems[:1], tmp_path, memory=1)
     assert small["states"] == 61643
+    # Split into sublayers, both layered solvers give the same counts again, layer by layer,
+    # and the same sublayers (5,880 for 11982, the largest of 1,936 positions).
+    c_fine = solve_c(problems, tmp_path, layers=True, fine=True)
+    b_fine = solve_b_layers(problems, fine=True)
+    for c, cf, bf in zip(c_answers, c_fine, b_fine, strict=True):
+        assert c["layers"] == cf["layers"] == bf["layers"]
+        assert cf["sublayers"] == bf["sublayers"] and cf["frozen"] == bf["frozen"]
+    assert (c_fine[0]["sublayers"], c_fine[0]["largest_sublayer"]) == (5880, 1936)
+    (spilled,) = solve_c(problems[:1], tmp_path, memory=1, fine=True)
+    assert spilled["states"] == 61643 and not list(tmp_path.glob("fc-c-*"))
 
 
 @needs_cc

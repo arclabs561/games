@@ -118,10 +118,12 @@ def solve_c(
     return out
 
 
-def solve_b_layers(problems: list[str], horne: bool = False) -> list[dict]:
-    """Solver B, one foundation at a time, on each problem (Horne's rule with `horne`)."""
+def solve_b_layers(problems: list[str], horne: bool = False, fine: bool = False) -> list[dict]:
+    """Solver B, one foundation at a time, on each problem (Horne's rule with `horne`, layers
+    split into sublayers with `fine`)."""
+    words = ["layers"] + (["horne"] if horne else []) + (["fine"] if fine else [])
     proc = subprocess.run(
-        [str(native.binary()), "0", "0", "layers", *(["horne"] if horne else [])],
+        [str(native.binary()), "0", "0", *words],
         input="".join(p + "\n" for p in problems),
         capture_output=True,
         text=True,
@@ -138,7 +140,11 @@ def solve_b_layers(problems: list[str], horne: bool = False) -> list[dict]:
         for row in lines:
             if row == "end":
                 break
-            ans["layers"].append(tuple(map(int, row.split()[1:])))
+            word, *nums = row.split()
+            if word == "sublayers":
+                ans["sublayers"], ans["largest_sublayer"] = map(int, nums)
+            else:
+                ans["layers"].append(tuple(map(int, nums)))
         out.append(ans)
     return out
 
@@ -174,7 +180,7 @@ def run_job(job: str, out: Path, budget: int, cap: int) -> dict:
                 log = out / f"progress-{tag}.log"
                 (ans,) = solve_c([problem], Path(tmp), cap, True, log, horne=horne, fine=True)
         else:
-            (ans,) = solve_b_layers([problem], horne)
+            (ans,) = solve_b_layers([problem], horne, fine=True)
         layers = ans.pop("layers")
         rows = "".join("\t".join(map(str, r)) + "\n" for r in layers)
         (out / f"layers-{tag}.tsv").write_text("C\tD\tH\tS\tpositions\n" + rows)
