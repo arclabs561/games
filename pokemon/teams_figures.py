@@ -188,9 +188,11 @@ def figures(data: dict) -> dict:
 
 def main(folder: Path = HERE / "figures") -> None:
     folder.mkdir(exist_ok=True)
-    for name, fig in figures(load()).items():
-        save_svg(fig, folder / name)
-        print("wrote", folder / name)
+    with plt.style.context("default"):  # unaffected by styles other modules set
+        drawn = figures(load())
+        for name, fig in drawn.items():
+            save_svg(fig, folder / name)
+            print("wrote", folder / name)
 
 
 if __name__ == "__main__":
