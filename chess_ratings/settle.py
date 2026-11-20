@@ -313,8 +313,51 @@ def to_text(out: dict) -> str:
     return json.dumps(rounded(out), indent=1, sort_keys=True) + "\n"
 
 
+def compare_with_lichess(per_player: int = 200, seed: int = 300) -> dict:
+    """The model beside real new players (results/trajectories.json, from the Lichess job).
+
+    Deviation: the model's path beside the median deviation backed out of real rating changes.
+    Settling: real players with more than 60 games are compared with model players whose
+    strengths follow the real ratings before game 61 (bins of 50 points, centers used), with
+    `per_player` model players for each real one; both are scored by the share of ratings
+    before game k within 100 points of the rating before game 61.
+    """
+    real = json.loads((RESULTS / "trajectories.json").read_text())
+    path = deviation_path(60)
+    deviation = [
+        {"game": k, "model": path[k - 1], "real_median": real["implied_deviation"][k - 1]["median"]}
+        for k in (1, 2, 5, 10, 11, 20, 40, 60)
+    ]
+    hist = real["rating_after_60"]["histogram_50"]
+    shares = np.zeros(61)
+    total = 0
+    for i, (lo, count) in enumerate(sorted((int(b), c) for b, c in hist.items())):
+        paths = simulate(lo + 25, 60, count * per_player, seed + i)
+        shares += (np.abs(paths - paths[-1]) <= 100).sum(axis=1)
+        total += count * per_player
+    model = shares / total
+    settling = [
+        {
+            "game": k,
+            "model": float(model[k - 1]),
+            "real": real["within_100_of_game_61"][k - 1]["share"],
+        }
+        for k in (1, 5, 10, 15, 20, 25, 30, 35, 40)
+    ]
+    return {
+        "per_player": per_player,
+        "seed": seed,
+        "real_players": real["players_with_more_than_60_games"],
+        "deviation": deviation,
+        "settling": settling,
+        "first_game_below_110_real_quartiles": real["first_game_below_110"]["quartiles"],
+        "first_game_below_110_model": games_to_establish(OPPONENT_RD),
+    }
+
+
 def main() -> None:
     RESULTS.mkdir(exist_ok=True)
+    (RESULTS / "compare.json").write_text(to_text(compare_with_lichess()))
     text = to_text(compute())
     (RESULTS / "settle.json").write_text(text)
     print(text)

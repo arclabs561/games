@@ -16,7 +16,6 @@ from peggle.figures import BLUE, GRID, INK, MUTED, ORANGE, Svg, num
 HERE = Path(__file__).parent
 OUT = HERE / "figures"
 RESULTS = HERE / "results"
-SCHOLAR = "e2e4 e7e5 d1h5 b8c6 f1c4"
 COLORS = {"800": "#7a4bc2", "1100": BLUE, "1900": "#1a9a6c", "2300": ORANGE}
 
 
@@ -24,13 +23,25 @@ def load(name: str) -> dict:
     return json.loads((RESULTS / name).read_text())
 
 
+def transcript(block: int = 0) -> tuple[str, dict[str, dict[str, float]]]:
+    """The FEN and the table {rating: {SAN: probability}} of one block of whatwould.txt."""
+    lines = (RESULTS / "whatwould.txt").read_text().split("\n\n")[block].splitlines()
+    fen, header = lines[1], lines[3].split()[1:]
+    table: dict[str, dict[str, float]] = {r: {} for r in header}
+    for line in lines[4:]:
+        words = line.split()
+        if words[0] == "other":
+            continue
+        for r, cell in zip(header, words[1:], strict=True):
+            table[r][words[0]] = float(cell.rstrip("%")) / 100
+    return fen, table
+
+
 def board() -> str:
     """The position after 1. e4 e5 2. Qh5 Nc6 3. Bc4, with Maia-3's three likeliest replies
-    for players rated 1100 (left) and 1900 (right)."""
-    dists = load("whatwould.json")["distributions"][SCHOLAR]
-    b = chess.Board()
-    for m in SCHOLAR.split():
-        b.push_uci(m)
+    for players rated 1100 (left) and 1900 (right), from the transcript in whatwould.txt."""
+    fen, table = transcript(0)
+    b = chess.Board(fen)
     width = 2 * (8 * SQUARE + 60) + 20
     svg = Svg(
         width,
@@ -45,15 +56,14 @@ def board() -> str:
         top = 40
         svg.text(left, 26, f"Both players rated {rating}", 14, font_weight="bold")
         draw_board(svg, b, left, top)
-        probs = dists[rating]
+        probs = table[rating]
         best = sorted(probs, key=lambda m: (-probs[m], m))[:3]
-        for m in best:
-            draw_arrow(svg, chess.Move.from_uci(m), probs[m], left, top)
+        for san in best:
+            draw_arrow(svg, b.parse_san(san), probs[san], left, top)
         y = top + 8 * SQUARE + 38
-        for j, m in enumerate(best):
-            san = b.san(chess.Move.from_uci(m))
-            svg.text(left + j * 120, y, f"{san}  {100 * probs[m]:.0f}%", 13, fill=INK)
-        nf6 = probs.get("g8f6", 0.0)
+        for j, san in enumerate(best):
+            svg.text(left + j * 120, y, f"{san}  {100 * probs[san]:.0f}%", 13, fill=INK)
+        nf6 = probs["Nf6"]
         svg.text(left, y + 22, f"Nf6, which allows Qxf7 mate: {100 * nf6:.1f}%", 12, fill=MUTED)
     return svg.render()
 

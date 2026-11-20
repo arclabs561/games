@@ -26,6 +26,7 @@ import time
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from threading import local
+from typing import Any
 
 import chess
 import chess.engine
@@ -165,7 +166,7 @@ def move_matching(maia: Maia, sample_games: list[dict], use_history: bool) -> di
 
 def summarize_estimates(records: list[dict], grid) -> dict:
     """Errors by band and by number of moves, interval coverage, and two baselines."""
-    rows = []
+    rows: list[dict[str, Any]] = []
     for r in records:
         e = estimate.estimate(r["logp"], grid)
         prefix = {}
@@ -491,6 +492,64 @@ def part_middlegame(args, out: Path) -> None:
     )
 
 
+def rounded(x, digits: int = 4):
+    """Floats rounded, so a summary is short enough to read and copy by hand."""
+    if isinstance(x, float):
+        return round(x, digits)
+    if isinstance(x, dict):
+        return {k: rounded(v, digits) for k, v in x.items()}
+    if isinstance(x, list | tuple):
+        return [rounded(v, digits) for v in x]
+    return x
+
+
+def compact(folder: Path, out: Path) -> None:
+    """Short summaries of a run's outputs, for results/: no per-player rows, floats rounded.
+
+    The committed copies in chess_ratings/results/ are checked against the SHA-256 that this
+    part prints.
+    """
+    names = []
+    if (folder / "estimate.json").exists():
+        e = json.loads((folder / "estimate.json").read_text())
+        e.pop("rows")
+        names.append(("estimate.json", e))
+    if (folder / "middlegame.json").exists():
+        m = json.loads((folder / "middlegame.json").read_text())
+        rows = m.pop("rows")
+        m["positions"] = len(rows)
+        m["mean_legal_moves"] = sum(r["legal_moves"] for r in rows) / len(rows)
+        m["share_with_a_blunder_available"] = sum(r["blunder_moves"] > 0 for r in rows) / len(rows)
+        names.append(("middlegame.json", m))
+    if (folder / "common.json").exists():
+        c = json.loads((folder / "common.json").read_text())
+        for p in c["positions"]:
+            p["maia"] = {r: v for r, v in p["maia"].items() if int(r) % 200 == 0}
+        names.append(("common.json", c))
+    for name, obj in names:
+        text = json.dumps(rounded(obj), indent=1, sort_keys=True) + "\n"
+        (out / name).write_text(text)
+        print(f"=== {name} sha256 {hashlib.sha256(text.encode()).hexdigest()}\n{text}", flush=True)
+    for f in sorted(folder.glob("*")):
+        if f.is_file():
+            print(f"sha256 {hashlib.sha256(f.read_bytes()).hexdigest()} {f.name}", flush=True)
+
+
+def part_compact(args, out: Path) -> None:
+    hub = __import__("huggingface_hub")
+    for name in args.runs.split(","):
+        local = hub.snapshot_download(
+            "arclabs561/games-runs",
+            repo_type="dataset",
+            allow_patterns=[f"runs/chess/{name}/*"],
+            token=os.environ["HF_TOKEN"],
+        )
+        target = out / name
+        target.mkdir(parents=True, exist_ok=True)
+        log(f"compact: {name}")
+        compact(Path(local) / "runs" / "chess" / name, target)
+
+
 def main(argv=None) -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("part")
@@ -501,6 +560,7 @@ def main(argv=None) -> None:
     parser.add_argument("--positions", type=int, default=24)
     parser.add_argument("--nodes", type=int, default=100_000)
     parser.add_argument("--history", action=argparse.BooleanOptionalAction, default=True)
+    parser.add_argument("--runs", default="", help="runs to summarize with the compact part")
     parser.add_argument("--run", default=None, help="upload OUT to runs/chess/RUN in the dataset")
     args = parser.parse_args(argv)
     out = Path(args.out)
@@ -512,6 +572,7 @@ def main(argv=None) -> None:
         "estimate": part_estimate,
         "common": part_common,
         "middlegame": part_middlegame,
+        "compact": part_compact,
     }
     for name in args.part.split(","):
         log(f"part {name} starts")
