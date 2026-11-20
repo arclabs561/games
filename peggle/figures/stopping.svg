@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="610" height="374" viewBox="0 0 610 374" role="img" font-family="Helvetica, Arial, sans-serif">
+<title>Equal players: the chance that someone is declared better</title>
+<desc>Exact chances for two players of equal skill, for caps of 10 to 200 games. Playing until one is 95% sure declares someone better more and more often, 0.528 at 100 games; one look after all the games stays near 0.09; playing until the Bayes factor reaches 20 stays below 0.05.</desc>
+<rect width="610" height="374" fill="#ffffff"/>
+<line x1="60" y1="320" x2="580" y2="320" stroke="#d9d8d4"/>
+<text x="52" y="324" font-size="11" fill="#52514e" text-anchor="end">0.0</text>
+<line x1="60" y1="285.71" x2="580" y2="285.71" stroke="#d9d8d4"/>
+<text x="52" y="289.71" font-size="11" fill="#52514e" text-anchor="end">0.1</text>
+<line x1="60" y1="251.43" x2="580" y2="251.43" stroke="#d9d8d4"/>
+<text x="52" y="255.43" font-size="11" fill="#52514e" text-anchor="end">0.2</text>
+<line x1="60" y1="217.14" x2="580" y2="217.14" stroke="#d9d8d4"/>
+<text x="52" y="221.14" font-size="11" fill="#52514e" text-anchor="end">0.3</text>
+<line x1="60" y1="182.86" x2="580" y2="182.86" stroke="#d9d8d4"/>
+<text x="52" y="186.86" font-size="11" fill="#52514e" text-anchor="end">0.4</text>
+<line x1="60" y1="148.57" x2="580" y2="148.57" stroke="#d9d8d4"/>
+<text x="52" y="152.57" font-size="11" fill="#52514e" text-anchor="end">0.5</text>
+<line x1="60" y1="114.29" x2="580" y2="114.29" stroke="#d9d8d4"/>
+<text x="52" y="118.29" font-size="11" fill="#52514e" text-anchor="end">0.6</text>
+<line x1="60" y1="80" x2="580" y2="80" stroke="#d9d8d4"/>
+<text x="52" y="84" font-size="11" fill="#52514e" text-anchor="end">0.7</text>
+<line x1="60" y1="302.86" x2="580" y2="302.86" stroke="#52514e" stroke-dasharray="4 3"/>
+<text x="580" y="298.86" font-size="11" fill="#52514e" text-anchor="end">0.05</text>
+<text x="60" y="336" font-size="11" fill="#52514e" text-anchor="middle">10</text>
+<text x="169.47" y="336" font-size="11" fill="#52514e" text-anchor="middle">50</text>
+<text x="306.32" y="336" font-size="11" fill="#52514e" text-anchor="middle">100</text>
+<text x="443.16" y="336" font-size="11" fill="#52514e" text-anchor="middle">150</text>
+<text x="580" y="336" font-size="11" fill="#52514e" text-anchor="middle">200</text>
+<text x="320" y="356" font-size="12" fill="#52514e" text-anchor="middle">cap: the most games they will play</text>
+<text x="10" y="20" font-size="12" fill="#52514e">chance that someone is declared better</text>
+<polyline points="60,243.66 87.37,206.79 114.74,187.58 142.11,175.99 169.47,165.09 196.84,158.23 224.21,151.19 251.58,146.98 278.95,142.12 306.32,138.91 333.68,135.01 361.05,131.93 388.42,129.02 415.79,126.39 443.16,124.23 470.53,121.81 497.89,119.77 525.26,117.85 552.63,116.12 580,114.44" fill="none" stroke="#d95926" stroke-width="2"/>
+<circle cx="60" cy="243.66" r="3" fill="#d95926"/>
+<circle cx="87.37" cy="206.79" r="3" fill="#d95926"/>
+<circle cx="114.74" cy="187.58" r="3" fill="#d95926"/>
+<circle cx="142.11" cy="175.99" r="3" fill="#d95926"/>
+<circle cx="169.47" cy="165.09" r="3" fill="#d95926"/>
+<circle cx="196.84" cy="158.23" r="3" fill="#d95926"/>
+<circle cx="224.21" cy="151.19" r="3" fill="#d95926"/>
+<circle cx="251.58" cy="146.98" r="3" fill="#d95926"/>
+<circle cx="278.95" cy="142.12" r="3" fill="#d95926"/>
+<circle cx="306.32" cy="138.91" r="3" fill="#d95926"/>
+<circle cx="333.68" cy="135.01" r="3" fill="#d95926"/>
+<circle cx="361.05" cy="131.93" r="3" fill="#d95926"/>
+<circle cx="388.42" cy="129.02" r="3" fill="#d95926"/>
+<circle cx="415.79" cy="126.39" r="3" fill="#d95926"/>
+<circle cx="443.16" cy="124.23" r="3" fill="#d95926"/>
+<circle cx="470.53" cy="121.81" r="3" fill="#d95926"/>
+<circle cx="497.89" cy="119.77" r="3" fill="#d95926"/>
+<circle cx="525.26" cy="117.85" r="3" fill="#d95926"/>
+<circle cx="552.63" cy="116.12" r="3" fill="#d95926"/>
+<circle cx="580" cy="114.44" r="3" fill="#d95926"/>
+<rect x="70" y="27" width="12" height="12" fill="#d95926"/>
+<text x="88" y="38" font-size="12" fill="#0b0b0b">play until 95% sure: 0.528 at 100 games</text>
+<polyline points="60,282.5 87.37,280.46 114.74,286.15 142.11,292.33 169.47,279.23 196.84,288.3 224.21,278.99 251.58,288.14 278.95,281.14 306.32,289.61 333.68,284.13 361.05,291.75 388.42,287.34 415.79,282.98 443.16,290.49 470.53,286.89 497.89,283.32 525.26,290.45 552.63,287.45 580,284.47" fill="none" stroke="#6250d6" stroke-width="2"/>
+<circle cx="60" cy="282.5" r="3" fill="#6250d6"/>
+<circle cx="87.37" cy="280.46" r="3" fill="#6250d6"/>
+<circle cx="114.74" cy="286.15" r="3" fill="#6250d6"/>
+<circle cx="142.11" cy="292.33" r="3" fill="#6250d6"/>
+<circle cx="169.47" cy="279.23" r="3" fill="#6250d6"/>
+<circle cx="196.84" cy="288.3" r="3" fill="#6250d6"/>
+<circle cx="224.21" cy="278.99" r="3" fill="#6250d6"/>
+<circle cx="251.58" cy="288.14" r="3" fill="#6250d6"/>
+<circle cx="278.95" cy="281.14" r="3" fill="#6250d6"/>
+<circle cx="306.32" cy="289.61" r="3" fill="#6250d6"/>
+<circle cx="333.68" cy="284.13" r="3" fill="#6250d6"/>
+<circle cx="361.05" cy="291.75" r="3" fill="#6250d6"/>
+<circle cx="388.42" cy="287.34" r="3" fill="#6250d6"/>
+<circle cx="415.79" cy="282.98" r="3" fill="#6250d6"/>
+<circle cx="443.16" cy="290.49" r="3" fill="#6250d6"/>
+<circle cx="470.53" cy="286.89" r="3" fill="#6250d6"/>
+<circle cx="497.89" cy="283.32" r="3" fill="#6250d6"/>
+<circle cx="525.26" cy="290.45" r="3" fill="#6250d6"/>
+<circle cx="552.63" cy="287.45" r="3" fill="#6250d6"/>
+<circle cx="580" cy="284.47" r="3" fill="#6250d6"/>
+<rect x="70" y="44" width="12" height="12" fill="#6250d6"/>
+<text x="88" y="55" font-size="12" fill="#0b0b0b">one look after all the games: 0.089 at 100 games</text>
+<polyline points="60,317.32 87.37,314.76 114.74,313.51 142.11,312.63 169.47,312.01 196.84,311.55 224.21,311.31 251.58,311.04 278.95,310.74 306.32,310.55 333.68,310.38 361.05,310.22 388.42,310.1 415.79,309.97 443.16,309.84 470.53,309.74 497.89,309.65 525.26,309.55 552.63,309.48 580,309.41" fill="none" stroke="#2a78d6" stroke-width="2"/>
+<circle cx="60" cy="317.32" r="3" fill="#2a78d6"/>
+<circle cx="87.37" cy="314.76" r="3" fill="#2a78d6"/>
+<circle cx="114.74" cy="313.51" r="3" fill="#2a78d6"/>
+<circle cx="142.11" cy="312.63" r="3" fill="#2a78d6"/>
+<circle cx="169.47" cy="312.01" r="3" fill="#2a78d6"/>
+<circle cx="196.84" cy="311.55" r="3" fill="#2a78d6"/>
+<circle cx="224.21" cy="311.31" r="3" fill="#2a78d6"/>
+<circle cx="251.58" cy="311.04" r="3" fill="#2a78d6"/>
+<circle cx="278.95" cy="310.74" r="3" fill="#2a78d6"/>
+<circle cx="306.32" cy="310.55" r="3" fill="#2a78d6"/>
+<circle cx="333.68" cy="310.38" r="3" fill="#2a78d6"/>
+<circle cx="361.05" cy="310.22" r="3" fill="#2a78d6"/>
+<circle cx="388.42" cy="310.1" r="3" fill="#2a78d6"/>
+<circle cx="415.79" cy="309.97" r="3" fill="#2a78d6"/>
+<circle cx="443.16" cy="309.84" r="3" fill="#2a78d6"/>
+<circle cx="470.53" cy="309.74" r="3" fill="#2a78d6"/>
+<circle cx="497.89" cy="309.65" r="3" fill="#2a78d6"/>
+<circle cx="525.26" cy="309.55" r="3" fill="#2a78d6"/>
+<circle cx="552.63" cy="309.48" r="3" fill="#2a78d6"/>
+<circle cx="580" cy="309.41" r="3" fill="#2a78d6"/>
+<rect x="70" y="61" width="12" height="12" fill="#2a78d6"/>
+<text x="88" y="72" font-size="12" fill="#0b0b0b">play until the Bayes factor reaches 20: 0.028 at 100 games</text>
+</svg>

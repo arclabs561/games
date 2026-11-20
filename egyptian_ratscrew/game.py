@@ -13,6 +13,7 @@ from collections import deque
 from collections.abc import Sequence
 from fractions import Fraction
 from functools import cache
+from itertools import permutations
 from math import comb
 from typing import NamedTuple
 
@@ -75,6 +76,25 @@ def first_challenge(royal: str) -> Fraction:
     """`challenger_keeps` at the start of a game: only the challenging royal has been seen."""
     royals = tuple(4 - (r == royal) for r in ROYALS)
     return challenger_keeps(CHANCES[royal], royals, 36)
+
+
+def challenger_keeps_by_orders(chances: int, cards: Sequence[Card]) -> Fraction:
+    """`challenger_keeps` by brute force: play the challenge out on every distinct order of
+    the unseen `cards`, which are equally likely, and count the orders in which the player
+    who laid the last royal takes the pile. Feasible only for a handful of cards."""
+    orders = set(permutations(cards))
+    keeps = 0
+    for order in orders:
+        owed, challenger = chances, 0
+        for card in order:
+            if card in CHANCES:
+                challenger, owed = 1 - challenger, CHANCES[card]
+            else:
+                owed -= 1
+                if owed == 0:
+                    break
+        keeps += challenger == 0
+    return Fraction(keeps, len(orders))
 
 
 assert answer_chance(1) == Fraction(15, 51)

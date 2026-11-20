@@ -35,6 +35,7 @@ execute:
 
 # Rebuild the Typst PDFs; CI fails if they differ from the committed ones.
 papers:
+    uv run tools/typst_vendor.py cannonballs/cannonballs.typ --all
     uv run tools/typst_vendor.py erase/paper/erase.typ --all
     uv run tools/typst_vendor.py peggle/peggle.typ
     uv run tools/typst_vendor.py tenzi/tenzi.typ

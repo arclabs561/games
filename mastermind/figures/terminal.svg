@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="330" viewBox="0 0 640 330" role="img" font-family="Helvetica, Arial, sans-serif">
+<title>A terminal screen of 18 five-letter words, and the helper&#x27;s guesses</title>
+<desc>A dark terminal panel lists 18 words in two columns. The log on the right shows the helper&#x27;s guesses PLANT, QUEEN and RIVER with likeness 0, 1 and 2, after which one candidate, WATER, is left: the password, entered with the fourth and last attempt.</desc>
+<rect width="640" height="330" fill="#ffffff"/>
+<rect x="10" y="10" width="620" height="310" rx="10" fill="#0f2418"/>
+<text x="30" y="42" font-size="15" fill="#7ee2a8" font-family="Menlo, Consolas, &#x27;DejaVu Sans Mono&#x27;, monospace">PASSWORD REQUIRED</text>
+<text x="30" y="64" font-size="15" fill="#7ee2a8" font-family="Menlo, Consolas, &#x27;DejaVu Sans Mono&#x27;, monospace">4 ATTEMPTS</text>
+<text x="30" y="100" font-size="15" fill="#7ee2a8" font-family="Menlo, Consolas, &#x27;DejaVu Sans Mono&#x27;, monospace">0xF4A0  BRAIN</text>
+<text x="30" y="123" font-size="15" fill="#7ee2a8" font-family="Menlo, Consolas, &#x27;DejaVu Sans Mono&#x27;, monospace">0xF4AC  CHAIR</text>
+<text x="30" y="146" font-size="15" fill="#7ee2a8" font-family="Menlo, Consolas, &#x27;DejaVu Sans Mono&#x27;, monospace">0xF4B8  DRINK</text>
+<text x="30" y="169" font-size="15" fill="#7ee2a8" font-family="Menlo, Consolas, &#x27;DejaVu Sans Mono&#x27;, monospace">0xF4C4  FLAME</text>
+<text x="30" y="192" font-size="15" fill="#7ee2a8" font-family="Menlo, Consolas, &#x27;DejaVu Sans Mono&#x27;, monospace">0xF4D0  GHOST</text>
+<text x="30" y="215" font-size="15" fill="#7ee2a8" font-family="Menlo, Consolas, &#x27;DejaVu Sans Mono&#x27;, monospace">0xF4DC  HEART</text>
+<text x="30" y="238" font-size="15" fill="#7ee2a8" font-family="Menlo, Consolas, &#x27;DejaVu Sans Mono&#x27;, monospace">0xF4E8  KNIFE</text>
+<text x="30" y="261" font-size="15" fill="#7ee2a8" font-family="Menlo, Consolas, &#x27;DejaVu Sans Mono&#x27;, monospace">0xF4F4  LIGHT</text>
+<text x="30" y="284" font-size="15" fill="#7ee2a8" font-family="Menlo, Consolas, &#x27;DejaVu Sans Mono&#x27;, monospace">0xF500  MONEY</text>
+<text x="170" y="100" font-size="15" fill="#7ee2a8" font-family="Menlo, Consolas, &#x27;DejaVu Sans Mono&#x27;, monospace">0xF50C  NIGHT</text>
+<text x="170" y="123" font-size="15" fill="#5fae80" font-family="Menlo, Consolas, &#x27;DejaVu Sans Mono&#x27;, monospace">0xF518  PLANT</text>
+<text x="170" y="146" font-size="15" fill="#5fae80" font-family="Menlo, Consolas, &#x27;DejaVu Sans Mono&#x27;, monospace">0xF524  QUEEN</text>
+<text x="170" y="169" font-size="15" fill="#5fae80" font-family="Menlo, Consolas, &#x27;DejaVu Sans Mono&#x27;, monospace">0xF530  RIVER</text>
+<text x="170" y="192" font-size="15" fill="#7ee2a8" font-family="Menlo, Consolas, &#x27;DejaVu Sans Mono&#x27;, monospace">0xF53C  SHEEP</text>
+<text x="170" y="215" font-size="15" fill="#7ee2a8" font-family="Menlo, Consolas, &#x27;DejaVu Sans Mono&#x27;, monospace">0xF548  STONE</text>
+<text x="170" y="238" font-size="15" fill="#7ee2a8" font-family="Menlo, Consolas, &#x27;DejaVu Sans Mono&#x27;, monospace">0xF554  TRAIN</text>
+<text x="170" y="261" font-size="15" fill="#7ee2a8" font-family="Menlo, Consolas, &#x27;DejaVu Sans Mono&#x27;, monospace">0xF560  WATER</text>
+<text x="170" y="284" font-size="15" fill="#7ee2a8" font-family="Menlo, Consolas, &#x27;DejaVu Sans Mono&#x27;, monospace">0xF56C  YOUTH</text>
+<text x="340" y="100" font-size="15" fill="#7ee2a8" font-family="Menlo, Consolas, &#x27;DejaVu Sans Mono&#x27;, monospace">&gt;PLANT</text>
+<text x="410" y="100" font-size="13" fill="#5fae80" font-family="Menlo, Consolas, &#x27;DejaVu Sans Mono&#x27;, monospace">(18 candidates)</text>
+<text x="340" y="123" font-size="15" fill="#7ee2a8" font-family="Menlo, Consolas, &#x27;DejaVu Sans Mono&#x27;, monospace">&gt;Likeness=0</text>
+<text x="340" y="152" font-size="15" fill="#7ee2a8" font-family="Menlo, Consolas, &#x27;DejaVu Sans Mono&#x27;, monospace">&gt;QUEEN</text>
+<text x="410" y="152" font-size="13" fill="#5fae80" font-family="Menlo, Consolas, &#x27;DejaVu Sans Mono&#x27;, monospace">(7 candidates)</text>
+<text x="340" y="175" font-size="15" fill="#7ee2a8" font-family="Menlo, Consolas, &#x27;DejaVu Sans Mono&#x27;, monospace">&gt;Likeness=1</text>
+<text x="340" y="204" font-size="15" fill="#7ee2a8" font-family="Menlo, Consolas, &#x27;DejaVu Sans Mono&#x27;, monospace">&gt;RIVER</text>
+<text x="410" y="204" font-size="13" fill="#5fae80" font-family="Menlo, Consolas, &#x27;DejaVu Sans Mono&#x27;, monospace">(3 candidates)</text>
+<text x="340" y="227" font-size="15" fill="#7ee2a8" font-family="Menlo, Consolas, &#x27;DejaVu Sans Mono&#x27;, monospace">&gt;Likeness=2</text>
+<text x="340" y="256" font-size="15" fill="#7ee2a8" font-family="Menlo, Consolas, &#x27;DejaVu Sans Mono&#x27;, monospace">&gt;WATER</text>
+<text x="410" y="256" font-size="13" fill="#5fae80" font-family="Menlo, Consolas, &#x27;DejaVu Sans Mono&#x27;, monospace">(1 candidate)</text>
+<text x="340" y="279" font-size="15" fill="#7ee2a8" font-family="Menlo, Consolas, &#x27;DejaVu Sans Mono&#x27;, monospace" font-weight="bold">&gt;Exact match</text>
+</svg>
