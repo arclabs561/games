@@ -53,7 +53,7 @@ def _run(*args: str) -> str:
     return subprocess.run([str(binary()), *args], capture_output=True, text=True, check=True).stdout
 
 
-def c_bounds(words: Path, rows: int, cols: int, cells: list[str]) -> tuple[int, int]:
+def c_bounds(words: Path, rows: int, cols: int, cells: Sequence[str]) -> tuple[int, int]:
     """The max and union bounds of a class, each cell given as a string of its letters."""
     mx, un = map(int, _run("bound", str(words), str(rows), str(cols), *cells).split())
     return mx, un
@@ -128,6 +128,7 @@ def summary(paths: list[Path]) -> dict:
             found, counts = parse(p.read_text())
             boards |= {canonical(b, 3, 3): s for b, s in found.items()}
             for k, v in counts.items():
+                k = {"boards": "boards scored", "found": "boards found, with repeats"}.get(k, k)
                 totals[k] = totals.get(k, 0) + v
         top = sorted(boards.items(), key=lambda kv: (-kv[1], kv[0]))
         for b, s in top:

@@ -6,6 +6,14 @@
   "classes": 34960,
   "nodes": 50977668,
   "pruned": 41640825,
+  "boards scored": 643232,
+  "boards found, with repeats": 56,
+  "boards found": 42,
+  "best": {
+   "board": "deslatper",
+   "points": 545,
+   "words": 267
+  },
   "boards": [
    {
     "board": "deslatper",
@@ -175,20 +183,21 @@
     "board": "detraspel",
     "points": 500
    }
-  ],
-  "found": 56,
-  "boards found": 42,
-  "best": {
-   "board": "deslatper",
-   "points": 545,
-   "words": 267
-  }
+  ]
  },
  "enable2k": {
   "slices": 20,
   "classes": 34960,
   "nodes": 51469589,
   "pruned": 42035267,
+  "boards scored": 655842,
+  "boards found, with repeats": 56,
+  "boards found": 42,
+  "best": {
+   "board": "deslatper",
+   "points": 545,
+   "words": 267
+  },
   "boards": [
    {
     "board": "deslatper",
@@ -358,13 +367,6 @@
     "board": "detraspel",
     "points": 500
    }
-  ],
-  "found": 56,
-  "boards found": 42,
-  "best": {
-   "board": "deslatper",
-   "points": 545,
-   "words": 267
-  }
+  ]
  }
 }

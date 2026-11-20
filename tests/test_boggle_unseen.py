@@ -14,6 +14,14 @@ import pytest
 from boggle import anneal, chance, unseen
 from boggle.board import CUBES, load_words, possible, word_faces
 
+
+def faces_of(word: str) -> list[str]:
+    """The faces of a word that the cubes can spell."""
+    faces = word_faces(word)
+    assert faces is not None, word
+    return faces
+
+
 HERE = Path(__file__).parent.parent / "boggle"
 needs_cc = pytest.mark.skipif(anneal.compiler_missing(), reason="bound.c needs a C compiler")
 
@@ -71,22 +79,22 @@ def test_placements_match_a_sum_over_every_choice_of_cubes():
         ("quote", CUBES[:6] + CUBES[12:15]),
         ("settee", CUBES[8:14]),
     ):
-        faces = word_faces(word)
+        faces = faces_of(word)
         brute = sum(
             prod(cubes[c].count(f) for c, f in zip(choice, faces, strict=True))
             for choice in permutations(range(len(cubes)), len(faces))
         )
         assert chance.placements(faces, cubes) == brute, word
-    assert chance.placements(word_faces("toe")) == 592
+    assert chance.placements(faces_of("toe")) == 592
 
 
 @needs_cc
 def test_c_placements_agree_with_the_exact_count():
     words = sorted(w for w in load_words(HERE / "enable1.txt") if len(w) >= 3 and possible(w))
     sample = random.Random(3).sample(words, 300) + ["replastering", "quinquennia"]
-    fast = chance.c_placements([word_faces(w) for w in sample])
+    fast = chance.c_placements([faces_of(w) for w in sample])
     for w, x in zip(sample, fast, strict=True):
-        exact = chance.placements(word_faces(w))
+        exact = chance.placements(faces_of(w))
         assert x == pytest.approx(int(exact), rel=1e-12), w
 
 

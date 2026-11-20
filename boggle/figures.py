@@ -164,6 +164,9 @@ FIGURES = {
         parse_board("ligdrmanesietildsracsepes"), ["interspecies"],
         "Best 5 by 5 board found: 10,397 points (enable1.txt)"
     ),
+    "best-3x3.svg": lambda: draw_board(
+        parse_board("streaedlp"), ["replated"], "Best 3 by 3 board: 545 points"
+    ),
     "unseen.svg": unseen_figure,
     "word-chances.svg": chances_figure,
 }  # fmt: skip

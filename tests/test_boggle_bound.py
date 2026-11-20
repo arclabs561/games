@@ -72,4 +72,8 @@ def test_committed_summary_is_what_the_script_writes():
     for name in ("enable1", "enable2k"):
         assert committed[name]["slices"] == 20
         assert committed[name]["best"]["board"] == bound.canonical("streaedlp", 3, 3)
-    assert committed["enable2k"]["boards found"] == 57  # as hybrid-boggle's README reports
+    # Boards that hybrid-boggle's README prints from its own 3 by 3 search, with their scores.
+    found = {b["board"]: b["points"] for b in committed["enable2k"]["boards"]}
+    for letters, score in (("legsartes", 527), ("lepsartes", 536), ("pecsartes", 500)):
+        assert found[bound.canonical(letters, 3, 3)] == score
+    assert committed["enable1"]["boards found"] == committed["enable2k"]["boards found"] == 42
