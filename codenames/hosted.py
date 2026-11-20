@@ -315,15 +315,18 @@ class Hosted:
     def __call__(self, prompt: str) -> str:
         return self.call(prompt)["reply"]
 
-    def call(self, prompt: str, tag: dict | None = None) -> dict:
-        """Send one prompt; return the logged record (reply, usage, cost, errors)."""
+    def call(self, prompt: str, tag: dict | None = None, history: list | None = None) -> dict:
+        """Send one prompt; return the logged record (reply, usage, cost, errors). With
+        history, a list of earlier chat messages, the prompt is the next user message."""
         model_id, extra = pinned(self.model)
+        messages = [*(history or []), {"role": "user", "content": prompt}]
         record: dict = {
             "model": self.model.repo,
             "provider": self.model.provider,
             "pinned": model_id,
             "params": {**self.params, "extra_body": extra},
             "prompt": prompt,
+            **({"history": history} if history else {}),
             "tag": tag or {},
             "errors": [],
         }
@@ -335,7 +338,7 @@ class Hosted:
                 start = time.perf_counter()
                 try:
                     out = self.connect().chat_completion(
-                        messages=[{"role": "user", "content": prompt}],
+                        messages=messages,
                         model=model_id,
                         extra_body=extra,
                         **self.params,
