@@ -44,7 +44,7 @@ RULES: list[tuple[str, re.Pattern[str]]] = [
         "blocked on compute",
         re.compile(
             r"disk-backed|larger budgets|more steps|\b16 GB\b|hours an arm|"
-            r"was started and cancelled|not enough to decide",
+            r"was started and cancelled|not enough to decide|more training",
             re.IGNORECASE,
         ),
     ),
