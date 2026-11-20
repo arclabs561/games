@@ -38,11 +38,11 @@ FAQ_ZERO_CELLS = [
 FAQ_FOUR_BELOW_1000 = [169, 178, 285, 454, 575, 598, 617, 657, 775, 829, 988]
 # Published counts of lost deals among the first 32,000, by free cells, and their sources.
 PUBLISHED_LOST = {
-    4: (1, "Ring's project (1995), confirmed by Ettlinger with FreeCell Pro (FAQ)"),
-    3: (199, "Ettlinger with FreeCell Pro (FAQ)"),
-    2: (6619, "Fish, fc-solve report of 2012-09-02"),
-    1: (25711, "at least 6,289 won (FAQ), so at most 25,711 lost"),
-    0: (31931, "69 won with zero free cells (FAQ)"),
+    4: (1, "FreeCell FAQ (Keller): every deal but 11982 solved"),
+    3: (199, "FreeCell FAQ (Keller)"),
+    2: (6619, "Fish, fc-solve blog, 2 September 2012"),
+    1: (25711, "FreeCell FAQ: at least 6,289 won, so at most 25,711 lost"),
+    0: (31931, "FreeCell FAQ: 69 won with zero free cells"),
 }
 
 
@@ -55,26 +55,35 @@ def published_least() -> dict[int, int]:
     return out
 
 
-def load(folder: Path | None, solver: str) -> list[dict]:
-    """Every record of one solver ('a' or 'b') below `folder`, each deal and level once."""
-    if folder is None:
-        return []
-    out = {}
-    for p in sorted(folder.rglob(f"survey-{solver}-*.jsonl")):
-        for x in p.open():
-            r = json.loads(x)
-            out[r["deal"], r["cells"]] = r
+def load(folders: list[Path] | None, solver: str) -> list[dict]:
+    """Every record of one solver ('a' or 'b') below the folders, each deal and level once.
+
+    A later run of the same deal and level replaces an earlier one only if the earlier one
+    was left undecided. Runs of a single level (`--levels`) are left out."""
+    out: dict[tuple[int, int], dict] = {}
+    for folder in folders or []:
+        for p in sorted(folder.rglob(f"survey-{solver}-*.jsonl")):
+            if "-cells" in p.name:
+                continue
+            for x in p.open():
+                r = json.loads(x)
+                k = r["deal"], r["cells"]
+                if k not in out or out[k]["verdict"] == "unknown":
+                    out[k] = r
     return [out[k] for k in sorted(out)]
 
 
 def least(records: list[dict]) -> dict[int, int | None]:
-    """Least winning number of free cells per deal (None if a level was left open)."""
+    """Least winning number of free cells per deal: 5 for a deal lost with 0 to 4, None if
+    a level was left open before a win."""
     out: dict[int, int | None] = {}
     for r in sorted(records, key=lambda r: (r["deal"], r["cells"])):
         if r["verdict"] == "won":
             out.setdefault(r["deal"], r["cells"])
         elif r["verdict"] == "unknown":
             out.setdefault(r["deal"], None)
+        elif r["cells"] == 4:
+            out.setdefault(r["deal"], 5)
     return out
 
 
@@ -122,8 +131,8 @@ def certificates(records: list[dict], least_cells: dict) -> dict:
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--a", type=Path, help="folder of Solver A runs")
-    ap.add_argument("--b", type=Path, help="folder of Solver B runs")
+    ap.add_argument("--a", type=Path, nargs="+", help="folders of Solver A runs")
+    ap.add_argument("--b", type=Path, nargs="+", help="folders of Solver B runs")
     ap.add_argument("--out", type=Path, default=HERE / "results")
     args = ap.parse_args()
     pub = published_least()

@@ -113,6 +113,10 @@ def test_solver_b_on_11982_and_deal_1():
     assert (lost.verdict, lost.states, lost.most_home) == ("lost", 83239, 2)
     assert {name(c) for c in lost.frozen} == FROZEN_11982
     assert won.verdict == "won" and replay(Rules(), ms_deal(1), won.line)
+    # With its own autoplay, Solver B reaches exactly Solver A's 61,643 positions.
+    auto, won = native.run([native.ms_problem(11982, 4), native.ms_problem(1, 4)], autoplay=True)
+    assert (auto.verdict, auto.states, auto.frozen) == ("lost", 61643, lost.frozen)
+    assert won.verdict == "won" and replay(Rules(), ms_deal(1), won.line)
 
 
 # Small games: (ranks, suits, columns, cells). Every 7th deal of each.
@@ -148,9 +152,10 @@ def test_solvers_agree_with_brute_force_on_small_decks(game):
 
 
 def test_blocked_at_the_start_matches_the_faq():
-    # Jones (FreeCell FAQ): with zero free cells the first blocked deals are 1, 23, 25, 28, 46, 51.
-    blocked = [d for d in range(1, 52) if blocked_at_start(ms_deal(d), 0)]
-    assert blocked == [1, 23, 25, 28, 46, 51]
+    # FreeCell FAQ: with zero free cells, 1,325 of the first 32,000 deals are blocked at the
+    # start, and the first few are 1, 23, 25, 28, 46 and 51.
+    blocked = [d for d in range(1, 32001) if blocked_at_start(ms_deal(d), 0)]
+    assert len(blocked) == 1325 and blocked[:6] == [1, 23, 25, 28, 46, 51]
     assert not blocked_at_start(ms_deal(1), 1)
 
 
