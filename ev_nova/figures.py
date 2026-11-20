@@ -256,7 +256,131 @@ def naev_landing() -> str:
     return svg.render()
 
 
-FIGURES = {"evnova_routes": evnova_routes, "naev_landing": naev_landing}
+# Naev's map, from the positions in its XML files
+
+MAP_SCALE = 0.25  # pixels per unit of Naev's map coordinates
+MAP_LABELS = ("Iris", "Holly", "Tau Ceti")  # the three systems with the highest betweenness
+
+
+def naev_links(data: dict, hidden: bool) -> list[tuple[str, str]]:
+    """Each link between two systems once, sorted: usable both ways, or with `hidden` only those
+    hidden one way or both."""
+    systems = data["systems"]
+    out = set()
+    for a, s in systems.items():
+        for b, flags in s["jumps"].items():
+            if b not in systems:
+                continue
+            back = systems[b]["jumps"].get(a)
+            if "exitonly" in flags or back is None or "exitonly" in back:
+                continue
+            is_hidden = "hidden" in flags or "hidden" in back
+            if is_hidden == hidden:
+                out.add((min(a, b), max(a, b)))
+    return sorted(out)
+
+
+def shortest_paths(data: dict, a: str, b: str) -> list[list[str]]:
+    """Every shortest path from system a to system b on links that are not hidden."""
+    nbrs: dict[str, list[str]] = {}
+    for x, y in naev_links(data, hidden=False):
+        nbrs.setdefault(x, []).append(y)
+        nbrs.setdefault(y, []).append(x)
+    dist = {a: 0}
+    frontier = [a]
+    while frontier and b not in dist:
+        nxt = []
+        for x in frontier:
+            for y in sorted(nbrs.get(x, [])):
+                if y not in dist:
+                    dist[y] = dist[x] + 1
+                    nxt.append(y)
+        frontier = nxt
+
+    def back(x: str) -> list[list[str]]:
+        if x == a:
+            return [[a]]
+        return [
+            path + [x] for y in sorted(nbrs[x]) if dist.get(y) == dist[x] - 1 for path in back(y)
+        ]
+
+    return back(b)
+
+
+def naev_map() -> str:
+    data = naev.load()
+    systems = data["systems"]
+    xs = [s["pos"][0] for s in systems.values()]
+    ys = [s["pos"][1] for s in systems.values()]
+    pad, top = 20, 50
+    x0, y1 = min(xs), max(ys)
+
+    def px(name: str) -> tuple[float, float]:
+        x, y = systems[name]["pos"]
+        return pad + (x - x0) * MAP_SCALE, top + (y1 - y) * MAP_SCALE  # y up, as Naev draws it
+
+    width = round(2 * pad + (max(xs) - x0) * MAP_SCALE)
+    height = round(top + pad + 40 + (y1 - min(ys)) * MAP_SCALE)
+    svg = Svg(
+        width,
+        height,
+        "Naev's map from its data files, with the three routes that are best for some landing cost",
+        f"All {len(systems)} systems of Naev at their positions in the game's data, joined by "
+        "their jumps; hidden jumps are dashed. Three routes are drawn thick: Dvaer Prime and "
+        "Eist Shipyard, both in Dvaer; Burnan in Scarlet and Lora-Mor in Druss, one jump "
+        "apart; and Modus in Modus Manis and Tankard Cloister in An'ku, two jumps apart by "
+        "either of two paths.",
+    )
+    for hidden, color, dash in ((True, "#c9c8c4", "3 3"), (False, "#b5b4b0", "")):
+        for a, b in naev_links(data, hidden):
+            (xa, ya), (xb, yb) = px(a), px(b)
+            attrs = {"stroke_dasharray": dash} if dash else {}
+            svg.add("line", x1=xa, y1=ya, x2=xb, y2=yb, stroke=color, stroke_width=0.8, **attrs)
+    traders = {s["system"] for s in data["spobs"].values()}
+    for name in sorted(systems):
+        x, y = px(name)
+        fill = INK if name in traders else "#9a9995"
+        svg.add("circle", cx=x, cy=y, r=2.2 if name in traders else 1.6, fill=fill)
+    colors = ["#2a78d6", "#d95926", "#1baf7a"]
+    labels: dict[str, str] = {}
+    for k, (_, route) in enumerate(NAEV_ENVELOPE):
+        where = [data["spobs"][stop]["system"] for stop in route]
+        for i, a in enumerate(where):
+            b = where[(i + 1) % len(where)]
+            if a == b:
+                continue
+            for path in shortest_paths(data, a, b):
+                for u, v in zip(path, path[1:], strict=False):
+                    (xa, ya), (xb, yb) = px(u), px(v)
+                    svg.add("line", x1=xa, y1=ya, x2=xb, y2=yb, stroke=colors[k], stroke_width=4)
+        for a in where:
+            x, y = px(a)
+            svg.add("circle", cx=x, cy=y, r=5, fill=colors[k])
+            labels[a] = colors[k]
+    for name in MAP_LABELS:
+        labels.setdefault(name, MUTED)
+        x, y = px(name)
+        svg.add("circle", cx=x, cy=y, r=4, fill="none", stroke=MUTED, stroke_width=1.5)
+    for name, color in sorted(labels.items()):
+        x, y = px(name)
+        svg.text(x + 7, y - 6, name, 12, fill=color, font_weight="bold")
+    x = pad
+    for k, (_, route) in enumerate(NAEV_ENVELOPE):
+        svg.add("rect", x=x, y=14, width=12, height=12, fill=colors[k])
+        svg.text(x + 17, 25, " and ".join(route), 12)
+        x += 230
+    svg.text(
+        pad,
+        height - 14,
+        "Dark dots: systems with a trading stop. Circled: the three systems with the highest "
+        "betweenness. Dashed: hidden jumps.",
+        11,
+        fill=MUTED,
+    )
+    return svg.render()
+
+
+FIGURES = {"evnova_routes": evnova_routes, "naev_landing": naev_landing, "naev_map": naev_map}
 
 
 def main() -> None:

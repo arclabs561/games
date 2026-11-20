@@ -29,6 +29,8 @@ Exact unless marked. Percentages are rounded; the exact fractions are in [`resul
 | 12 starters as 4 names × 3 copies or 12 × 1: two different starters, going first | 41.52% or 47.72% | exact |
 | 3 draw-2 cards in place of other cards, example deck, going first | a starter 89.01%, worth 1.56 starters | exact under the model below; simulated, 200,000 decks, seed 1 |
 | 3 look-at-6 cards in place of other cards | a starter 91.50%, worth 2.78 starters | as above |
+| Pot of Prosperity, the one copy allowed, revealing 6 / 3, example deck, going first | a starter 87.57% / 87.01%, worth 0.94 / 0.73 starters | exact; checked against every order of small decks |
+| Pot of Prosperity with 3 draw-2 cards, against the generic model that plays both | a starter 90.90% against 91.15%; a starter and an extender 73.18% against 73.98% | exact; simulated, 200,000 decks, seed 1, each within its 95% interval |
 | c draw-1 cards added to a deck of N | the same hands as the N cards without them | proved below, and checked exactly |
 | Public calculators | three agree with every value in their tables; one disagrees in 10 of 13 | exact values against values read on 2026-11-19 |
 
@@ -105,6 +107,33 @@ Real cards of these kinds have costs and limits that are left out, so these numb
 
 **Draw-1 cards cancel exactly.** Add c draw-1 cards to a deck of N. Play every one as soon as it is drawn. Then the final hand is the first n cards in the shuffled deck that are not draw-1 cards. In a uniformly shuffled deck, those N cards are in uniformly random order. So the hand is a uniform draw of n from the N, the same as from the deck without the draw-1 cards. The tests check this exactly for several decks. Draw-2 cards added to the deck do better than that: three of them as cards 41 to 43 raise the example deck from 85.06% to 86.35%.
 
+## One real card: Pot of Prosperity
+
+The generic looker above is an upper bound. One real card of that kind, Pot of Prosperity, gives 87.57% for a starter going first in the example deck, 2.51 points above the deck without it and 3.93 points below the three generic lookers. Most of that gap is the card's limit of one copy. Its other costs take less: revealing 3 cards instead of 6 costs 0.56 points, and the rule against drawing costs 0.25 points in a deck that also holds three draw-2 cards. All exact ([`results/prosperity.md`](results/prosperity.md)).
+
+The card's text, as Yugipedia gives it from Konami's card database (entry 15756), read 2026-11-20, paraphrased:
+
+- **Cost.** Banish 3 or 6 cards of the player's choice from the Extra Deck, face-down.
+- **Effect.** Reveal that many cards from the top of the deck, add 1 of them to the hand, and put the rest on the bottom.
+- **Limits.** Only 1 can be activated per turn, and the player cannot draw cards by card effects in the turn it is activated. It is Limited, so a deck holds one copy.
+
+`prosperity.py` keeps each of these:
+
+- Revealing 6 costs 6 of the 15 Extra Deck cards for the rest of the duel, so both 3 and 6 are computed. Which is better depends on how much the deck needs its Extra Deck, which the model does not see.
+- A hand with the card and a draw-2 card must choose one before seeing the deck. Playing the draw-2 first makes the card unusable, and playing the card first stops the draw. The player takes the choice with the higher chance; the table also gives each fixed choice.
+- The draw-2 card stays generic (draw 2, one per turn, no cost), so that only this card's own rules differ from the model above.
+
+| Example deck, plus | A starter, first | A starter and an extender, first | A starter, second | Worth in starters |
+|---|---:|---:|---:|---:|
+| nothing | 85.06% | 61.01% | 90.18% | 0 |
+| Pot of Prosperity, revealing 6 | 87.57% | 66.25% | 92.17% | 0.94 |
+| Pot of Prosperity, revealing 3 | 87.01% | 64.85% | 91.75% | 0.73 |
+| Pot of Prosperity (6) and 3 draw-2, best choice | 90.90% | 73.18% | 94.65% | 2.47 |
+| the same, always the draw-2 first | 90.52% | 72.39% | 94.29% | 2.27 |
+| one generic look-at-6 and 3 draw-2 (model above) | 91.15% | 73.98% | 94.83% | 2.60 |
+
+Alone, the card gives exactly what one generic looker gives, since nothing in the opening hand conflicts with it. Always playing it before a draw-2 is as good as the best choice for a starter, and 0.05 points short of it for a starter and an extender. The exact sum is checked against a listing of every order of decks of six to eight cards. A seeded simulation of 200,000 decks for each fixed choice (seed 1) puts both exact values inside their 95% intervals: 90.87% to 91.12% around 90.90%, and 90.47% to 90.73% around 90.52%.
+
 ## Public calculators
 
 The values that four public calculators print were read on 2026-11-19 and compared with the exact values ([table](results/tables.md#public-calculators-read-on-2026-11-19)).
@@ -125,12 +154,13 @@ Typical ratios from public deck lists were not collected. The [YGOPRODeck API gu
 |---|---|---|---|
 | Official Rulebook, version 10 (Konami) | deck size, copies, draws | copyrighted; cited only | no |
 | Public calculators above | printed percentages | not stated; quoted as numbers with their source | numbers only |
+| [Yugipedia, Pot of Prosperity](https://yugipedia.com/wiki/Pot_of_Prosperity) | the card's text, from Konami's card database | card text is Konami's copyright | no; paraphrased in `prosperity.py` |
 
-No card names, card text or card images are used. The figures draw blank cards labeled by role.
+No card images are used, and the figures draw blank cards labeled by role. One card name, Pot of Prosperity, is used with its text paraphrased, not quoted, and one other is named in an open question.
 
 ## Open questions
 
-- Real draw cards have costs: banishing cards from the deck or the Extra Deck, or no further draws that turn. Modeling one specific card, cost included, would show how far below these upper bounds it falls.
+- Pot of Prosperity is modeled above with its costs. Some cards banish cards from the deck, such as Pot of Desires (10 face-down). That changes nothing in the opening hand, because the banished cards are random. It matters when a starter searches a card that the banish removes. That needs a model of search targets, which roles do not have.
 - A starter that needs the turn's one Normal Summon competes with another such starter. A need that counts Normal Summons would separate those hands.
 - "Worth in starters" is measured on one need. For "a starter and an extender" a looker could be worth more, since it can take whichever card is missing.
 - Ratios in real tournament decks, if a source with clear terms is found.
@@ -141,6 +171,7 @@ No card names, card text or card images are used. The figures draw blank cards l
 uv run python -m yugioh.calc --starters 12 --extenders 9 --bricks 3   # about 0.1 seconds
 uv run python -m yugioh.tables               # results/tables.md, about 1 second
 uv run python -m yugioh.tables --simulate    # also results/simulation.md, 1 to 2 minutes
+uv run python -m yugioh.prosperity --write   # results/prosperity.md and the simulation, about 5 seconds
 uv run python -m yugioh.figures              # figures/*.svg
 uv run pytest tests/test_yugioh.py           # about 10 seconds
 ```
@@ -185,6 +216,7 @@ a starter and no brick                     57.61%        55.01%
 |---|---|
 | `odds.py` | Decks, roles and needs; the exact sum over hands, the dynamic program over names, brute force and simulation |
 | `draws.py` | Draw-1, draw-2 and look-at-6 cards: exact recursion and separate seeded dealing |
+| `prosperity.py` | Pot of Prosperity with its costs: exact sum, brute force, seeded dealing; writes `results/prosperity.md` |
 | `calc.py` | The calculator |
 | `tables.py` | Writes `results/tables.md` and, with `--simulate`, `results/simulation.md` |
 | `figures.py` | Writes the three SVG figures, without a plotting library |
