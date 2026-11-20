@@ -406,13 +406,13 @@ def usage_shares(ss: Sequence[teams_model.Set]) -> list[float]:
 def spearman_interval(x: Sequence[float], y: Sequence[float]) -> tuple[float, float, float]:
     """Spearman's ρ with a 95% bootstrap interval over Pokémon (BOOTSTRAP resamples)."""
     rng = np.random.default_rng(BOOTSTRAP_SEED)
-    x, y = np.asarray(x, dtype=float), np.asarray(y, dtype=float)
-    rho = float(spearmanr(x, y).statistic)
+    xa, ya = np.asarray(x, dtype=float), np.asarray(y, dtype=float)
+    rho = float(spearmanr(xa, ya).statistic)
     reps = []
     for _ in range(BOOTSTRAP):
-        k = rng.integers(0, len(x), len(x))
-        if np.ptp(x[k]) and np.ptp(y[k]):
-            reps.append(float(spearmanr(x[k], y[k]).statistic))
+        k = rng.integers(0, len(xa), len(xa))
+        if np.ptp(xa[k]) and np.ptp(ya[k]):
+            reps.append(float(spearmanr(xa[k], ya[k]).statistic))
     return (rho, *interval(reps))
 
 
@@ -434,7 +434,7 @@ def run(n: int = POOL) -> dict:
         t0 = time.time()
         levels[level] = {"unit": unit_summary(m, names), "team": team_level(m, ladder, teams)}
         print(f"level {level}: {time.time() - t0:.0f} s")
-    out = {"pool": names, "usage": use, "levels": levels, "matrices": mats, "duels": duels}
+    out: dict = {"pool": names, "usage": use, "levels": levels, "matrices": mats, "duels": duels}
     pool_teams = common_pool(levels, n)
     out["common"] = {"teams": pool_teams, "levels": {}}
     for level, m in mats.items():
@@ -466,6 +466,137 @@ def run(n: int = POOL) -> dict:
             "summary": battles,
         }
     return out
+
+
+LEVEL_NAMES = {"1": "types", "2": "moves", "3": "abilities", "4": "stats", "5": "simulator"}
+
+
+def pct(x) -> str:
+    return f"{float(Fraction(x)):.1%}"
+
+
+def short(team: Sequence[str]) -> str:
+    return ", ".join(team)
+
+
+def note(res: dict) -> str:
+    """``results/teams.md``: every table of the study, written from ``teams.json``."""
+    usage = {
+        p["identifier"]: p
+        for p in json.loads((RESULTS / "usage-pokemon.json").read_text())["pokemon"]
+    }
+    out = ["# Teams of six at five levels of detail", "",
+           "Written by `uv run --group pokemon python -m pokemon.teams` from the models in "
+           "`teams_model.py` and the simulator runs summarized in `teams-duels.json` and "
+           "`teams-battles.json`. Exact unless marked. The README's section on teams explains "
+           "the models.", ""]  # fmt: skip
+    out += ["## The pool and its sets", "",
+            "The 40 most used Pokémon of `gen9ou` (rating 1500, 2025-11 to 2026-10) that can be "
+            "played without an item. Use is the share of teams with the Pokémon (Smogon).", "",
+            "| # | Pokémon | use | ability here | most used ability | moves here |",
+            "|---:|---|---:|---|---|---|"]  # fmt: skip
+    for k, s in enumerate(res["sets"]):
+        u = usage[s["pokemon"]]
+        top = max(u["abilities"], key=u["abilities"].get)
+        out.append(f"| {k + 1} | {s['pokemon']} | {u['usage']:.1%} | {s['ability']} | {top} | "
+                   f"{', '.join(s['moves'])} |")  # fmt: skip
+    sv = res["sets_vs_usage"]
+    out += ["", f"The ability here is the most used one for {sv['same_ability']} of "
+            f"{sv['pokemon']} Pokémon. Of the four moves here, on average "
+            f"{sum(sv['move_overlap']) / len(sv['move_overlap']):.2f} are among the Pokémon's "
+            "four most used moves.", ""]  # fmt: skip
+    out += ["## The Pokémon game at each level", "",
+            "M(p, q) is the share of HP the winner of a one-on-one fight keeps (level 5: the "
+            "mean over the simulated battles). The ranking share is the part of M's squared "
+            "norm that one score per Pokémon explains (Hodge decomposition).", "",
+            "| level | ranking share | top five by ranking score | Pokémon in the equilibrium |",
+            "|---|---:|---|---:|"]  # fmt: skip
+    for lv, r in res["levels"].items():
+        out.append(f"| {lv}: {LEVEL_NAMES[lv]} | {pct(r['unit_gradient_share'])} | "
+                   f"{short(r['unit_ranking'][:5])} | {len(r['unit_equilibrium'])} |")  # fmt: skip
+    keys = sorted(res["levels"])
+    out += ["", "Kendall's τ between the rankings of two levels:", "",
+            "| | " + " | ".join(keys[1:]) + " |", "|---|" + "---:|" * (len(keys) - 1)]  # fmt: skip
+    for a in keys[:-1]:
+        cells = [f"{res['kendall_tau'][f'{a}-{b}']:.2f}" if a < b else "" for b in keys[1:]]
+        out.append(f"| {a} | " + " | ".join(cells) + " |")
+    out += ["", "## The team game at each level", "",
+            "P(T, U) is the mean over U's six of T's best answer, minus the mean over T's six "
+            "of U's best answer. The equilibrium is of the whole game over all "
+            f"{res['levels']['1']['teams_checked']:,} teams, found by double oracle and checked "
+            "exactly against every team. The ladder is "
+            f"{res['field']['teams']:,} teams drawn by use (seed {res['field']['seed']}).", "",
+            "| level | teams in the equilibrium | heaviest team (weight) | best against the ladder (score) | best against random teams (score) |",
+            "|---|---:|---|---|---|"]  # fmt: skip
+    for lv, r in res["levels"].items():
+        t, p = r["team_support"][0]
+        out.append(f"| {lv} | {len(r['team_support'])} | {short(t)} ({pct(p)}) | "
+                   f"{short(r['best_vs_ladder'])} ({float(Fraction(r['best_vs_ladder_score'])):.3f}) | "
+                   f"{short(r['best_vs_random'])} ({float(Fraction(r['best_vs_random_score'])):.3f}) |")  # fmt: skip
+    out += ["", "Chance that each Pokémon is on the equilibrium team (the eight largest):", "",
+            "| level | Pokémon |", "|---|---|"]  # fmt: skip
+    for lv, r in res["levels"].items():
+        top = sorted(r["team_marginals"].items(), key=lambda kv: -Fraction(kv[1]))[:8]
+        out.append(f"| {lv} | " + ", ".join(f"{k} {pct(v)}" for k, v in top) + " |")
+    out += ["", "Solver details: rounds of double oracle, teams in the restricted game, whether "
+            "its equilibrium is unique (exact certificate), and teams tied with the best score "
+            "(0) against the mix.", "",
+            "| level | rounds | restricted teams | restricted equilibrium unique | teams scoring 0 |",
+            "|---|---:|---:|---|---:|"]  # fmt: skip
+    for lv, r in res["levels"].items():
+        out.append(f"| {lv} | {r['team_rounds']} | {r['team_restricted']} | "
+                   f"{'yes' if r['team_restricted_unique'] else 'no'} | {r['team_best_responses']} |")  # fmt: skip
+    c = res["common"]
+    out += ["", "## One tournament across the levels", "",
+            f"{len(c['teams'])} teams: the six most used Pokémon (team 0), each level's "
+            "equilibrium teams and best teams, and random teams (seed "
+            f"{RANDOM_SEED}). Each level plays the same round robin.", "",
+            "| level | ranking share | teams in the equilibrium | τ with full battles |",
+            "|---|---:|---:|---:|"]  # fmt: skip
+    for lv, r in c["levels"].items():
+        tau = res.get("kendall_tau_common", {}).get(lv)
+        out.append(f"| {lv} | {pct(r['gradient_share'])} | {len(r['support'])} | "
+                   f"{'' if tau is None else f'{tau:.2f}'} |")  # fmt: skip
+    if "battles" in c:
+        b = c["battles"]
+        lo, hi = b["gradient_share_interval"]
+        out.append(f"| full battles | {pct(b['gradient_share'])} ({lo:.1%} to {hi:.1%}) | "
+                   f"{len(b['equilibrium'])} | 1 |")  # fmt: skip
+        out += ["", f"Full battles: {b['games']} per pair of teams, seed {b['seed']}, sides "
+                "alternating; payoff wins minus losses over battles. The interval is a 95% "
+                f"bootstrap over battles within each pair ({res['bootstrap']['resamples']} "
+                f"resamples, seed {res['bootstrap']['seed']}). Equilibrium "
+                f"{'unique' if b['unique'] else 'not shown unique'}:", "",
+                "| team | weight | Pokémon |", "|---:|---:|---|"]  # fmt: skip
+        for i, p in sorted(b["equilibrium"].items(), key=lambda kv: -Fraction(kv[1])):
+            out.append(f"| {i} | {pct(p)} | {short(c['teams'][int(i)])} |")
+        lo, hi = b["top_weight_interval"]
+        out += ["", f"The heaviest team's weight over the bootstrap: {lo:.1%} to {hi:.1%}."]
+    out += ["", "## Agreement with use (exploratory)", "",
+            "Spearman's ρ over the 40 Pokémon between use and each level's ranking score, and "
+            "between use and the chance of being on the equilibrium team, with 95% bootstrap "
+            "intervals over Pokémon. The pool is the 40 most used, so this asks about order "
+            "within the top of the ladder.", "",
+            "| level | ρ, ranking score | ρ, equilibrium team |", "|---|---|---|"]  # fmt: skip
+    for lv, r in res["usage_spearman"].items():
+        a, b2 = r["score"], r["team_weight"]
+        out.append(
+            f"| {lv} | {a[0]:.2f} ({a[1]:.2f} to {a[2]:.2f}) | {b2[0]:.2f} ({b2[1]:.2f} to {b2[2]:.2f}) |"
+        )
+    if "duels" in res:
+        d = res["duels"]
+        out += ["", "## Simulator checks", "",
+                f"- One-on-one battles: {d['pairs']} pairs, {d['games']} battles each, seed "
+                f"{d['seed']}. Damage checks: {d['damage_checks'].get('agree', 0):,} hits "
+                f"agree with level 4's rolls, {d['damage_checks'].get('differ', 0)} differ. Stats "
+                f"that differ from Showdown's: {len(d['stat_problems'])}. Choices Showdown "
+                f"refused: {d['choice_errors']}."]  # fmt: skip
+        if "battles" in c:
+            b = c["battles"]
+            out.append(f"- Full battles: damage checks {b['damage_checks'].get('agree', 0):,} agree, "
+                       f"{b['damage_checks'].get('differ', 0)} differ; stats that differ: "
+                       f"{len(b['stat_problems'])}; refused choices: {b['choice_errors']}.")  # fmt: skip
+    return "\n".join(out) + "\n"
 
 
 # Writing the results.
@@ -548,7 +679,7 @@ def jsonable(out: dict, ss: Sequence[teams_model.Set]) -> dict:
                          "support": {str(i): fr(p) for i, p in enumerate(v["equilibrium"]) if p},
                          "score": [fr(x) for x in v["score"]]}
                 for k, v in common["levels"].items()}  # fmt: skip
-    res = {
+    res: dict = {
         "pool": out["pool"],
         "usage": out["usage"],
         "sets": [
@@ -559,7 +690,7 @@ def jsonable(out: dict, ss: Sequence[teams_model.Set]) -> dict:
         "kendall_tau": tau,
         "usage_spearman": {str(k): v for k, v in usage_comparison(out).items()},
         "sets_vs_usage": set_comparison(ss),
-        "common": {"teams": [team(t) for t in common["teams"]], "levels": c_levels},
+        "common": dict[str, object](teams=[team(t) for t in common["teams"]], levels=c_levels),
         "field": {"teams": FIELD_TEAMS, "seed": FIELD_SEED},
         "bootstrap": {"resamples": BOOTSTRAP, "seed": BOOTSTRAP_SEED},
     }
@@ -616,6 +747,7 @@ def main() -> None:
     pool_out.write_text(
         json.dumps({"pool": args.pool, "teams": [list(t) for t in out["common"]["teams"]]}) + "\n"
     )
+    (args.out / "teams.md").write_text(note(res))
     print(json.dumps({k: res["levels"][k]["unit_ranking"][:5] for k in res["levels"]}, indent=1))
 
 

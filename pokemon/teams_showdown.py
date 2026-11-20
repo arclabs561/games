@@ -131,7 +131,9 @@ class Battle:
     def __init__(self, key: str, teams: tuple[Sequence[int], Sequence[int]], n: int):
         self.key, self.n = key, n
         ss = pool_sets(n)
-        self.sets = {side: [ss[i] for i in t] for side, t in zip(("p1", "p2"), teams, strict=True)}
+        self.sets: dict[str, list[tm.Set]] = {
+            side: [ss[i] for i in t] for side, t in zip(("p1", "p2"), teams, strict=True)
+        }
         self.index = {
             side: {nickname(i): i for i in t} for side, t in zip(("p1", "p2"), teams, strict=True)
         }
@@ -234,6 +236,8 @@ class Battle:
 
     def set_hp(self, side: str, cond: str, name: str | None = None) -> None:
         name = name or self.active[side]
+        if name is None:
+            return
         hp = cond.split()[0]
         if hp.endswith("fnt") or hp == "0":
             self.hp[(side, name)] = (0, self.hp.get((side, name), (0, 1))[1])
@@ -300,24 +304,27 @@ class Battle:
                 self.stat_problems.append(s.name)
         foe = self.other(side)
         if req.get("teamPreview"):
-            mine = self.sets[side]
-            m = level4_matrix(self.n)
+            own = self.sets[side]
+            m4 = level4_matrix(self.n)
             ss = pool_sets(self.n)
-            idx = [ss.index(x) for x in mine]
+            idx = [ss.index(x) for x in own]
             opp = [ss.index(x) for x in self.sets[foe]]
-            size = len(mine)
-            lead = max(range(size), key=lambda k: (sum(m[idx[k]][j] for j in opp), -k))
+            size = len(own)
+            lead = max(range(size), key=lambda k: (sum(m4[idx[k]][j] for j in opp), -k))
             order = [lead + 1] + [k + 1 for k in range(size) if k != lead]
             return [f">{side} team {''.join(map(str, order))}"]
         if req.get("forceSwitch"):
             return [f">{side} switch {self.switch_choice(side, req)}"]
         active = req["active"][0]
-        me = self.set_of(side, self.active[side])
+        mine = self.active[side]
+        if mine is None:
+            return [f">{side} default"]
+        me = self.set_of(side, mine)
         opp_name = self.active[foe]
         if opp_name is None:
             return [f">{side} default"]
-        opp = self.set_of(foe, opp_name)
-        fa, fd = pair(me, opp)
+        foe_set = self.set_of(foe, opp_name)
+        fa, fd = pair(me, foe_set)
         hp = self.hp.get((foe, opp_name), (1, 1))
         best, best_d = None, None
         for k, mv in enumerate(active["moves"], start=1):
@@ -370,6 +377,7 @@ def play(jobs: Sequence[tuple[str, Sequence[int], Sequence[int]]], sim: Path, n:
     proc = subprocess.Popen(["node", str(DRIVER), str(sim)], stdin=subprocess.PIPE,
                             stdout=subprocess.PIPE, text=True, bufsize=1)  # fmt: skip
     assert proc.stdin and proc.stdout
+    stdin, stdout = proc.stdin, proc.stdout
     battles: dict[int, Battle] = {}
     results: list[dict] = []
     queue = list(enumerate(jobs))
@@ -380,7 +388,7 @@ def play(jobs: Sequence[tuple[str, Sequence[int], Sequence[int]]], sim: Path, n:
         msg = {"id": k, "start": {"formatid": FORMAT, "seed": seed(key)},
                "p1": [showdown_set(pool_sets(n)[i], i) for i in a],
                "p2": [showdown_set(pool_sets(n)[i], i) for i in b]}  # fmt: skip
-        proc.stdin.write(json.dumps(msg) + "\n")
+        stdin.write(json.dumps(msg) + "\n")
 
     while queue and len(battles) < CONCURRENT:
         start()
