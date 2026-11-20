@@ -124,14 +124,14 @@ def guess_reference(clue, board, vecs):
 def world(seed, n_clues=60, dims=8):
     rng = np.random.default_rng(seed)
     board_pool = [f"b{chr(97 + i // 26)}{chr(97 + i % 26)}" for i in range(40)]
-    clues = [f"c{i:03d}" for i in range(n_clues)] + [
+    clues = [f"clue{i:03d}" for i in range(n_clues)] + [
         "xbaa",
         "ba",
     ]  # illegal when a board holds baa, or any ba-word
     words = board_pool + clues
     vecs = {w: rng.standard_normal(dims) for w in words}
     forms = {c: (c, c[:3]) for c in clues}
-    forms["c000"] = ("baa", "c00")  # its "lemma" is a word that is never on a board
+    forms["clue000"] = ("baa", "clu")  # its "lemma" is a word that is never on a board
     return board_pool, clues, vecs, forms
 
 
@@ -344,12 +344,36 @@ def test_shares_form():
 
 
 def test_strict_codemaster_skips_flagged_clues():
-    pool, clues, vecs, forms = world(2)
+    pool, clues, vecs, forms = world(2, n_clues=300)
     board = bench.framework_deal(pool, 2)
     loose = bench.FrameworkCodemaster("glove", as_vectors(vecs), clues, forms)
-    strict = bench.FrameworkCodemaster("glove", as_vectors(vecs), clues, forms, strict=True)
-    _, illegal_loose = loose.board_tables(board)
-    _, illegal_strict = strict.board_tables(board)
-    assert (illegal_strict >= illegal_loose).all()
-    clue = strict(board).word
-    assert not bench.flagged(clue, board.unrevealed())
+    first = loose(board).word
+    # A copy of the board where one non-team word shares the chosen clue's first five
+    # letters without containing it: the loose rule allows the clue, the strict one not.
+    target = next(i for i, k in enumerate(board.kinds) if k == NEUTRAL)
+    twin = first[:5] + "qq"
+    words = list(board.words)
+    vecs[twin] = vecs[words[target]]
+    words[target] = twin
+    board2 = Board(tuple(words), board.kinds)
+    clues2 = [c for c in clues if c != twin]
+    loose = bench.FrameworkCodemaster("glove", as_vectors(vecs), clues2, forms)
+    strict = bench.FrameworkCodemaster("glove", as_vectors(vecs), clues2, forms, strict=True)
+    assert bench.framework_legal(first, forms[first], [twin]) and bench.shares_form(first, twin)
+    assert bench.flagged(strict(board2).word, board2.unrevealed()) is False
+    _, illegal_loose = loose.board_tables(board2)
+    _, illegal_strict = strict.board_tables(board2)
+    assert (illegal_strict >= illegal_loose).all() and (illegal_strict > illegal_loose).any()
+
+
+def test_committed_results_are_what_the_script_writes():
+    import json
+
+    from codenames import bench_play
+
+    if not bench_play.RUNS_FILE.exists():
+        pytest.skip("no committed runs")
+    runs = json.loads(bench_play.RUNS_FILE.read_text())
+    summary = bench_play.analyze(runs)
+    assert json.loads(bench_play.SUMMARY_FILE.read_text()) == json.loads(json.dumps(summary))
+    assert bench_play.REPORT_FILE.read_text() == bench_play.report(summary)
