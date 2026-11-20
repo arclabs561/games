@@ -166,9 +166,9 @@ def distribution() -> str:
         left + width + 20,
         top + height + 60,
         "How many solutions a set of seven distinct nuts has",
-        "A bar chart on a log scale of the 59,487,568,920 sets of seven distinct nuts by their "
-        "number of solutions, from exact_counts.csv: 93.195% have none, 5.346% have one, and no "
-        "set has more than 20.",
+        "Dots on a log scale for the 59,487,568,920 sets of seven distinct nuts by their "
+        "number of solutions, from exact_counts.csv: 93.195% have none, 5.346% have one, 1.459% "
+        "have two or more, no set has 17 to 19, and no set has more than 20.",
     )
     for p in range(lo, hi + 1):
         y = sy(10**p)
@@ -176,23 +176,33 @@ def distribution() -> str:
         svg.text(
             left - 8, y + 4, "10" + str(p).translate(SUPERSCRIPT), 11, fill=MUTED, text_anchor="end"
         )
+    # dots, not bars: on a log axis a bar's length means nothing; a count of 0 cannot be drawn,
+    # so it is written in as "0"
     for k in range(21):
         x = left + k * bw
-        if k in counts:
-            y = sy(counts[k])
+        if counts.get(k):
             svg.add(
-                "rect",
-                x=x + 2,
-                y=y,
-                width=bw - 4,
-                height=top + height - y,
+                "circle",
+                cx=x + bw / 2,
+                cy=sy(counts[k]),
+                r=5,
                 fill="#2a78d6" if k != 1 else "#d95926",
             )
+        else:
+            svg.text(x + bw / 2, top + height - 6, "0", 11, fill=MUTED, text_anchor="middle")
         if k % 2 == 0 or k == 1:
             svg.text(x + bw / 2, top + height + 16, str(k), 11, fill=MUTED, text_anchor="middle")
     for k in (0, 1, 2):
         share = f"{100 * counts[k] / total:.3f}%"
-        svg.text(left + (k + 1) * bw, sy(counts[k]) + 12, share, 11)
+        svg.text(left + (k + 1) * bw - 4, sy(counts[k]) + 4, share, 11)
+    more = sum(n for k, n in counts.items() if k >= 2)
+    svg.text(
+        left + 6 * bw,
+        sy(counts[1]) - 14,
+        f"one solution: {100 * counts[1] / total:.3f}%; two or more, all together: "
+        f"{100 * more / total:.3f}%",
+        12,
+    )
     svg.text(left + width / 2, top + height + 36, "solutions", 12, fill=MUTED, text_anchor="middle")
     svg.text(10, 16, "sets of seven nuts (log scale)", 12, fill=MUTED)
     svg.text(

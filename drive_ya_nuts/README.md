@@ -1,6 +1,6 @@
 # Drive Ya Nuts
 
-Do the seven nuts fit together in only one way, and was the designer lucky to get a set like that? The original nuts have exactly one solution. Of all 59,487,568,920 sets of seven distinct nuts, 6.805% can be solved, and 78.56% of those have exactly one solution, so a single solution is the usual case once a set can be solved at all. Up to renaming the numbers there are 82,628,379 different sets. If a nut may appear twice, 6,901,100 classes can be solved, as a comment on Mathematics Stack Exchange reports. Every count is exact, by counting every arrangement and by Burnside's lemma, and checked against brute force.
+Do the seven nuts fit together in only one way, and how rare is a set like that? The original nuts have exactly one solution. Of all 59,487,568,920 sets of seven distinct nuts, 5.346% (about 1 in 18.7) have exactly one solution. Most of that rarity is solvability: 6.805% of sets can be solved, and 78.56% of those have exactly one solution. Up to renaming the numbers there are 82,628,379 different sets. If a nut may be repeated, 6,901,100 classes can be solved, as a comment on Mathematics Stack Exchange reports. Every count is exact, by counting every arrangement and by Burnside's lemma. The method is checked against brute force on nuts of four and five sides, and set by set on 3,000 sampled sets of six-sided nuts.
 
 ![Seven hexagons, one in the center and six around it, each with the numbers 1 to 6 on its sides; every pair of touching sides shows the same number, drawn in the same color.](figures/puzzle.svg)
 
@@ -8,10 +8,11 @@ Do the seven nuts fit together in only one way, and was the designer lucky to ge
 
 ## Rules as modeled
 
-- A **nut** is a hexagon with the numbers 1 to 6 on its sides, one each, in some order. Two nuts are the same if one is a rotation of the other, so there are 120 distinct nuts.
+- A **nut** is a hexagon with the numbers 1 to 6 on its sides, one each, in some order. Two nuts are the same if one is a rotation of the other, so there are 120 distinct nuts. A nut cannot be turned over.
 - A **solution** places one nut in the middle and six around it so that every pair of touching sides shows the same number. Solutions that differ by turning the whole puzzle are counted once.
 - A **set** is seven distinct nuts. Sets in which a nut appears twice are not counted. The original nuts come from the Cube Lovers post by Stan Isaacs (see Sources).
 - Two sets are **equivalent** when renaming the numbers 1 to 6 turns one into the other. Equivalent sets have the same number of solutions. A **class** is a group of equivalent sets.
+- **By hand.** Once the center nut is chosen, each outer nut must show the center's number on the side it shares, so its turn is forced. A person therefore tries at most 7 centers times 6! orders of the outer nuts, 5,040 placements, or 840 up to turning the whole puzzle.
 
 ## Results
 
@@ -34,6 +35,8 @@ All results are exact.
 ## How the results are checked
 
 - **Smaller nuts.** The construction of `exact.py` works for nuts with n sides. For four and five sides, the tests compare it with a direct count of every ring around every center, with no renaming, and with brute force on each set (all 6 sets for four sides, 300 random sets of the 134,596 for five sides).
+The checks use the terms of the method, below: C0 is the nut (1, 2, 3, 4, 5, 6), and a ring is a center nut with six outer nuts whose touching edges all match.
+
 - **Totals.** For six sides, the total number of solutions, 5,220,000,960, equals 120 × 43,500,008, and every count of sets that contain C0 is divisible by 7, as step 4 of the method requires. The tests check the first.
 - **Set by set.** With `--check 3000`, 3,000 sets that contain C0 were solved one at a time with `solver.py`. Half were drawn uniformly and half from the solvable sets. All 3,000 counts matched. The tests run the same check for five sides.
 - **Sampling.** The exact shares fall inside the 95% Wilson intervals of random samples. With `--distribution --trials 5000 --seed 0`, 6.84% of sets were solvable (interval 6.17% to 7.57%) and 5.42% had one solution (4.83% to 6.08%). An earlier sample of 5,000 sets gave 7.5% and 5.8%, whose intervals are 6.80% to 8.26% and 5.19% to 6.48%. With `--trials 100000 --seed 0`, the shares were 6.825% solvable (interval 6.670% to 6.983%), 5.393% with one solution (5.255% to 5.535%) and 1.081% with two (1.019% to 1.147%). The exact shares, 6.805%, 5.346% and 1.114%, fall inside all three.
@@ -43,13 +46,13 @@ All results are exact.
 
 CI runs the tests. The full counts take minutes and 2 GB, so CI checks them through the smaller cases and the committed tables.
 
-## How lucky was the designer?
+## How rare is a set with one solution?
 
-Not very, once the set can be solved: among the sets that can be solved, 78.56% have exactly one solution, as the original does. The rarer property is solvability, which about one random set in 15 has. This assumes the designer drew seven distinct nuts at random. Nothing is known here about how the nuts were in fact chosen.
+About 1 in 18.7: a set of seven distinct nuts drawn at random has exactly one solution, as the original does, with chance 5.346%. Most of that rarity is solvability, which about one random set in 15 has; once a set can be solved, a single solution is usual (78.56%). So a designer who drew nuts at random was lucky to get a solvable set, and not further lucky that it had one solution. Nothing is known here about how the nuts were in fact chosen.
 
-![A bar chart on a log scale of the number of sets by their number of solutions, from 0 to 20. The bar for 0 is highest at 93.195%, the bar for 1, in orange, is 5.346%, and the bars fall by about a factor of ten every three solutions.](figures/distribution.svg)
+![Dots on a log scale of the number of sets by their number of solutions, from 0 to 20. The dot for 0 is highest at 93.195%, the dot for 1, in orange, is 5.346%, and the dots fall by about a factor of ten every three solutions; no set has 17 to 19 solutions.](figures/distribution.svg)
 
-*How many solutions a set of seven distinct nuts has (`exact_counts.csv`). Note the log scale: sets with one solution, like the original, outnumber all the sets with more.*
+*How many solutions a set of seven distinct nuts has (`exact_counts.csv`), on a log scale, so heights cannot be added by eye. Sets with one solution, like the original, are 5.346% of all sets; those with two or more are 1.459% together.*
 
 | Solutions | Sets | Share |
 |---:|---:|---:|
@@ -72,7 +75,7 @@ The full table is in [`exact_counts.csv`](exact_counts.csv). No set has more tha
    - three other numbers, in any of 3! orders;
    - and e_i.
 
-   Each e_i must differ from i + 1, from i + 2 and from e_{i-1}, and 1,144 of the 6^6 sequences do. That gives 1,144 × 6^6 = 53,374,464 candidate rings around C0, of which 43,500,008 have seven distinct nuts.
+   Each e_i must differ from i + 1, from i + 2 and from e_{i-1}, and 1,144 of the 6^6 sequences of edge numbers do. Each outer nut's three other numbers can be in any of 3! orders, so there are 1,144 × (3!)^6 = 53,374,464 candidate rings around C0, of which 43,500,008 have seven distinct nuts.
 3. A ring with another center C and C0 among its outer nuts is a renamed ring around C0. For each C, the code renames the rings around C0 that contain the nut that becomes C0. This lists every ring whose set contains C0, 7 × 43,500,008 in all.
 4. Sorting those rings by set gives the count of every set that contains C0. Each nut is in the same number of sets with k solutions, so the number of all such sets is 120 / 7 times the number that contain C0.
 
@@ -92,9 +95,7 @@ By Burnside's lemma, the number of classes is the average over the 720 renamings
 
 The number of classes is the weighted sum of the last column divided by 720:
 
-- 59,487,568,920 for the identity;
-- plus 120 · 44, 40 · 4,788 and 15 · 311,144 for the three other types;
-- which comes to 82,628,379 classes.
+(59,487,568,920 + 120 · 44 + 40 · 4,788 + 15 · 311,144) / 720 = 82,628,379.
 
 Counting only the sets with k solutions gives the classes with k solutions. The identity's share is the exact table above; for the other renamings, `classes.py` lists the sets that each one leaves unchanged and solves them, one renaming of each type. Every class count is exact:
 
@@ -118,9 +119,9 @@ There are 6,901,100 classes of solvable multisets, the number the Stack Exchange
 
 - A **multiset** is seven nuts, where a nut may appear more than once. It is **solvable** when some ring is made of exactly those seven nuts.
 - Two multisets are equivalent when renaming the numbers turns one into the other, as for sets.
-- The comment's method is to take every ring around C0 (1,144 · 6<sup>6</sup> = 53,374,464 of them, repeated nuts included) and rename it each of the 42 ways that turn one of its nuts into C0. The least result, sorted, is the same for every multiset of a class, so distinct least results are classes.
+- The comment's method is to take every ring around C0 (1,144 · (3!)<sup>6</sup> = 53,374,464 of them, repeated nuts included) and rename it each of the 42 ways that turn one of its nuts into C0. The least result, sorted, is the same for every multiset of a class, so distinct least results are classes.
 
-Two methods count them. The **direct listing** follows the comment and finds 6,901,100 least results. The comment also says that four classes have one ring around C0 and two have 120, with an example of each, and the listing agrees on all four. **Burnside's lemma** averages, over the 720 renamings, the number of solvable multisets each one fixes:
+Two methods count them. The **direct listing** follows the comment and finds 6,901,100 least results. The comment also says that four classes have, in its words, a "unique solution" and two have 120, with an example of each; in its counting that means one ring around C0, and the listing agrees on all four examples. **Burnside's lemma** averages, over the 720 renamings, the number of solvable multisets each one fixes:
 
 | Renamings | Cycle type | Solvable multisets each fixes |
 |---:|---|---:|
@@ -154,13 +155,14 @@ The 5,623,238 classes of seven different nuts are the solvable classes of the se
 
 - Jaap Scherphuis, [Circus Seven / Drive Ya Nuts](http://www.jaapsch.net/puzzles/circus.htm): the puzzle and its relatives.
 - Stan Isaacs, [drive ya nuts](http://www.math.rwth-aachen.de/~Martin.Schoenert/Cube-Lovers/Stan_Isaacs__drive_ya_nuts.html), Cube Lovers: the numbers on the original nuts.
-- M. Zarecky and A. Parker, [Describing a combinatorics problem with a system of polynomial equations](http://www.wittenberg.edu/sites/default/files/media/computer_science/forms/sumInSMC.pdf).
-- J. Sawada, [A fast algorithm to generate necklaces with fixed content](http://www.cis.uoguelph.ca/~sawada/papers/alph.pdf), *Theoretical Computer Science* 301 (2003).
+- M. Zarecky and A. Parker, [Describing a combinatorics problem with a system of polynomial equations](http://www.wittenberg.edu/sites/default/files/media/computer_science/forms/sumInSMC.pdf): related work, listed for reference and not used in the counts.
+- J. Sawada, [A fast algorithm to generate necklaces with fixed content](http://www.cis.uoguelph.ca/~sawada/papers/alph.pdf), *Theoretical Computer Science* 301 (2003): a fast way to list necklaces such as the 120 nuts up to rotation, which `solver.py` mentions; with six sides it lists them by rotating instead.
 
 ## Open questions
 
 - How many solutions do the 6,901,100 classes of multisets have? The listing counts rings around C0 for each class, which is not the number of solutions of one multiset. Counting those would need the listing of every ring that contains C0, as `exact.py` does for sets.
 - How were the original nuts chosen? A designer who kept drawing until a set had one solution would find one after about 18.7 draws on average.
+- How hard is the original among the 4,417,343 classes with one solution? The number of solutions says little about how hard a set is to solve by hand; the size of the search tree, the partial placements that fail, could be computed from the same listing of rings.
 
 ## Usage
 
