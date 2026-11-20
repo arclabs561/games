@@ -1,0 +1,29 @@
+name: hanabi-hat-gap
+# hanabi/hat_gap.py: the three-player information strategy with 4, 6, 8, 12 and 16 hint
+# values on seeded deals 0 to 9,999. Commits hanabi/results/hat-gap.json to this branch.
+on:
+  push:
+    branches: ["compute/hanabi-hat-gap"]
+    paths: [".github/workflows/hanabi-hat-gap.yml"]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          python-version: "3.14"
+      - name: Play the deals
+        run: uv run --no-project python -m hanabi.hat_gap -n 10000 --out hanabi/results
+      - name: Commit the results to this branch
+        run: |
+          echo "$GITHUB_SHA" > hanabi/results/hat-gap.commit
+          git config user.name arclabs561
+          git config user.email arclabs561@users.noreply.github.com
+          git add hanabi/results/hat-gap.json hanabi/results/hat-gap.commit
+          git commit -q -m "hanabi: hat-gap results"
+          git push -q
