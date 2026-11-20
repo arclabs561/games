@@ -54,6 +54,7 @@ COLORS = "RYGBW"
 LIVE_COLORS = "RYGBP"  # hanab.live's No Variant: red, yellow, green, blue, purple
 UNSUPPORTED_OPTIONS = (
     "deckPlays",
+    "emptyClues",
     "oneExtraCard",
     "oneLessCard",
     "allOrNothing",
@@ -99,8 +100,10 @@ class LiveGame:
 
 
 def parse_live(data: dict) -> LiveGame:
-    """Read a hanab.live JSON export: format 4 (actions named "play", "discard", "clue")
-    or the older numbered actions (0 play, 1 discard, 2 color clue, 3 rank clue, 4 end).
+    """Read a hanab.live JSON export: actions named "play", "discard" and "clue", or the
+    older numbered actions (0 play, 1 discard, 2 color clue, 3 rank clue, 4 end). A clue
+    names its receiver as "target" in the format's description and as "receiverIndex" in
+    the site's /export pages, and its value as "value", or as "color" or "rank".
 
     The format's own description (misc/example_game_with_comments.jsonc in the site's
     repository) fixes the conventions: the deck is listed from the top, the hands are dealt
@@ -110,7 +113,7 @@ def parse_live(data: dict) -> LiveGame:
     that names another starting player is refused rather than guessed at."""
     opts = data.get("options") or {}
     variant = opts.get("variantName", opts.get("variant", "No Variant"))
-    if variant != "No Variant":
+    if variant != "No Variant" or opts.get("variantId", 0):  # the site writes variantId 0
         raise ValueError(f"only No Variant is supported, not {variant!r}")
     bad = [o for o in UNSUPPORTED_OPTIONS if opts.get(o)]
     if bad:
@@ -135,8 +138,11 @@ def parse_live(data: dict) -> LiveGame:
             actions.append(("discard", a.get("order", a.get("target")), 0))
         elif kind in (2, 3):
             actions.append(("color" if kind == 2 else "rank", a["target"], a["value"]))
-        elif kind == "clue":
-            actions.append((a["clue"]["type"], a["target"], a["clue"]["value"]))
+        elif kind == "clue":  # the site writes receiverIndex and color or rank
+            clue = a["clue"]
+            attr = "color" if clue["type"] in (0, "color") else "rank"
+            value = clue.get("value", clue.get(attr))
+            actions.append((attr, a.get("target", a.get("receiverIndex")), value))
         elif kind in (4, "gameOver"):
             break
         else:

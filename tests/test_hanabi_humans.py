@@ -294,8 +294,11 @@ def test_drops_add_up_on_random_games():
 # --- the command line ------------------------------------------------------------------------
 
 
-def live_export(game: HumanGame, numbered: bool = False) -> dict:
-    """The game as a hanab.live export, in format 4 or with the older numbered actions."""
+def live_export(game: HumanGame, style: str = "spec") -> dict:
+    """The game as a hanab.live export: "spec" as the format's description writes clues,
+    "site" as the site's /export pages do (receiverIndex, color or rank, variantId 0), or
+    "numbered" with the older numbered actions."""
+    numbered = style == "numbered"
     rules = Rules(players=game.players)
     p, h = rules.players, rules.hand
     deck = [{"suitIndex": c // 5, "rank": c % 5 + 1} for c in game.deck]
@@ -316,27 +319,38 @@ def live_export(game: HumanGame, numbered: bool = False) -> dict:
         elif numbered:
             kind = 2 if a.attr == "color" else 3
             actions.append({"type": kind, "target": a.target, "value": a.value})
+        elif style == "site":
+            clue = {"type": a.attr, a.attr: a.value}
+            actions.append({"type": "clue", "receiverIndex": a.target, "clue": clue})
         else:
             clue = {"type": a.attr, "value": a.value}
             actions.append({"type": "clue", "target": a.target, "clue": clue})
         step(s, a)
     names = ["Alice", "Bob", "Cathy"][:p]
-    return {"playerNames": names, "deck": deck, "actions": actions, "gameId": game.game_id}
+    out = {"playerNames": names, "deck": deck, "actions": actions, "gameId": game.game_id}
+    if style == "site":
+        out["options"] = {"variantId": 0, "deckPlays": False, "detrimentalCharacters": False}
+    return out
 
 
-@pytest.mark.parametrize(("players", "numbered"), [(2, False), (3, False), (3, True)])
-def test_hanab_live_exports_replay(players, numbered):
+@pytest.mark.parametrize(
+    ("players", "style"), [(2, "spec"), (3, "spec"), (2, "site"), (3, "site"), (3, "numbered")]
+)
+def test_hanab_live_exports_replay(players, style):
     g = recorded(players, 4)
-    live = parse_live(json.loads(json.dumps(live_export(g, numbered))))
+    live = parse_live(json.loads(json.dumps(live_export(g, style))))
     assert live.deck == list(g.deck)
     states, acts = live_states(live)
     assert states[-1].score == g.score and states[-1].over
     assert [s.hands for s in states] == [s.hands for s in states_of(g)]
 
 
-def test_a_later_starting_player_is_refused():
+@pytest.mark.parametrize(
+    "options", [{"startingPlayer": 1}, {"variantId": 1}, {"detrimentalCharacters": True}]
+)
+def test_exports_with_other_rules_are_refused(options):
     data = live_export(recorded(2, 4))
-    data["options"] = {"startingPlayer": 1}
+    data["options"] = options
     with pytest.raises(ValueError):
         parse_live(data)
 
