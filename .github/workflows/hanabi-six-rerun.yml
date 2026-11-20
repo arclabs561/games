@@ -1,0 +1,69 @@
+name: hanabi-six-rerun
+# Six colors: the deals that Solver A (300,000 nodes) and Solver B (1,000,000 nodes) both left
+# undecided, with Solver A at 5,000,000 nodes, then the attempts outside plan H1's steps
+# (hanabi.upper_bound.rerun), as for the five-color run. Two processes per job, up to two
+# deals each; a process stopped by its time limit keeps the deals it finished.
+on:
+  push:
+    branches: ["compute/hanabi-six-suits"]
+    paths: [".github/workflows/hanabi-six-rerun.yml"]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  rerun:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    strategy:
+      fail-fast: false
+      max-parallel: 14
+      matrix:
+        include:
+          - {players: 2, id: "2-0", a: "3137 3793", b: "3948 5375"}
+          - {players: 2, id: "2-1", a: "5809 5851", b: "5860 5892"}
+          - {players: 2, id: "2-2", a: "6017 6600", b: "8446 8897"}
+          - {players: 2, id: "2-3", a: "10654 11907", b: "12059 12150"}
+          - {players: 2, id: "2-4", a: "12285 13755", b: "15956 16610"}
+          - {players: 2, id: "2-5", a: "16856 17311", b: "17458 18031"}
+          - {players: 3, id: "3-0", a: "2438 6647", b: "8572 12041"}
+          - {players: 3, id: "3-1", a: "18353 19323", b: "19522"}
+          - {players: 4, id: "4-0", a: "5590 6647", b: "8572"}
+          - {players: 5, id: "5-0", a: "987 1881", b: "5381 5781"}
+          - {players: 5, id: "5-1", a: "6289 6386", b: "7086 7874"}
+          - {players: 5, id: "5-2", a: "8572 10851", b: "11087 11220"}
+          - {players: 5, id: "5-3", a: "12041 12564", b: "12786 14963"}
+          - {players: 5, id: "5-4", a: "15731 16947", b: "17986 18105"}
+          - {players: 5, id: "5-5", a: "18353 19710", b: ""}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          python-version: "3.14"
+      - name: Rerun the deals
+        env:
+          PLAYERS: ${{ matrix.players }}
+          ID: ${{ matrix.id }}
+          A: ${{ matrix.a }}
+          B: ${{ matrix.b }}
+        run: |
+          dir=hanabi/results/six-runs
+          timeout 20000 uv run --no-project python -m hanabi.upper_bound --sample "$PLAYERS" 0 \
+            --seeds $A --colors 6 --rerun --budgets 5000000 --json "$dir/p$PLAYERS-rerun-$ID-a.json" &
+          if [ -n "$B" ]; then
+            timeout 20000 uv run --no-project python -m hanabi.upper_bound --sample "$PLAYERS" 0 \
+              --seeds $B --colors 6 --rerun --budgets 5000000 --json "$dir/p$PLAYERS-rerun-$ID-b.json" &
+          fi
+          wait || true
+          ls -l $dir/*rerun* || true
+          echo "$GITHUB_SHA" > "$dir/p$PLAYERS-rerun-$ID.commit"
+      - name: Commit the records to this branch
+        if: always()
+        run: |
+          git config user.name arclabs561
+          git config user.email arclabs561@users.noreply.github.com
+          git add hanabi/results/six-runs
+          git commit -q -m "hanabi: six-color rerun records, ${{ matrix.id }}"
+          for i in $(seq 1 40); do
+            git pull -q --rebase && git push -q && break
+            sleep $((RANDOM % 20 + 5))
+          done
