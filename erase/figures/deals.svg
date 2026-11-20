@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="660" height="420" viewBox="0 0 660 420" role="img" font-family="Helvetica, Arial, sans-serif">
+<title>Two deals of Erase: one that clears and one that cannot</title>
+<desc>Each deal shows seven hand cards and four center cards. The first hand, 4 4 5 5 6 8 9 with center 1 5 7 8, clears in groups that make 10, or in one group of all seven hand cards. The second hand, 0 4 4 4 8 8 8 with center 0 3 7 9, cannot be cleared.</desc>
+<rect width="660" height="420" fill="#ffffff"/>
+<text x="10" y="28" font-size="14" font-weight="bold" fill="#0b0b0b">This deal clears</text>
+<text x="10" y="64" font-size="12" fill="#52514e">hand</text>
+<rect x="60" y="38" width="42" height="60" rx="6" fill="#ffffff" stroke="#0b0b0b" stroke-width="1.5"/>
+<text x="81" y="77" font-size="22" font-weight="bold" text-anchor="middle" fill="#0b0b0b">4</text>
+<rect x="108" y="38" width="42" height="60" rx="6" fill="#ffffff" stroke="#0b0b0b" stroke-width="1.5"/>
+<text x="129" y="77" font-size="22" font-weight="bold" text-anchor="middle" fill="#0b0b0b">4</text>
+<rect x="156" y="38" width="42" height="60" rx="6" fill="#ffffff" stroke="#0b0b0b" stroke-width="1.5"/>
+<text x="177" y="77" font-size="22" font-weight="bold" text-anchor="middle" fill="#0b0b0b">5</text>
+<rect x="204" y="38" width="42" height="60" rx="6" fill="#ffffff" stroke="#0b0b0b" stroke-width="1.5"/>
+<text x="225" y="77" font-size="22" font-weight="bold" text-anchor="middle" fill="#0b0b0b">5</text>
+<rect x="252" y="38" width="42" height="60" rx="6" fill="#ffffff" stroke="#0b0b0b" stroke-width="1.5"/>
+<text x="273" y="77" font-size="22" font-weight="bold" text-anchor="middle" fill="#0b0b0b">6</text>
+<rect x="300" y="38" width="42" height="60" rx="6" fill="#ffffff" stroke="#0b0b0b" stroke-width="1.5"/>
+<text x="321" y="77" font-size="22" font-weight="bold" text-anchor="middle" fill="#0b0b0b">8</text>
+<rect x="348" y="38" width="42" height="60" rx="6" fill="#ffffff" stroke="#0b0b0b" stroke-width="1.5"/>
+<text x="369" y="77" font-size="22" font-weight="bold" text-anchor="middle" fill="#0b0b0b">9</text>
+<text x="10" y="134" font-size="12" fill="#52514e">center</text>
+<rect x="60" y="108" width="42" height="60" rx="6" fill="#f4f3ef" stroke="#0b0b0b" stroke-width="1.5"/>
+<text x="81" y="147" font-size="22" font-weight="bold" text-anchor="middle" fill="#0b0b0b">1</text>
+<rect x="108" y="108" width="42" height="60" rx="6" fill="#f4f3ef" stroke="#0b0b0b" stroke-width="1.5"/>
+<text x="129" y="147" font-size="22" font-weight="bold" text-anchor="middle" fill="#0b0b0b">5</text>
+<rect x="156" y="108" width="42" height="60" rx="6" fill="#f4f3ef" stroke="#0b0b0b" stroke-width="1.5"/>
+<text x="177" y="147" font-size="22" font-weight="bold" text-anchor="middle" fill="#0b0b0b">7</text>
+<rect x="204" y="108" width="42" height="60" rx="6" fill="#f4f3ef" stroke="#0b0b0b" stroke-width="1.5"/>
+<text x="225" y="147" font-size="22" font-weight="bold" text-anchor="middle" fill="#0b0b0b">8</text>
+<text x="420" y="64" font-size="13" fill="#52514e">groups that make 10:</text>
+<text x="420" y="86" font-size="14" font-family="Menlo, Consolas, monospace" fill="#0b0b0b">(1+(4+5))   center 1</text>
+<text x="420" y="106" font-size="14" font-family="Menlo, Consolas, monospace" fill="#0b0b0b">(1+(4+5))   center 1</text>
+<text x="420" y="126" font-size="14" font-family="Menlo, Consolas, monospace" fill="#0b0b0b">(5×(8−6))   center 5</text>
+<text x="420" y="146" font-size="14" font-family="Menlo, Consolas, monospace" fill="#0b0b0b">(1+9)   center 1</text>
+<text x="10" y="192" font-size="13" font-family="Menlo, Consolas, monospace" fill="#0b0b0b">or all seven in one group: (4+(4+(5+((5×9)−(6×8))))), with no center card</text>
+<text x="10" y="234" font-size="14" font-weight="bold" fill="#0b0b0b">This deal cannot be cleared</text>
+<text x="10" y="270" font-size="12" fill="#52514e">hand</text>
+<rect x="60" y="244" width="42" height="60" rx="6" fill="#ffffff" stroke="#0b0b0b" stroke-width="1.5"/>
+<text x="81" y="283" font-size="22" font-weight="bold" text-anchor="middle" fill="#0b0b0b">0</text>
+<rect x="108" y="244" width="42" height="60" rx="6" fill="#ffffff" stroke="#0b0b0b" stroke-width="1.5"/>
+<text x="129" y="283" font-size="22" font-weight="bold" text-anchor="middle" fill="#0b0b0b">4</text>
+<rect x="156" y="244" width="42" height="60" rx="6" fill="#ffffff" stroke="#0b0b0b" stroke-width="1.5"/>
+<text x="177" y="283" font-size="22" font-weight="bold" text-anchor="middle" fill="#0b0b0b">4</text>
+<rect x="204" y="244" width="42" height="60" rx="6" fill="#ffffff" stroke="#0b0b0b" stroke-width="1.5"/>
+<text x="225" y="283" font-size="22" font-weight="bold" text-anchor="middle" fill="#0b0b0b">4</text>
+<rect x="252" y="244" width="42" height="60" rx="6" fill="#ffffff" stroke="#0b0b0b" stroke-width="1.5"/>
+<text x="273" y="283" font-size="22" font-weight="bold" text-anchor="middle" fill="#0b0b0b">8</text>
+<rect x="300" y="244" width="42" height="60" rx="6" fill="#ffffff" stroke="#0b0b0b" stroke-width="1.5"/>
+<text x="321" y="283" font-size="22" font-weight="bold" text-anchor="middle" fill="#0b0b0b">8</text>
+<rect x="348" y="244" width="42" height="60" rx="6" fill="#ffffff" stroke="#0b0b0b" stroke-width="1.5"/>
+<text x="369" y="283" font-size="22" font-weight="bold" text-anchor="middle" fill="#0b0b0b">8</text>
+<text x="10" y="340" font-size="12" fill="#52514e">center</text>
+<rect x="60" y="314" width="42" height="60" rx="6" fill="#f4f3ef" stroke="#0b0b0b" stroke-width="1.5"/>
+<text x="81" y="353" font-size="22" font-weight="bold" text-anchor="middle" fill="#0b0b0b">0</text>
+<rect x="108" y="314" width="42" height="60" rx="6" fill="#f4f3ef" stroke="#0b0b0b" stroke-width="1.5"/>
+<text x="129" y="353" font-size="22" font-weight="bold" text-anchor="middle" fill="#0b0b0b">3</text>
+<rect x="156" y="314" width="42" height="60" rx="6" fill="#f4f3ef" stroke="#0b0b0b" stroke-width="1.5"/>
+<text x="177" y="353" font-size="22" font-weight="bold" text-anchor="middle" fill="#0b0b0b">7</text>
+<rect x="204" y="314" width="42" height="60" rx="6" fill="#f4f3ef" stroke="#0b0b0b" stroke-width="1.5"/>
+<text x="225" y="353" font-size="22" font-weight="bold" text-anchor="middle" fill="#0b0b0b">9</text>
+<text x="420" y="270" font-size="13" fill="#0b0b0b">erase.py finds no set of groups</text>
+<text x="420" y="288" font-size="13" fill="#0b0b0b">that erases every hand card.</text>
+<text x="10" y="412" font-size="12" fill="#52514e">Shaded cards lie in the center and can be used again; hand cards are erased.</text>
+</svg>

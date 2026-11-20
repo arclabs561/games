@@ -1,0 +1,351 @@
+{
+ "board_seed": 11010,
+ "boards": [
+  {
+   "F": "girl/2",
+   "P": "female/2",
+   "board": 0,
+   "seed_index": 0
+  },
+  {
+   "F": "luna/1",
+   "P": "lunar/1",
+   "board": 1,
+   "seed_index": 1
+  },
+  {
+   "F": "explosive/3",
+   "P": "placement/1",
+   "board": 2,
+   "seed_index": 2
+  },
+  {
+   "F": "lake/2",
+   "P": "seafood/1",
+   "board": 3,
+   "seed_index": 3
+  },
+  {
+   "F": "scalp/2",
+   "P": "physician/1",
+   "board": 4,
+   "seed_index": 4
+  },
+  {
+   "F": "nylon/3",
+   "P": "polymer/1",
+   "board": 5,
+   "seed_index": 7
+  },
+  {
+   "F": "diabetic/2",
+   "P": "diabetes/2",
+   "board": 6,
+   "seed_index": 8
+  },
+  {
+   "F": "mama/2",
+   "P": "mummy/2",
+   "board": 7,
+   "seed_index": 9
+  },
+  {
+   "F": "poultry/1",
+   "P": "automobile/1",
+   "board": 8,
+   "seed_index": 10
+  },
+  {
+   "F": "vehicle/2",
+   "P": "alcohol/2",
+   "board": 9,
+   "seed_index": 11
+  },
+  {
+   "F": "cows/2",
+   "P": "dairy/1",
+   "board": 10,
+   "seed_index": 12
+  },
+  {
+   "F": "wasted/2",
+   "P": "garbage/1",
+   "board": 11,
+   "seed_index": 13
+  },
+  {
+   "F": "freight/4",
+   "P": "below/2",
+   "board": 12,
+   "seed_index": 14
+  },
+  {
+   "F": "paired/2",
+   "P": "backpack/2",
+   "board": 13,
+   "seed_index": 15
+  },
+  {
+   "F": "restroom/1",
+   "P": "sailing/1",
+   "board": 14,
+   "seed_index": 16
+  },
+  {
+   "F": "pregnancy/3",
+   "P": "child/2",
+   "board": 15,
+   "seed_index": 17
+  },
+  {
+   "F": "production/3",
+   "P": "equipment/3",
+   "board": 16,
+   "seed_index": 18
+  },
+  {
+   "F": "diabetic/2",
+   "P": "physician/1",
+   "board": 17,
+   "seed_index": 19
+  },
+  {
+   "F": "bathing/1",
+   "P": "writer/1",
+   "board": 18,
+   "seed_index": 20
+  },
+  {
+   "F": "beverage/2",
+   "P": "caffeine/1",
+   "board": 19,
+   "seed_index": 21
+  },
+  {
+   "F": "face/2",
+   "P": "female/1",
+   "board": 20,
+   "seed_index": 22
+  },
+  {
+   "F": "beach/2",
+   "P": "victory/2",
+   "board": 21,
+   "seed_index": 23
+  },
+  {
+   "F": "shop/1",
+   "P": "retail/1",
+   "board": 22,
+   "seed_index": 24
+  },
+  {
+   "F": "transportation/2",
+   "P": "automotive/1",
+   "board": 23,
+   "seed_index": 25
+  },
+  {
+   "F": "cupboard/2",
+   "P": "steak/2",
+   "board": 24,
+   "seed_index": 27
+  },
+  {
+   "F": "cupboard/1",
+   "P": "fluid/1",
+   "board": 25,
+   "seed_index": 28
+  },
+  {
+   "F": "pit/3",
+   "P": "military/2",
+   "board": 26,
+   "seed_index": 29
+  },
+  {
+   "F": "meadow/3",
+   "P": "train/1",
+   "board": 27,
+   "seed_index": 30
+  },
+  {
+   "F": "purse/1",
+   "P": "dad/1",
+   "board": 28,
+   "seed_index": 31
+  },
+  {
+   "F": "athletics/3",
+   "P": "automobile/1",
+   "board": 29,
+   "seed_index": 32
+  },
+  {
+   "F": "santos/4",
+   "P": "ocean/1",
+   "board": 30,
+   "seed_index": 35
+  },
+  {
+   "F": "alley/2",
+   "P": "glucose/1",
+   "board": 31,
+   "seed_index": 37
+  },
+  {
+   "F": "diagnosis/4",
+   "P": "treatment/2",
+   "board": 32,
+   "seed_index": 38
+  },
+  {
+   "F": "beach/2",
+   "P": "ocean/1",
+   "board": 33,
+   "seed_index": 40
+  },
+  {
+   "F": "cliff/3",
+   "P": "abdominal/1",
+   "board": 34,
+   "seed_index": 44
+  },
+  {
+   "F": "manufacturing/3",
+   "P": "principal/2",
+   "board": 35,
+   "seed_index": 45
+  },
+  {
+   "F": "man/3",
+   "P": "dad/1",
+   "board": 36,
+   "seed_index": 46
+  },
+  {
+   "F": "toddler/1",
+   "P": "educator/2",
+   "board": 37,
+   "seed_index": 49
+  },
+  {
+   "F": "episcopal/2",
+   "P": "slope/3",
+   "board": 38,
+   "seed_index": 50
+  },
+  {
+   "F": "drawer/4",
+   "P": "neuroscience/1",
+   "board": 39,
+   "seed_index": 52
+  }
+ ],
+ "giver": {
+  "clue_filter": "codenames.legality.strict_legal (amendment of 2026-11-19)",
+  "code": "codenames.human_pilot.giver_picks (codenames.listen, codenames.c10score)",
+  "held_out": "potion",
+  "k": 10,
+  "proposer": "google/embeddinggemma-2"
+ },
+ "items": {
+  "048ee4": "P",
+  "0689e2": "F",
+  "07b50f": "F",
+  "0bad42": "F",
+  "0ea7df": "P",
+  "12c685": "P",
+  "138372": "P",
+  "13ea20": "P",
+  "1482b5": "F",
+  "165928": "F",
+  "18040d": "P",
+  "19e345": "P",
+  "1ebbcb": "P",
+  "1ec013": "P",
+  "252ae9": "F",
+  "2783b5": "P",
+  "280597": "F",
+  "2e9aaf": "F",
+  "2ef43b": "F",
+  "318371": "F",
+  "35b7cb": "F",
+  "3b3c50": "P",
+  "3d6841": "P",
+  "3d9c16": "P",
+  "450313": "F",
+  "4625ea": "P",
+  "496702": "P",
+  "4ced13": "F",
+  "4d1dcb": "F",
+  "4df84b": "F",
+  "57cd04": "F",
+  "5a1d5a": "F",
+  "5c6810": "P",
+  "5ccd8e": "F",
+  "600d92": "F",
+  "60ba29": "P",
+  "61591e": "F",
+  "63bc02": "F",
+  "671e4c": "P",
+  "6870cc": "P",
+  "68d059": "F",
+  "6b7ac4": "F",
+  "6ecae9": "P",
+  "736df1": "F",
+  "737c22": "F",
+  "79e7b0": "F",
+  "80d4b6": "P",
+  "818658": "F",
+  "82faa0": "P",
+  "8aaeb4": "P",
+  "90d24a": "P",
+  "9e27cc": "F",
+  "a0238a": "F",
+  "a0b391": "F",
+  "a1db65": "F",
+  "a57fa9": "F",
+  "af9111": "P",
+  "b38f5d": "P",
+  "b8e3b9": "P",
+  "b929d9": "F",
+  "b9b9fd": "P",
+  "befdc1": "F",
+  "bf4a10": "F",
+  "bf5b42": "P",
+  "c47657": "P",
+  "c4f482": "P",
+  "c676f3": "F",
+  "c69380": "F",
+  "cd4cd0": "F",
+  "d1ef15": "P",
+  "d907bd": "P",
+  "da34e1": "P",
+  "de066e": "F",
+  "dedc65": "P",
+  "e7a57f": "P",
+  "e8bb25": "P",
+  "f229a5": "P",
+  "f23fe1": "P",
+  "f5c0ed": "P",
+  "f79dc7": "F"
+ },
+ "order_seed": 11011,
+ "plan": "experiments/plans/C11.md",
+ "skipped": [
+  5,
+  6,
+  26,
+  33,
+  34,
+  36,
+  39,
+  41,
+  42,
+  43,
+  47,
+  48,
+  51
+ ]
+}

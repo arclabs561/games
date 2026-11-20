@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="160" viewBox="0 0 640 160" role="img" font-family="Helvetica, Arial, sans-serif">
+<title>The first two turns of a game of Tenzi</title>
+<desc>Two rows of ten dice. After the first roll the most common face is kept (shaded blue); the second row shows the kept dice and the others rolled again.</desc>
+<rect width="640" height="160" fill="#ffffff"/>
+<text x="10" y="42" font-size="13" font-weight="bold" fill="#0b0b0b">Turn 1</text>
+<rect x="80" y="14" width="44" height="44" rx="8" fill="#ffffff" stroke="#0b0b0b" stroke-width="1.5"/>
+<circle cx="90.12" cy="47.88" r="3.52" fill="#0b0b0b"/>
+<circle cx="113.88" cy="24.12" r="3.52" fill="#0b0b0b"/>
+<rect x="130" y="14" width="44" height="44" rx="8" fill="#ffffff" stroke="#0b0b0b" stroke-width="1.5"/>
+<circle cx="140.12" cy="47.88" r="3.52" fill="#0b0b0b"/>
+<circle cx="152" cy="36" r="3.52" fill="#0b0b0b"/>
+<circle cx="163.88" cy="24.12" r="3.52" fill="#0b0b0b"/>
+<rect x="180" y="14" width="44" height="44" rx="8" fill="#2a78d6" stroke="#0b0b0b" stroke-width="1.5"/>
+<circle cx="202" cy="36" r="3.52" fill="#ffffff"/>
+<rect x="230" y="14" width="44" height="44" rx="8" fill="#ffffff" stroke="#0b0b0b" stroke-width="1.5"/>
+<circle cx="240.12" cy="24.12" r="3.52" fill="#0b0b0b"/>
+<circle cx="240.12" cy="36" r="3.52" fill="#0b0b0b"/>
+<circle cx="240.12" cy="47.88" r="3.52" fill="#0b0b0b"/>
+<circle cx="263.88" cy="24.12" r="3.52" fill="#0b0b0b"/>
+<circle cx="263.88" cy="36" r="3.52" fill="#0b0b0b"/>
+<circle cx="263.88" cy="47.88" r="3.52" fill="#0b0b0b"/>
+<rect x="280" y="14" width="44" height="44" rx="8" fill="#ffffff" stroke="#0b0b0b" stroke-width="1.5"/>
+<circle cx="290.12" cy="24.12" r="3.52" fill="#0b0b0b"/>
+<circle cx="290.12" cy="47.88" r="3.52" fill="#0b0b0b"/>
+<circle cx="313.88" cy="24.12" r="3.52" fill="#0b0b0b"/>
+<circle cx="313.88" cy="47.88" r="3.52" fill="#0b0b0b"/>
+<rect x="330" y="14" width="44" height="44" rx="8" fill="#ffffff" stroke="#0b0b0b" stroke-width="1.5"/>
+<circle cx="340.12" cy="24.12" r="3.52" fill="#0b0b0b"/>
+<circle cx="340.12" cy="47.88" r="3.52" fill="#0b0b0b"/>
+<circle cx="363.88" cy="24.12" r="3.52" fill="#0b0b0b"/>
+<circle cx="363.88" cy="47.88" r="3.52" fill="#0b0b0b"/>
+<rect x="380" y="14" width="44" height="44" rx="8" fill="#ffffff" stroke="#0b0b0b" stroke-width="1.5"/>
+<circle cx="390.12" cy="47.88" r="3.52" fill="#0b0b0b"/>
+<circle cx="413.88" cy="24.12" r="3.52" fill="#0b0b0b"/>
+<rect x="430" y="14" width="44" height="44" rx="8" fill="#2a78d6" stroke="#0b0b0b" stroke-width="1.5"/>
+<circle cx="452" cy="36" r="3.52" fill="#ffffff"/>
+<rect x="480" y="14" width="44" height="44" rx="8" fill="#2a78d6" stroke="#0b0b0b" stroke-width="1.5"/>
+<circle cx="502" cy="36" r="3.52" fill="#ffffff"/>
+<rect x="530" y="14" width="44" height="44" rx="8" fill="#2a78d6" stroke="#0b0b0b" stroke-width="1.5"/>
+<circle cx="552" cy="36" r="3.52" fill="#ffffff"/>
+<text x="586" y="42" font-size="13" fill="#52514e">4 kept</text>
+<text x="10" y="112" font-size="13" font-weight="bold" fill="#0b0b0b">Turn 2</text>
+<rect x="80" y="84" width="44" height="44" rx="8" fill="#ffffff" stroke="#0b0b0b" stroke-width="1.5"/>
+<circle cx="90.12" cy="94.12" r="3.52" fill="#0b0b0b"/>
+<circle cx="90.12" cy="117.88" r="3.52" fill="#0b0b0b"/>
+<circle cx="113.88" cy="94.12" r="3.52" fill="#0b0b0b"/>
+<circle cx="113.88" cy="117.88" r="3.52" fill="#0b0b0b"/>
+<rect x="130" y="84" width="44" height="44" rx="8" fill="#ffffff" stroke="#0b0b0b" stroke-width="1.5"/>
+<circle cx="140.12" cy="94.12" r="3.52" fill="#0b0b0b"/>
+<circle cx="140.12" cy="117.88" r="3.52" fill="#0b0b0b"/>
+<circle cx="152" cy="106" r="3.52" fill="#0b0b0b"/>
+<circle cx="163.88" cy="94.12" r="3.52" fill="#0b0b0b"/>
+<circle cx="163.88" cy="117.88" r="3.52" fill="#0b0b0b"/>
+<rect x="180" y="84" width="44" height="44" rx="8" fill="#2a78d6" stroke="#0b0b0b" stroke-width="1.5"/>
+<circle cx="202" cy="106" r="3.52" fill="#ffffff"/>
+<rect x="230" y="84" width="44" height="44" rx="8" fill="#ffffff" stroke="#0b0b0b" stroke-width="1.5"/>
+<circle cx="240.12" cy="117.88" r="3.52" fill="#0b0b0b"/>
+<circle cx="252" cy="106" r="3.52" fill="#0b0b0b"/>
+<circle cx="263.88" cy="94.12" r="3.52" fill="#0b0b0b"/>
+<rect x="280" y="84" width="44" height="44" rx="8" fill="#2a78d6" stroke="#0b0b0b" stroke-width="1.5"/>
+<circle cx="302" cy="106" r="3.52" fill="#ffffff"/>
+<rect x="330" y="84" width="44" height="44" rx="8" fill="#ffffff" stroke="#0b0b0b" stroke-width="1.5"/>
+<circle cx="340.12" cy="117.88" r="3.52" fill="#0b0b0b"/>
+<circle cx="363.88" cy="94.12" r="3.52" fill="#0b0b0b"/>
+<rect x="380" y="84" width="44" height="44" rx="8" fill="#ffffff" stroke="#0b0b0b" stroke-width="1.5"/>
+<circle cx="390.12" cy="94.12" r="3.52" fill="#0b0b0b"/>
+<circle cx="390.12" cy="117.88" r="3.52" fill="#0b0b0b"/>
+<circle cx="402" cy="106" r="3.52" fill="#0b0b0b"/>
+<circle cx="413.88" cy="94.12" r="3.52" fill="#0b0b0b"/>
+<circle cx="413.88" cy="117.88" r="3.52" fill="#0b0b0b"/>
+<rect x="430" y="84" width="44" height="44" rx="8" fill="#2a78d6" stroke="#0b0b0b" stroke-width="1.5"/>
+<circle cx="452" cy="106" r="3.52" fill="#ffffff"/>
+<rect x="480" y="84" width="44" height="44" rx="8" fill="#2a78d6" stroke="#0b0b0b" stroke-width="1.5"/>
+<circle cx="502" cy="106" r="3.52" fill="#ffffff"/>
+<rect x="530" y="84" width="44" height="44" rx="8" fill="#2a78d6" stroke="#0b0b0b" stroke-width="1.5"/>
+<circle cx="552" cy="106" r="3.52" fill="#ffffff"/>
+<text x="586" y="112" font-size="13" fill="#52514e">5 kept</text>
+<text x="10" y="150" font-size="12" fill="#52514e">Seed 4. Shaded: dice showing the kept face, which stay put.</text>
+</svg>
