@@ -49,8 +49,13 @@ from yahtzee.solver import Tables
 HERE = Path(__file__).parent
 # Columns n = 0 .. 1576 for the full game: its highest score is 1575, so the last is 0.
 OFFICIAL_WIDTH = 1577
-# Against optimal play for the mean: count only wins, or a tie as half a win.
-RESPOND = {"respond-win": 0.0, "respond-half": 0.5}
+# Against optimal play for the mean (count only wins, or a tie as half a win), and against
+# the cheat sheet (only wins): (opponent, weight of a tie).
+RESPOND = {
+    "respond-win": ("optimal", 0.0),
+    "respond-half": ("optimal", 0.5),
+    "respond-sheet-win": ("sheet", 0.0),
+}
 
 
 def box_moves(t: Tables, states: np.ndarray) -> list[tuple[np.ndarray, np.ndarray, np.ndarray]]:
@@ -380,6 +385,13 @@ def optimal_distribution() -> np.ndarray:
     return dist
 
 
+def sheet_distribution() -> np.ndarray:
+    """The cheat sheet's exact score distribution, as `versus.py` wrote it."""
+    return np.array(
+        json.loads((HERE / "results" / "versus.json").read_text())["sheet_distribution"]
+    )
+
+
 def main(argv: list[str]) -> None:
     out = Path(argv[argv.index("--out") + 1]) if "--out" in argv else None
     workers = int(argv[argv.index("--workers") + 1]) if "--workers" in argv else 1
@@ -389,8 +401,10 @@ def main(argv: list[str]) -> None:
         data = {"reach": f.tolist()}
         print(f"mean of the distribution of best chances: {f[1:].sum():.6f}", flush=True)
     elif argv[0] in RESPOND:
-        tie = RESPOND[argv[0]]
-        data = {"tie": tie, "value": respond(optimal_distribution(), tie, OFFICIAL, True, workers)}
+        who, tie = RESPOND[argv[0]]
+        opponent = optimal_distribution() if who == "optimal" else sheet_distribution()
+        data = {"opponent": who, "tie": tie}
+        data["value"] = respond(opponent, tie, OFFICIAL, True, workers)
         print(f"{argv[0]}: {data['value']:.12f}", flush=True)
     else:
         raise SystemExit(__doc__)
