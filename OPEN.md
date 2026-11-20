@@ -6,9 +6,9 @@ Each status comes from the question's wording, by the rules in the script's docs
 
 | Status | Questions |
 |---|---:|
-| blocked on data | 8 |
+| blocked on data | 9 |
 | blocked on compute | 3 |
-| partly answered | 8 |
+| partly answered | 7 |
 | open | 60 |
 
 | Game | Question | Status |
@@ -45,7 +45,7 @@ Each status comes from the question's wording, by the rules in the script's docs
 | [Erase](erase/README.md) | Do the thresholds hold for multisets of more than 11 cards, for 10 or for any other target? A deal never holds more than 11 cards, and every threshold here, that of 10 included, is checked only that far. | open |
 | [Erase](erase/README.md) | Does any target above 30 have a threshold above 9? Among the targets checked only 14 reaches 9, because of one multiset of eight cards. | partly answered |
 | [EV Nova and Naev](ev_nova/README.md) | Whether Naev's mean prices match the game. A running copy of Naev could check a few spobs. | blocked on data |
-| [EV Nova and Naev](ev_nova/README.md) | Time. A jump in Naev takes flying time that depends on the system, and the source comments put a jump at about three periods and a landing at about one. Rates per period would need a model of flight time. The map positions in `naev.json` are a first step: a jump point marked `autopos` lies at the system's radius, in the direction of the target system (`src/space.c`), so the distance flown inside a system between two such points can be computed. Ship speeds and the time of the jump itself are still needed. | partly answered |
+| [EV Nova and Naev](ev_nova/README.md) | Time, checked in the game. The rates per period above rest on a flight model read from the source. Timing one leg in a running copy of Naev, from take-off at Burnan to take-off at Samell, would test it; the model gives 2.33 periods for it. | blocked on data |
 | [EV Nova and Naev](ev_nova/README.md) | Missions against trading. Cargo missions in both games pay for delivery and need no capital. They are not modeled. | open |
 | [EV Nova and Naev](ev_nova/README.md) | Price drift in Naev, used on purpose. Prices in a system rise and fall together, with periods of a few hundred periods, so waiting for a good phase may beat flying at once. | open |
 | [EV Nova and Naev](ev_nova/README.md) | Story changes. EV Nova's galaxy changes with control bits, and Naev's with its campaign. Only the start of an EV Nova game and Naev's base data are studied. EV Nova's disasters (`öops`), which shift one price for a while, are left out, as are hypergates and wormholes. | open |
