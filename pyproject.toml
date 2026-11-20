@@ -20,6 +20,7 @@ dev = [
     "nbclient>=0.11",
     "nbval>=0.11",
     "pytest>=9.2",
+    "pyyaml>=6",
     "ruff>=0.17",
     "ty>=0.0.105",
 ]
@@ -33,6 +34,7 @@ boggle = [
 chess_ratings = [
     "chess>=1.11",
     "duckdb>=2.0.0",
+    "huggingface-hub>=1.0",
     "matplotlib>=3.11",
     "numpy>=2.5",
 ]
@@ -48,10 +50,12 @@ codenames = [
 # LoRA fine-tuning (codenames/lora.py), for a GPU job; see experiments/plans/C2.md.
 codenames-gpu = [
     { include-group = "codenames" },
+    "datasets>=5.2",
     "flash-linear-attention==0.6.0",
     "peft>=0.17",
     "sentence-transformers[train]>=5",
     "torch>=2.9",
+    "transformers>=5.23",
     "trl==1.18.1",
 ]
 drive_ya_nuts = [

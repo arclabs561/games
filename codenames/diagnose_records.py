@@ -281,8 +281,13 @@ def c3_units() -> list[dict]:
 
 
 def pilot_units(key_path: Path, label: str = "C11-pilot") -> list[dict]:
-    """The C11 pilot's 40 boards (seed 11010): F and P on each, from a key.json."""
+    """The C11 pilot's 40 boards (seed 11010): F and P on each, from a key.json, or from a
+    boards.json, whose key human_pilot.key rebuilds."""
     key = json.loads(key_path.read_text())
+    if "key_sha256" in key:  # a boards.json
+        from codenames.human_pilot import key as pilot_key
+
+        key = pilot_key(key)
     seed = key["board_seed"]
     n = 1 + max(r["seed_index"] for r in key["boards"])
     rows = []

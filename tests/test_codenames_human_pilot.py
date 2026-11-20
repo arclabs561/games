@@ -1,5 +1,5 @@
 """Tests for codenames/human_pilot.py (C11, part B). None needs word vectors: the giver's
-picks are read back from the committed key.json, or made up."""
+picks are read back from the key that boards.json determines, or made up."""
 
 import json
 import random
@@ -13,11 +13,12 @@ from codenames.game import deal
 from codenames.legality import flags, strict_legal
 from codenames.words import board_words, legal
 
-NAMES = ("boards.json", "key.json", "play.html")
-
 
 def committed() -> list[str]:
-    return [(hp.OUT / n).read_text() for n in NAMES]
+    """boards.json, key.json (rebuilt from boards.json and checked by its hash), play.html."""
+    boards_text = (hp.OUT / "boards.json").read_text()
+    key_text = hp.dumps(hp.key(json.loads(boards_text)))
+    return [boards_text, key_text, (hp.OUT / "play.html").read_text()]
 
 
 def toy_picks(board):
@@ -29,8 +30,19 @@ def toy_picks(board):
 
 
 def test_committed_files_are_what_the_script_writes_from_the_key():
-    key = json.loads((hp.OUT / "key.json").read_text())
+    key = json.loads(committed()[1])
     assert list(hp.materials(*hp.rebuild(key), order_seed=key["order_seed"])) == committed()
+
+
+def test_the_key_is_not_in_the_public_folder_and_is_ignored_by_git():
+    import subprocess
+
+    assert sorted(p.name for p in hp.OUT.iterdir()) == ["boards.json", "play.html"]
+    ignored = subprocess.run(["git", "check-ignore", "-q", str(hp.KEY)], cwd=hp.HERE)
+    assert ignored.returncode == 0
+    boards = json.loads((hp.OUT / "boards.json").read_text())
+    with pytest.raises(ValueError):  # the hash in boards.json pins the key
+        hp.key({**boards, "key_sha256": "0" * 64})
 
 
 def test_key_hash_and_the_page_hold_no_arm_or_team_map():
@@ -48,7 +60,7 @@ def test_key_hash_and_the_page_hold_no_arm_or_team_map():
 
 def test_committed_boards_are_c4_deals_with_legal_distinct_clues():
     boards = json.loads((hp.OUT / "boards.json").read_text())
-    key = json.loads((hp.OUT / "key.json").read_text())
+    key = hp.key(boards)
     assert len(boards["boards"]) == hp.N_BOARDS and boards["board_seed"] == hp.BOARD_SEED
     deals = c4.boards(hp.BOARD_SEED, 1 + boards["boards"][-1]["seed_index"])
     used = [b["seed_index"] for b in boards["boards"]]
@@ -161,3 +173,22 @@ def test_score_response_on_a_made_up_session():
         (2, "P"): 20,
     }
     assert {r["seconds"] for r in rows} == {1.5}
+
+
+def test_the_page_states_its_terms_and_can_be_cleared():
+    """The consent text names publication, private storage, withdrawal and the age limit;
+    a finished session is deleted from the browser once sent, and can be cleared by hand."""
+    page = (hp.OUT / "play.html").read_text()
+    for words in ("public code repository", "private dataset", "To withdraw",
+                  "18 or older", "session code"):  # fmt: skip
+        assert words in page, words
+    assert page.count("localStorage.removeItem(STORE)") == 1 and "const forget" in page
+    assert "Start fresh" in page and "S ? resume() : intro();" in page
+    assert "http" not in page.replace("http-equiv", "")  # no network request
+
+
+def test_the_page_names_its_controls_for_screen_readers():
+    page = (hp.OUT / "play.html").read_text()
+    assert '"aria-pressed"' in page and '"aria-label"' in page and '<main id="app">' in page
+    assert 'htmlFor: "result"' in page and 'htmlFor: "comment"' in page
+    assert "font-size: 3vw" not in page and "0.7rem" not in page

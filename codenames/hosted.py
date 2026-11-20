@@ -23,12 +23,21 @@ The **meter** adds up the cost of each call: the cost in the usage object when t
 router reports one (`usage["cost"]`, in dollars), and otherwise the reported tokens
 times the provider's listed price (`listed_prices`, read from the router when the job
 starts). With neither, it charges a deliberately high price (FALLBACK_PRICE). Each
-call's record says which of the three it used. Before each call the meter reserves
-room for it, and raises OverBudgetError instead of calling when the reserved and spent
-amounts would pass the cap. So a job that is given a cap stops below it.
+call's record says which of the three it used. Before each attempt the meter reserves a
+ceiling for it: the prompt's length in bytes plus 512 tokens in, and `max_tokens` out, at
+the listed price or else the fallback price, and at least twice the dearest call so far.
+It raises OverBudgetError instead of sending when the spent and reserved amounts would
+pass the cap, so calls in flight at once cannot together pass it. After the attempt the
+reservation is replaced by the cost. An attempt that fails is booked at its ceiling, since
+a timeout or a server error may come after the provider has done the work and billed it;
+only an HTTP 4xx refusal (other than 408) is booked at zero. So `spent` is an upper bound
+when attempts failed, and a job that is given a cap stops below it.
 
-A call that fails five times (with waits of 2, 4, 8, 16 and 32 seconds) is returned as
-"", which the players in codenames.llm treat as a reply that cannot be parsed.
+Timeouts, connection errors, HTTP 408, 429 and 5xx are retried, up to five attempts
+(with waits of 2, 4, 8, 16 and 32 seconds). Other HTTP errors (400, 401, 404 and so on)
+are not retried. A call that fails is returned as "", which the players in codenames.llm
+treat as a reply that cannot be parsed. Any other exception is a fault in the program and
+is raised.
 
 No call is made when this module is imported, and the tests use a stub client.
 """
@@ -42,6 +51,7 @@ import threading
 import time
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
+from http.client import HTTPException
 from pathlib import Path
 from typing import Any
 
@@ -56,32 +66,70 @@ class OverBudgetError(RuntimeError):
     """The next call could take the spending past the cap."""
 
 
+class HTTPStatusError(RuntimeError):
+    """The router answered with an HTTP error status."""
+
+    def __init__(self, status: int, text: str):
+        super().__init__(f"HTTP {status}: {text}")
+        self.status = status
+
+
+def outcome(e: BaseException) -> tuple[bool, bool] | None:
+    """For a failed attempt: (retry it, it may have been billed), or None for an error
+    that is a fault in the program and not in the service."""
+    if isinstance(e, HTTPStatusError):
+        refused = 400 <= e.status < 500 and e.status != 408
+        return e.status in (408, 429) or e.status >= 500, not refused
+    if isinstance(e, OSError | ValueError | HTTPException):  # timeouts, resets, bad bodies
+        return True, True
+    return None
+
+
 @dataclass
 class Meter:
-    """Spending in dollars against a cap, safe to share between threads."""
+    """Spending in dollars against a cap, safe to share between threads.
+
+    Each attempt reserves a ceiling before it is sent (`reserve`) and is settled after:
+    at its cost when a reply came (`settle`), or at its ceiling when it failed in a way
+    that may have been billed (`fail`). The cap holds for any number of calls in flight,
+    as long as no reply costs more than its ceiling; the ceiling is also at least twice the
+    dearest reply so far, in case a provider bills past `max_tokens`.
+    """
 
     cap: float
-    spent: float = 0.0
+    spent: float = 0.0  # replies, plus the ceilings of failed attempts that may be billed
     reserved: float = 0.0
-    calls: int = 0
+    calls: int = 0  # attempts that brought a reply
+    failures: int = 0  # attempts that did not
+    failed: float = 0.0  # the part of `spent` booked for failed attempts
     largest: float = 0.0
     lock: threading.Lock = field(default_factory=threading.Lock, repr=False)
 
-    def reserve(self, floor: float = 0.002) -> float:
-        """Set aside room for one call: twice the dearest call so far, and at least floor."""
-        amount = max(floor, 2 * self.largest)
+    def reserve(self, ceiling: float) -> float:
+        """Set aside room for one attempt, or raise OverBudgetError."""
         with self.lock:
+            amount = max(ceiling, 2 * self.largest)
             if self.spent + self.reserved + amount > self.cap:
                 raise OverBudgetError(f"spent {self.spent:.4f} of {self.cap:.4f}")
             self.reserved += amount
         return amount
 
     def settle(self, amount: float, cost: float) -> None:
+        """An attempt that brought a reply, at its cost."""
         with self.lock:
             self.reserved -= amount
             self.spent += cost
             self.calls += 1
             self.largest = max(self.largest, cost)
+
+    def fail(self, amount: float, billed: bool = True) -> None:
+        """An attempt that failed, booked at its reservation unless it cannot be billed."""
+        with self.lock:
+            self.reserved -= amount
+            self.failures += 1
+            if billed:
+                self.spent += amount
+                self.failed += amount
 
 
 ROUTER_MODELS = "https://router.huggingface.co/v1/models"
@@ -285,7 +333,12 @@ class RouterClient:
                 out["_router_header"] = r.headers.get("x-inference-provider")
                 return out
         except HTTPError as e:
-            raise RuntimeError(f"HTTP {e.code}: {e.read().decode(errors='replace')[:300]}") from e
+            raise HTTPStatusError(e.code, e.read().decode(errors="replace")[:300]) from e
+
+
+# Tokens added to a prompt's length in bytes for the ceiling: the chat template's tokens.
+# A byte-level tokenizer gives at most one token per byte of text.
+TEMPLATE_TOKENS = 512
 
 
 class Hosted:
@@ -315,6 +368,15 @@ class Hosted:
     def __call__(self, prompt: str) -> str:
         return self.call(prompt)["reply"]
 
+    def ceiling(self, prompt: str) -> float:
+        """The most one attempt can cost: every byte of the prompt a token, plus the
+        template, and a full reply, at the listed price (or the fallback price)."""
+        usage = {
+            "prompt_tokens": len(prompt.encode()) + TEMPLATE_TOKENS,
+            "completion_tokens": self.params["max_tokens"],
+        }
+        return call_cost(usage, self.model.price)[0]
+
     def call(self, prompt: str, tag: dict | None = None) -> dict:
         """Send one prompt; return the logged record (reply, usage, cost, errors)."""
         model_id, extra = pinned(self.model)
@@ -327,50 +389,61 @@ class Hosted:
             "tag": tag or {},
             "errors": [],
         }
-        reserved = self.meter.reserve()
+        ceiling = self.ceiling(prompt)
         cost = 0.0
-        try:
-            for attempt in range(self.attempts):
-                record["time"] = datetime.now(UTC).isoformat(timespec="seconds")
-                start = time.perf_counter()
-                try:
-                    out = self.connect().chat_completion(
-                        messages=[{"role": "user", "content": prompt}],
-                        model=model_id,
-                        extra_body=extra,
-                        **self.params,
-                    )
-                except Exception as e:  # network, rate limit, provider error: retry
-                    record["errors"].append(f"{type(e).__name__}: {str(e)[:300]}")
-                    self.sleep(2 ** (attempt + 1))
-                    continue
+        for attempt in range(self.attempts):
+            record["time"] = datetime.now(UTC).isoformat(timespec="seconds")
+            reserved = self.meter.reserve(ceiling)
+            start = time.perf_counter()
+            try:
+                out = self.connect().chat_completion(
+                    messages=[{"role": "user", "content": prompt}],
+                    model=model_id,
+                    extra_body=extra,
+                    **self.params,
+                )
+            except BaseException as e:
+                how = outcome(e)
+                self.meter.fail(reserved, billed=how is None or how[1])
+                if how is None:
+                    raise
+                record["errors"].append(f"{type(e).__name__}: {str(e)[:300]}")
+                if how[1]:  # booked by the meter, kept apart from the replies' cost
+                    record["failed_booked"] = record.get("failed_booked", 0.0) + reserved
+                if not how[0]:
+                    break
+                self.sleep(2 ** (attempt + 1))
+                continue
+            try:
                 record["seconds"] = round(time.perf_counter() - start, 2)
                 choice = out["choices"][0]
                 message = choice["message"]
                 usage = dict(out.get("usage") or {})
                 this, source = call_cost(usage, self.model.price)
-                cost += this
-                served = served_by(out)
-                record.update(
-                    raw=message.get("content") or "",
-                    reasoning=message.get("reasoning_content") or message.get("reasoning"),
-                    finish=choice.get("finish_reason"),
-                    usage=usage,
-                    cost=cost,
-                    cost_source=source,
-                    served=out.get("model"),
-                    served_by=served,
-                    pin_held=pin_held(self.model, served),
-                    attempts=attempt + 1,
-                )
-                if record["pin_held"] is False:  # paid for, but not the pinned provider
-                    record["errors"].append(f"served by {served_provider(served)}")
-                    record["raw"] = ""
-                    self.sleep(2 ** (attempt + 1))
-                    continue
-                break
-        finally:
-            self.meter.settle(reserved, cost)
+            except BaseException:
+                self.meter.fail(reserved)
+                raise
+            self.meter.settle(reserved, this)
+            cost += this
+            served = served_by(out)
+            record.update(
+                raw=message.get("content") or "",
+                reasoning=message.get("reasoning_content") or message.get("reasoning"),
+                finish=choice.get("finish_reason"),
+                usage=usage,
+                cost=cost,
+                cost_source=source,
+                served=out.get("model"),
+                served_by=served,
+                pin_held=pin_held(self.model, served),
+                attempts=attempt + 1,
+            )
+            if record["pin_held"] is False:  # paid for, but not the pinned provider
+                record["errors"].append(f"served by {served_provider(served)}")
+                record["raw"] = ""
+                self.sleep(2 ** (attempt + 1))
+                continue
+            break
         record["reply"] = visible(record.get("raw", ""))
         if self.log is not None:
             with LOG_LOCK, self.log.open("a") as f:

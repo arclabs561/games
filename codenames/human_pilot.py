@@ -23,12 +23,18 @@ Files, in codenames/results/human-pilot/:
 
 - boards.json: the boards (words and team map), the items (board, clue, count), the order
   of each version, and the SHA-256 of key.json;
-- key.json: the arm of each item, and each board's F and P actions;
 - play.html: the phone page. It holds the words, clues, counts and orders, and no team map
   and no arm.
 
+key.json, the arm of each item and each board's F and P actions, is written to
+codenames/.cache/human-pilot/key.json, which git ignores, and is not committed, so that a
+volunteer who looks at the folder beside the page does not see the arms. It is not a
+secret from someone who runs the code: the item ids and the arm of each id follow from the
+order seed (`orders`), so `key` rebuilds key.json from boards.json alone and checks it
+against the SHA-256 that boards.json holds.
+
     uv run python -m codenames.human_pilot build    # needs the word vectors (6 min, then under 1)
-    uv run python -m codenames.human_pilot check    # rebuilds the files from key.json
+    uv run python -m codenames.human_pilot check    # rebuilds the files from boards.json
 
 A person's turn is scored as every other guesser in this folder is (`c4.play_turn`): the
 picks in order, up to the count, ending at the first word that is not the team's.
@@ -45,6 +51,7 @@ from codenames.game import Board
 
 HERE = Path(__file__).parent
 OUT = HERE / "results" / "human-pilot"
+KEY = HERE / ".cache" / "human-pilot" / "key.json"  # ignored by git
 PLAN = "experiments/plans/C11.md"
 BOARD_SEED = 11010
 ORDER_SEED = 11011
@@ -310,28 +317,66 @@ def score_response(boards: dict, key: dict, response: dict) -> list[dict]:
     return rows
 
 
-def write(texts, out: Path = OUT) -> None:
+def key_rows(boards: dict) -> dict:
+    """The parts of key.json that rebuild needs, from boards.json and the order seed: the
+    arm of each item id comes from `orders`, and its action from the item's clue."""
+    n = len(boards["boards"])
+    arm_of = {i: arm for (_, arm), i in orders(n, boards["order_seed"])["ids"].items()}
+    action = {(x["board"], arm_of[x["item"]]): f"{x['clue']}/{x['count']}" for x in boards["items"]}
+    used = [b["seed_index"] for b in boards["boards"]]
+    rows = [
+        {"seed_index": b["seed_index"], **{arm: action[(i, arm)] for arm in ARMS}}
+        for i, b in enumerate(boards["boards"])
+    ]
+    return {"boards": rows, "skipped": sorted(set(range(1 + max(used))) - set(used))}
+
+
+def texts_from_boards(boards: dict) -> tuple[str, str, str]:
+    """boards.json, key.json and play.html, rebuilt from boards.json (no vectors)."""
+    return materials(*rebuild(key_rows(boards)), order_seed=boards["order_seed"])
+
+
+def key(boards: dict | None = None) -> dict:
+    """key.json, rebuilt from boards.json; it must match the SHA-256 that boards.json holds."""
+    boards = boards or json.loads((OUT / "boards.json").read_text())
+    key_text = texts_from_boards(boards)[1]
+    if sha256(key_text) != boards["key_sha256"]:
+        raise ValueError("the key rebuilt from boards.json does not match key_sha256")
+    return json.loads(key_text)
+
+
+def write(texts, out: Path = OUT, key_path: Path = KEY) -> None:
+    boards_text, key_text, page_text = texts
     out.mkdir(parents=True, exist_ok=True)
-    for name, text in zip(("boards.json", "key.json", "play.html"), texts, strict=True):
-        (out / name).write_text(text)
-        print(out / name, sha256(text))
+    key_path.parent.mkdir(parents=True, exist_ok=True)
+    for path, text in ((out / "boards.json", boards_text), (key_path, key_text),
+                       (out / "play.html", page_text)):  # fmt: skip
+        path.write_text(text)
+        print(path, sha256(text))
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("what", choices=["build", "check"])
     parser.add_argument("--out", type=Path, default=OUT)
+    parser.add_argument("--key", type=Path, default=KEY, help="where key.json goes (not in git)")
     args = parser.parse_args()
     if args.what == "build":
         check_against_c10()
-        write(materials(*choose_boards(BOARD_SEED, N_BOARDS)), args.out)
+        write(materials(*choose_boards(BOARD_SEED, N_BOARDS)), args.out, args.key)
         return
-    key = json.loads((args.out / "key.json").read_text())
-    texts = materials(*rebuild(key), order_seed=key["order_seed"])
-    names = ("boards.json", "key.json", "play.html")
-    same = [(args.out / n).read_text() == t for n, t in zip(names, texts, strict=True)]
-    print(dict(zip(names, same, strict=True)))
-    if not all(same):
+    boards_text = (args.out / "boards.json").read_text()
+    boards = json.loads(boards_text)
+    new_boards, key_text, page_text = texts_from_boards(boards)
+    same = {
+        "boards.json": new_boards == boards_text,
+        "key_sha256": sha256(key_text) == boards["key_sha256"],
+        "play.html": page_text == (args.out / "play.html").read_text(),
+    }
+    if args.key.exists():
+        same["key.json"] = args.key.read_text() == key_text
+    print(same)
+    if not all(same.values()):
         raise SystemExit(1)
 
 
@@ -345,46 +390,60 @@ PAGE = """<!DOCTYPE html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Codenames guesses</title>
 <style>
-body { font-family: system-ui, sans-serif; margin: 0 auto; max-width: 32rem; padding: 0.8rem;
-  color: #111; background: #fff; }
-h1 { font-size: 1.2rem; }
-p, li { line-height: 1.4; }
+body { font-family: system-ui, sans-serif; font-size: 1rem; margin: 0 auto; max-width: 32rem;
+  padding: 0.8rem; color: #111; background: #fff; }
+@media (max-width: 24rem) { body { padding: 0.8rem 0.25rem; } }
+h1 { font-size: 1.25rem; }
+h2 { font-size: 1.1rem; }
+[tabindex="-1"]:focus { outline: none; }
+p, li, label { line-height: 1.4; }
 button { font: inherit; padding: 0.6rem 1rem; margin: 0.2rem; border: 1px solid #555;
   border-radius: 0.4rem; background: #f4f4f4; color: #111; }
-button:disabled { opacity: 0.4; }
+button[aria-disabled="true"] { opacity: 0.45; }
+:focus-visible { outline: 3px solid #b35900; outline-offset: 2px; }
 #clue { font-size: 1.5rem; font-weight: 600; text-align: center; margin: 0.6rem 0; }
-#grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.25rem; }
-#grid button { margin: 0; padding: 0.7rem 0.1rem; font-size: 3vw; text-transform: uppercase;
-  position: relative; overflow-wrap: anywhere; }
-@media (min-width: 32rem) { #grid button { font-size: 0.8rem; } }
+#grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0.2rem; }
+#grid button { margin: 0; padding: 0.6rem 0.05rem; font-size: 1rem; line-height: 1.2;
+  overflow-wrap: anywhere; hyphens: auto; }
 #grid button.picked { background: #1f4e79; color: #fff; }
-#grid button span { position: absolute; top: 0.05rem; right: 0.2rem; font-size: 0.7rem; }
-#bar { display: flex; justify-content: space-between; align-items: center; margin-top: 0.6rem; }
+#grid button .order { display: block; font-size: 1rem; }
+#bar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
+  margin-top: 0.6rem; }
 textarea { width: 100%; min-height: 6rem; font: inherit; box-sizing: border-box; }
-#result { width: 100%; min-height: 8rem; font-family: monospace; font-size: 0.7rem; }
-.small { color: #555; font-size: 0.85rem; }
+#result { min-height: 8rem; font-family: monospace; font-size: 1rem; }
+.small { color: #444; }
 </style>
 </head>
 <body>
-<div id="app"></div>
+<main id="app"></main>
 <script>
 const DATA = /*DATA*/;
 const STORE = "c11-pilot";
-let S = null;
-try { S = JSON.parse(localStorage.getItem(STORE) || "null"); } catch (e) { S = null; }
+const load = () => { try { return JSON.parse(localStorage.getItem(STORE) || "null"); } catch (e) { return null; } };
+const save = () => { try { localStorage.setItem(STORE, JSON.stringify(S)); } catch (e) {} };
+const forget = () => { try { localStorage.removeItem(STORE); } catch (e) {} };
+let S = load();
 let shown = 0, picks = [], times = [], undos = 0;
 const app = document.getElementById("app");
-const save = () => { try { localStorage.setItem(STORE, JSON.stringify(S)); } catch (e) {} };
 const el = (tag, attrs, ...kids) => {
   const e = document.createElement(tag);
   Object.assign(e, attrs || {});
   kids.forEach(k => e.append(k));
   return e;
 };
+// Show a screen and, after the first, move the keyboard focus to its heading, so that
+// focus never drops to the page and a screen reader reads the new screen from its top.
+let loaded = false;
+function show(...kids) {
+  app.replaceChildren(...kids);
+  const h = app.querySelector("h1, h2");
+  if (h && loaded) { h.tabIndex = -1; h.focus(); }
+  loaded = true;
+}
 
 function intro() {
   const v = new URLSearchParams(location.search).get("v");
-  app.replaceChildren(
+  show(
     el("h1", {}, "Codenames: you are the guesser"),
     el("p", {}, "Each screen shows 25 words and a one-word clue with a number. " +
       "Nine of the words belong to your team; you cannot see which. The clue is meant " +
@@ -395,14 +454,47 @@ function intro() {
     el("p", {}, "There are 80 screens in two halves of 40, and each board appears once " +
       "in each half with a different clue. About 20 to 30 minutes. You can stop and come " +
       "back on the same phone and browser."),
-    el("p", {className: "small"}, "What is kept: your picks, how long each took, and an " +
-      "optional comment at the end. No name or contact detail is asked; please do not " +
-      "write any in the comment. Nothing is sent anywhere: at the end you copy or share " +
-      "a block of text with the person who gave you this page."),
+    el("h2", {}, "What is kept, and where"),
+    el("p", {className: "small"}, "This is a small study of how people read one-word " +
+      "clues. What is kept: your picks, how long each took, and an optional comment at " +
+      "the end. No name or contact detail is asked; please do not write any in the " +
+      "comment. This page sends nothing: at the end you copy or share a block of text " +
+      "with the person who gave you this page."),
+    el("p", {className: "small"}, "That text is kept unchanged in a private dataset on " +
+      "Hugging Face. Your scored answers will be published in a public code repository: " +
+      "for each screen, how many words you picked, how many were your team's, the " +
+      "score and the time, under a session number, without your words, the session " +
+      "code, the date or your comment. Comments are not published; the results may say " +
+      "in a sentence what they were about."),
+    el("p", {className: "small"}, "To withdraw, now or later, send the session code " +
+      "shown at the end to the person who gave you this page. Your text is then deleted " +
+      "and your answers are left out of the results. If they were already published, a " +
+      "new version removes them, though earlier versions of the repository keep them."),
+    el("p", {className: "small"}, "Please take part only if you are 18 or older."),
     ...(v === "A" || v === "B" ? [el("button", {onclick: () => start(v)}, "Start")] :
       [el("p", {}, "Version (as you were told):"),
        el("button", {onclick: () => start("A")}, "A"),
        el("button", {onclick: () => start("B")}, "B")]));
+}
+
+function resume() {
+  const n = S.responses.length;
+  show(el("h1", {}, "This phone holds a session"),
+    el("p", {}, S.finished ?
+      "A finished session from " + S.date + " is stored in this browser." :
+      "An unfinished session from " + S.date + " is stored in this browser (" + n +
+      " of " + DATA.versions[S.version].length + " screens done)."),
+    el("p", {}, "If it is yours, go on with it. If it is someone else's, start fresh: " +
+      "that deletes it from this phone without showing it."),
+    el("button", {onclick: () => S.finished ? result() : next()},
+      S.finished ? "Show my answers" : "Continue my session"),
+    el("button", {onclick: fresh}, "Start fresh"));
+}
+
+function fresh() {
+  forget();
+  S = null;
+  intro();
 }
 
 function start(version) {
@@ -422,22 +514,35 @@ function next() {
   const [b, clue, count] = DATA.items[order[k]];
   picks = []; times = []; undos = 0;
   const words = DATA.boards[b];
-  const grid = el("div", {id: "grid"});
+  const counter = el("p", {className: "small"});
+  counter.setAttribute("role", "status");
+  const undo = el("button", {onclick: () => {
+    if (picks.length) { picks.pop(); times.pop(); undos++; draw(); } }}, "Undo");
   const done = el("button", {onclick: () => answer(order[k])}, "Done");
-  const undo = el("button", {onclick: () => { if (picks.length) { picks.pop(); times.pop(); undos++; draw(); } }}, "Undo");
-  const counter = el("span", {className: "small"});
+  // The 25 buttons are made once per screen and only changed after, so the focus stays
+  // on the word that was just picked.
+  const buttons = words.map(w => el("button", {onclick: () => {
+    if (!picks.includes(w) && picks.length < count) {
+      picks.push(w); times.push(Math.round(performance.now() - shown)); draw(); } }}));
   function draw() {
-    grid.replaceChildren(...words.map(w => {
-      const i = picks.indexOf(w);
-      const btn = el("button", {className: i >= 0 ? "picked" : "",
-        onclick: () => { if (i < 0 && picks.length < count) { picks.push(w); times.push(Math.round(performance.now() - shown)); draw(); } }}, w);
-      if (i >= 0) btn.append(el("span", {}, String(i + 1)));
-      return btn;
-    }));
-    undo.disabled = !picks.length;
-    counter.textContent = (k + 1) + " of " + order.length + " \\u00b7 " + picks.length + " of " + count + " picked";
+    buttons.forEach((btn, j) => {
+      const w = words[j], i = picks.indexOf(w);
+      btn.className = i >= 0 ? "picked" : "";
+      btn.setAttribute("aria-pressed", String(i >= 0));
+      btn.setAttribute("aria-label", i >= 0 ? w + ", pick " + (i + 1) : w);
+      const badge = el("span", {className: "order"}, "#" + (i + 1));
+      badge.setAttribute("aria-hidden", "true");
+      btn.replaceChildren(w, ...(i >= 0 ? [badge] : []));
+    });
+    undo.setAttribute("aria-disabled", String(!picks.length));
+    counter.textContent = "Screen " + (k + 1) + " of " + order.length + ": " +
+      picks.length + " of " + count + " picked" +
+      (picks.length === count ? " (the most for this clue; Undo to change)" : "");
   }
-  app.replaceChildren(el("div", {id: "clue"}, clue.toUpperCase() + " \\u00b7 " + count), grid,
+  const grid = el("div", {id: "grid"}, ...buttons);
+  grid.setAttribute("role", "group");
+  grid.setAttribute("aria-label", "The 25 words");
+  show(el("h2", {id: "clue"}, clue.toUpperCase() + " \\u00b7 " + count), grid,
     el("div", {id: "bar"}, counter, el("span", {}, undo, done)));
   draw();
   shown = performance.now();
@@ -452,7 +557,7 @@ function answer(item) {
 }
 
 function halfway() {
-  app.replaceChildren(el("h1", {}, "Halfway"),
+  show(el("h1", {}, "Halfway"),
     el("p", {}, "The second half shows the same 40 boards again, each with a different clue. " +
       "Guess each one on its own, as if you had not seen the board before."),
     el("button", {onclick: () => { S.halfway = true; save(); next(); }}, "Continue"));
@@ -460,30 +565,43 @@ function halfway() {
 
 function finish() {
   if (S.finished) return result();
-  const box = el("textarea", {placeholder: "Optional: anything about the clues or the page"});
-  app.replaceChildren(el("h1", {}, "Done, thank you"),
-    el("p", {}, "An optional comment (no names, please):"), box,
+  const box = el("textarea", {id: "comment", placeholder: "Anything about the clues or the page"});
+  show(el("h1", {}, "Done, thank you"),
+    el("label", {htmlFor: "comment"}, "An optional comment (no names, please):"), box,
     el("button", {onclick: () => { S.comment = box.value; S.finished = true; save(); result(); }}, "Finish"));
 }
 
 function result() {
   const text = JSON.stringify(S);
+  const note = el("p", {});
+  note.setAttribute("role", "status");
+  // Once the text has left by a button, it is deleted from the browser's storage, so the
+  // next person on this phone cannot see it. It stays on this screen until the page closes.
+  const sent = how => { forget();
+    note.textContent = how + ". The answers are deleted from this phone's storage and stay " +
+      "on this screen until you close the page."; };
   const area = el("textarea", {id: "result", readOnly: true, value: text});
-  const share = el("button", {onclick: () => navigator.share ? navigator.share({text}) :
-    navigator.clipboard.writeText(text)}, "Share");
-  const copy = el("button", {onclick: () => navigator.clipboard.writeText(text)}, "Copy");
+  const share = el("button", {onclick: () => (navigator.share ? navigator.share({text}) :
+    navigator.clipboard.writeText(text)).then(() => sent("Shared"), () => {})}, "Share");
+  const copy = el("button", {onclick: () =>
+    navigator.clipboard.writeText(text).then(() => sent("Copied"), () => {})}, "Copy");
   const file = el("button", {onclick: () => {
     const a = el("a", {href: URL.createObjectURL(new Blob([text], {type: "application/json"})),
       download: "c11-" + S.session + ".json"});
-    a.click(); }}, "Download");
-  app.replaceChildren(el("h1", {}, "Your answers"),
+    a.click(); sent("Downloaded"); }}, "Download");
+  show(el("h1", {}, "Your answers"),
     el("p", {}, "Send this text to the person who gave you the page, by any of the buttons."),
-    area, el("div", {}, share, copy, file),
-    el("p", {className: "small"}, "It holds the version, a random session code, the date, " +
-      "your picks and times, and your comment."));
+    el("p", {}, "Your session code is " + S.session + ". Keep it if you may want to " +
+      "withdraw later."),
+    el("label", {htmlFor: "result"}, "Your answers, as text to send:"),
+    area, el("div", {}, share, copy, file), note,
+    el("p", {className: "small"}, "It holds the version, the session code, the date, " +
+      "your picks and times, and your comment."),
+    el("p", {}, "When you have sent it, or to hand the phone to someone else:"),
+    el("button", {onclick: fresh}, "Start fresh (deletes these answers from this phone)"));
 }
 
-S ? (S.finished ? result() : next()) : intro();
+S ? resume() : intro();
 </script>
 </body>
 </html>

@@ -18,9 +18,9 @@ import argparse
 import hashlib
 import json
 import os
+import shlex
 import shutil
 import subprocess
-import tempfile
 import threading
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
@@ -45,15 +45,35 @@ def compiler_missing() -> bool:
 
 
 def binary() -> Path:
-    """The compiled annealer, built once per version of the source."""
-    digest = hashlib.sha256(SOURCE.read_bytes()).hexdigest()[:12]
-    out = Path(tempfile.gettempdir()) / f"boggle-anneal-{digest}"
+    """The compiled annealer, built once per version of the source and of the compiler.
+
+    It goes in a folder of the user's own (`$XDG_CACHE_HOME/games`, else `~/.cache/games`,
+    mode 0700), not in /tmp, where another user could put a program under the expected
+    name first. `$CC` may carry flags (`CC="gcc -fsanitize=address"`).
+    """
+    cc = compiler()
+    if cc is None:
+        raise RuntimeError("anneal.c needs a C compiler (cc)")
+    argv = shlex.split(cc)
+    try:
+        version = subprocess.run(
+            [*argv, "--version"], capture_output=True, text=True, timeout=30
+        ).stdout
+    except (OSError, subprocess.TimeoutExpired):
+        version = ""
+    key = hashlib.sha256(SOURCE.read_bytes())
+    for part in ("\0".join(argv), version):
+        key.update(b"\0" + part.encode())
+    folder = Path(os.environ.get("XDG_CACHE_HOME") or Path.home() / ".cache") / "games"
+    folder.mkdir(parents=True, exist_ok=True, mode=0o700)
+    if folder.stat().st_uid != os.getuid():
+        raise RuntimeError(f"{folder} belongs to another user")
+    if folder.stat().st_mode & 0o077:
+        folder.chmod(0o700)
+    out = folder / f"boggle-anneal-{key.hexdigest()[:16]}"
     if not out.exists():
-        cc = compiler()
-        if cc is None:
-            raise RuntimeError("anneal.c needs a C compiler (cc)")
         tmp = out.with_suffix(f".{os.getpid()}.{threading.get_ident()}")
-        subprocess.run([cc, "-O3", "-o", str(tmp), str(SOURCE), "-lm"], check=True)
+        subprocess.run([*argv, "-O3", "-o", str(tmp), str(SOURCE), "-lm"], check=True)
         tmp.replace(out)
     return out
 

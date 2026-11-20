@@ -660,8 +660,10 @@ def score_items(g) -> dict:
 
     if not any(k[0] == "items" for k in g):
         return {}
+    from codenames.human_pilot import key as pilot_key
+
     boards = json.loads(ITEMS.read_text())
-    key = json.loads((ITEMS.parent / "key.json").read_text())
+    key = pilot_key(boards)  # rebuilt from boards.json, checked against its key_sha256
     out: dict = {}
     for m in GUESSERS:
         cells = g.get(("items", m, ITEM_SEED, 0))

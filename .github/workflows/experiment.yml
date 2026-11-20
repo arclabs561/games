@@ -26,7 +26,7 @@ on:
         required: true
         default: "60"
       store:
-        description: "Where results go: branch (compute/<experiment>-<run id>) or hf (private dataset; needs the HF_TOKEN secret)"
+        description: "Where results go: branch (compute/<experiment>-<run id>, public, also kept as artifacts for 30 days) or hf (private dataset only, no artifacts; needs the HF_TOKEN secret)"
         required: true
         default: branch
         type: choice
@@ -36,6 +36,8 @@ jobs:
   run:
     runs-on: ubuntu-latest
     timeout-minutes: ${{ fromJSON(inputs.timeout) }}
+    permissions:
+      contents: read
     strategy:
       fail-fast: false
       max-parallel: 20
@@ -73,21 +75,65 @@ jobs:
           code=$?
           set -e
           seconds=$(( $(date +%s) - start ))
+          # The manifest records the arguments that ran, with SEED and OUT replaced.
           python3 experiments/manifest.py "$out" --experiment "$EXPERIMENT" --run "seed-$SEED" \
-            --commit "$GITHUB_SHA" --platform actions --returncode "$code" --seconds "$seconds" -- "${raw[@]}"
+            --commit "$GITHUB_SHA" --platform actions --returncode "$code" --seconds "$seconds" -- "${argv[@]}"
           exit "$code"
-      - name: Keep the outputs
-        if: always()
+      # Artifacts of a public repository can be downloaded by anyone signed in to GitHub, so
+      # only outputs bound for a public branch become artifacts. With store: hf the outputs go
+      # to the store-hf job through the Actions cache, which is not public, so that the token
+      # is never on a machine that ran the module and its packages.
+      - name: Keep the outputs for the public branch
+        if: always() && inputs.store == 'branch'
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: seed-${{ matrix.seed }}
           path: ${{ runner.temp }}/out/seed-${{ matrix.seed }}
           retention-days: 30
+      - name: Hand the outputs to the store-hf job
+        if: always() && inputs.store == 'hf'
+        uses: actions/cache/save@caa296126883cff596d87d8935842f9db880ef25 # v5.1.0
+        with:
+          path: ${{ runner.temp }}/out/seed-${{ matrix.seed }}
+          key: experiment-out-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.seed }}
+
+  store-hf:
+    needs: run
+    if: always() && inputs.store == 'hf'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    # Holds HF_TOKEN. Runs no code of this repository, only huggingface_hub at a pinned
+    # version, with its dependencies as they were on the date given.
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      max-parallel: 5
+      matrix:
+        seed: ${{ fromJSON(inputs.seeds) }}
+    steps:
+      - uses: actions/cache/restore@caa296126883cff596d87d8935842f9db880ef25 # v5.1.0
+        with:
+          path: ${{ runner.temp }}/out/seed-${{ matrix.seed }}
+          key: experiment-out-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.seed }}
+          fail-on-cache-miss: true
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+      - name: Upload the outputs to the private dataset
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          EXPERIMENT: ${{ inputs.experiment }}
+          SEED: ${{ matrix.seed }}
+        run: |
+          uvx --exclude-newer 2026-11-20T00:00:00Z --from 'huggingface_hub==2.4.0' hf upload arclabs561/games-runs \
+            "$RUNNER_TEMP/out/seed-$SEED" "runs/$EXPERIMENT/actions-$GITHUB_RUN_ID/seed-$SEED" \
+            --repo-type dataset --commit-message "$EXPERIMENT seed $SEED from run $GITHUB_RUN_ID at ${GITHUB_SHA::7}"
 
   store:
     needs: run
-    if: always()
+    if: always() && inputs.store == 'branch'
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    # The only job that pushes. It runs no package from PyPI, only git and the artifacts.
     permissions:
       contents: write
     steps:
@@ -96,7 +142,6 @@ jobs:
         with:
           path: ${{ runner.temp }}/runs
       - name: Commit the outputs to a compute branch
-        if: inputs.store == 'branch'
         env:
           EXPERIMENT: ${{ inputs.experiment }}
         run: |
@@ -112,14 +157,3 @@ jobs:
           git commit -q -m "$EXPERIMENT outputs from run $GITHUB_RUN_ID at ${GITHUB_SHA::7}"
           git push -q origin "$branch"
           echo "Outputs on branch $branch"
-      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
-        if: inputs.store == 'hf'
-      - name: Upload the outputs to the private dataset
-        if: inputs.store == 'hf'
-        env:
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
-          EXPERIMENT: ${{ inputs.experiment }}
-        run: |
-          uvx --from 'huggingface_hub>=1.0' hf upload arclabs561/games-runs \
-            "$RUNNER_TEMP/runs" "runs/$EXPERIMENT/actions-$GITHUB_RUN_ID" --repo-type dataset \
-            --commit-message "$EXPERIMENT outputs from run $GITHUB_RUN_ID at ${GITHUB_SHA::7}"

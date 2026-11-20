@@ -4,6 +4,7 @@ The rows are made up; nothing here downloads the data.
 """
 
 import json
+import re
 from collections import Counter
 
 import numpy as np
@@ -14,6 +15,8 @@ from codenames.split import (
     Row,
     assign,
     build_turns,
+    first_refs,
+    from_refs,
     game_keys,
     game_split,
     games,
@@ -21,6 +24,7 @@ from codenames.split import (
     player_id,
     player_split,
     shuffled_split,
+    to_refs,
 )
 from codenames.stats import (
     cluster_draws,
@@ -132,6 +136,31 @@ def test_player_split_keeps_held_out_people_out_of_training():
     assert all(x.guesser in s["test"] for x in test)
     assert not {x.game for x in train} & {x.game for x in test}
     assert sum(lab == "test" for lab in labels) >= 0.15 * len(t)
+
+
+def test_positions_stand_for_the_same_games_and_players_as_the_ids():
+    t = many_turns()
+    for scheme, ids in (
+        ("shuffled", shuffled_split(t, seed=2)),
+        ("player", player_split(t, 1, 0.15)),
+    ):
+        refs = to_refs(t, scheme, ids)
+        assert from_refs(t, scheme, refs) == ids
+        assert assign(t, scheme, from_refs(t, scheme, refs)) == assign(t, scheme, ids)
+    game, guesser = first_refs(t)
+    assert len(set(game.values())) == len(game) and len(set(guesser.values())) == len(guesser)
+    first = t[0]
+    assert game[first.game] == guesser[first.guesser] == f"{first.source}:{first.row}"
+
+
+def test_committed_splits_hold_positions_and_no_hashes():
+    """splits.json names games and players by "file:row" only, never by a hash of the
+    data: a hash of a typed-fields-only profile can be inverted by enumeration."""
+    text = SPLITS_FILE.read_text()
+    s = json.loads(text)
+    lists = [v for scheme in ("game", "shuffled", "player") for v in s[scheme].values()]
+    assert all(re.fullmatch(r"(train|val|test):\d+", r) for refs in lists for r in refs)
+    assert not re.search(r"[0-9a-f]{8}", text)
 
 
 def test_clustered_interval_matches_explicit_resampling():

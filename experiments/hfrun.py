@@ -5,14 +5,16 @@
 """Run one experiment from this repository at a pinned commit, and store what it wrote.
 
 Hugging Face Jobs runs this script (`hf jobs uv run`, or the Jobs tool). It clones the
-repository at COMMIT, installs the dependency group GROUP, runs the module with its
-arguments, writes its manifest with `manifest.py`, and uploads the output folder to the private dataset
+repository at COMMIT, installs the dependency group GROUP from that commit's uv.lock
+(`uv sync --locked`, which fails if the lock is stale instead of resolving again), runs the
+module with its arguments, writes its manifest with `manifest.py`, and uploads the output folder to the private dataset
 arclabs561/games-runs, under runs/<EXPERIMENT>/<RUN>/.
 
     environment: COMMIT (full SHA), GROUP, EXPERIMENT, RUN, HF_TOKEN (secret)
     arguments:   the module and its arguments, e.g. codenames.study --seed 3 --out OUT
 
-The literal argument OUT is replaced by the output folder.
+The literal argument OUT is replaced by the output folder, and the manifest records the
+arguments as they ran. The script's own dependency is locked in hfrun.py.lock.
 """
 
 import os
@@ -36,7 +38,7 @@ def main(argv):
     subprocess.run(["git", "clone", "-q", REPO, str(work)], check=True)
     subprocess.run(["git", "checkout", "-q", commit], cwd=work, check=True)
     uv = shutil.which("uv") or "uv"
-    subprocess.run([uv, "sync", "-q", "--group", group], cwd=work, check=True)
+    subprocess.run([uv, "sync", "-q", "--locked", "--group", group], cwd=work, check=True)
     args = [str(out) if a == "OUT" else a for a in argv]
     start = time.time()
     done = subprocess.run([uv, "run", "--group", group, "python", "-m", *args], cwd=work)
@@ -59,7 +61,7 @@ def main(argv):
             "--seconds",
             str(seconds),
             "--",
-            *argv,
+            *args,
         ],
         cwd=work,
         check=True,

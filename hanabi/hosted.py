@@ -2,7 +2,8 @@
 
 `Hosted(model, provider, meter)` is a function from prompt to reply for `llm.play_text_game`
 and `h2.play_game`. Each call sends the prompt as one user message with temperature 0 and a
-fixed seed, retries a failed request three times, and logs the prompt, the reply, the model
+fixed seed, retries a failed request three times (timeouts, connection errors, HTTP 408,
+429 and 5xx; other HTTP errors are not retried, and any other exception is raised), and logs the prompt, the reply, the model
 id the provider reports, the request parameters, the token counts and the cost.
 
 The provider is pinned as in `codenames/hosted.py`: the model id carries the provider as a
@@ -17,7 +18,10 @@ The providers' usage objects report token counts but no cost (checked on Cerebra
 DeepInfra, November 2026), so `Meter` prices each call at the provider's listed price per
 million tokens, as the router's model list gives it, and refuses a call that could take the
 total past its cap. The amount billed is not visible from here; the meter's total is the
-listed price times the reported tokens.
+listed price times the reported tokens. A failed attempt is booked at the most a call can
+cost, since a timeout or a server error may come after the provider billed it; only an
+HTTP 4xx refusal (other than 408) is booked at zero. `codenames/hosted.py` has a meter with
+the same rules, for calls whose prices differ.
 """
 
 from __future__ import annotations
@@ -29,6 +33,7 @@ import threading
 import time
 import urllib.request
 from dataclasses import dataclass, field
+from http.client import HTTPException
 from typing import Any
 
 ROUTER = "https://router.huggingface.co/v1/models"
@@ -41,6 +46,25 @@ class CapError(Exception):
 
 class ProviderError(Exception):
     """A request failed on every attempt, for reasons outside the model."""
+
+
+class HTTPStatusError(RuntimeError):
+    """The router answered with an HTTP error status."""
+
+    def __init__(self, status: int, text: str):
+        super().__init__(f"HTTP {status}: {text}")
+        self.status = status
+
+
+def outcome(e: BaseException) -> tuple[bool, bool] | None:
+    """For a failed attempt: (retry it, it may have been billed), or None for an error
+    that is a fault in the program and not in the service (as codenames.hosted.outcome)."""
+    if isinstance(e, HTTPStatusError):
+        refused = 400 <= e.status < 500 and e.status != 408
+        return e.status in (408, 429) or e.status >= 500, not refused
+    if isinstance(e, OSError | ValueError | HTTPException):  # timeouts, resets, bad bodies
+        return True, True
+    return None
 
 
 @dataclass(frozen=True)
@@ -132,20 +156,24 @@ class RouterClient:
                 out._router_header = r.headers.get("x-inference-provider")
                 return out
         except HTTPError as e:
-            raise RuntimeError(f"HTTP {e.code}: {e.read().decode(errors='replace')[:300]}") from e
+            raise HTTPStatusError(e.code, e.read().decode(errors="replace")[:300]) from e
 
 
 @dataclass
 class Meter:
     """Running cost of calls, shared by threads. A call is allowed only if the total stays
-    at or below the cap even when every call in flight costs its most."""
+    at or below the cap even when every call in flight costs its most. A call ends in
+    `settle` (a reply, at its cost), `fail` (no reply, booked at max_call) or `release`
+    (no reply, and it cannot have been billed)."""
 
     price: Price
     cap: float
     max_call: float  # the most one call can cost: longest prompt and a full reply
-    spent: float = 0.0
+    spent: float = 0.0  # replies, plus max_call for each failed attempt that may be billed
     calls: int = 0
     in_flight: int = 0
+    failures: int = 0
+    failed: float = 0.0  # the part of `spent` booked for failed attempts
     lock: threading.Lock = field(default_factory=threading.Lock, repr=False)
 
     def reserve(self) -> None:
@@ -165,6 +193,13 @@ class Meter:
     def release(self) -> None:
         with self.lock:
             self.in_flight -= 1
+
+    def fail(self) -> None:
+        with self.lock:
+            self.in_flight -= 1
+            self.failures += 1
+            self.spent += self.max_call
+            self.failed += self.max_call
 
 
 class Hosted:
@@ -205,13 +240,25 @@ class Hosted:
                     model=self.model_id,
                     **self.params,
                 )
-            except Exception as e:  # provider errors of any kind; the model is not at fault
-                self.meter.release()
+            except BaseException as e:
+                how = outcome(e)
+                if how is None or how[1]:
+                    self.meter.fail()  # may have been billed: book the most a call costs
+                else:
+                    self.meter.release()
+                if how is None:  # a fault in the program
+                    raise
                 errors.append(f"{type(e).__name__}: {str(e)[:300]}")
+                if not how[0]:
+                    break
                 time.sleep(self.wait * 2**attempt)
                 continue
-            usage = r.usage
-            p, c = (usage.prompt_tokens, usage.completion_tokens) if usage else (0, 0)
+            try:
+                usage = r.usage
+                p, c = (usage.prompt_tokens, usage.completion_tokens) if usage else (0, 0)
+            except BaseException:
+                self.meter.fail()
+                raise
             cost = self.meter.settle(p, c)
             choice = r.choices[0]
             reply = choice.message.content or ""

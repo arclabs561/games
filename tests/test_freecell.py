@@ -346,3 +346,17 @@ def test_open_levels_summary_and_readme_agree():
         if level["verdict"] == "lost":
             states = level["positions"]["c"]
             assert level["positions"]["bl"] == states and f"{states:,} positions" in readme
+
+
+@needs_cc
+def test_solver_b_is_built_in_a_private_folder_keyed_by_the_compiler(tmp_path, monkeypatch):
+    monkeypatch.setenv("XDG_CACHE_HOME", str(tmp_path))
+    plain = native.binary()
+    assert plain.parent == tmp_path / "games"
+    assert (tmp_path / "games").stat().st_mode & 0o777 == 0o700
+    cc = native.compiler()
+    assert cc is not None
+    monkeypatch.setenv("CC", f"{cc} -DSOLVER_B_TEST")  # $CC with a flag
+    flagged = native.binary()
+    assert flagged != plain and flagged.parent == plain.parent
+    assert native.run([native.ms_problem(1, 4)])[0].verdict == "won"

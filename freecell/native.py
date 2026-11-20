@@ -1,16 +1,20 @@
 """Build and run Solver B (`solver_b.c`), and read its answers as Python values.
 
-The C program is compiled once with the system's C compiler (`cc -O2`) into a cache folder
-named after a hash of the source, so an edited source is rebuilt. It reads one problem per
+The C program is compiled once with the system's C compiler (`$CC`, else `cc`, with `-O2`)
+into a cache folder of the user's own (`$XDG_CACHE_HOME/games`, else `~/.cache/games`, mode
+0700). The file is named after a hash of the source, the compiler command and the compiler's
+`--version`, so an edited source or another compiler is rebuilt. `$CC` may carry flags, as in
+`CC="gcc -fsanitize=address"`. It reads one problem per
 line and writes one answer per line; `run` sends a batch and parses the answers. A won line
 comes back as card moves in the form of `freecell.rules`, which `rules.replay` checks.
 """
 
 import hashlib
 import os
+import shlex
 import shutil
 import subprocess
-import tempfile
+import threading
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -34,20 +38,56 @@ class Answer:
 
 
 def compiler() -> str | None:
-    """The C compiler, if there is one."""
+    """The C compiler command, if there is one: `$CC` as given, else cc or gcc."""
     return os.environ.get("CC") or shutil.which("cc") or shutil.which("gcc")
+
+
+def compiler_argv() -> list[str] | None:
+    """The compiler command split into words, so that `$CC` may carry flags."""
+    cc = compiler()
+    return shlex.split(cc) if cc else None
+
+
+def cache_dir() -> Path:
+    """A folder only this user can write to, for compiled programs.
+
+    A shared folder such as /tmp would let another user put a program under the expected
+    name first, and it would then be run.
+    """
+    base = Path(os.environ.get("XDG_CACHE_HOME") or Path.home() / ".cache")
+    folder = base / "games"
+    folder.mkdir(parents=True, exist_ok=True, mode=0o700)
+    st = folder.stat()
+    if st.st_uid != os.getuid():
+        raise RuntimeError(f"{folder} belongs to another user")
+    if st.st_mode & 0o077:
+        folder.chmod(0o700)
+    return folder
+
+
+def build_key(source: Path, argv: list[str]) -> str:
+    """A hash of the source, the compiler command and the compiler's --version output."""
+    try:
+        version = subprocess.run(
+            [*argv, "--version"], capture_output=True, text=True, timeout=30
+        ).stdout
+    except (OSError, subprocess.TimeoutExpired):
+        version = ""
+    h = hashlib.sha256(source.read_bytes())
+    for part in ("\0".join(argv), version):
+        h.update(b"\0" + part.encode())
+    return h.hexdigest()[:16]
 
 
 def binary(source: Path = SOURCE) -> Path:
     """Path of the compiled solver (Solver B by default), compiling it if needed."""
-    digest = hashlib.sha256(source.read_bytes()).hexdigest()[:12]
-    out = Path(tempfile.gettempdir()) / f"freecell-{source.stem}-{digest}"
+    argv = compiler_argv()
+    if argv is None:
+        raise RuntimeError(f"{source.name} needs a C compiler (cc)")
+    out = cache_dir() / f"freecell-{source.stem}-{build_key(source, argv)}"
     if not out.exists():
-        cc = compiler()
-        if cc is None:
-            raise RuntimeError(f"{source.name} needs a C compiler (cc)")
-        tmp = out.with_suffix(f".{os.getpid()}")
-        subprocess.run([cc, "-O2", "-o", str(tmp), str(source)], check=True)
+        tmp = out.with_suffix(f".{os.getpid()}.{threading.get_ident()}")
+        subprocess.run([*argv, "-O2", "-o", str(tmp), str(source)], check=True)
         tmp.replace(out)
     return out
 

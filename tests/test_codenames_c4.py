@@ -50,7 +50,8 @@ def test_meter_stops_before_the_cap():
     with pytest.raises(OverBudgetError):
         for _ in range(10):
             replies.append(hosted("prompt"))
-    # Each call reserves max(0.002, twice the dearest call) = 0.006 after the first.
+    # Each call reserves its ceiling (0.0054 at the fallback price), or twice the dearest
+    # call so far (0.006) once that is larger.
     assert meter.spent <= 0.01
     assert len(replies) == meter.calls == 2
     assert meter.reserved == pytest.approx(0)
@@ -63,6 +64,7 @@ def test_retries_then_logs_every_field(tmp_path):
     assert hosted("the prompt") == "ocean 2"
     rec = json.loads(log.read_text())
     assert rec["attempts"] == 3 and len(rec["errors"]) == 2
+    assert rec["failed_booked"] == pytest.approx(2 * hosted.ceiling("the prompt"))
     assert rec["params"] == {
         "max_tokens": 64,
         "temperature": 0.0,
@@ -75,11 +77,87 @@ def test_retries_then_logs_every_field(tmp_path):
     assert rec["pinned"] == "org/model:provider" and rec["pin_held"] is None
 
 
-def test_a_call_that_always_fails_returns_empty_and_costs_nothing(tmp_path):
+def test_a_call_that_always_fails_returns_empty_and_is_booked_at_its_ceilings(tmp_path):
     meter = Meter(1.0)
     hosted = Hosted(MODEL, meter, tmp_path / "c.jsonl", client=Stub(fail=9), sleep=lambda s: None)
     assert hosted("p") == ""
-    assert meter.spent == 0 and meter.calls == 1
+    # a dropped connection may come after the provider billed the call
+    assert meter.failures == 5 and meter.calls == 0 and meter.reserved == pytest.approx(0)
+    assert meter.spent == meter.failed == pytest.approx(5 * hosted.ceiling("p"))
+
+
+class Refusing(Stub):
+    def __init__(self, error):
+        super().__init__()
+        self.error = error
+
+    def chat_completion(self, messages, model, extra_body=None, **params):
+        self.sent.append((messages, model, extra_body, params))
+        raise self.error
+
+
+def test_refusals_are_not_retried_or_billed_and_program_faults_are_raised():
+    from codenames.hosted import HTTPStatusError
+
+    meter = Meter(1.0)
+    stub = Refusing(HTTPStatusError(401, "bad token"))
+    assert Hosted(MODEL, meter, client=stub, sleep=lambda s: None)("p") == ""
+    assert len(stub.sent) == 1 and meter.spent == 0 and meter.failures == 1
+    busy = Refusing(HTTPStatusError(503, "busy"))
+    assert Hosted(MODEL, meter, client=busy, sleep=lambda s: None)("p") == ""
+    assert len(busy.sent) == 5 and meter.failures == 6 and meter.spent > 0
+    with pytest.raises(TypeError):
+        Hosted(MODEL, meter, client=Refusing(TypeError("bug")), sleep=lambda s: None)("p")
+    assert meter.reserved == pytest.approx(0)
+
+
+def test_calls_in_flight_at_once_cannot_pass_the_cap():
+    """Sixteen threads send at once to a client that holds every call until all have been
+    sent, so no call has settled when the next reserves. Each reply costs its ceiling, and
+    every third attempt times out after the provider might have billed it."""
+    import threading
+    from concurrent.futures import ThreadPoolExecutor
+
+    from codenames.hosted import TEMPLATE_TOKENS
+
+    price = (1.0, 2.0)
+    model = Model("org/model", "provider", price=price)
+    barrier = threading.Barrier(4, timeout=2)
+    lock, count = threading.Lock(), [0]
+
+    class Slow(Stub):
+        def chat_completion(self, messages, model, extra_body=None, **params):
+            with lock:
+                count[0] += 1
+                n = count[0]
+            try:
+                barrier.wait()
+            except threading.BrokenBarrierError:
+                pass
+            if n % 3 == 0:
+                raise TimeoutError("read timed out")
+            tokens = len(messages[0]["content"].encode()) + TEMPLATE_TOKENS
+            usage = {"prompt_tokens": tokens, "completion_tokens": params["max_tokens"]}
+            return {"model": model, "choices": [{"message": {"content": "x"}}], "usage": usage}
+
+    for cap in (0.001, 0.01, 0.05):
+        meter = Meter(cap)
+        hosted = Hosted(model, meter, max_tokens=1000, client=Slow(), sleep=lambda s: None)
+        ceiling = hosted.ceiling("prompt")  # 0.0025
+
+        def one(_, hosted=hosted):
+            try:
+                return hosted("prompt")
+            except OverBudgetError:
+                return None
+
+        with ThreadPoolExecutor(16) as pool:
+            replies = list(pool.map(one, range(16)))
+        assert meter.spent <= cap + 1e-12, (cap, meter.spent)
+        assert meter.reserved == pytest.approx(0)
+        # a failed attempt is booked at its reservation, at least its ceiling
+        assert meter.spent >= (meter.calls + meter.failures) * ceiling - 1e-12
+        assert any(r is None for r in replies)  # some calls were refused, none overspent
 
 
 def test_cost_without_a_reported_cost_is_overcounted():

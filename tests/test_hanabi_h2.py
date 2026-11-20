@@ -125,6 +125,76 @@ def test_hosted_retries_three_times_then_gives_up():
     with pytest.raises(ProviderError):
         bad("prompt")
     assert meter.in_flight == 0 and meter.calls == 1
+    # seven dropped connections, each booked at the most a call can cost
+    assert meter.failures == 7 and meter.failed == pytest.approx(7 * 0.01)
+
+
+def test_refusals_are_not_retried_or_billed_and_program_faults_are_raised():
+    from hanabi.hosted import HTTPStatusError
+
+    class Raising(FakeClient):
+        def __init__(self, error):
+            super().__init__()
+            self.error = error
+
+        def chat_completion(self, messages, model, **params):
+            self.calls += 1
+            raise self.error
+
+    meter = Meter(Price(1.0, 1.0), cap=1.0, max_call=0.01)
+    refused = Raising(HTTPStatusError(400, "bad request"))
+    with pytest.raises(ProviderError):
+        Hosted("m", "p", meter, client=refused, wait=0)("prompt")
+    assert refused.calls == 1 and meter.spent == 0 and meter.in_flight == 0
+    with pytest.raises(KeyError):
+        Hosted("m", "p", meter, client=Raising(KeyError("bug")), wait=0)("prompt")
+    assert meter.in_flight == 0 and meter.spent == pytest.approx(0.01)
+
+
+def test_calls_in_flight_at_once_cannot_pass_the_cap():
+    """Sixteen threads send at once to a client that holds each call until four are in
+    flight; every third attempt times out after the provider might have billed it."""
+    import threading
+    from concurrent.futures import ThreadPoolExecutor
+
+    from hanabi.hosted import CapError
+
+    barrier = threading.Barrier(4, timeout=2)
+    lock, count = threading.Lock(), [0]
+
+    class Slow(FakeClient):
+        def chat_completion(self, messages, model, **params):
+            with lock:
+                count[0] += 1
+                n = count[0]
+            try:
+                barrier.wait()
+            except threading.BrokenBarrierError:
+                pass
+            if n % 3 == 0:
+                raise TimeoutError("read timed out")
+            return SimpleNamespace(
+                id="x",
+                model=model,
+                usage=SimpleNamespace(prompt_tokens=2000, completion_tokens=512),
+                choices=[SimpleNamespace(finish_reason="stop", message=SimpleNamespace(content="PLAY 1"))],
+            )  # fmt: skip
+
+    price = Price(1.0, 2.0)
+    for cap in (0.001, 0.01, 0.05):
+        meter = Meter(price, cap, max_call=price.cost(2000, 512))
+        h = Hosted("m", "p", meter, client=Slow(), wait=0)
+
+        def one(_, h=h):
+            try:
+                return h("prompt")
+            except (CapError, ProviderError):
+                return None
+
+        with ThreadPoolExecutor(16) as pool:
+            replies = list(pool.map(one, range(16)))
+        assert meter.spent <= cap + 1e-12 and meter.in_flight == 0, (cap, meter.spent)
+        assert any(r is None for r in replies)
 
 
 def test_reasoning_effort_is_sent():

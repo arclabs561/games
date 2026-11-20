@@ -21,6 +21,7 @@ JOB_OUTPUTS = {
     "middlegame.json": "c7e705ad60eccf6d58731a720cc8f175bb6aac6dd354ee9b42be16e71309062a",
     "calibration-pilot.json": "46c299fcfdd09df40d9ab3eb299a3a1555e27ce891a31f1a296095b599c78e1f",
     "calibration-fit.json": "68759397df8de6df38496be943baf5b4852c9010726bc7a675539d0b321b9dbb",
+    "calibration-test.json": "58389932df39f57c362dcffb1d83fc070670fd75c0d0a812c4d52e446d7afcf0",
 }
 
 

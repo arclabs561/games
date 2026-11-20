@@ -36,8 +36,15 @@ Splits (``scheme``):
   training guesser) are dropped. This follows the description of White et al. (2024),
   whose validation and test players do not appear in training.
 
-Game ids are hashes of the game key, and player ids hashes of the survey answers.
-``splits.json`` lists which ids each split holds, and nothing from the data itself.
+In memory, game ids are hashes of the game key, and player ids hashes of the survey
+answers (or of the typed fields). These ids are not written out. A typed-fields-only id
+hashes a profile drawn from a small space (an age, a gender, a country, yes or no), so it
+can be inverted by enumeration without the data; an earlier ``splits.json`` that listed
+such ids could be read that way. ``splits.json`` now names each game, and each held-out
+player, by the position of a turn in the published files, written "file:row": a game by
+its first turn, a player by the first turn they guessed. These positions are resolved to
+ids against the download. The file holds no ids, hashes or text from the rows, and says
+nothing about a player to someone who does not have the files.
 
     uv run python -m codenames.split --check   # rebuild, compare with splits.json, print counts
     uv run python -m codenames.split --write   # rewrite splits.json
@@ -52,6 +59,7 @@ import random
 import re
 import zlib
 from collections import Counter, defaultdict
+from collections.abc import Sequence
 from dataclasses import dataclass
 from functools import cache
 from pathlib import Path
@@ -216,6 +224,45 @@ def player_split(turns: list[Turn], seed: int = 0, frac: float = 0.1) -> dict[st
     return {k: sorted(v) for k, v in out.items()}
 
 
+def ref(t: Turn) -> str:
+    """The position of a turn in the published files, as "file:row"."""
+    return f"{t.source}:{t.row}"
+
+
+def ref_order(r: str) -> tuple[int, int]:
+    source, row = r.split(":")
+    return PUBLISHED.index(source), int(row)
+
+
+def first_refs(turns: Sequence[Turn]) -> tuple[dict[str, str], dict[str, str]]:
+    """The first turn of each game, and the first turn each player guessed, by position.
+
+    Players who never guessed have no position; only guessers are ever held out.
+    """
+    game: dict[str, str] = {}
+    guesser: dict[str, str] = {}
+    for t in sorted(turns, key=lambda t: ref_order(ref(t))):
+        game.setdefault(t.game, ref(t))
+        guesser.setdefault(t.guesser, ref(t))
+    return game, guesser
+
+
+def to_refs(turns: Sequence[Turn], scheme: str, spec: dict[str, list[str]]) -> dict[str, list[str]]:
+    """A split's id lists as lists of positions, for splits.json."""
+    game, guesser = first_refs(turns)
+    where = guesser if scheme == "player" else game
+    return {name: sorted((where[i] for i in ids), key=ref_order) for name, ids in spec.items()}
+
+
+def from_refs(
+    turns: Sequence[Turn], scheme: str, spec: dict[str, list[str]]
+) -> dict[str, list[str]]:
+    """A split's lists of positions, from splits.json, as sorted id lists."""
+    by_ref = {ref(t): t for t in turns}
+    pick = (lambda t: t.guesser) if scheme == "player" else (lambda t: t.game)
+    return {name: sorted(pick(by_ref[r]) for r in refs) for name, refs in spec.items()}
+
+
 def assign(turns: list[Turn], scheme: str, spec: dict) -> list[str | None]:
     """The split of each turn under a scheme, None for a dropped turn."""
     if scheme == "published":
@@ -254,6 +301,7 @@ def build(seed: int = 0) -> dict:
         name: sorted(digest(k) for k in keys if game_split(k) == name)
         for name in ("train", "val", "test")
     }
+    spec = {scheme: to_refs(turns, scheme, ids) for scheme, ids in spec.items()}
     return {
         "seed": seed,
         "turns": len(turns),
@@ -273,7 +321,10 @@ def all_turns() -> tuple[Turn, ...]:
 
 @cache
 def spec() -> dict:
-    return json.loads(SPLITS_FILE.read_text())
+    """The id lists of each scheme in splits.json, resolved against the download."""
+    saved = json.loads(SPLITS_FILE.read_text())
+    every = all_turns()
+    return {scheme: from_refs(every, scheme, saved[scheme]) for scheme in ("shuffled", "player")}
 
 
 @cache

@@ -37,10 +37,29 @@ def first_party_names():
     return names
 
 
-def third_party_imports(path):
+def dynamic_import(node):
+    """The module named by importlib.import_module("x") or __import__("x"), else None."""
+    if not isinstance(node, ast.Call) or not node.args:
+        return None
+    f, arg = node.func, node.args[0]
+    named = (isinstance(f, ast.Name) and f.id in ("__import__", "import_module")) or (
+        isinstance(f, ast.Attribute) and f.attr == "import_module"
+    )
+    if named and isinstance(arg, ast.Constant) and isinstance(arg.value, str):
+        return arg.value
+    return None
+
+
+def third_party_imports(path, dynamic=False):
+    """Top-level names of the import statements in a file, or with dynamic=True, of the
+    modules it imports by name at run time."""
     found = set()
     for node in ast.walk(ast.parse(path.read_text(), str(path))):
-        if isinstance(node, ast.Import):
+        if dynamic:
+            name = dynamic_import(node)
+            if name is not None:
+                found.add(name.split(".")[0])
+        elif isinstance(node, ast.Import):
             found |= {alias.name.split(".")[0] for alias in node.names}
         elif isinstance(node, ast.ImportFrom) and node.level == 0 and node.module:
             found.add(node.module.split(".")[0])
@@ -64,11 +83,35 @@ def normalize(name):
     return re.sub(r"[-_.]+", "-", name).lower()
 
 
+def dependency_groups():
+    groups = tomllib.loads((ROOT / "pyproject.toml").read_text())["dependency-groups"]
+    return {normalize(k): v for k, v in groups.items()}
+
+
 def group_packages(group):
     """Distribution names in one dependency group of pyproject.toml."""
-    groups = tomllib.loads((ROOT / "pyproject.toml").read_text())["dependency-groups"]
-    specs = {normalize(k): v for k, v in groups.items()}.get(group, [])
-    return {normalize(re.split(r"[<>=!~;\[ ]", spec)[0]) for spec in specs}
+    specs = dependency_groups().get(group, [])
+    return {normalize(re.split(r"[<>=!~;\[ ]", s)[0]) for s in specs if isinstance(s, str)}
+
+
+def including_groups(group):
+    """The group and every group that includes it, such as codenames-gpu for codenames."""
+    groups = dependency_groups()
+
+    def includes(name, seen=()):
+        subs = [normalize(s["include-group"]) for s in groups.get(name, []) if isinstance(s, dict)]
+        return group in subs or any(includes(s, (*seen, name)) for s in subs if s not in seen)
+
+    return {group} | {name for name in groups if includes(name)}
+
+
+# Imported by name at run time and installed by hand, not by a dependency group, with the
+# place that says how. torch and maia3 (AGPL-3.0, from git) are installed inside the chess
+# job only; nltk is added with `--with nltk` for one step of the Codenames bench.
+INSTALLED_BY_HAND = {
+    "chess_ratings/maia.py": {"torch", "maia3"},  # chess_ratings/README.md, Usage
+    "codenames/bench_data.py": {"nltk"},  # codenames/results/bench.md
+}
 
 
 def test_third_party_imports_are_declared():
@@ -86,6 +129,37 @@ def test_third_party_imports_are_declared():
         if imports - declared:
             missing[str(rel)] = sorted(imports - declared)
     assert not missing, f"declare these in the folder's dependency group or inline: {missing}"
+
+
+def test_imports_by_name_are_declared():
+    """importlib.import_module("x") and __import__("x") need a declaration too: in the
+    folder's group or in a group that includes it (a GPU group), or in INSTALLED_BY_HAND."""
+    missing = {}
+    for path in tracked_python_files():
+        rel = path.relative_to(ROOT)
+        if rel.parts[0] == "tests":
+            continue
+        imports = {normalize(DISTRIBUTION.get(m, m)) for m in third_party_imports(path, True)}
+        meta = script_metadata(path)
+        if meta is not None:
+            declared = {normalize(re.split(r"[<>=!~;\[ ]", d)[0]) for d in meta["dependencies"]}
+        else:
+            groups = including_groups(normalize(rel.parts[0]))
+            declared = set().union(*(group_packages(g) for g in groups))
+        declared |= INSTALLED_BY_HAND.get(rel.as_posix(), set())
+        if imports - declared:
+            missing[str(rel)] = sorted(imports - declared)
+    assert not missing, f"declare these in the folder's dependency group: {missing}"
+
+
+def test_imports_by_name_are_found():
+    tree = ast.parse(
+        "import importlib\nfrom importlib import import_module\n"
+        "a = importlib.import_module('torch.nn')\nb = __import__('huggingface_hub')\n"
+        "c = import_module('peft')\nd = importlib.import_module(name)\n"
+    )
+    found = {dynamic_import(n) for n in ast.walk(tree)} - {None}
+    assert found == {"torch.nn", "huggingface_hub", "peft"}
 
 
 def test_scripts_with_a_shebang_are_executable_and_only_they():

@@ -10,6 +10,10 @@ on:
 jobs:
   python:
     runs-on: ubuntu-latest
+    # The full suite took 15 to 40 minutes per Python version in November 2026.
+    timeout-minutes: 90
+    permissions:
+      contents: read
     strategy:
       fail-fast: false
       matrix:
@@ -55,6 +59,9 @@ jobs:
     # uses only Typst's own fonts and those committed beside a paper, and no PDF records
     # its build date, so the same source gives the same bytes on any machine.
     runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:

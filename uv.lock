@@ -1288,6 +1288,7 @@ boggle = [
 chess-ratings = [
     { name = "chess" },
     { name = "duckdb" },
+    { name = "huggingface-hub" },
     { name = "matplotlib" },
     { name = "numpy" },
 ]
@@ -1301,6 +1302,7 @@ codenames = [
     { name = "wordfreq" },
 ]
 codenames-gpu = [
+    { name = "datasets" },
     { name = "duckdb" },
     { name = "flash-linear-attention" },
     { name = "huggingface-hub" },
@@ -1311,6 +1313,7 @@ codenames-gpu = [
     { name = "snowballstemmer" },
     { name = "tokenizers" },
     { name = "torch" },
+    { name = "transformers" },
     { name = "trl" },
     { name = "wordfreq" },
 ]
@@ -1319,6 +1322,7 @@ dev = [
     { name = "nbclient" },
     { name = "nbval" },
     { name = "pytest" },
+    { name = "pyyaml" },
     { name = "ruff" },
     { name = "ty" },
 ]
@@ -1390,6 +1394,7 @@ boggle = [
 chess-ratings = [
     { name = "chess", specifier = ">=1.11" },
     { name = "duckdb", specifier = ">=2.0.0" },
+    { name = "huggingface-hub", specifier = ">=1.0" },
     { name = "matplotlib", specifier = ">=3.11" },
     { name = "numpy", specifier = ">=2.5" },
 ]
@@ -1403,6 +1408,7 @@ codenames = [
     { name = "wordfreq", specifier = "==3.1.1" },
 ]
 codenames-gpu = [
+    { name = "datasets", specifier = ">=5.2" },
     { name = "duckdb", specifier = ">=2.0.0" },
     { name = "flash-linear-attention", specifier = "==0.6.0" },
     { name = "huggingface-hub", specifier = ">=1.0" },
@@ -1413,6 +1419,7 @@ codenames-gpu = [
     { name = "snowballstemmer", specifier = ">=3.1.1" },
     { name = "tokenizers", specifier = ">=0.23" },
     { name = "torch", specifier = ">=2.9" },
+    { name = "transformers", specifier = ">=5.23" },
     { name = "trl", specifier = "==1.18.1" },
     { name = "wordfreq", specifier = "==3.1.1" },
 ]
@@ -1421,6 +1428,7 @@ dev = [
     { name = "nbclient", specifier = ">=0.11" },
     { name = "nbval", specifier = ">=0.11" },
     { name = "pytest", specifier = ">=9.2" },
+    { name = "pyyaml", specifier = ">=6" },
     { name = "ruff", specifier = ">=0.17" },
     { name = "ty", specifier = ">=0.0.105" },
 ]
