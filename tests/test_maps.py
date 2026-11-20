@@ -297,3 +297,8 @@ def test_quick_results_are_current(name):
 def test_figures_are_current(name, tmp_path):
     draw.save_svg(figures.FIGURES[name](), tmp_path / "figure.svg")
     assert (tmp_path / "figure.svg").read_bytes() == (figures.OUT / f"{name}.svg").read_bytes()
+
+
+def test_grays_have_oklab_hue_zero():
+    lch = colors.oklch(["#000000", "#696969", "#ffffff", "#ff0000"])
+    assert lch[:3, 2].tolist() == [0.0, 0.0, 0.0] and lch[3, 2] > 20

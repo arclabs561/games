@@ -11,6 +11,7 @@ from pathlib import Path
 import numpy as np
 from matplotlib.colors import LinearSegmentedColormap
 from matplotlib.figure import Figure
+from matplotlib.patches import Rectangle
 
 from maps import data, draw, study
 
@@ -122,8 +123,15 @@ def tradeoff() -> Figure:
 def color_som() -> Figure:
     """Kohonen's color map: 20 x 20 units, each painted with its weight."""
     w = study.stored_maps()["colors/weights"].astype(float).clip(0, 1)
+    rows, cols = study.COLOR_SHAPE
     fig, ax = plt.subplots(figsize=(3.0, 3.0))
-    ax.imshow(w.reshape(*study.COLOR_SHAPE, 3), interpolation="nearest")
+    # Squares, not an embedded PNG, whose bytes depend on the zlib build.
+    for i, rgb in enumerate(w):
+        r, c = divmod(i, cols)
+        ax.add_patch(Rectangle((c, rows - 1 - r), 1, 1, facecolor=rgb, edgecolor="none"))
+    ax.set_xlim(0, cols)
+    ax.set_ylim(0, rows)
+    ax.set_aspect("equal")
     ax.axis("off")
     fig.tight_layout()
     return fig

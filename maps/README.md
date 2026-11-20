@@ -24,9 +24,9 @@ Four questions about drawing data so that neighbors stay neighbors.
 |---|---|---|
 | Shortest total jump, 12-book shelf | 1.710; HSV hue sort 3.674 (2.15 times) | exact (Held-Karp), checked by brute force on 9 of the books |
 | Shortest total jump, 139 CSS colors | 8.133 | exact (integer program with subtour cuts, HiGHS at zero gap) |
-| Same shelf, other methods | greedy + 2-opt 8.342, 1D SOM 8.975, 1D t-SNE 9.262, Hilbert curve 12.51, HSV hue 24.89, Oklab hue 26.68 | computed (seed 0 for the SOM and t-SNE) |
+| Same shelf, other methods | greedy + 2-opt 8.342, 1D SOM 8.975, 1D t-SNE 9.262, Hilbert curve 12.51, HSV hue 24.89, Oklab hue 25.65 | computed (seed 0 for the SOM and t-SNE) |
 | Continuity C(5) on that shelf | 1D t-SNE 0.964, 1D SOM 0.948, shortest 0.908, greedy 0.890 | computed |
-| 100 random 10-book shelves, mean excess over shortest | greedy + 2-opt 0.1% (solves 91%), 1D SOM 2.5%, 1D t-SNE 20.9%, Hilbert 32.7%, hue 57% | exact optimum per shelf; methods computed; seeds 0 to 99 |
+| 100 random 10-book shelves, mean excess over shortest | greedy + 2-opt 0.1% (solves 91%), 1D SOM 2.5%, 1D t-SNE 18.3%, Hilbert 32.7%, hue 57% | exact optimum per shelf; methods computed; seeds 0 to 99 |
 | Worst distortion, 400 words, k = 256 | 0.409 (Gaussian), 0.410 (±1), 0.412 (sparse) | simulated, median of 20 maps (seeds 0 to 19) |
 | Same, k = 1,024 | 0.193, 0.198, 0.201; exact union bound 0.258; Achlioptas's bound 0.296 | simulated (20 maps); bounds exact |
 | Variance of one pair's ratio, Shuckle and Blissey, k = 16 | ±1 map 0.0764 (formula 0.0768), Gaussian 0.127 (formula 0.125) | simulated, 20,000 maps, standard error 0.0015 or less; formula exact |
@@ -56,7 +56,7 @@ Hue sorts fail for three reasons, all visible in the picture above. Grays have n
 
 The two scores disagree. The shortest shelf has the least total jump and the best T(2) (0.993). But its C(5) is 0.908, against 0.964 for the 1D t-SNE and 0.948 for the 1D SOM. A shortest path visits each region of color once and leaves by its cheapest exit, so two close colors visited at different times end up far apart. Its largest single jump (0.407) is also larger than the SOM's (0.322) and t-SNE's (0.330).
 
-On 100 random shelves of 10 books, greedy + 2-opt finds the shortest ordering 91 times, and is never more than 4.2% longer. The 1D t-SNE is worse on 10 books (20.9% over) than on 139 (13.9%): on a line, points cannot pass each other, so an early wrong order can stay. With the paper's learning rate of 100, ten books fly hundreds of units apart; the package uses 10.
+On 100 random shelves of 10 books, greedy + 2-opt finds the shortest ordering 91 times, and is never more than 4.2% longer. The 1D t-SNE is worse on 10 books (18.3% over) than on 139 (13.9%): on a line, points cannot pass each other, so an early wrong order can stay. With the paper's learning rate of 100, ten books fly hundreds of units apart; the package uses 10.
 
 ## Random projections ([`jl.ipynb`](jl.ipynb))
 

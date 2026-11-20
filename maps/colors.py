@@ -50,26 +50,43 @@ def srgb_to_linear(rgb: np.ndarray) -> np.ndarray:
     return np.where(rgb <= 0.04045, rgb / 12.92, ((rgb + 0.055) / 1.055) ** 2.4)
 
 
+def apply(matrix: np.ndarray, rows: np.ndarray) -> np.ndarray:
+    """matrix times each row, written out term by term so that no BLAS kernel (whose
+    rounding varies between machines) is involved."""
+    rows = np.asarray(rows, float)
+    out = np.zeros((len(rows), matrix.shape[0]))
+    for j in range(matrix.shape[1]):
+        out += rows[:, j, None] * matrix[:, j]
+    return out
+
+
 def lms_to_oklab(lms: np.ndarray) -> np.ndarray:
     """Cube root, then the second matrix."""
-    return np.cbrt(lms) @ LMS_TO_LAB.T
+    return apply(LMS_TO_LAB, np.cbrt(lms))
 
 
 def xyz_to_oklab(xyz: np.ndarray) -> np.ndarray:
     """Oklab (L, a, b) of CIE XYZ colors."""
-    return lms_to_oklab(np.asarray(xyz, float) @ XYZ_TO_LMS.T)
+    return lms_to_oklab(apply(XYZ_TO_LMS, xyz))
 
 
 def oklab(colors: Sequence[Hex]) -> np.ndarray:
     """Oklab (L, a, b) of sRGB colors given as hex strings, one row each."""
-    return lms_to_oklab(srgb_to_linear(hex_to_rgb(colors)) @ SRGB_TO_LMS.T)
+    return lms_to_oklab(apply(SRGB_TO_LMS, srgb_to_linear(hex_to_rgb(colors))))
+
+
+GRAY_CHROMA = 1e-6  # below this chroma a color counts as gray, with hue 0
 
 
 def oklch(colors: Sequence[Hex]) -> np.ndarray:
-    """Lightness, chroma and hue in degrees [0, 360) in Oklab's polar form."""
+    """Lightness, chroma and hue in degrees [0, 360) in Oklab's polar form.
+
+    A gray's a and b are rounding error, so its hue angle would be noise; it gets 0.
+    """
     lab = oklab(colors)
+    chroma = np.hypot(lab[:, 1], lab[:, 2])
     hue = np.degrees(np.arctan2(lab[:, 2], lab[:, 1])) % 360
-    return np.column_stack([lab[:, 0], np.hypot(lab[:, 1], lab[:, 2]), hue])
+    return np.column_stack([lab[:, 0], chroma, np.where(chroma < GRAY_CHROMA, 0.0, hue)])
 
 
 def hsv(colors: Sequence[Hex]) -> np.ndarray:
