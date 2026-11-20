@@ -1,0 +1,15 @@
+[
+ {
+  "cards": 9,
+  "players": 2,
+  "slice": [
+   9,
+   16
+  ],
+  "deck_types": 84,
+  "seconds": 184,
+  "with_traps": [],
+  "positions": 27709146,
+  "all_traps_slap_free": true
+ }
+]

@@ -1,0 +1,23 @@
+[
+ {
+  "cards": 9,
+  "players": 2,
+  "slice": [
+   11,
+   16
+  ],
+  "deck_types": 84,
+  "seconds": 211,
+  "with_traps": [
+   {
+    "deck": "2 2 2 3 3 3 4 Q Q",
+    "positions": 69818,
+    "trapped_positions": 274,
+    "trapped_orders": 864,
+    "all_traps_slap_free": true
+   }
+  ],
+  "positions": 32693521,
+  "all_traps_slap_free": true
+ }
+]

@@ -1,0 +1,30 @@
+[
+ {
+  "cards": 9,
+  "players": 2,
+  "slice": [
+   14,
+   16
+  ],
+  "deck_types": 84,
+  "seconds": 138,
+  "with_traps": [
+   {
+    "deck": "2 2 2 3 4 5 6 Q Q",
+    "positions": 361584,
+    "trapped_positions": 3912,
+    "trapped_orders": 2880,
+    "all_traps_slap_free": true
+   },
+   {
+    "deck": "2 2 2 3 4 5 J J J",
+    "positions": 120192,
+    "trapped_positions": 120,
+    "trapped_orders": 432,
+    "all_traps_slap_free": true
+   }
+  ],
+  "positions": 23765566,
+  "all_traps_slap_free": true
+ }
+]
