@@ -59,7 +59,7 @@ jobs:
         run: |
           uv run tools/typst_vendor.py cannonballs/cannonballs.typ --all
           uv run tools/typst_vendor.py erase/paper/erase.typ --all
-          uv run tools/typst_vendor.py peggle/peggle.typ
-          uv run tools/typst_vendor.py tenzi/tenzi.typ
+          uv run tools/typst_vendor.py peggle/peggle.typ --all
+          uv run tools/typst_vendor.py tenzi/tenzi.typ --all
       - name: The committed PDFs are current
         run: git diff --exit-code --stat -- '*.pdf'

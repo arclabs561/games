@@ -102,7 +102,7 @@ uv run python -m tenzi.tenzi
 uv run python -m tenzi.optimal
 uv run python -m tenzi.maximum
 uv run --group tenzi python -m tenzi.tenzi --plot   # also a histogram with a fitted gamma density
-uv run tools/typst_vendor.py tenzi/tenzi.typ    # rebuilds tenzi.pdf
+uv run tools/typst_vendor.py tenzi/tenzi.typ --all   # the PDF, the phone PDF and the HTML page
 uv run python -m tenzi.figures   # the figures in figures/
 ```
 
@@ -113,4 +113,4 @@ uv run python -m tenzi.figures   # the figures in figures/
 - `maximum.py` checks the harmonic-number formula and its Fourier remainder.
 - `monte_carlo.py` simulates a million games while keeping the shortest and longest ones, and checks the Gumbel-max trick for sampling a die whose faces are not equally likely.
 - `figures.py` draws the figures in `figures/`; a test checks they are current.
-- `tenzi.typ` and `tenzi.pdf` are the write-up.
+- `tenzi.typ` is the write-up; `tenzi.pdf` and `tenzi-phone.pdf`, a narrow page for reading on a phone, are built from it. The HTML page that `--all` also writes is not committed.
