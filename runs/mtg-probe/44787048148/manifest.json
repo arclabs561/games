@@ -1,0 +1,23 @@
+{
+ "experiment": "mtg-probe",
+ "run": "seed-1",
+ "commit": "ff752ac5cb96ad26c5c51a953ca6680850f32749",
+ "platform": "actions",
+ "command": [
+  "python",
+  "-m",
+  "mtg_decks.seventeen_lands",
+  "probe",
+  "--sets",
+  "BLB",
+  "FRA",
+  "--out",
+  "OUT"
+ ],
+ "returncode": 0,
+ "seconds": 2.0,
+ "job_id": "44787048148",
+ "hardware": "GitHub Actions 1000101393",
+ "gpu": null,
+ "python": "3.14.4"
+}
