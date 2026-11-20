@@ -2,7 +2,7 @@
 
 <!-- shared:summary -->
 
-Two friends play a game with no draws, such as a Peggle duel, and one wins k of n games: what is the chance that this player is the better one? With a uniform prior it equals the chance of at most k heads in n + 1 fair coin flips, so six wins in ten give 743/1024, about 0.726. Playing on until one player is 95% sure declares one of two equal players better with chance 0.528 within 100 games; playing until the Bayes factor reaches 20 keeps that under 0.05 however long they play. Exact, by Bayes's billiard-table argument and a dynamic program over (wins, games).
+Two friends play a game with no draws, such as a Peggle duel, and one wins k of n games: what is the chance that this player is the better one? With a uniform prior it equals the chance of at most k heads in n + 1 fair coin flips, so six wins in ten give 743/1024, about 0.726. Playing on until the posterior gives one player a 95% chance of being better declares one of two equal players better with chance 0.528 within 100 games; playing until the Bayes factor reaches 20 keeps that under 0.05 however long they play. Exact, by Bayes's billiard-table argument and a dynamic program over (wins, games).
 
 <!-- /shared -->
 

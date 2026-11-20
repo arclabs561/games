@@ -170,7 +170,7 @@ CAPS = range(10, 201, 10)
 def stopping_rules() -> str:
     arms = [
         ("play until 95% sure", lambda cap: stopping.outcome(HALF, cap), "#d95926"),
-        ("one look after all the games", lambda cap: stopping.fixed_length(HALF, cap), "#6250d6"),
+        ("one look after all the games", lambda cap: stopping.fixed_length(HALF, cap), "#3d3d3d"),
         (
             "play until the Bayes factor reaches 20",
             lambda cap: stopping.outcome(HALF, cap, stopping.bayes_factor_rule),
