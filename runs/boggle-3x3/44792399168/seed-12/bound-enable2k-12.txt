@@ -1,0 +1,1 @@
+classes 1748 nodes 2595937 pruned 2124415 boards 28429 found 0

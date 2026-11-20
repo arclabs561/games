@@ -1,0 +1,5 @@
+board rebtalsed 526
+board redtalseb 502
+board sebtalred 502
+board sedtalreb 526
+classes 1748 nodes 2495792 pruned 2030409 boards 34586 found 4

@@ -1,0 +1,3 @@
+board lstiaengr 501
+board seltaprem 501
+classes 1748 nodes 2532513 pruned 2074717 boards 21219 found 2

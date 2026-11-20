@@ -1,0 +1,24 @@
+{
+ "experiment": "boggle-3x3",
+ "run": "seed-4",
+ "commit": "f359d86edb25fbb3b7e4ebc8b39c8b99f890d3c9",
+ "platform": "actions",
+ "command": [
+  "python",
+  "-m",
+  "boggle.bound",
+  "run",
+  "--shard",
+  "SEED",
+  "--shards",
+  "20",
+  "--out",
+  "OUT"
+ ],
+ "returncode": 0,
+ "seconds": 802.0,
+ "job_id": "44792399168",
+ "hardware": "GitHub Actions 1000101543",
+ "gpu": null,
+ "python": "3.14.4"
+}
