@@ -1,0 +1,5 @@
+board srpeaelst 528
+board lsteaesrp 528
+board slpeearst 510
+board rsteeaslp 510
+classes 1748 nodes 2512232 pruned 2049402 boards 33795 found 4

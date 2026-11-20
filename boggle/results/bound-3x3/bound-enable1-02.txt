@@ -1,0 +1,3 @@
+board lsteaegrs 527
+board lrdeaetsp 503
+classes 1748 nodes 2604957 pruned 2127447 boards 34495 found 2

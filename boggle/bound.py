@@ -22,6 +22,7 @@ import re
 import subprocess
 import tempfile
 import threading
+from collections.abc import Sequence
 from pathlib import Path
 
 from boggle import anneal
@@ -105,11 +106,13 @@ def exhaust(words: Path, n: int, alphabet: str, threshold: int) -> dict[str, int
     return {canonical(b, n, n): p for b, p in parse(out)[0].items()}
 
 
-def run(shard: int, shards: int, out: Path) -> None:
+def run(
+    shard: int, shards: int, out: Path, groups: str = GROUPS, lists: Sequence[str] = tuple(LISTS)
+) -> None:
     """One slice of the search for each word list, written to out/bound-<list>-<shard>.txt."""
     out.mkdir(parents=True, exist_ok=True)
-    for name, path in LISTS.items():
-        text = solve(path, 3, 3, THRESHOLD, GROUPS, shard, shards)
+    for name in lists:
+        text = solve(LISTS[name], 3, 3, THRESHOLD, groups, shard, shards)
         (out / f"bound-{name}-{shard:02d}.txt").write_text(text)
 
 
@@ -150,12 +153,14 @@ def main() -> None:
     r.add_argument("--shard", type=int, required=True)
     r.add_argument("--shards", type=int, required=True)
     r.add_argument("--out", type=Path, required=True)
+    r.add_argument("--groups", default=GROUPS, help="letter groups, separated by commas")
+    r.add_argument("--lists", nargs="+", default=list(LISTS), choices=list(LISTS))
     s = sub.add_parser("summary")
     s.add_argument("paths", type=Path, nargs="+")
     sub.add_parser("check")
     args = parser.parse_args()
     if args.command == "run":
-        run(args.shard, args.shards, args.out)
+        run(args.shard, args.shards, args.out, args.groups.replace(",", " "), args.lists)
     elif args.command == "summary":
         RESULTS.mkdir(exist_ok=True)
         out = RESULTS / "best-3x3.json"

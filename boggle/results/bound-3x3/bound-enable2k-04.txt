@@ -1,0 +1,8 @@
+board lsteaedrp 514
+board lsteaegrp 505
+board rsteeadlp 500
+board rectalsep 502
+board reptalsec 523
+board sectalrep 523
+board septalrec 502
+classes 1748 nodes 2901138 pruned 2375583 boards 34546 found 7

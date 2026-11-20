@@ -1,0 +1,4 @@
+board rsteaepld 514
+board lsteaeprd 500
+board lsteaeprg 511
+classes 1748 nodes 2631759 pruned 2145408 boards 41393 found 3

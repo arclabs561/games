@@ -1,0 +1,13 @@
+board srteaelpm 501
+board lsteaegrd 507
+board laspitser 516
+board saltipres 516
+board serpitlas 516
+board restipsal 516
+board reptalsed 545
+board septalred 522
+board septarled 537
+board raptelsed 520
+board nactersed 503
+board saptilred 502
+classes 1748 nodes 2648154 pruned 2144790 boards 56670 found 12

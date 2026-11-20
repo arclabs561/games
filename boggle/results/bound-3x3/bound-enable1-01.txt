@@ -1,0 +1,3 @@
+board sertagrin 504
+board rintagser 504
+classes 1748 nodes 2513860 pruned 2070008 boards 20559 found 2

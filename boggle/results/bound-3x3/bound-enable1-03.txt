@@ -1,0 +1,9 @@
+board slpeaerts 503
+board rlpeaistn 503
+board srpeaelts 528
+board lspeaerts 520
+board lspeaestr 507
+board rspeaelts 524
+board rspeaestl 513
+board slpeiarts 507
+classes 1748 nodes 2435915 pruned 1975718 boards 42758 found 8

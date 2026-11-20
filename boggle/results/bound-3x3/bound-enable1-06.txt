@@ -1,0 +1,5 @@
+board srceaetsl 504
+board srpeaetsl 536
+board lsteaecrs 504
+board lsteaeprs 536
+classes 1748 nodes 2465664 pruned 2021879 boards 21893 found 4

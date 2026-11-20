@@ -4,6 +4,8 @@ The notebook estimates three things about each word and keeps them apart: how of
 
 It also reproduces the three board scores in Peter Norvig's pytudes [Boggle notebook](https://github.com/norvig/pytudes/blob/main/ipynb/Boggle.ipynb), among them 10,112 points from 2,290 words for Boyan's 5 by 5 board, and shows that no change of one square and no swap of two improves that board. Searches from random boards do better: the best 5 by 5 board found scores 10,397 points from 2,338 words. It is the board Vanderkam (2025) found for ENABLE2K, and it is the best found, not a proved optimum.
 
+Two newer questions have exact answers to score against. With these cubes, 160,719 words can appear on some board, and 15,000 sampled boards show 41,171 of them. The usual estimators of unseen species (Good–Turing, Chao2, iChao2 and the jackknife) put the total at 26% to 36% of the truth, with intervals far below it, because nearly half of the possible words are on fewer than one board in a million. And no 3 by 3 board scores more than `streaedlp`, 545 points, with either word list. A branch-and-bound search over classes of boards, after Vanderkam's, shows this; it reproduces his 2009 result for ENABLE2K.
+
 ![A 4 by 4 Boggle board, I H R E / T Y V L / R A S E / O M N S, with the word "traveler" traced through eight of its cubes.](figures/random-board.svg)
 
 *One shake of the cubes (seed 0), drawn by `figures.py`. The line traces "traveler", the longest of its 183 words.*
@@ -17,6 +19,11 @@ Unless a line says it is simulated, the number is exact. The simulated ones come
 | Result | How it is known |
 |---|---|
 | "toe" is the most common word, on 19.1% of boards (18.5% to 19.7%). | Simulated |
+| "toe" is the word most likely to be on a board: its chance is 3932205375797791/20591163668275200, about 19.10%. The next is "tee", 18.79%, and every word of four or more faces has a chance of at most 13.13%. | Exact for words of two or three faces, checked by brute force on small grids; an exact upper bound for longer words ([note](results/unseen.md)) |
+| For the 968 words of two or three faces, the sample agrees with the exact chances: 41 lie outside their 95% intervals, near the 48 expected. | Exact chances against the simulated sample |
+| From the 15,000 boards, Good–Turing estimates 41,482 possible words, Chao2 53,413 (52,818 to 54,038), iChao2 56,082 and the second-order jackknife 58,248: 26% to 36% of the 160,719. No interval, at any of 100 to 15,000 boards, reaches 37% of the truth. | Estimators on the simulated sample, scored against the exact count ([note](results/unseen.md)) |
+| Chao2 divides the unseen words' total chance per board by the mean chance of words seen once, 6.0 × 10<sup>−5</sup>. The unseen words' mean chance is at most 8.3 × 10<sup>−6</sup>, so it counts 12,242 unseen words where there are 119,548. | Exact upper bounds on each word's chance (expected number of paths that spell it) |
+| On average, fewer than half of the possible words appear in 315,245 boards, and fewer than 90% in 4,053,600,667 boards. | Exact, from the same bounds |
 | A board holds 97.8 words and 140 points on average; the best of the 15,000 boards scores 969. | Simulated |
 | Of the 172,723 different words of three or more letters in `enable1.txt`, 160,719 can appear on some board with these cubes and 12,004 cannot. | Exact, by matching faces to cubes; a board is built for every possible word |
 | Of the 131,552 words that no sampled board showed, 12,004 are impossible and 119,548 are possible but rare. | Exact split of a simulated set |
@@ -84,12 +91,22 @@ Searches from random boards find higher-scoring boards than Boyan's. `anneal.c` 
 
 *The best 4 by 4 board for ENABLE2K (Vanderkam, 2025), with its longest word.*
 
+## How many words can a board show?
+
+![Estimates of the number of possible words against the number of boards. All four estimators rise from about 8,000 to 12,000 words at 100 boards to 41,000 to 58,000 at 15,000 boards, far below the line at 160,719.](figures/unseen.svg)
+
+*Four estimators of the number of possible words, with 95% intervals, against the number of boards sampled. The dashed curve bounds the average number of different words that boards show.*
+
+Treat each sampled board as a survey plot and each word as a species. The estimators then use only how many words were seen on one board, on two, and so on. All of them stay below 37% of the truth through 15,000 boards, and their intervals narrow around values that are too low. The cause can be measured here. A word's chance of being on a board is at most the expected number of paths that spell it, which is exact and quick to compute. For words of two or three faces the chance itself is exact. By these bounds the unseen words are on average at least seven times rarer than the words seen once, whose mean chance Chao2 uses for them. The note [`results/unseen.md`](results/unseen.md) gives the formulas, every estimate, the checks, and the histogram of the bounds.
+
 ## Files and usage
 
 - `board.py` has the cubes, the board, the word search and the sampler.
 - It also has the test of which words are possible, the roll counts, and hill climbing.
-- `figures.py` draws boards for the notebook and writes the three SVGs here.
+- `figures.py` draws boards for the notebook and writes the five SVGs here.
 - `anneal.c` and `anneal.py` score boards fast and search 5 by 5 boards; `results/` holds every search and the summary.
+- `unseen.py` scores the estimators of unseen words; `chance.py` computes each word's chance or its bound.
+- `bound.c` and `bound.py` search classes of boards by branch and bound.
 
 The notebook and the tests import both modules.
 
@@ -99,14 +116,18 @@ uv run --group boggle python -m boggle.figures   # the SVGs in figures/
 uv run python -m boggle.anneal check                                   # C and Python scores agree
 uv run python -m boggle.anneal run --seed 1 --runs 40 --procs 4 --out runs/   # about an hour on 4 cores
 uv run python -m boggle.anneal summary runs/*/anneal-*.jsonl           # writes results/
-uv run pytest tests/test_boggle.py    # about a minute
+uv run python -m boggle.chance        # results/chances.json, about 30 seconds
+uv run python -m boggle.unseen        # results/unseen.json, about 2 minutes on 2 cores
+uv run python -m boggle.bound run --shard 0 --shards 20 --out runs/   # one of 20 slices
+uv run python -m boggle.bound summary runs/bound-*.txt                 # results/best-3x3.json
+uv run pytest tests/test_boggle.py tests/test_boggle_unseen.py tests/test_boggle_bound.py
 ```
 
 ## Questions left open
 
 - **Findability and cancellation.** Whether a player finds a word, and whether an opponent finds it too, needs an experiment with people; the post describes one.
-- **Unseen words.** The exact count of possible words lets estimators of the number of unseen words (Good and Turing, Chao) be scored against the truth. That has not been done.
-- **Exact board probability of a word.** The chance of a whole board is a permanent. The chance that a board shows a given short word, such as "toe", is a finite sum over where the cubes carrying its letters land, but the paths overlap and the sum needs inclusion and exclusion. Only the simulated value is known here.
+- **Exact board probability of longer words.** For words of two or three faces the chance is exact, by counting colorings of the slots with bit masks. Four distinct faces need 5<sup>16</sup> colorings, about 1.5 × 10<sup>11</sup>, so longer words have only the upper bound. A second-moment (Bonferroni) lower bound over pairs of paths would bracket each chance.
+- **An estimator that can see the tail.** The estimators here use only the counts of rare sightings. Whether a model of the chances (for example a mixture fitted to the bounds) predicts the 160,719 from 15,000 boards is untested.
 - **Other editions.** Big Boggle (5 by 5) and Super Big Boggle (6 by 6) have other cubes and minimum lengths. The published listings of the 5 by 5 set disagree on one cube.
 - **The best 5 by 5 board.** 1,920 searches found nothing above 10,397 points, Vanderkam's board. Whether any 5 by 5 board scores more is open: no bound is published, and branch and bound as for 4 by 4 boards is estimated at a billion CPU years. Longer searches, or a pool of boards climbed together as in Vanderkam's search, might find more.
 - **The best board for `enable1.txt`.** Vanderkam's proof is for ENABLE2K. Whether `perslatgsineters` is also best for `enable1.txt` has not been checked.

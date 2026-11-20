@@ -1,0 +1,425 @@
+{
+ "truth": 160719,
+ "seed": 20161126,
+ "resamples": 200,
+ "rows": [
+  {
+   "boards": 100,
+   "S_obs": 5435,
+   "U": 10475,
+   "Q1": 3498,
+   "Q2": 934,
+   "Q3": 400,
+   "Q4": 196,
+   "good_turing": {
+    "estimate": 8159.9,
+    "se": 274.1,
+    "low": 7673.4,
+    "high": 8752.2,
+    "resample_mean": 4752.9,
+    "share_of_truth": 0.0508
+   },
+   "chao2": {
+    "estimate": 11919.8,
+    "se": 515.9,
+    "low": 10984.9,
+    "high": 13012.2,
+    "resample_mean": 5321.1,
+    "share_of_truth": 0.0742,
+    "analytic_low": 11330.2,
+    "analytic_high": 12568.4
+   },
+   "ichao2": {
+    "estimate": 13188.8,
+    "se": 637.4,
+    "low": 12036.7,
+    "high": 14542.1,
+    "resample_mean": 5592.6,
+    "share_of_truth": 0.0821
+   },
+   "jackknife2": {
+    "estimate": 11420.0,
+    "se": 569.7,
+    "low": 10403.4,
+    "high": 12644.6,
+    "resample_mean": 6193.5,
+    "share_of_truth": 0.0711
+   }
+  },
+  {
+   "boards": 200,
+   "S_obs": 7845,
+   "U": 20299,
+   "Q1": 4447,
+   "Q2": 1320,
+   "Q3": 663,
+   "Q4": 390,
+   "good_turing": {
+    "estimate": 10045.8,
+    "se": 268.6,
+    "low": 9579.0,
+    "high": 10638.2,
+    "resample_mean": 6702.3,
+    "share_of_truth": 0.0625
+   },
+   "chao2": {
+    "estimate": 15298.4,
+    "se": 523.3,
+    "low": 14341.2,
+    "high": 16396.6,
+    "resample_mean": 7634.9,
+    "share_of_truth": 0.0952,
+    "analytic_low": 14705.3,
+    "analytic_high": 15942.7
+   },
+   "ichao2": {
+    "estimate": 16695.0,
+    "se": 638.4,
+    "low": 15529.6,
+    "high": 18037.2,
+    "resample_mean": 8007.0,
+    "share_of_truth": 0.1039
+   },
+   "jackknife2": {
+    "estimate": 15372.1,
+    "se": 603.7,
+    "low": 14278.8,
+    "high": 16651.1,
+    "resample_mean": 8830.8,
+    "share_of_truth": 0.0956
+   }
+  },
+  {
+   "boards": 500,
+   "S_obs": 12359,
+   "U": 48744,
+   "Q1": 5943,
+   "Q2": 2067,
+   "Q3": 1100,
+   "Q4": 675,
+   "good_turing": {
+    "estimate": 14075.1,
+    "se": 212.8,
+    "low": 13706.0,
+    "high": 14545.2,
+    "resample_mean": 10486.1,
+    "share_of_truth": 0.0876
+   },
+   "chao2": {
+    "estimate": 20885.5,
+    "se": 472.4,
+    "low": 20008.7,
+    "high": 21862.8,
+    "resample_mean": 12045.4,
+    "share_of_truth": 0.13,
+    "analytic_low": 20309.5,
+    "analytic_high": 21503.2
+   },
+   "ichao2": {
+    "estimate": 22612.9,
+    "se": 578.8,
+    "low": 21539.8,
+    "high": 23811.5,
+    "resample_mean": 12574.8,
+    "share_of_truth": 0.1407
+   },
+   "jackknife2": {
+    "estimate": 22154.7,
+    "se": 569.0,
+    "low": 21101.5,
+    "high": 23334.9,
+    "resample_mean": 13766.3,
+    "share_of_truth": 0.1378
+   }
+  },
+  {
+   "boards": 1000,
+   "S_obs": 16521,
+   "U": 96523,
+   "Q1": 7036,
+   "Q2": 2602,
+   "Q3": 1488,
+   "Q4": 891,
+   "good_turing": {
+    "estimate": 17820.0,
+    "se": 175.4,
+    "low": 17519.2,
+    "high": 18211.4,
+    "resample_mean": 13990.3,
+    "share_of_truth": 0.1109
+   },
+   "chao2": {
+    "estimate": 26024.4,
+    "se": 381.5,
+    "low": 25305.6,
+    "high": 26802.1,
+    "resample_mean": 16015.1,
+    "share_of_truth": 0.1619,
+    "analytic_low": 25437.6,
+    "analytic_high": 26649.9
+   },
+   "ichao2": {
+    "estimate": 28050.6,
+    "se": 461.5,
+    "low": 27180.9,
+    "high": 28991.2,
+    "resample_mean": 16636.8,
+    "share_of_truth": 0.1745
+   },
+   "jackknife2": {
+    "estimate": 27977.7,
+    "se": 477.5,
+    "low": 27079.4,
+    "high": 28952.4,
+    "resample_mean": 18108.8,
+    "share_of_truth": 0.1741
+   }
+  },
+  {
+   "boards": 2000,
+   "S_obs": 21644,
+   "U": 192664,
+   "Q1": 8221,
+   "Q2": 3249,
+   "Q3": 1796,
+   "Q4": 1183,
+   "good_turing": {
+    "estimate": 22608.7,
+    "se": 176.5,
+    "low": 22320.0,
+    "high": 23020.7,
+    "resample_mean": 18465.4,
+    "share_of_truth": 0.1407
+   },
+   "chao2": {
+    "estimate": 32039.7,
+    "se": 355.7,
+    "low": 31365.6,
+    "high": 32760.5,
+    "resample_mean": 21029.2,
+    "share_of_truth": 0.1994,
+    "analytic_low": 31449.2,
+    "analytic_high": 32665.7
+   },
+   "ichao2": {
+    "estimate": 34221.5,
+    "se": 425.1,
+    "low": 33415.6,
+    "high": 35082.6,
+    "resample_mean": 21762.2,
+    "share_of_truth": 0.2129
+   },
+   "jackknife2": {
+    "estimate": 34829.5,
+    "se": 450.7,
+    "low": 33975.3,
+    "high": 35742.9,
+    "resample_mean": 23533.4,
+    "share_of_truth": 0.2167
+   }
+  },
+  {
+   "boards": 5000,
+   "S_obs": 29819,
+   "U": 486423,
+   "Q1": 9601,
+   "Q2": 4158,
+   "Q3": 2353,
+   "Q4": 1565,
+   "good_turing": {
+    "estimate": 30419.4,
+    "se": 153.1,
+    "low": 30186.1,
+    "high": 30800.9,
+    "resample_mean": 25843.4,
+    "share_of_truth": 0.1893
+   },
+   "chao2": {
+    "estimate": 40901.3,
+    "se": 298.1,
+    "low": 40332.4,
+    "high": 41501.1,
+    "resample_mean": 29097.7,
+    "share_of_truth": 0.2545,
+    "analytic_low": 40323.3,
+    "analytic_high": 41511.2
+   },
+   "ichao2": {
+    "estimate": 43334.2,
+    "se": 352.7,
+    "low": 42660.4,
+    "high": 44043.4,
+    "resample_mean": 29972.6,
+    "share_of_truth": 0.2696
+   },
+   "jackknife2": {
+    "estimate": 44859.7,
+    "se": 381.1,
+    "low": 44131.1,
+    "high": 45625.5,
+    "resample_mean": 32125.8,
+    "share_of_truth": 0.2791
+   }
+  },
+  {
+   "boards": 10000,
+   "S_obs": 36791,
+   "U": 972826,
+   "Q1": 10576,
+   "Q2": 4631,
+   "Q3": 2794,
+   "Q4": 2000,
+   "good_turing": {
+    "estimate": 37195.4,
+    "se": 118.5,
+    "low": 37021.4,
+    "high": 37500.6,
+    "resample_mean": 32269.1,
+    "share_of_truth": 0.2314
+   },
+   "chao2": {
+    "estimate": 48866.2,
+    "se": 249.0,
+    "low": 48387.9,
+    "high": 49364.2,
+    "resample_mean": 35950.3,
+    "share_of_truth": 0.304,
+    "analytic_low": 48266.0,
+    "analytic_high": 49497.9
+   },
+   "ichao2": {
+    "estimate": 51429.6,
+    "se": 297.8,
+    "low": 50857.4,
+    "high": 52025.1,
+    "resample_mean": 36911.1,
+    "share_of_truth": 0.32
+   },
+   "jackknife2": {
+    "estimate": 53310.2,
+    "se": 323.0,
+    "low": 52689.2,
+    "high": 53955.4,
+    "resample_mean": 39321.5,
+    "share_of_truth": 0.3317
+   }
+  },
+  {
+   "boards": 15000,
+   "S_obs": 41171,
+   "U": 1467424,
+   "Q1": 11018,
+   "Q2": 4958,
+   "Q3": 3048,
+   "Q4": 2135,
+   "good_turing": {
+    "estimate": 41482.5,
+    "se": 111.4,
+    "low": 41328.8,
+    "high": 41785.9,
+    "resample_mean": 36391.3,
+    "share_of_truth": 0.2581
+   },
+   "chao2": {
+    "estimate": 53412.7,
+    "se": 214.0,
+    "low": 53000.3,
+    "high": 53839.4,
+    "resample_mean": 40271.8,
+    "share_of_truth": 0.3323,
+    "analytic_low": 52817.7,
+    "analytic_high": 54038.0
+   },
+   "ichao2": {
+    "estimate": 56081.6,
+    "se": 254.5,
+    "low": 55591.0,
+    "high": 56588.9,
+    "resample_mean": 41273.1,
+    "share_of_truth": 0.3489
+   },
+   "jackknife2": {
+    "estimate": 58247.8,
+    "se": 278.9,
+    "low": 57709.8,
+    "high": 58803.2,
+    "resample_mean": 43813.7,
+    "share_of_truth": 0.3624
+   }
+  }
+ ],
+ "blocks": [
+  {
+   "boards": 1000,
+   "blocks": 15,
+   "good_turing": {
+    "mean": 17764.5,
+    "sd": 187.5,
+    "min": 17221.3,
+    "max": 17974.0
+   },
+   "chao2": {
+    "mean": 25773.3,
+    "sd": 374.6,
+    "min": 24754.8,
+    "max": 26217.2
+   },
+   "ichao2": {
+    "mean": 27684.2,
+    "sd": 409.9,
+    "min": 26604.4,
+    "max": 28101.4
+   },
+   "jackknife2": {
+    "mean": 27812.1,
+    "sd": 317.3,
+    "min": 26905.5,
+    "max": 28184.6
+   }
+  },
+  {
+   "boards": 3000,
+   "blocks": 5,
+   "good_turing": {
+    "mean": 25919.6,
+    "sd": 144.1,
+    "min": 25681.3,
+    "max": 26026.6
+   },
+   "chao2": {
+    "mean": 35675.6,
+    "sd": 159.0,
+    "min": 35543.0,
+    "max": 35930.5
+   },
+   "ichao2": {
+    "mean": 37937.5,
+    "sd": 200.2,
+    "min": 37752.2,
+    "max": 38217.6
+   },
+   "jackknife2": {
+    "mean": 39018.7,
+    "sd": 122.0,
+    "min": 38818.8,
+    "max": 39133.8
+   }
+  }
+ ],
+ "explanation": {
+  "boards": 15000,
+  "unseen possible words": 119548,
+  "Chao2 unseen words": 12241.7,
+  "unseen total chance, Good-Turing": 0.7345,
+  "unseen total chance, at most": 0.9876,
+  "mean chance of words seen once, estimated": 6e-05,
+  "mean chance of unseen words, at most": 8.261e-06,
+  "unseen words with bound below 1e-6": 72843
+ },
+ "short words against the sample": {
+  "words": 968,
+  "outside the 95% interval": 41,
+  "mean difference": -0.02,
+  "spread of differences": 0.994
+ }
+}

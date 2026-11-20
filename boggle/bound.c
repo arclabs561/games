@@ -38,6 +38,8 @@
          Prints the max and union bounds of one class, cells given as letter sets row by row.
      score <words> <rows> <cols> <letters>
          Prints the points and number of words of one board.
+     placements <cube faces...>
+         For each sequence of faces on standard input, prints chance.placements (below).
 */
 #include <stdint.h>
 #include <stdio.h>
@@ -242,7 +244,43 @@ static uint32_t letters_mask(const char *s) {
     return m;
 }
 
+/* For each line on standard input, a sequence of faces ("q" for Qu), print the number of ways
+   to give each face its own cube, counted once for each side of that cube that shows the
+   face: chance.placements, in floating point. A dynamic program over the cubes; the state is
+   how many positions of each different face are filled, stored in mixed radix. Visiting the
+   states from the last down, each cube fills at most one position, as in a 0/1 knapsack. */
+static int placements(int ncubes, char **cubes) {
+    static double val[1 << 16];
+    char line[64];
+    while (fgets(line, sizeof line, stdin)) {
+        int mult[26] = {0}, len = 0;
+        for (; line[len] >= 'a' && line[len] <= 'z'; len++) mult[line[len] - 'a']++;
+        if (len > ncubes || len > 16) { printf("0\n"); continue; }
+        int face[26], need[26], radix[26], nf = 0, states = 1;
+        for (int c = 0; c < 26; c++)
+            if (mult[c]) face[nf] = c, need[nf] = mult[c], radix[nf] = states, states *= mult[c] + 1, nf++;
+        memset(val, 0, (size_t)states * sizeof *val);
+        val[0] = 1;
+        for (int q = 0; q < ncubes; q++) {
+            int sides[26] = {0}, on[6], non = 0;
+            for (const char *p = cubes[q]; *p; p++) sides[*p - 'a']++;
+            for (int i = 0; i < nf; i++)
+                if (sides[face[i]]) on[non++] = i;
+            for (int s = states - 1; s >= 0 && non; s--) {
+                if (val[s] == 0) continue;
+                for (int t = 0; t < non; t++) {
+                    int i = on[t], d = s / radix[i] % (need[i] + 1);
+                    if (d < need[i]) val[s + radix[i]] += val[s] * sides[face[i]] * (need[i] - d);
+                }
+            }
+        }
+        printf("%.17g\n", val[states - 1]);
+    }
+    return 0;
+}
+
 int main(int argc, char **argv) {
+    if (argc >= 2 && !strcmp(argv[1], "placements")) return placements(argc - 2, argv + 2);
     if (argc < 5) { fprintf(stderr, "usage: see the comment at the top of bound.c\n"); return 2; }
     load(argv[2]);
     grid(atoi(argv[3]), atoi(argv[4]));
