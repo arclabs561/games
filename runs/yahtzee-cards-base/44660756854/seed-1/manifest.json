@@ -1,0 +1,32 @@
+{
+ "experiment": "yahtzee-cards-base",
+ "run": "seed-1",
+ "commit": "5050ce8bb11423a28505b8b50f48fa000e3d1515",
+ "platform": "actions",
+ "command": [
+  "python",
+  "-m",
+  "yahtzee.learn",
+  "learn",
+  "--start",
+  "base",
+  "--seed",
+  "SEED",
+  "--out",
+  "OUT",
+  "--steps",
+  "80",
+  "--rate",
+  "4000",
+  "--tries",
+  "6",
+  "--minutes",
+  "300"
+ ],
+ "returncode": 0,
+ "seconds": 5226.0,
+ "job_id": "44660756854",
+ "hardware": "GitHub Actions 1000099467",
+ "gpu": null,
+ "python": "3.14.4"
+}
