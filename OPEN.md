@@ -8,8 +8,8 @@ Each status comes from the question's wording, by the rules in the script's docs
 |---|---:|
 | blocked on data | 8 |
 | blocked on compute | 3 |
-| partly answered | 11 |
-| open | 52 |
+| partly answered | 10 |
+| open | 53 |
 
 | Game | Question | Status |
 |---|---|---|
@@ -19,10 +19,10 @@ Each status comes from the question's wording, by the rules in the script's docs
 | [Common Words in Boggle](boggle/README.md) | **Other editions.** Big Boggle (5 by 5) and Super Big Boggle (6 by 6) have other cubes and minimum lengths. The published listings of the 5 by 5 set disagree on one cube. | open |
 | [Common Words in Boggle](boggle/README.md) | **The best 5 by 5 board.** Boyan's board resists every one-square change. Changes of two squares, swaps and restarts, which Norvig lists, have not been tried. | partly answered |
 | [Common Words in Boggle](boggle/README.md) | **The best board for `enable1.txt`.** Vanderkam's proof is for ENABLE2K. Whether `perslatgsineters` is also best for `enable1.txt` has not been checked. | partly answered |
-| [Cannonballs](cannonballs/README.md) | Is the single ball the only square pile with a cube number of balls? Remainders rule out only two of the six cases for cubes. | partly answered |
-| [Cannonballs](cannonballs/README.md) | Is there a short proof, using Pell equations and remainders, that 7,140 is the last number that is both a triangle and a tetrahedral pile? | open |
-| [Cannonballs](cannonballs/README.md) | Which oblong piles hold a triangular number of balls? For a fixed short side, each extra ball of length adds a triangle, so the remainder method of the square case applies. | open |
-| [Cannonballs](cannonballs/README.md) | How do the counts and touching pairs change for piles built in the hexagonal close packing? | open |
+| [Cannonballs](cannonballs/README.md) | **Square piles that are cubes.** Is the single ball the only square pile that holds a cube number of balls? The search found no other up to 10<sup>18</sup> layers. Four of the six cases for cubes survive every divisor up to 200, so a proof would need another idea, perhaps a bound on equations of the form \|ax³ − by³\| = 1 as for tetrahedral piles. | open |
+| [Cannonballs](cannonballs/README.md) | **A short proof for the tetrahedral pile of 34 layers.** Avanesov's proof that 7,140 is the last number that is both a triangle and a tetrahedral pile uses heavy machinery. Is there a proof by Pell equations and remainders, like Anglin's for Lucas's problem? | open |
+| [Cannonballs](cannonballs/README.md) | **Oblong piles that are triangles or cubes.** The rule for squares is proved<!--raw-typst  (@thm-oblong)-->. Which short sides allow an oblong pile with a triangular number of balls? For a fixed short side a, each extra ball of length adds a triangle of side a, so the remainder method of the square case applies, but it has not been worked out. | open |
+| [Cannonballs](cannonballs/README.md) | **Other packings.** The piles here are pieces of the face-centered cubic packing. A pile can also be built with each new layer turned the other way, as in the hexagonal close packing, which is equally dense. Which pile shapes stay stable then, and how do their counts and touching pairs change? | open |
 | [Chess: what a rating says, and what a player at a rating plays](chess_ratings/README.md) | How much of the gap between real and model settling comes from players who improve, and how much from strong players on new accounts? Splitting real players by their rating at game 61 against their first results would separate them. | open |
 | [Chess: what a rating says, and what a player at a rating plays](chess_ratings/README.md) | Does Maia-3 expect fewer opening blunders when it sees the moves that led to a position? Running the common positions with each occurrence's history would tell. | open |
 | [Chess: what a rating says, and what a player at a rating plays](chess_ratings/README.md) | Would Maia3-79M or Allie 2.1 estimate a rating from one game better than Maia3-5M, and is the error floor set by the model or by the noise in the rating itself (about 31 points)? | open |
@@ -40,9 +40,9 @@ Each status comes from the question's wording, by the rules in the script's docs
 | [Egyptian Ratscrew](egyptian_ratscrew/README.md) | Which nine-card deck types have a trap with three players? The census was run for two players only. | open |
 | [Egyptian Ratscrew](egyptian_ratscrew/README.md) | What is the smallest deck with a trap with slaps in it for three players? For two players it has nine cards, and the census finds one such deck type among the 1,349. | open |
 | [Egyptian Ratscrew](egyptian_ratscrew/README.md) | Is the seat effect with four players zero, or too small to see in 200,000 games? | open |
-| [Erase](erase/README.md) | A proof of Theorem 15 that does not check cases is still open. | open |
-| [Erase](erase/README.md) | Do the thresholds for targets other than 10 hold for hands of more than 11 cards? The paper's induction to larger hands is worked out only for 10. | partly answered |
-| [Erase](erase/README.md) | Does any target above 30 have a threshold above 9? Only 14 reaches 9 among the targets checked, because of one multiset of eight cards. | partly answered |
+| [Erase](erase/README.md) | A proof of the theorem on big hands<!--raw-typst  (@thm-big)--> that does not check cases is still open; in particular, a short reason why any seven nonzero cards outside the two families make 10 using all of them, apart from 1 6 6 7 7 7 7. | open |
+| [Erase](erase/README.md) | Do the thresholds for targets other than 10 hold for hands of more than 11 cards? The induction to larger hands is worked out only for 10. | partly answered |
+| [Erase](erase/README.md) | Does any target above 30 have a threshold above 9? Among the targets checked only 14 reaches 9, because of one multiset of eight cards. | partly answered |
 | [EV Nova and Naev](ev_nova/README.md) | Whether Naev's mean prices match the game. A running copy of Naev could check a few spobs. | blocked on data |
 | [EV Nova and Naev](ev_nova/README.md) | Time. A jump in Naev takes flying time that depends on the system, and the source comments put a jump at about three periods and a landing at about one. Rates per period would need a model of flight time. The map positions in `naev.json` are a first step: a jump point marked `autopos` lies at the system's radius, in the direction of the target system (`src/space.c`), so the distance flown inside a system between two such points can be computed. Ship speeds and the time of the jump itself are still needed. | partly answered |
 | [EV Nova and Naev](ev_nova/README.md) | Missions against trading. Cargo missions in both games pay for delivery and need no capital. They are not modeled. | open |
