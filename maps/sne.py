@@ -8,13 +8,15 @@ Kullback-Leibler divergence. SNE uses a Gaussian on the map; t-SNE symmetrizes t
 into one joint distribution and uses a Student t with one degree of freedom, whose
 heavy tail lets moderately distant data points sit far apart on the map.
 
-The loops use only elementwise numpy operations, no matrix products, so that a run gives
-the same bits on any machine with the same numpy.
+The loops use only elementwise numpy operations, no matrix products, and the exp and log
+of maps.portable, so that a run gives the same bits on any machine with the same numpy.
 """
 
 from dataclasses import dataclass, field
 
 import numpy as np
+
+from maps.portable import exp, log, log2
 
 
 def sq_distances(y: np.ndarray) -> np.ndarray:
@@ -29,14 +31,14 @@ def row_distribution(d2: np.ndarray, beta: float, i: int) -> np.ndarray:
     """p(. | i) for precision beta = 1 / (2 sigma^2), with p(i | i) = 0."""
     d = d2.copy()
     d[i] = np.inf
-    p = np.exp(-beta * (d - d.min()))  # shifted for stability; the shift cancels
+    p = exp(-beta * (d - d.min()))  # shifted for stability; the shift cancels
     return p / p.sum()
 
 
 def entropy_bits(p: np.ndarray) -> float:
     """Shannon entropy in bits, with 0 log 0 = 0."""
     nz = p[p > 0]
-    return float(-(nz * np.log2(nz)).sum())
+    return float(-(nz * log2(nz)).sum())
 
 
 def conditional_p(
@@ -48,7 +50,7 @@ def conditional_p(
     the matrix and the betas.
     """
     n = len(d2)
-    target = np.log2(perplexity)
+    target = float(log2(perplexity))
     p = np.zeros((n, n))
     betas = np.empty(n)
     for i in range(n):
@@ -56,7 +58,8 @@ def conditional_p(
         scale = np.median(np.delete(d2[i], i))
         for _ in range(max_steps):
             mid = (lo + hi) / 2
-            row = row_distribution(d2[i], np.exp(mid) / scale, i)
+            beta = float(exp(mid)) / scale
+            row = row_distribution(d2[i], beta, i)
             h = entropy_bits(row)
             if abs(h - target) < tol:
                 break
@@ -64,7 +67,7 @@ def conditional_p(
                 lo = mid
             else:
                 hi = mid
-        p[i], betas[i] = row, np.exp(mid) / scale
+        p[i], betas[i] = row, beta
     return p, betas
 
 
@@ -79,7 +82,7 @@ def kl(p: np.ndarray, q: np.ndarray) -> float:
     A q that underflowed to 0 where p > 0 (early in SNE) is read as 1e-300.
     """
     m = p > 0
-    return float((p[m] * np.log(p[m] / np.maximum(q[m], 1e-300))).sum())
+    return float((p[m] * log(p[m] / np.maximum(q[m], 1e-300))).sum())
 
 
 def _pull(force: np.ndarray, y: np.ndarray) -> np.ndarray:
@@ -97,7 +100,7 @@ def sne_q_grad(y: np.ndarray, p_cond: np.ndarray) -> tuple[np.ndarray, np.ndarra
     """
     d2 = sq_distances(y)
     np.fill_diagonal(d2, np.inf)
-    w = np.exp(-(d2 - d2.min(axis=1, keepdims=True)))  # shifted per row; the shift cancels
+    w = exp(-(d2 - d2.min(axis=1, keepdims=True)))  # shifted per row; the shift cancels
     q = w / w.sum(axis=1, keepdims=True)
     m = p_cond - q
     return q, 2 * _pull(m + m.T, y)
@@ -107,7 +110,7 @@ def ssne_q_grad(y: np.ndarray, p: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     """Symmetric SNE: joint Gaussian q_ij; gradient of KL(P || Q) is 4 sum_j (p_ij - q_ij)(y_i - y_j)."""
     d2 = sq_distances(y)
     np.fill_diagonal(d2, np.inf)
-    w = np.exp(-(d2 - d2.min()))  # shifted; the shift cancels
+    w = exp(-(d2 - d2.min()))  # shifted; the shift cancels
     q = w / w.sum()
     return q, 4 * _pull(p - q, y)
 

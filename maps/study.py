@@ -15,7 +15,7 @@ from pathlib import Path
 
 import numpy as np
 
-from maps import colors, data, jl, ranks, shelf, sne, som
+from maps import colors, data, jl, portable, ranks, shelf, sne, som
 
 RESULTS = Path(__file__).parent / "results" / "maps.json"
 MAPS = Path(__file__).parent / "results" / "maps.npz"  # the maps that the figures draw
@@ -236,11 +236,10 @@ def embeddings(name: str) -> dict[str, np.ndarray]:
 
 
 def pca(x: np.ndarray, dims: int = 2) -> np.ndarray:
-    """Coordinates on the leading principal components, each signed so its largest loading is positive."""
-    xc = x - x.mean(axis=0)
-    _, _, vt = np.linalg.svd(xc, full_matrices=False)
-    vt = vt[:dims] * np.sign(vt[np.arange(dims), np.abs(vt[:dims]).argmax(axis=1)])[:, None]
-    return xc @ vt.T
+    """Coordinates on the leading principal components, each signed so its largest loading
+    is positive (Jacobi's method and fixed-order sums, so the same bits on any machine)."""
+    _, axes = portable.principal_axes(x, dims)
+    return portable.dot_rows(x - x.mean(axis=0), axes)
 
 
 def map_scores(x: np.ndarray, y: np.ndarray, p: np.ndarray) -> dict[str, list[float] | float]:
