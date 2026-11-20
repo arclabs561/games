@@ -1,12 +1,16 @@
 """Boggle word search (boggle/board.py, which boggle.ipynb imports)."""
 
+import json
 import random
 from collections import Counter
 from fractions import Fraction
 from itertools import permutations, product
 from math import factorial, prod
+from pathlib import Path
 
-from boggle import figures
+import pytest
+
+from boggle import anneal, figures
 from boggle.board import (
     CUBES,
     all_cube_losses,
@@ -36,6 +40,8 @@ from boggle.board import (
     word_slots,
     words_by_paths,
 )
+
+HERE = Path(__file__).parent.parent / "boggle"
 
 
 def test_qu_face_is_matched_as_one_unit():
@@ -359,3 +365,46 @@ def test_committed_svgs_are_what_the_script_writes(tmp_path):
         assert (tmp_path / name).read_bytes() == (figures.HERE / "figures" / name).read_bytes(), (
             name
         )
+
+
+@pytest.mark.skipif(anneal.compiler_missing(), reason="anneal.c needs a C compiler")
+def test_c_scorer_agrees_with_get_words():
+    words = [w for w in load_words(HERE / "enable1.txt") if len(w) >= 3]
+    trie = make_trie(words)
+    rng = random.Random(5)
+    boards = ["rstcsdeiaegnlrpeatesmssid", "ligdrmanesietildsracsepes", "quqqquqqqquqqqqquuuuuuuuu"]
+    boards += ["".join(rng.choice("aeeinorstlqdxz") for _ in range(25)) for _ in range(30)]
+    boards += [
+        "".join(rng.choice("abcdefghijklmnopqrstuvwxyz") for _ in range(16)) for _ in range(30)
+    ]
+    for letters in boards:
+        assert anneal.c_score(letters) == anneal.py_score(letters, trie), letters
+
+
+@pytest.mark.skipif(anneal.compiler_missing(), reason="anneal.c needs a C compiler")
+def test_boyans_board_resists_every_change_of_one_square_and_every_swap():
+    # 625 one-square changes and 300 swaps, each scored; none beats 10,112.
+    assert anneal.c_climb("rstcsdeiaegnlrpeatesmssid") == (10112, 2290, "rstcsdeiaegnlrpeatesmssid")
+    # Vanderkam's best 5 by 5 board for ENABLE2K, scored with enable1.txt, beats it.
+    assert anneal.c_score("ligdrmanesietildsracsepes") == (10397, 2338)
+    assert anneal.c_score("ligdrmanesietildsracsepes", HERE / "enable2k.txt") == (10406, 2344)
+
+
+@pytest.mark.skipif(anneal.compiler_missing(), reason="anneal.c needs a C compiler")
+def test_annealing_is_seeded():
+    assert anneal.anneal(7, 1, steps=2000) == anneal.anneal(7, 1, steps=2000)
+
+
+def test_committed_search_summary_is_what_the_script_writes():
+    # 1,920 seeded searches; the best board they found is Vanderkam's, up to symmetry.
+    summary = anneal.summary()
+    committed = json.loads((HERE / "results" / "best-5x5.json").read_text())
+    assert summary == committed
+    assert summary["best"] == {
+        "board": "ligdrmanesietildsracsepes",
+        "points": 10397,
+        "words": 2338,
+        "searches": 269,
+    }
+    assert anneal.canonical("sepesdsracietilmanesligdr") == "ligdrmanesietildsracsepes"
+    assert anneal.canonical("rslcsdeiaegntrpatesesmidr") == summary["top boards"][1]["board"]

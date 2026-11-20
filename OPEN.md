@@ -1,6 +1,6 @@
 # Open questions
 
-78 open questions from 18 games' READMEs, collected by `tools/open_questions.py`. Edit the READMEs, not this file, then run `python3 tools/open_questions.py`; a test checks that this file is current.
+79 open questions from 18 games' READMEs, collected by `tools/open_questions.py`. Edit the READMEs, not this file, then run `python3 tools/open_questions.py`; a test checks that this file is current.
 
 Each status comes from the question's wording, by the rules in the script's docstring. It guides the choice of what to work on next and is not itself a finding.
 
@@ -8,8 +8,8 @@ Each status comes from the question's wording, by the rules in the script's docs
 |---|---:|
 | blocked on data | 8 |
 | blocked on compute | 3 |
-| partly answered | 10 |
-| open | 57 |
+| partly answered | 9 |
+| open | 59 |
 
 | Game | Question | Status |
 |---|---|---|
@@ -17,7 +17,7 @@ Each status comes from the question's wording, by the rules in the script's docs
 | [Common Words in Boggle](boggle/README.md) | **Unseen words.** The exact count of possible words lets estimators of the number of unseen words (Good and Turing, Chao) be scored against the truth. That has not been done. | open |
 | [Common Words in Boggle](boggle/README.md) | **Exact board probability of a word.** The chance of a whole board is a permanent. The chance that a board shows a given short word, such as "toe", is a finite sum over where the cubes carrying its letters land, but the paths overlap and the sum needs inclusion and exclusion. Only the simulated value is known here. | partly answered |
 | [Common Words in Boggle](boggle/README.md) | **Other editions.** Big Boggle (5 by 5) and Super Big Boggle (6 by 6) have other cubes and minimum lengths. The published listings of the 5 by 5 set disagree on one cube. | open |
-| [Common Words in Boggle](boggle/README.md) | **The best 5 by 5 board.** Boyan's board resists every one-square change. Changes of two squares, swaps and restarts, which Norvig lists, have not been tried. | partly answered |
+| [Common Words in Boggle](boggle/README.md) | **The best 5 by 5 board.** 1,920 searches found nothing above 10,397 points, Vanderkam's board. Whether any 5 by 5 board scores more is open: no bound is published, and branch and bound as for 4 by 4 boards is estimated at a billion CPU years. Longer searches, or a pool of boards climbed together as in Vanderkam's search, might find more. | open |
 | [Common Words in Boggle](boggle/README.md) | **The best board for `enable1.txt`.** Vanderkam's proof is for ENABLE2K. Whether `perslatgsineters` is also best for `enable1.txt` has not been checked. | partly answered |
 | [Cannonballs](cannonballs/README.md) | **Square piles that are cubes.** Is the single ball the only square pile that holds a cube number of balls? The search found no other up to 10<sup>18</sup> layers. Four of the six cases for cubes survive every divisor up to 200, so a proof would need another idea, perhaps a bound on equations of the form \|ax³ − by³\| = 1 as for tetrahedral piles. | open |
 | [Cannonballs](cannonballs/README.md) | **A short proof for the tetrahedral pile of 34 layers.** Avanesov's proof that 7,140 is the last number that is both a triangle and a tetrahedral pile uses heavy machinery. Is there a proof by Pell equations and remainders, like Anglin's for Lucas's problem? | open |
@@ -25,6 +25,7 @@ Each status comes from the question's wording, by the rules in the script's docs
 | [Cannonballs](cannonballs/README.md) | **Other packings.** The piles here are pieces of the face-centered cubic packing. A pile can also be built with each new layer turned the other way, as in the hexagonal close packing, which is equally dense. Which pile shapes stay stable then, and how do their counts and touching pairs change? | open |
 | [Chess: what a rating says, and what a player at a rating plays](chess_ratings/README.md) | How much of the gap between real and model settling comes from players who improve, and how much from strong players on new accounts? Splitting real players by their rating at game 61 against their first results would separate them. | open |
 | [Chess: what a rating says, and what a player at a rating plays](chess_ratings/README.md) | Does Maia-3 expect fewer opening blunders when it sees the moves that led to a position? Running the common positions with each occurrence's history would tell. | open |
+| [Chess: what a rating says, and what a player at a rating plays](chess_ratings/README.md) | Does a rating map fitted separately for each time control remove the rest of the bias below 1400? The pilot's bias was twice as large at 5 minutes plus 3 seconds as at 3 minutes, and the map here was fitted on all time controls together. | open |
 | [Chess: what a rating says, and what a player at a rating plays](chess_ratings/README.md) | Would Maia3-79M or Allie 2.1 estimate a rating from one game better than Maia3-5M, and is the error floor set by the model or by the noise in the rating itself (about 31 points)? | open |
 | [Chess: what a rating says, and what a player at a rating plays](chess_ratings/README.md) | With one game a day instead of back to back, the deviation grows between games by 0.21436 σ² per day. How does that change the games needed to settle? | open |
 | [Codenames](codenames/README.md) | Does the single-peak property of the value of a turn hold for every weighting? | open |
@@ -50,9 +51,9 @@ Each status comes from the question's wording, by the rules in the script's docs
 | [EV Nova and Naev](ev_nova/README.md) | Story changes. EV Nova's galaxy changes with control bits, and Naev's with its campaign. Only the start of an EV Nova game and Naev's base data are studied. EV Nova's disasters (`öops`), which shift one price for a while, are left out, as are hypergates and wormholes. | open |
 | [EV Nova and Naev](ev_nova/README.md) | The prices of EV Nova's special commodities, and whether a player's rank changes commodity prices. | open |
 | [EV Nova and Naev](ev_nova/README.md) | Legal limits. Some special commodities are contraband, and a player without enough standing with a Naev spob's faction cannot land there. | open |
-| [FreeCell](freecell/README.md) | **The eight undecided levels.** Solver B can store 260 million positions on a runner with 16 GB, and that was not enough to decide them. A disk-backed search could decide them, and so could a win found by a better search. Deal 982 with two free cells is the hardest; Fish (2012) reports that it was intractable for a long time before it was shown impossible. | blocked on compute |
+| [FreeCell](freecell/README.md) | **The four open levels.** Deals 13167 and 13599 with one free cell (won in the published list), 24966 with one (lost) and 982 with two (lost) are still undecided. Split into groups, their largest group of positions held more than 32 GB could store. Fish (2012) decided 982 on a machine with 512 GB. A disk-backed table for the largest group, or a finer split of it, could decide them here. | blocked on compute |
 | [FreeCell](freecell/README.md) | **A short certificate with free cells.** No proof that 11982 is lost avoids listing positions. Sells (2026) tried counting free places at the moment a stuck card must move; he found that it fails once a column can be emptied. With a free cell, the only certificate here is the fence. A short argument like the stuck-card set would need to bound how long cards can stay in free cells. | partly answered |
-| [FreeCell](freecell/README.md) | **Deals with no frozen card.** In 27 lost deals every card moves in some line. What makes deal 8927 lost with three free cells? | open |
+| [FreeCell](freecell/README.md) | **Deals with no frozen card.** In 27 lost deals of the survey every card moves in some line, and deal 27708 with one free cell is another. What makes deal 8927 lost with three free cells? | open |
 | [FreeCell](freecell/README.md) | **Further deals.** Fish (2012) reports 82,126 deals lost with two free cells among the first 400,000. Pringle and Fish (2018) count 102,075 deals lost with four among all FreeCell Pro deals. Neither is rerun here. A survey of the first million deals with four free cells was started and cancelled before it finished; no result of it is reported. | blocked on compute |
 | [Hanabi](hanabi/README.md) | Split the points between a team's score and its deal's ceiling into what hidden information costs and what play costs. That needs an agent that plays the real game well, scored on the same 3,079 decks. | open |
 | [Hanabi](hanabi/README.md) | Settle the 23 deals still undecided ([h1.md](results/h1.md) lists them). No certificate proves any of them lost, and 13 are won in the free-order game. | partly answered |

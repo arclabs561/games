@@ -1,0 +1,14 @@
+{"job": "b:9499:1:1", "deal": 9499, "cells": 1, "solver": "b", "seed": 1, "budget": 260000000, "verdict": "unknown", "states": 260000000, "seconds": 787.4, "run": "actions-44707374026"}
+{"job": "b:9499:1:2", "deal": 9499, "cells": 1, "solver": "b", "seed": 2, "budget": 260000000, "verdict": "unknown", "states": 260000000, "seconds": 808.4, "run": "actions-44707374026"}
+{"job": "b:9499:1:3", "deal": 9499, "cells": 1, "solver": "b", "seed": 3, "budget": 260000000, "verdict": "unknown", "states": 260000000, "seconds": 666.5, "run": "actions-44707374026"}
+{"job": "b:13167:1:1", "deal": 13167, "cells": 1, "solver": "b", "seed": 1, "budget": 260000000, "verdict": "unknown", "states": 260000000, "seconds": 752.7, "run": "actions-44707374026"}
+{"job": "b:13167:1:2", "deal": 13167, "cells": 1, "solver": "b", "seed": 2, "budget": 260000000, "verdict": "unknown", "states": 260000000, "seconds": 820.5, "run": "actions-44707374026"}
+{"job": "b:13167:1:3", "deal": 13167, "cells": 1, "solver": "b", "seed": 3, "budget": 260000000, "verdict": "unknown", "states": 260000000, "seconds": 650.1, "run": "actions-44707374026"}
+{"job": "b:13599:1:1", "deal": 13599, "cells": 1, "solver": "b", "seed": 1, "budget": 260000000, "verdict": "unknown", "states": 260000000, "seconds": 915.1, "run": "actions-44707374026"}
+{"job": "b:13599:1:2", "deal": 13599, "cells": 1, "solver": "b", "seed": 2, "budget": 260000000, "verdict": "unknown", "states": 260000000, "seconds": 598.7, "run": "actions-44707374026"}
+{"job": "b:13599:1:3", "deal": 13599, "cells": 1, "solver": "b", "seed": 3, "budget": 260000000, "verdict": "unknown", "states": 260000000, "seconds": 644.6, "run": "actions-44707374026"}
+{"job": "b:17760:2:1", "deal": 17760, "cells": 2, "solver": "b", "seed": 1, "budget": 260000000, "verdict": "unknown", "states": 260000000, "seconds": 859.2, "run": "actions-44707374026"}
+{"job": "b:17760:2:2", "deal": 17760, "cells": 2, "solver": "b", "seed": 2, "budget": 260000000, "verdict": "unknown", "states": 260000000, "seconds": 687.6, "run": "actions-44707374026"}
+{"job": "b:17760:2:3", "deal": 17760, "cells": 2, "solver": "b", "seed": 3, "budget": 260000000, "verdict": "unknown", "states": 260000000, "seconds": 748.3, "run": "actions-44707374026"}
+{"job": "c:20410:1", "deal": 20410, "cells": 1, "solver": "c", "verdict": "lost", "states": 652740362, "most_home": 13, "frozen": ["TS"], "layer_count": 82, "largest_layer": 115894684, "seconds": 1598.0, "run": "actions-44707374026"}
+{"job": "c:27708:1", "deal": 27708, "cells": 1, "solver": "c", "verdict": "lost", "states": 277578773, "most_home": 12, "frozen": [], "layer_count": 51, "largest_layer": 56380312, "seconds": 783.3, "run": "actions-44707374026"}

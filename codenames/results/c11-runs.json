@@ -1,0 +1,152 @@
+{
+ "plan": "experiments/plans/C11.md",
+ "approved_cap": 1.0,
+ "job_caps": 0.48,
+ "how_known": "each job's cost meter (codenames/hosted.py): the tokens each provider reported times the price the router listed when the job started; no provider reported a cost. Serving fields come from each job's served.json (codenames.providers.summarize over its call log)",
+ "guesses": "codenames/results/c11-guesses.txt is the four jobs' guesses.txt, in the order pilot, test-llama, test-gpt-oss, repeat; each was copied from the private dataset through a packed form (one character per cell, written by a cpu-basic job with no model calls, 6b002df4efaf5e14f4b31c1a) and checked against the SHA-256 below",
+ "runs": [
+  {
+   "run": "lists",
+   "where": "here",
+   "commit": "7dd3a09617f56440de77f27b1161a9883df50c91",
+   "spent": 0.0,
+   "what": "F, P and the oracle under both filters on 20 pilot and 1,000 test boards, with exact values; no model calls"
+  },
+  {
+   "run": "pilot",
+   "job_id": "6b00015e4fdc5ab3c55b01af",
+   "commit": "099d82666e2065a99f9c9730dc8db8a450366d43",
+   "cap": 0.03,
+   "spent": 0.009281,
+   "seconds": 693.5,
+   "guesses_sha256": "c73f25fa9e9475be9ecdd940a2b11fd12fa150ee5c4620309a004cdfeb3cff31",
+   "what": "both guessers on the 56 distinct prompts of 20 boards of seed 11999, then the 41 strict prompts twice more; not scored",
+   "serving": {
+    "gpt-oss-120b": {
+     "calls": 141,
+     "served_by": {
+      "deepinfra": 141
+     },
+     "pin_held": 141,
+     "empty": 4,
+     "cut_at_cap": 5,
+     "seconds_median": 29.92,
+     "seconds_median_empty": 30.84,
+     "http_retries": 3
+    },
+    "llama-3.3-70b": {
+     "calls": 138,
+     "served_by": {
+      "novita": 138
+     },
+     "pin_held": 138,
+     "empty": 0,
+     "cut_at_cap": 0,
+     "seconds_median": 0.63,
+     "http_retries": 0
+    }
+   },
+   "checks": "(a) every reply from the pinned provider; (b) after the resend, no empty, failed or no-word reply; (c) gpt-oss-120b cut at its cap on 1 of 56 first prompts (1.8%) and 5 of 138 replies (3.6%), under 5%, so the cap stayed at 1,024; (d) repeat: gpt-oss-120b's played-out value changed on 3 of the 40 strict prompts answered in all three sends (41 prompts, one send empty), Llama 3.3 on 0 of 41"
+  },
+  {
+   "run": "test-llama",
+   "job_id": "6b0004dc4fdc5ab3c55b0627",
+   "commit": "099d82666e2065a99f9c9730dc8db8a450366d43",
+   "cap": 0.17,
+   "spent": 0.064406,
+   "seconds": 1107.2,
+   "guesses_sha256": "d77ae68f39190dce0196f12f8b11f4c591af50ec3dbada5809a1c579cc6be007",
+   "what": "Llama 3.3 70B on the 2,541 distinct prompts of the six arms on 1,000 test boards, and the 80 items of part B",
+   "serving": {
+    "llama-3.3-70b": {
+     "calls": 2652,
+     "served_by": {
+      "novita": 2621
+     },
+     "pin_held": 2621,
+     "failed_after_five_tries": 31,
+     "resent_and_answered": 31,
+     "empty": 0,
+     "cut_at_cap": 6,
+     "no_board_word": 1,
+     "seconds_median": 0.65,
+     "http_retries": 796,
+     "retry_cause": "HTTP 429 server overload from Novita"
+    }
+   }
+  },
+  {
+   "run": "test-gpt-oss",
+   "job_id": "6b000a314fdc5ab3c55b0c8a",
+   "commit": "099d82666e2065a99f9c9730dc8db8a450366d43",
+   "cap": 0.22,
+   "spent": 0.105503,
+   "seconds": 7146.5,
+   "guesses_sha256": "f8fe5af17b6d41764996e112e762c45a490efc1c15c88bce4acf874128b56fcf",
+   "what": "gpt-oss-120b on the same 2,541 distinct prompts and the 80 items",
+   "serving": {
+    "gpt-oss-120b": {
+     "calls": 2642,
+     "served_by": {
+      "deepinfra": 2642
+     },
+     "pin_held": 2642,
+     "empty": 21,
+     "resent_and_answered": 21,
+     "cut_at_cap": 71,
+     "no_board_word": 1,
+     "seconds_median": 19.93,
+     "seconds_median_empty": 32.39,
+     "http_retries": 13
+    }
+   }
+  },
+  {
+   "run": "repeat",
+   "job_id": "6b00292befaf5e14f4b31816",
+   "commit": "099d82666e2065a99f9c9730dc8db8a450366d43",
+   "cap": 0.06,
+   "spent": 0.026976,
+   "seconds": 973.0,
+   "guesses_sha256": "7920b6c216e7804f74df176d59f4c21b815cfb70bac5f6fa5b4346e772aac0c7",
+   "what": "the 210 distinct strict prompts of test boards 0 to 99, sent twice more to each guesser",
+   "serving": {
+    "gpt-oss-120b": {
+     "calls": 420,
+     "served_by": {
+      "deepinfra": 420
+     },
+     "pin_held": 420,
+     "empty": 0,
+     "cut_at_cap": 13,
+     "seconds_median": 13.53
+    },
+    "llama-3.3-70b": {
+     "calls": 420,
+     "served_by": {
+      "novita": 420
+     },
+     "pin_held": 420,
+     "empty": 0,
+     "cut_at_cap": 0,
+     "seconds_median": 0.62,
+     "http_retries": 69
+    }
+   }
+  },
+  {
+   "run": "pack",
+   "job_id": "6b002df4efaf5e14f4b31c1a",
+   "commit": "099d82666e2065a99f9c9730dc8db8a450366d43",
+   "spent": 0.0,
+   "what": "read the three test-split guesses.txt files from the private dataset and printed them one character per cell; no model calls"
+  }
+ ],
+ "model_calls": 0.206166,
+ "cpu_basic_hours": 2.8,
+ "cpu_note": "the jobs' run times plus about a minute of setup each; at about $0.01 an hour, about $0.03",
+ "quantization_listed": {
+  "gpt-oss-120b on DeepInfra": "bf16 (OpenRouter's endpoint list, read at the start of each job)",
+  "Llama 3.3 on Novita": "not listed"
+ }
+}
