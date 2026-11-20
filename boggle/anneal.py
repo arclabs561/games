@@ -21,6 +21,7 @@ import os
 import shutil
 import subprocess
 import tempfile
+import threading
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
@@ -50,7 +51,7 @@ def binary() -> Path:
         cc = compiler()
         if cc is None:
             raise RuntimeError("anneal.c needs a C compiler (cc)")
-        tmp = out.with_suffix(f".{os.getpid()}")
+        tmp = out.with_suffix(f".{os.getpid()}.{threading.get_ident()}")
         subprocess.run([cc, "-O3", "-o", str(tmp), str(SOURCE), "-lm"], check=True)
         tmp.replace(out)
     return out
@@ -157,6 +158,7 @@ def main() -> None:
     if args.cmd == "run":
         args.out.mkdir(parents=True, exist_ok=True)
         seeds = [10 * args.seed + k for k in range(args.procs)]
+        binary()  # build once, before the threads start
 
         def one(seed: int) -> None:
             recs = anneal(seed, args.runs, args.steps)
