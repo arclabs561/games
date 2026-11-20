@@ -1,5 +1,6 @@
 """Maps: colors, exact orderings, rank scores, SNE and t-SNE, random projections, SOMs."""
 
+import hashlib
 from itertools import permutations, product
 from math import log
 
@@ -9,11 +10,93 @@ from scipy.spatial.distance import squareform
 from sklearn.manifold import trustworthiness as sklearn_trustworthiness
 from sklearn.manifold._t_sne import _joint_probabilities, _kl_divergence
 
-from maps import colors, data, draw, figures, jl, paths, ranks, shelf, sne, som, study
+from maps import colors, data, draw, figures, jl, paths, portable, ranks, shelf, sne, som, study
 
 
 def random_points(n: int, d: int, seed: int) -> np.ndarray:
     return np.random.default_rng(seed).normal(size=(n, d))
+
+
+# Portable functions -----------------------------------------------------------------------
+
+
+def ulps(ours: np.ndarray, theirs: np.ndarray) -> float:
+    """Largest difference in units in the last place of theirs."""
+    return float((np.abs(ours - theirs) / np.spacing(np.abs(theirs))).max())
+
+
+def test_portable_functions_match_numpy():
+    rng = np.random.default_rng(0)
+    x = rng.uniform(-700, 700, 100_000)
+    assert ulps(portable.exp(x), np.exp(x)) <= 2
+    pos = np.exp(rng.uniform(-700, 700, 100_000))
+    assert ulps(portable.log(pos), np.log(pos)) <= 3
+    assert ulps(portable.log2(pos), np.log2(pos)) <= 3
+    near_one = rng.uniform(0.5, 2, 100_000)
+    assert ulps(portable.log(near_one), np.log(near_one)) <= 4
+    unit = rng.uniform(0.05, 1, 100_000)
+    assert ulps(portable.power(unit, 2.4), unit**2.4) <= 4
+    assert ulps(portable.cbrt(x), np.cbrt(x)) <= 2
+    y = rng.normal(size=100_000)
+    assert ulps(portable.atan2(y, x), np.arctan2(y, x)) <= 6
+
+
+def test_portable_special_values():
+    ex = portable.exp(np.array([-np.inf, -746.0, 0.0, 710.0, np.inf, np.nan]))
+    assert ex[:5].tolist() == [0.0, 0.0, 1.0, np.inf, np.inf] and np.isnan(ex[5])
+    lg = portable.log(np.array([0.0, 1.0, np.inf, 5e-324, -1.0]))
+    assert lg[:3].tolist() == [-np.inf, 0.0, np.inf] and np.isclose(lg[3], log(5e-324))
+    assert np.isnan(lg[4])
+    assert portable.cbrt(np.array([0.0, 8.0, -27.0])).tolist() == [0.0, 2.0, -3.0]
+    assert portable.power(np.array([0.0, 1.0, 4.0]), 2.5).tolist() == [0.0, 1.0, 32.0]
+    quadrants = portable.atan2(np.array([0.0, 1.0, 0.0, -1.0]), np.array([1.0, 0.0, -1.0, 0.0]))
+    assert np.allclose(quadrants, [0, np.pi / 2, np.pi, -np.pi / 2], rtol=0, atol=1e-15)
+
+
+@pytest.mark.parametrize("n", [1, 2, 5, 8])
+def test_jacobi_matches_lapack(n):
+    a = random_points(n, n, n)
+    a = a + a.T
+    values, vectors = portable.symmetric_eigen(a)
+    theirs = np.linalg.eigh(a)[0][::-1]
+    assert np.allclose(values, theirs, atol=1e-12)
+    assert np.allclose(vectors.T @ vectors, np.eye(n), atol=1e-12)
+    assert np.allclose(a @ vectors, vectors * values, atol=1e-12)
+
+
+def test_principal_axes_match_svd():
+    x = random_points(300, 6, 9) * np.arange(1, 7)
+    sd, axes = portable.principal_axes(x, 3)
+    _, s, vt = np.linalg.svd(x - x.mean(axis=0), full_matrices=False)
+    vt = vt[:3] * np.sign(vt[np.arange(3), np.abs(vt[:3]).argmax(axis=1)])[:, None]
+    assert np.allclose(axes, vt, atol=1e-12) and np.allclose(sd, s[:3] / np.sqrt(300))
+
+
+def bits(a: np.ndarray) -> str:
+    return hashlib.sha256(np.ascontiguousarray(a, dtype=float).tobytes()).hexdigest()[:16]
+
+
+def test_same_bits_on_every_machine():
+    # The hashes were recorded on one machine. A CPU whose numpy or OpenBLAS kernels round
+    # differently must still give the same bits, since only IEEE basic operations are used.
+    x = np.linspace(-40, 40, 10_001)
+    funcs = [
+        portable.exp(x),
+        portable.log(np.abs(x) + 1e-3),
+        portable.log2(np.abs(x) + 1e-3),
+        portable.cbrt(x),
+        portable.power(np.abs(x), 2.4),
+        portable.atan2(x, x[::-1] + 0.5),
+    ]
+    assert bits(np.concatenate(funcs)) == "f84b02c5aeb2e67a"
+    pts = random_points(40, 5, 0)
+    d2 = sne.sq_distances(pts)
+    tsne = sne.embed(d2, "tsne", perplexity=8, seed=0, iterations=300).y
+    assert bits(tsne) == "a7a88ae45c015feb"
+    assert bits(sne.embed(d2, "sne", perplexity=8, seed=0, iterations=300).y) == "db577f94e5dc5019"
+    m = som.train(pts, (4, 4), steps=2000, seed=0, init="pca")
+    assert bits(m.weights) == "c8d061e9465b6842"
+    assert bits(study.pca(pts)) == "d5fed80c856b9203"
 
 
 # Colors -----------------------------------------------------------------------------------

@@ -154,6 +154,7 @@ def embed(
     exaggeration: float = 4.0,
     exaggerate_until: int = 50,
     record_every: int = 50,
+    p_cond: np.ndarray | None = None,
 ) -> Run:
     """Minimize the chosen cost with van der Maaten and Hinton's optimizer (section 3.4).
 
@@ -162,11 +163,13 @@ def embed(
     SNE gets the same optimizer, without the annealing noise of Hinton and Roweis, and
     with the learning rate divided by 2n: its n conditional distributions carry 2n times
     the mass of the joint one, so its gradient is about 2n times as large.
-    x_d2 holds squared distances in the data.
+    x_d2 holds squared distances in the data; p_cond, if given, is
+    conditional_p(x_d2, perplexity)[0], computed once for several runs.
     """
     rng = np.random.default_rng(seed)
     n = len(x_d2)
-    p_cond, _ = conditional_p(x_d2, perplexity)
+    if p_cond is None:
+        p_cond, _ = conditional_p(x_d2, perplexity)
     target = p_cond if kind == "sne" else joint_p(p_cond)
     q_grad = Q_GRAD[kind]
     if kind == "sne":
