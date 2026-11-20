@@ -118,7 +118,9 @@ def test_hosted_retries_three_times_then_gives_up():
     ok = Hosted("org/model", "slow", meter, client=fake, log=log.append, wait=0)
     assert ok("prompt") == "PLAY 1"
     assert log[0]["attempt"] == 3 and len(log[0]["errors"]) == 3
-    assert log[0]["params"] == {"max_tokens": 512, "temperature": 0, "seed": 0}
+    pin = {"provider": {"order": ["slow"], "allow_fallbacks": False}}
+    assert log[0]["params"] == {"max_tokens": 512, "temperature": 0, "seed": 0, "extra_body": pin}
+    assert log[0]["pinned"] == "org/model:slow" and log[0]["pin_held"] is None
     bad = Hosted("org/model", "slow", meter, client=FakeClient(fail=4), wait=0)
     with pytest.raises(ProviderError):
         bad("prompt")
@@ -128,7 +130,10 @@ def test_hosted_retries_three_times_then_gives_up():
 def test_reasoning_effort_is_sent():
     meter = Meter(Price(1.0, 1.0), cap=1.0, max_call=0.01)
     h = Hosted("m", "p", meter, reasoning_effort="medium", client=FakeClient())
-    assert h.params["extra_body"] == {"reasoning_effort": "medium"}
+    assert h.params["extra_body"] == {
+        "reasoning_effort": "medium",
+        "provider": {"order": ["p"], "allow_fallbacks": False},
+    }
 
 
 def test_seeds_prefix_and_statistics():
@@ -254,3 +259,30 @@ def test_harness_report_counts_over_complete_games(tmp_path):
     arm = json.loads(out.read_text())["arms"][0]
     assert arm["games"] == 3 and arm["max_tokens"] == 512
     assert arm["lives_lost_by_fallbacks"] == 0 and arm["truncated"] == 0
+
+
+def test_a_reply_from_another_provider_counts_as_a_failed_attempt():
+    class Elsewhere(FakeClient):
+        def chat_completion(self, messages, model, **params):
+            r = super().chat_completion(messages, model, **params)
+            r.provider = "Crusoe" if self.calls == 1 else "Novita"
+            return r
+
+    meter = Meter(Price(1.0, 1.0), cap=1.0, max_call=0.01)
+    log = []
+    h = Hosted("org/model", "novita", meter, client=Elsewhere(reply=lambda p: "PLAY 1"),
+               log=log.append, wait=0)  # fmt: skip
+    assert h("prompt") == "PLAY 1"
+    assert [c["pin_held"] for c in log] == [False, True]
+    assert log[1]["errors"] == ["served by Crusoe"] and meter.calls == 2
+
+
+def test_repeat_check_counts_prompts_whose_replies_change():
+    from hanabi.hosted import repeat_check
+
+    replies = iter(["PLAY 1", "PLAY 1", "PLAY 1", "PLAY 2"])
+    assert repeat_check(lambda p: next(replies), ["a", "b"]) == {
+        "prompts": 2,
+        "times": 2,
+        "changed": 1,
+    }

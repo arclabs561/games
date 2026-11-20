@@ -106,7 +106,16 @@ def run_games(args, models: list[dict] | None = None, client=None) -> int:
     made here unless given, as the tests give them."""
     import huggingface_hub
 
-    from hanabi.hosted import CapError, Hosted, Meter, ProviderError, fetch_models, listed_price
+    from hanabi.hosted import (
+        CapError,
+        Hosted,
+        Meter,
+        ProviderError,
+        RouterClient,
+        fetch_models,
+        listed_price,
+        listed_quantization,
+    )
 
     out = Path(args.out)
     (out / "calls").mkdir(parents=True, exist_ok=True)
@@ -120,8 +129,10 @@ def run_games(args, models: list[dict] | None = None, client=None) -> int:
     # the longest prompt seen in stub games is under 1,300 tokens; allow 2,500
     max_call = price.cost(2500, args.max_tokens)
     meter = Meter(price, args.cap, max_call)
-    if client is None:
-        client = huggingface_hub.InferenceClient(provider=args.provider, token=token, timeout=300)
+    quantization = None
+    if client is None:  # a real run: record the listed quantization too
+        client = RouterClient(token or "")
+        quantization = listed_quantization(args.model, args.provider)
     deadline = time.time() + args.stop_after * 60  # no new game after this
     hard_stop = time.time() + args.hard_stop * 60  # games in progress stop here
     lock = threading.Lock()
@@ -183,6 +194,8 @@ def run_games(args, models: list[dict] | None = None, client=None) -> int:
                 "truncated": sum(c["finish_reason"] == "length" for c in calls),
                 "retried_calls": sum(c["attempt"] > 0 for c in calls),
                 "served_models": sorted({str(c["served_model"]) for c in calls}),
+                "served_providers": sorted({str(c.get("served_provider")) for c in calls}),
+                "pin_broken": sum(c.get("pin_held") is False for c in calls),
             }
             row = base | {"status": status, "reason": reason, "attempts": attempt + 1}
             row |= record | usage
@@ -233,6 +246,10 @@ def run_games(args, models: list[dict] | None = None, client=None) -> int:
         "started": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(started)),
         "seconds": round(time.time() - started, 1),
         "huggingface_hub": huggingface_hub.__version__,
+        "pinned": f"{args.model}:{args.provider}",
+        "served_providers": sorted({p for r in rows for p in r.get("served_providers", [])}),
+        "pin_broken": sum(r.get("pin_broken", 0) for r in rows),
+        "listed_quantization": quantization,
     }
     (out / "summary.json").write_text(json.dumps(summary, indent=1) + "\n")
     print(json.dumps(summary), flush=True)

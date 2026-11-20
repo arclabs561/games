@@ -36,7 +36,14 @@ from dataclasses import replace
 from pathlib import Path
 
 from codenames.game import Board, deal
-from codenames.hosted import Hosted, Meter, Model, OverBudgetError, listed_prices
+from codenames.hosted import (
+    Hosted,
+    Meter,
+    Model,
+    OverBudgetError,
+    listed_prices,
+    record_serving,
+)
 from codenames.llm import giver_prompt, guesser_prompt, parse_clue, parse_ranking
 from codenames.words import board_words, legal
 
@@ -421,6 +428,7 @@ def price_models(models, out: Path) -> None:
         MODELS[name] = replace(m, price=prices.get(m.repo, {}).get(m.provider))
     listed = {MODELS[n].repo: prices.get(MODELS[n].repo, {}) for n in models}
     (out / "prices.json").write_text(json.dumps(listed, indent=1) + "\n")
+    record_serving([MODELS[n] for n in models], out)
 
 
 def model_list(arg: str) -> list[str]:

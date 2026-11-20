@@ -406,9 +406,7 @@ def run() -> dict:
         ),
         "agreement": {"mean": a, "ci": interval(replicates(agree, pidx, pcounts))},
         "best_top1_bounds": agreement_bounds(a),
-        "chance": float(
-            np.mean([1 / len(shared_words(every[i], every[j])) for i, j in pairs_cov])
-        ),
+        "chance": float(np.mean([1 / len(shared_words(every[i], every[j])) for i, j in pairs_cov])),
         "guessers": {},
     }
     for name, pick in top_pickers.items():

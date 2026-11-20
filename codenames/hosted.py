@@ -33,6 +33,8 @@ A call that fails five times (with waits of 2, 4, 8, 16 and 32 seconds) is retur
 No call is made when this module is imported, and the tests use a stub client.
 """
 
+from __future__ import annotations
+
 import json
 import os
 import re
@@ -106,6 +108,63 @@ def listed_prices() -> dict[str, dict[str, Price]]:
     req = Request(ROUTER_MODELS, headers={"Authorization": f"Bearer {os.environ['HF_TOKEN']}"})
     with urlopen(req, timeout=60) as r:
         return parse_prices(json.load(r))
+
+
+OPENROUTER_ENDPOINTS = "https://openrouter.ai/api/v1/models/{id}/endpoints"
+OPENROUTER_ORGS = {"deepseek-ai": "deepseek"}  # where OpenRouter's author name differs
+
+
+def openrouter_id(repo: str) -> str:
+    """OpenRouter's id for a Hub model, as its model list writes it (lowercase)."""
+    org, _, name = repo.partition("/")
+    return f"{OPENROUTER_ORGS.get(org, org)}/{name}".lower()
+
+
+def parse_quantizations(listing: dict) -> dict[str, str | None]:
+    """{provider name: quantization} from OpenRouter's endpoint list for one model."""
+    data = listing.get("data") or {}
+    return {e.get("provider_name"): e.get("quantization") for e in data.get("endpoints", [])}
+
+
+def listed_quantizations(models: list[Model]) -> dict:
+    """Each pinned provider's quantization as OpenRouter lists it, read when a job starts.
+    Replies do not say how they were served, so this is the record; a provider that
+    OpenRouter does not list (Novita, which the router reaches directly) is None."""
+    from urllib.request import urlopen
+
+    out: dict = {"source": OPENROUTER_ENDPOINTS, "time": datetime.now(UTC).isoformat()}
+    for m in models:
+        try:
+            with urlopen(OPENROUTER_ENDPOINTS.format(id=openrouter_id(m.repo)), timeout=30) as r:
+                listed = parse_quantizations(json.load(r))
+        except (OSError, ValueError) as e:  # recorded; the run goes on
+            out[m.repo] = {"error": f"{type(e).__name__}: {str(e)[:200]}"}
+            continue
+        mine = next(
+            (q for p, q in listed.items() if provider_key(p) == provider_key(m.provider)), None
+        )
+        out[m.repo] = {"provider": m.provider, "quantization": mine, "listed": listed}
+    return out
+
+
+def record_serving(models: list[Model], out: Path) -> None:
+    """At the start of a job: save the listed quantizations (quantizations.json). At its
+    end: summarize who served every logged call in OUT (served.json)."""
+    import atexit
+
+    (out / "quantizations.json").write_text(json.dumps(listed_quantizations(models), indent=1))
+
+    def served() -> None:
+        from codenames.providers import normalize, summarize
+
+        logs = {}
+        for path in sorted(out.glob("calls-*.jsonl")):
+            rows = [normalize(json.loads(x)) for x in path.read_text().splitlines() if x.strip()]
+            if rows:
+                logs[path.stem.removeprefix("calls-")] = summarize(rows)
+        (out / "served.json").write_text(json.dumps(logs, indent=1, sort_keys=True) + "\n")
+
+    atexit.register(served)
 
 
 def call_cost(usage: dict, price: Price | None = None) -> tuple[float, str]:

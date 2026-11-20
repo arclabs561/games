@@ -249,3 +249,30 @@ def test_repeat_check_counts_changed_replies_and_providers():
     assert r["changed"] == 0 and r["served"] == {"DeepInfra": 6} and r["pin"]["held"] == 6
     flip = Hosted(Model("m", "deepinfra"), Meter(1.0), client=Served(replies=("a", "b")))
     assert repeat_check(flip, ["p"], times=2)["changed_share"] == 1.0
+
+
+def test_openrouter_ids_and_listed_quantizations(tmp_path, monkeypatch):
+    from codenames import hosted
+    from codenames.hosted import Model, openrouter_id, parse_quantizations
+
+    assert openrouter_id("deepseek-ai/DeepSeek-V3.2") == "deepseek/deepseek-v3.2"
+    assert openrouter_id("meta-llama/Llama-3.3-70B-Instruct") == "meta-llama/llama-3.3-70b-instruct"
+    listing = {"data": {"endpoints": [{"provider_name": "DeepInfra", "quantization": "bf16"}]}}
+    assert parse_quantizations(listing) == {"DeepInfra": "bf16"}
+    monkeypatch.setattr(hosted, "listed_quantizations", lambda models: {"m": "listed"})
+    registered = []
+    monkeypatch.setattr("atexit.register", registered.append)
+    hosted.record_serving([Model("org/m", "deepinfra")], tmp_path)
+    assert json.loads((tmp_path / "quantizations.json").read_text()) == {"m": "listed"}
+    (tmp_path / "calls-m.jsonl").write_text(json.dumps(codenames_record("x" * 50, "a")) + "\n")
+    registered[0]()
+    served = json.loads((tmp_path / "served.json").read_text())
+    assert served["m"]["calls"] == 1 and served["m"]["requested_providers"] == {"deepinfra": 1}
+
+
+def test_both_games_pin_the_same_way():
+    from codenames.hosted import Model, pinned
+    from hanabi.hosted import pinned as hanabi_pinned
+
+    ours = pinned(Model("openai/gpt-oss-120b", "novita", {"reasoning_effort": "medium"}))
+    assert ours == hanabi_pinned("openai/gpt-oss-120b", "novita", {"reasoning_effort": "medium"})
