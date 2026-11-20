@@ -32,7 +32,7 @@ from yahtzee.solver import Tables, solve
 
 HERE = Path(__file__).parent
 RESULTS = HERE / "results"
-SHEET_RULES = 12
+SHEET_RULES = 8
 NAMES = {
     "aces": "Aces",
     "twos": "Twos",
@@ -87,11 +87,11 @@ PHRASES = {
 }
 PHRASES |= {f"{SHORT[c]} open": f"{NAMES[c]} is open" for c in CATEGORIES}
 PHRASES |= {f"{SHORT[c]} filled": f"{NAMES[c]} is filled" for c in CATEGORIES}
-DEFINITIONS = [
-    "The most common face is the face on the most dice, the higher one on a tie.",
-    "Pace is the upper total minus 3 times the faces of the filled upper boxes;",
-    "0 or more is on pace for the 63 points of the bonus.",
-]
+MOST = "The most common face is the face on the most dice, the higher one on a tie."
+PACE = (
+    "Pace is the upper total minus 3 times the faces of the filled upper boxes; "
+    "0 or more is on pace for the 63 points of the bonus."
+)
 
 
 def sheet_lines(card: Strategy) -> list[str]:
@@ -112,13 +112,16 @@ def sheet_lines(card: Strategy) -> list[str]:
         lines.append(
             f"Until the bonus is made, count an upper box's points minus par {card.weight:g} times."
         )
-    return lines + [""] + DEFINITIONS
+    tests = {t for r in (*card.keep_rules, *card.box_rules) for t in r.tests}
+    return lines + ["", MOST] + ([PACE] if "on pace for the bonus" in tests else [])
 
 
 SHEET_KEEPS = KEEP_WORDS | {
     "most": "every die of the most common face",
-    "most open": "every die of the most common face whose upper box is open",
+    "most open": "every die of the most common face among those whose upper box is open "
+    "(the most common face if none is)",
     "run": "one die of each face in the longest run",
+    "pairs": "every die whose face shows two or more times",
 }
 ROLL = ("a ", "two pair", "three or more", "four or more", "five ")
 

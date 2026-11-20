@@ -1,0 +1,4318 @@
+{
+ "optimal": 254.58960948196284,
+ "glenn": 226.08646625310098,
+ "glenn_reported": 218.18,
+ "frontier": [
+  {
+   "size": 0,
+   "score": 194.2148980068944,
+   "file": "prune-base-2.jsonl",
+   "card": {
+    "keep": [],
+    "box": [],
+    "par": {
+     "aces": 4,
+     "twos": 6,
+     "threes": 9,
+     "fours": 11,
+     "fives": 14,
+     "sixes": 17,
+     "three_kind": 23,
+     "four_kind": 15,
+     "full_house": 15,
+     "small_straight": 29,
+     "large_straight": 15,
+     "yahtzee": 11,
+     "chance": 27
+    },
+    "weight": 2.75,
+    "default": "most open"
+   }
+  },
+  {
+   "size": 1,
+   "score": 225.02125786326596,
+   "file": "prune-base-2.jsonl",
+   "card": {
+    "keep": [
+     [
+      [
+       "four or more in a row",
+       "LS open"
+      ],
+      "run"
+     ]
+    ],
+    "box": [],
+    "par": {
+     "aces": 4,
+     "twos": 6,
+     "threes": 9,
+     "fours": 11,
+     "fives": 14,
+     "sixes": 17,
+     "three_kind": 23,
+     "four_kind": 15,
+     "full_house": 15,
+     "small_straight": 29,
+     "large_straight": 15,
+     "yahtzee": 11,
+     "chance": 27
+    },
+    "weight": 2.75,
+    "default": "most open"
+   }
+  },
+  {
+   "size": 2,
+   "score": 231.15627824085755,
+   "file": "prune-base-2.jsonl",
+   "card": {
+    "keep": [
+     [
+      [
+       "four or more in a row",
+       "LS open"
+      ],
+      "run"
+     ],
+     [
+      [
+       "four or more in a row",
+       "SS open"
+      ],
+      "all"
+     ]
+    ],
+    "box": [],
+    "par": {
+     "aces": 4,
+     "twos": 6,
+     "threes": 9,
+     "fours": 11,
+     "fives": 14,
+     "sixes": 17,
+     "three_kind": 23,
+     "four_kind": 15,
+     "full_house": 15,
+     "small_straight": 29,
+     "large_straight": 15,
+     "yahtzee": 11,
+     "chance": 27
+    },
+    "weight": 2.75,
+    "default": "most open"
+   }
+  },
+  {
+   "size": 3,
+   "score": 236.8659652345198,
+   "file": "prune-base-2.jsonl",
+   "card": {
+    "keep": [
+     [
+      [
+       "four or more in a row",
+       "LS open"
+      ],
+      "run"
+     ],
+     [
+      [
+       "four or more in a row",
+       "SS open"
+      ],
+      "all"
+     ],
+     [
+      [
+       "three or more of a kind"
+      ],
+      "most"
+     ]
+    ],
+    "box": [],
+    "par": {
+     "aces": 4,
+     "twos": 6,
+     "threes": 9,
+     "fours": 11,
+     "fives": 14,
+     "sixes": 17,
+     "three_kind": 23,
+     "four_kind": 15,
+     "full_house": 15,
+     "small_straight": 29,
+     "large_straight": 15,
+     "yahtzee": 11,
+     "chance": 27
+    },
+    "weight": 2.75,
+    "default": "most open"
+   }
+  },
+  {
+   "size": 4,
+   "score": 239.30161104897044,
+   "file": "prune-base-2.jsonl",
+   "card": {
+    "keep": [
+     [
+      [
+       "four or more in a row",
+       "LS open"
+      ],
+      "run"
+     ],
+     [
+      [
+       "four or more in a row",
+       "SS open"
+      ],
+      "all"
+     ],
+     [
+      [
+       "a pair or more",
+       "one roll left",
+       "FH open"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "three or more of a kind"
+      ],
+      "most"
+     ]
+    ],
+    "box": [],
+    "par": {
+     "aces": 4,
+     "twos": 6,
+     "threes": 9,
+     "fours": 11,
+     "fives": 14,
+     "sixes": 17,
+     "three_kind": 23,
+     "four_kind": 15,
+     "full_house": 15,
+     "small_straight": 29,
+     "large_straight": 15,
+     "yahtzee": 11,
+     "chance": 27
+    },
+    "weight": 2.75,
+    "default": "most open"
+   }
+  },
+  {
+   "size": 5,
+   "score": 240.36322179909646,
+   "file": "prune-base-2.jsonl",
+   "card": {
+    "keep": [
+     [
+      [
+       "four or more in a row",
+       "LS open"
+      ],
+      "run"
+     ],
+     [
+      [
+       "four or more in a row",
+       "SS open"
+      ],
+      "all"
+     ],
+     [
+      [
+       "the most common face is 4 or more",
+       "its upper box is open"
+      ],
+      "most"
+     ],
+     [
+      [
+       "a pair or more",
+       "one roll left",
+       "FH open"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "three or more of a kind"
+      ],
+      "most"
+     ]
+    ],
+    "box": [],
+    "par": {
+     "aces": 4,
+     "twos": 6,
+     "threes": 9,
+     "fours": 11,
+     "fives": 14,
+     "sixes": 17,
+     "three_kind": 23,
+     "four_kind": 15,
+     "full_house": 15,
+     "small_straight": 29,
+     "large_straight": 15,
+     "yahtzee": 11,
+     "chance": 27
+    },
+    "weight": 2.75,
+    "default": "most open"
+   }
+  },
+  {
+   "size": 6,
+   "score": 241.58982657799146,
+   "file": "prune-base-2.jsonl",
+   "card": {
+    "keep": [
+     [
+      [
+       "four or more in a row",
+       "LS open"
+      ],
+      "run"
+     ],
+     [
+      [
+       "four or more in a row",
+       "SS open"
+      ],
+      "all"
+     ],
+     [
+      [
+       "the most common face is 4 or more",
+       "its upper box is open"
+      ],
+      "most"
+     ],
+     [
+      [
+       "a pair or more",
+       "one roll left",
+       "FH open"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "three or fewer boxes open",
+       "SS open",
+       "3K filled"
+      ],
+      "run"
+     ],
+     [
+      [
+       "three or more of a kind"
+      ],
+      "most"
+     ]
+    ],
+    "box": [],
+    "par": {
+     "aces": 4,
+     "twos": 6,
+     "threes": 9,
+     "fours": 11,
+     "fives": 14,
+     "sixes": 17,
+     "three_kind": 23,
+     "four_kind": 15,
+     "full_house": 15,
+     "small_straight": 29,
+     "large_straight": 15,
+     "yahtzee": 11,
+     "chance": 27
+    },
+    "weight": 2.75,
+    "default": "most open"
+   }
+  },
+  {
+   "size": 7,
+   "score": 242.32858729587073,
+   "file": "prune-base-2.jsonl",
+   "card": {
+    "keep": [
+     [
+      [
+       "four or more in a row",
+       "LS open"
+      ],
+      "run"
+     ],
+     [
+      [
+       "four or more in a row",
+       "SS open"
+      ],
+      "all"
+     ],
+     [
+      [
+       "the most common face is 4 or more",
+       "its upper box is open"
+      ],
+      "most"
+     ],
+     [
+      [
+       "a pair or more",
+       "one roll left",
+       "FH open"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "three or fewer boxes open",
+       "SS open",
+       "3K filled"
+      ],
+      "run"
+     ],
+     [
+      [
+       "3K filled",
+       "4K filled",
+       "three or more of a kind"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "three or more of a kind"
+      ],
+      "most"
+     ]
+    ],
+    "box": [],
+    "par": {
+     "aces": 4,
+     "twos": 6,
+     "threes": 9,
+     "fours": 11,
+     "fives": 14,
+     "sixes": 17,
+     "three_kind": 23,
+     "four_kind": 15,
+     "full_house": 15,
+     "small_straight": 29,
+     "large_straight": 15,
+     "yahtzee": 11,
+     "chance": 27
+    },
+    "weight": 2.75,
+    "default": "most open"
+   }
+  },
+  {
+   "size": 8,
+   "score": 243.1777340701982,
+   "file": "prune-base-2.jsonl",
+   "card": {
+    "keep": [
+     [
+      [
+       "four or more in a row",
+       "LS open"
+      ],
+      "run"
+     ],
+     [
+      [
+       "four or more in a row",
+       "SS open"
+      ],
+      "all"
+     ],
+     [
+      [
+       "the most common face is 4 or more",
+       "its upper box is open"
+      ],
+      "most"
+     ],
+     [
+      [
+       "a pair or more",
+       "one roll left",
+       "FH open"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "three or fewer boxes open",
+       "SS open",
+       "3K filled"
+      ],
+      "run"
+     ],
+     [
+      [
+       "3K filled",
+       "4K filled",
+       "three or more of a kind"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "three or more of a kind"
+      ],
+      "most"
+     ],
+     [
+      [
+       "the most common face is 5 or more",
+       "3K open",
+       "a pair or more"
+      ],
+      "most"
+     ]
+    ],
+    "box": [],
+    "par": {
+     "aces": 4,
+     "twos": 6,
+     "threes": 9,
+     "fours": 11,
+     "fives": 14,
+     "sixes": 17,
+     "three_kind": 23,
+     "four_kind": 15,
+     "full_house": 15,
+     "small_straight": 29,
+     "large_straight": 15,
+     "yahtzee": 11,
+     "chance": 27
+    },
+    "weight": 2.75,
+    "default": "most open"
+   }
+  },
+  {
+   "size": 9,
+   "score": 243.24393035193867,
+   "file": "prune-base-2.jsonl",
+   "card": {
+    "keep": [
+     [
+      [
+       "four or more in a row",
+       "LS open"
+      ],
+      "run"
+     ],
+     [
+      [
+       "four or more in a row",
+       "SS open"
+      ],
+      "all"
+     ],
+     [
+      [
+       "the most common face is 4 or more",
+       "its upper box is open"
+      ],
+      "most"
+     ],
+     [
+      [
+       "a pair or more",
+       "one roll left",
+       "FH open"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "its upper box is open"
+      ],
+      "most"
+     ],
+     [
+      [
+       "three or fewer boxes open",
+       "SS open",
+       "3K filled"
+      ],
+      "run"
+     ],
+     [
+      [
+       "3K filled",
+       "4K filled",
+       "three or more of a kind"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "three or more of a kind"
+      ],
+      "most"
+     ],
+     [
+      [
+       "the most common face is 5 or more",
+       "3K open",
+       "a pair or more"
+      ],
+      "most"
+     ]
+    ],
+    "box": [],
+    "par": {
+     "aces": 4,
+     "twos": 6,
+     "threes": 9,
+     "fours": 11,
+     "fives": 14,
+     "sixes": 17,
+     "three_kind": 23,
+     "four_kind": 15,
+     "full_house": 15,
+     "small_straight": 29,
+     "large_straight": 15,
+     "yahtzee": 11,
+     "chance": 27
+    },
+    "weight": 2.75,
+    "default": "most open"
+   }
+  },
+  {
+   "size": 10,
+   "score": 243.50172330159097,
+   "file": "prune-base-2.jsonl",
+   "card": {
+    "keep": [
+     [
+      [
+       "four or more in a row",
+       "LS open"
+      ],
+      "run"
+     ],
+     [
+      [
+       "four or more in a row",
+       "SS open"
+      ],
+      "all"
+     ],
+     [
+      [
+       "the most common face is 4 or more",
+       "its upper box is open"
+      ],
+      "most"
+     ],
+     [
+      [
+       "a pair or more",
+       "one roll left",
+       "FH open"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "its upper box is open"
+      ],
+      "most"
+     ],
+     [
+      [
+       "three or fewer boxes open",
+       "SS open",
+       "3K filled"
+      ],
+      "run"
+     ],
+     [
+      [
+       "three or more of a kind",
+       "FH open"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "3K filled",
+       "4K filled",
+       "three or more of a kind"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "three or more of a kind"
+      ],
+      "most"
+     ],
+     [
+      [
+       "the most common face is 5 or more",
+       "3K open",
+       "a pair or more"
+      ],
+      "most"
+     ]
+    ],
+    "box": [],
+    "par": {
+     "aces": 4,
+     "twos": 6,
+     "threes": 9,
+     "fours": 11,
+     "fives": 14,
+     "sixes": 17,
+     "three_kind": 23,
+     "four_kind": 15,
+     "full_house": 15,
+     "small_straight": 29,
+     "large_straight": 15,
+     "yahtzee": 11,
+     "chance": 27
+    },
+    "weight": 2.75,
+    "default": "most open"
+   }
+  },
+  {
+   "size": 11,
+   "score": 243.7197488951497,
+   "file": "prune-base-2.jsonl",
+   "card": {
+    "keep": [
+     [
+      [
+       "four or more in a row",
+       "LS open"
+      ],
+      "run"
+     ],
+     [
+      [
+       "four or more in a row",
+       "SS open"
+      ],
+      "all"
+     ],
+     [
+      [
+       "the most common face is 4 or more",
+       "its upper box is open"
+      ],
+      "most"
+     ],
+     [
+      [
+       "a pair or more",
+       "one roll left",
+       "FH open"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "its upper box is open"
+      ],
+      "most"
+     ],
+     [
+      [
+       "three or fewer boxes open",
+       "SS open",
+       "3K filled"
+      ],
+      "run"
+     ],
+     [
+      [
+       "three or more of a kind",
+       "FH open"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "3K filled",
+       "4K filled",
+       "three or more of a kind"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "three or more of a kind"
+      ],
+      "most"
+     ],
+     [
+      [
+       "three or fewer boxes open",
+       "LS open",
+       "3K filled"
+      ],
+      "run"
+     ],
+     [
+      [
+       "the most common face is 5 or more",
+       "3K open",
+       "a pair or more"
+      ],
+      "most"
+     ]
+    ],
+    "box": [],
+    "par": {
+     "aces": 4,
+     "twos": 6,
+     "threes": 9,
+     "fours": 11,
+     "fives": 14,
+     "sixes": 17,
+     "three_kind": 23,
+     "four_kind": 15,
+     "full_house": 15,
+     "small_straight": 29,
+     "large_straight": 15,
+     "yahtzee": 11,
+     "chance": 27
+    },
+    "weight": 2.75,
+    "default": "most open"
+   }
+  },
+  {
+   "size": 12,
+   "score": 243.94545460599986,
+   "file": "prune-base-2.jsonl",
+   "card": {
+    "keep": [
+     [
+      [
+       "four or more in a row",
+       "LS open"
+      ],
+      "run"
+     ],
+     [
+      [
+       "four or more in a row",
+       "SS open"
+      ],
+      "all"
+     ],
+     [
+      [
+       "the most common face is 4 or more",
+       "its upper box is open"
+      ],
+      "most"
+     ],
+     [
+      [
+       "two pair",
+       "on pace for the bonus",
+       "1s filled"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "a pair or more",
+       "one roll left",
+       "FH open"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "its upper box is open"
+      ],
+      "most"
+     ],
+     [
+      [
+       "three or fewer boxes open",
+       "SS open",
+       "3K filled"
+      ],
+      "run"
+     ],
+     [
+      [
+       "three or more of a kind",
+       "FH open"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "3K filled",
+       "4K filled",
+       "three or more of a kind"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "three or more of a kind"
+      ],
+      "most"
+     ],
+     [
+      [
+       "three or fewer boxes open",
+       "LS open",
+       "3K filled"
+      ],
+      "run"
+     ],
+     [
+      [
+       "the most common face is 5 or more",
+       "3K open",
+       "a pair or more"
+      ],
+      "most"
+     ]
+    ],
+    "box": [],
+    "par": {
+     "aces": 4,
+     "twos": 6,
+     "threes": 9,
+     "fours": 11,
+     "fives": 14,
+     "sixes": 17,
+     "three_kind": 23,
+     "four_kind": 15,
+     "full_house": 15,
+     "small_straight": 29,
+     "large_straight": 15,
+     "yahtzee": 11,
+     "chance": 27
+    },
+    "weight": 2.75,
+    "default": "most open"
+   }
+  },
+  {
+   "size": 13,
+   "score": 244.10740016772155,
+   "file": "prune-base-2.jsonl",
+   "card": {
+    "keep": [
+     [
+      [
+       "four or more of a kind"
+      ],
+      "most"
+     ],
+     [
+      [
+       "four or more in a row",
+       "LS open"
+      ],
+      "run"
+     ],
+     [
+      [
+       "four or more in a row",
+       "SS open"
+      ],
+      "all"
+     ],
+     [
+      [
+       "the most common face is 4 or more",
+       "its upper box is open"
+      ],
+      "most"
+     ],
+     [
+      [
+       "two pair",
+       "on pace for the bonus",
+       "1s filled"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "a pair or more",
+       "one roll left",
+       "FH open"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "its upper box is open"
+      ],
+      "most"
+     ],
+     [
+      [
+       "three or fewer boxes open",
+       "SS open",
+       "3K filled"
+      ],
+      "run"
+     ],
+     [
+      [
+       "three or more of a kind",
+       "FH open"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "3K filled",
+       "4K filled",
+       "three or more of a kind"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "three or more of a kind"
+      ],
+      "most"
+     ],
+     [
+      [
+       "three or fewer boxes open",
+       "LS open",
+       "3K filled"
+      ],
+      "run"
+     ],
+     [
+      [
+       "the most common face is 5 or more",
+       "3K open",
+       "a pair or more"
+      ],
+      "most"
+     ]
+    ],
+    "box": [],
+    "par": {
+     "aces": 4,
+     "twos": 6,
+     "threes": 9,
+     "fours": 11,
+     "fives": 14,
+     "sixes": 17,
+     "three_kind": 23,
+     "four_kind": 15,
+     "full_house": 15,
+     "small_straight": 29,
+     "large_straight": 15,
+     "yahtzee": 11,
+     "chance": 27
+    },
+    "weight": 2.75,
+    "default": "most open"
+   }
+  },
+  {
+   "size": 14,
+   "score": 244.29390956165125,
+   "file": "prune-base-2.jsonl",
+   "card": {
+    "keep": [
+     [
+      [
+       "four or more of a kind"
+      ],
+      "most"
+     ],
+     [
+      [
+       "four or more in a row",
+       "LS open"
+      ],
+      "run"
+     ],
+     [
+      [
+       "four or more in a row",
+       "SS open"
+      ],
+      "all"
+     ],
+     [
+      [
+       "the most common face is 4 or more",
+       "its upper box is open"
+      ],
+      "most"
+     ],
+     [
+      [
+       "two pair",
+       "on pace for the bonus",
+       "1s filled"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "a pair or more",
+       "one roll left",
+       "FH open"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "its upper box is open"
+      ],
+      "most"
+     ],
+     [
+      [
+       "three or fewer boxes open",
+       "SS open",
+       "3K filled"
+      ],
+      "run"
+     ],
+     [
+      [
+       "three or more of a kind",
+       "FH open"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "3K filled",
+       "4K filled",
+       "three or more of a kind"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "three or more of a kind",
+       "the most common face is 1"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "three or more of a kind"
+      ],
+      "most"
+     ],
+     [
+      [
+       "three or fewer boxes open",
+       "LS open",
+       "3K filled"
+      ],
+      "run"
+     ],
+     [
+      [
+       "the most common face is 5 or more",
+       "3K open",
+       "a pair or more"
+      ],
+      "most"
+     ]
+    ],
+    "box": [],
+    "par": {
+     "aces": 4,
+     "twos": 6,
+     "threes": 9,
+     "fours": 11,
+     "fives": 14,
+     "sixes": 17,
+     "three_kind": 23,
+     "four_kind": 15,
+     "full_house": 15,
+     "small_straight": 29,
+     "large_straight": 15,
+     "yahtzee": 11,
+     "chance": 27
+    },
+    "weight": 2.75,
+    "default": "most open"
+   }
+  },
+  {
+   "size": 15,
+   "score": 244.46220799583529,
+   "file": "prune-base-2.jsonl",
+   "card": {
+    "keep": [
+     [
+      [
+       "four or more of a kind"
+      ],
+      "most"
+     ],
+     [
+      [
+       "four or more in a row",
+       "LS open"
+      ],
+      "run"
+     ],
+     [
+      [
+       "four or more in a row",
+       "SS open"
+      ],
+      "all"
+     ],
+     [
+      [
+       "the most common face is 4 or more",
+       "its upper box is open"
+      ],
+      "most"
+     ],
+     [
+      [
+       "two pair",
+       "on pace for the bonus",
+       "1s filled"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "a pair or more",
+       "one roll left",
+       "FH open"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "its upper box is open"
+      ],
+      "most"
+     ],
+     [
+      [
+       "three or fewer boxes open",
+       "SS open",
+       "3K filled"
+      ],
+      "run"
+     ],
+     [
+      [
+       "three or more of a kind",
+       "FH open"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "3K filled",
+       "4K filled",
+       "three or more of a kind"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "three or more of a kind",
+       "the most common face is 1"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "three or more of a kind"
+      ],
+      "most"
+     ],
+     [
+      [
+       "one roll left",
+       "C open",
+       "SS filled"
+      ],
+      "fives"
+     ],
+     [
+      [
+       "three or fewer boxes open",
+       "LS open",
+       "3K filled"
+      ],
+      "run"
+     ],
+     [
+      [
+       "the most common face is 5 or more",
+       "3K open",
+       "a pair or more"
+      ],
+      "most"
+     ]
+    ],
+    "box": [],
+    "par": {
+     "aces": 4,
+     "twos": 6,
+     "threes": 9,
+     "fours": 11,
+     "fives": 14,
+     "sixes": 17,
+     "three_kind": 23,
+     "four_kind": 15,
+     "full_house": 15,
+     "small_straight": 29,
+     "large_straight": 15,
+     "yahtzee": 11,
+     "chance": 27
+    },
+    "weight": 2.75,
+    "default": "most open"
+   }
+  },
+  {
+   "size": 16,
+   "score": 244.61798257532124,
+   "file": "prune-base-2.jsonl",
+   "card": {
+    "keep": [
+     [
+      [
+       "four or more of a kind"
+      ],
+      "most"
+     ],
+     [
+      [
+       "four or more in a row",
+       "LS open"
+      ],
+      "run"
+     ],
+     [
+      [
+       "four or more in a row",
+       "SS open"
+      ],
+      "all"
+     ],
+     [
+      [
+       "the most common face is 4 or more",
+       "its upper box is open"
+      ],
+      "most"
+     ],
+     [
+      [
+       "three or fewer boxes open",
+       "FH open",
+       "a pair or more"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "two pair",
+       "on pace for the bonus",
+       "1s filled"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "a pair or more",
+       "one roll left",
+       "FH open"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "its upper box is open"
+      ],
+      "most"
+     ],
+     [
+      [
+       "three or fewer boxes open",
+       "SS open",
+       "3K filled"
+      ],
+      "run"
+     ],
+     [
+      [
+       "three or more of a kind",
+       "FH open"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "3K filled",
+       "4K filled",
+       "three or more of a kind"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "three or more of a kind",
+       "the most common face is 1"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "three or more of a kind"
+      ],
+      "most"
+     ],
+     [
+      [
+       "one roll left",
+       "C open",
+       "SS filled"
+      ],
+      "fives"
+     ],
+     [
+      [
+       "three or fewer boxes open",
+       "LS open",
+       "3K filled"
+      ],
+      "run"
+     ],
+     [
+      [
+       "the most common face is 5 or more",
+       "3K open",
+       "a pair or more"
+      ],
+      "most"
+     ]
+    ],
+    "box": [],
+    "par": {
+     "aces": 4,
+     "twos": 6,
+     "threes": 9,
+     "fours": 11,
+     "fives": 14,
+     "sixes": 17,
+     "three_kind": 23,
+     "four_kind": 15,
+     "full_house": 15,
+     "small_straight": 29,
+     "large_straight": 15,
+     "yahtzee": 11,
+     "chance": 27
+    },
+    "weight": 2.75,
+    "default": "most open"
+   }
+  },
+  {
+   "size": 17,
+   "score": 244.71284114739248,
+   "file": "prune-base-2.jsonl",
+   "card": {
+    "keep": [
+     [
+      [
+       "four or more of a kind"
+      ],
+      "most"
+     ],
+     [
+      [
+       "four or more in a row",
+       "LS open"
+      ],
+      "run"
+     ],
+     [
+      [
+       "four or more in a row",
+       "SS open"
+      ],
+      "all"
+     ],
+     [
+      [
+       "the most common face is 4 or more",
+       "its upper box is open"
+      ],
+      "most"
+     ],
+     [
+      [
+       "three or fewer boxes open",
+       "FH open",
+       "a pair or more"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "two pair",
+       "on pace for the bonus",
+       "1s filled"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "a pair or more",
+       "one roll left",
+       "FH open"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "its upper box is open"
+      ],
+      "most"
+     ],
+     [
+      [
+       "three or fewer boxes open",
+       "SS open",
+       "3K filled"
+      ],
+      "run"
+     ],
+     [
+      [
+       "three or more of a kind",
+       "FH open"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "3K filled",
+       "4K filled",
+       "three or more of a kind"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "three or more of a kind",
+       "the most common face is 1"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "three or more of a kind"
+      ],
+      "most"
+     ],
+     [
+      [
+       "one roll left",
+       "C open",
+       "SS filled"
+      ],
+      "fives"
+     ],
+     [
+      [
+       "three or fewer boxes open",
+       "LS open",
+       "3K filled"
+      ],
+      "run"
+     ],
+     [
+      [
+       "the most common face is 5 or more",
+       "3K open",
+       "a pair or more"
+      ],
+      "most"
+     ],
+     [
+      [
+       "three or more in a row",
+       "SS open"
+      ],
+      "run"
+     ]
+    ],
+    "box": [],
+    "par": {
+     "aces": 4,
+     "twos": 6,
+     "threes": 9,
+     "fours": 11,
+     "fives": 14,
+     "sixes": 17,
+     "three_kind": 23,
+     "four_kind": 15,
+     "full_house": 15,
+     "small_straight": 29,
+     "large_straight": 15,
+     "yahtzee": 11,
+     "chance": 27
+    },
+    "weight": 2.75,
+    "default": "most open"
+   }
+  },
+  {
+   "size": 18,
+   "score": 244.79805034977682,
+   "file": "prune-base-2.jsonl",
+   "card": {
+    "keep": [
+     [
+      [
+       "four or more of a kind"
+      ],
+      "most"
+     ],
+     [
+      [
+       "four or more in a row",
+       "LS open"
+      ],
+      "run"
+     ],
+     [
+      [
+       "four or more in a row",
+       "SS open"
+      ],
+      "all"
+     ],
+     [
+      [
+       "the most common face is 4 or more",
+       "its upper box is open"
+      ],
+      "most"
+     ],
+     [
+      [
+       "three or fewer boxes open",
+       "FH open",
+       "a pair or more"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "two pair",
+       "on pace for the bonus",
+       "1s filled"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "a pair or more",
+       "one roll left",
+       "FH open"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "its upper box is open"
+      ],
+      "most"
+     ],
+     [
+      [
+       "three or fewer boxes open",
+       "SS open",
+       "3K filled"
+      ],
+      "run"
+     ],
+     [
+      [
+       "three or more of a kind",
+       "FH open"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "3K filled",
+       "4K filled",
+       "three or more of a kind"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "three or more of a kind",
+       "the most common face is 1"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "three or more of a kind"
+      ],
+      "most"
+     ],
+     [
+      [
+       "one roll left",
+       "C open",
+       "SS filled"
+      ],
+      "fives"
+     ],
+     [
+      [
+       "three or fewer boxes open",
+       "LS open",
+       "3K filled"
+      ],
+      "run"
+     ],
+     [
+      [
+       "the most common face is 5 or more",
+       "3K open",
+       "a pair or more"
+      ],
+      "most"
+     ],
+     [
+      [
+       "4s open"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "three or more in a row",
+       "SS open"
+      ],
+      "run"
+     ]
+    ],
+    "box": [],
+    "par": {
+     "aces": 4,
+     "twos": 6,
+     "threes": 9,
+     "fours": 11,
+     "fives": 14,
+     "sixes": 17,
+     "three_kind": 23,
+     "four_kind": 15,
+     "full_house": 15,
+     "small_straight": 29,
+     "large_straight": 15,
+     "yahtzee": 11,
+     "chance": 27
+    },
+    "weight": 2.75,
+    "default": "most open"
+   }
+  },
+  {
+   "size": 19,
+   "score": 244.9278713249937,
+   "file": "prune-base-2.jsonl",
+   "card": {
+    "keep": [
+     [
+      [
+       "four or more of a kind"
+      ],
+      "most"
+     ],
+     [
+      [
+       "four or more in a row",
+       "LS open"
+      ],
+      "run"
+     ],
+     [
+      [
+       "four or more in a row",
+       "SS open"
+      ],
+      "all"
+     ],
+     [
+      [
+       "the most common face is 4 or more",
+       "its upper box is open"
+      ],
+      "most"
+     ],
+     [
+      [
+       "three or fewer boxes open",
+       "FH open",
+       "a pair or more"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "two pair",
+       "on pace for the bonus",
+       "1s filled"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "a pair or more",
+       "one roll left",
+       "FH open"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "its upper box is open"
+      ],
+      "most"
+     ],
+     [
+      [
+       "three or fewer boxes open",
+       "SS open",
+       "3K filled"
+      ],
+      "run"
+     ],
+     [
+      [
+       "three or more of a kind",
+       "FH open"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "3K filled",
+       "4K filled",
+       "three or more of a kind"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "three or more of a kind",
+       "the most common face is 1"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "three or more of a kind"
+      ],
+      "most"
+     ],
+     [
+      [
+       "one roll left",
+       "C open",
+       "SS filled"
+      ],
+      "fives"
+     ],
+     [
+      [
+       "three or fewer boxes open",
+       "LS open",
+       "3K filled"
+      ],
+      "run"
+     ],
+     [
+      [
+       "the most common face is 5 or more",
+       "3K open",
+       "a pair or more"
+      ],
+      "most"
+     ],
+     [
+      [
+       "4s open"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "three or more in a row",
+       "SS open"
+      ],
+      "run"
+     ],
+     [
+      [
+       "the most common face is 2 or less",
+       "3K open"
+      ],
+      "high"
+     ]
+    ],
+    "box": [],
+    "par": {
+     "aces": 4,
+     "twos": 6,
+     "threes": 9,
+     "fours": 11,
+     "fives": 14,
+     "sixes": 17,
+     "three_kind": 23,
+     "four_kind": 15,
+     "full_house": 15,
+     "small_straight": 29,
+     "large_straight": 15,
+     "yahtzee": 11,
+     "chance": 27
+    },
+    "weight": 2.75,
+    "default": "most open"
+   }
+  },
+  {
+   "size": 20,
+   "score": 245.05220383326977,
+   "file": "prune-base-2.jsonl",
+   "card": {
+    "keep": [
+     [
+      [
+       "four or more of a kind"
+      ],
+      "most"
+     ],
+     [
+      [
+       "four or more in a row",
+       "LS open"
+      ],
+      "run"
+     ],
+     [
+      [
+       "four or more in a row",
+       "SS open"
+      ],
+      "all"
+     ],
+     [
+      [
+       "the most common face is 4 or more",
+       "its upper box is open"
+      ],
+      "most"
+     ],
+     [
+      [
+       "three or fewer boxes open",
+       "FH open",
+       "a pair or more"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "two pair",
+       "on pace for the bonus",
+       "1s filled"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "a pair or more",
+       "one roll left",
+       "FH open"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "its upper box is open"
+      ],
+      "most"
+     ],
+     [
+      [
+       "three or fewer boxes open",
+       "SS open",
+       "3K filled"
+      ],
+      "run"
+     ],
+     [
+      [
+       "three or more of a kind",
+       "FH open"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "3K filled",
+       "4K filled",
+       "three or more of a kind"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "three or more of a kind",
+       "the most common face is 1"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "three or more of a kind"
+      ],
+      "most"
+     ],
+     [
+      [
+       "on pace for the bonus",
+       "three or fewer boxes open",
+       "SS filled"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "one roll left",
+       "C open",
+       "SS filled"
+      ],
+      "fives"
+     ],
+     [
+      [
+       "three or fewer boxes open",
+       "LS open",
+       "3K filled"
+      ],
+      "run"
+     ],
+     [
+      [
+       "the most common face is 5 or more",
+       "3K open",
+       "a pair or more"
+      ],
+      "most"
+     ],
+     [
+      [
+       "4s open"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "three or more in a row",
+       "SS open"
+      ],
+      "run"
+     ],
+     [
+      [
+       "the most common face is 2 or less",
+       "3K open"
+      ],
+      "high"
+     ]
+    ],
+    "box": [],
+    "par": {
+     "aces": 4,
+     "twos": 6,
+     "threes": 9,
+     "fours": 11,
+     "fives": 14,
+     "sixes": 17,
+     "three_kind": 23,
+     "four_kind": 15,
+     "full_house": 15,
+     "small_straight": 29,
+     "large_straight": 15,
+     "yahtzee": 11,
+     "chance": 27
+    },
+    "weight": 2.75,
+    "default": "most open"
+   }
+  },
+  {
+   "size": 21,
+   "score": 245.1257852879946,
+   "file": "prune-base-2.jsonl",
+   "card": {
+    "keep": [
+     [
+      [
+       "four or more of a kind"
+      ],
+      "most"
+     ],
+     [
+      [
+       "four or more in a row",
+       "LS open"
+      ],
+      "run"
+     ],
+     [
+      [
+       "its upper box is open",
+       "two rolls left",
+       "a pair or more"
+      ],
+      "most"
+     ],
+     [
+      [
+       "four or more in a row",
+       "SS open"
+      ],
+      "all"
+     ],
+     [
+      [
+       "the most common face is 4 or more",
+       "its upper box is open"
+      ],
+      "most"
+     ],
+     [
+      [
+       "three or fewer boxes open",
+       "FH open",
+       "a pair or more"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "two pair",
+       "on pace for the bonus",
+       "1s filled"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "a pair or more",
+       "one roll left",
+       "FH open"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "its upper box is open"
+      ],
+      "most"
+     ],
+     [
+      [
+       "three or fewer boxes open",
+       "SS open",
+       "3K filled"
+      ],
+      "run"
+     ],
+     [
+      [
+       "three or more of a kind",
+       "FH open"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "3K filled",
+       "4K filled",
+       "three or more of a kind"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "three or more of a kind",
+       "the most common face is 1"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "three or more of a kind"
+      ],
+      "most"
+     ],
+     [
+      [
+       "on pace for the bonus",
+       "three or fewer boxes open",
+       "SS filled"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "one roll left",
+       "C open",
+       "SS filled"
+      ],
+      "fives"
+     ],
+     [
+      [
+       "three or fewer boxes open",
+       "LS open",
+       "3K filled"
+      ],
+      "run"
+     ],
+     [
+      [
+       "the most common face is 5 or more",
+       "3K open",
+       "a pair or more"
+      ],
+      "most"
+     ],
+     [
+      [
+       "4s open"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "three or more in a row",
+       "SS open"
+      ],
+      "run"
+     ],
+     [
+      [
+       "the most common face is 2 or less",
+       "3K open"
+      ],
+      "high"
+     ]
+    ],
+    "box": [],
+    "par": {
+     "aces": 4,
+     "twos": 6,
+     "threes": 9,
+     "fours": 11,
+     "fives": 14,
+     "sixes": 17,
+     "three_kind": 23,
+     "four_kind": 15,
+     "full_house": 15,
+     "small_straight": 29,
+     "large_straight": 15,
+     "yahtzee": 11,
+     "chance": 27
+    },
+    "weight": 2.75,
+    "default": "most open"
+   }
+  },
+  {
+   "size": 22,
+   "score": 245.19945693604333,
+   "file": "prune-base-2.jsonl",
+   "card": {
+    "keep": [
+     [
+      [
+       "four or more of a kind"
+      ],
+      "most"
+     ],
+     [
+      [
+       "four or more in a row",
+       "LS open"
+      ],
+      "run"
+     ],
+     [
+      [
+       "its upper box is open",
+       "two rolls left",
+       "a pair or more"
+      ],
+      "most"
+     ],
+     [
+      [
+       "four or more in a row",
+       "SS open"
+      ],
+      "all"
+     ],
+     [
+      [
+       "the most common face is 4 or more",
+       "its upper box is open"
+      ],
+      "most"
+     ],
+     [
+      [
+       "three or fewer boxes open",
+       "FH open",
+       "a pair or more"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "two pair",
+       "on pace for the bonus",
+       "1s filled"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "a pair or more",
+       "one roll left",
+       "FH open"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "its upper box is open"
+      ],
+      "most"
+     ],
+     [
+      [
+       "three or fewer boxes open",
+       "SS open",
+       "3K filled"
+      ],
+      "run"
+     ],
+     [
+      [
+       "three or more of a kind",
+       "FH open"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "3K filled",
+       "4K filled",
+       "three or more of a kind"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "three or more of a kind",
+       "the most common face is 1"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "three or more of a kind"
+      ],
+      "most"
+     ],
+     [
+      [
+       "on pace for the bonus",
+       "three or fewer boxes open",
+       "SS filled"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "one roll left",
+       "C open",
+       "SS filled"
+      ],
+      "fives"
+     ],
+     [
+      [
+       "three or fewer boxes open",
+       "LS open",
+       "3K filled"
+      ],
+      "run"
+     ],
+     [
+      [
+       "the most common face is 5 or more",
+       "3K open",
+       "a pair or more"
+      ],
+      "most"
+     ],
+     [
+      [
+       "4s open"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "three or more in a row",
+       "SS open"
+      ],
+      "run"
+     ],
+     [
+      [
+       "the bonus is made",
+       "C open"
+      ],
+      "fives"
+     ],
+     [
+      [
+       "the most common face is 2 or less",
+       "3K open"
+      ],
+      "high"
+     ]
+    ],
+    "box": [],
+    "par": {
+     "aces": 4,
+     "twos": 6,
+     "threes": 9,
+     "fours": 11,
+     "fives": 14,
+     "sixes": 17,
+     "three_kind": 23,
+     "four_kind": 15,
+     "full_house": 15,
+     "small_straight": 29,
+     "large_straight": 15,
+     "yahtzee": 11,
+     "chance": 27
+    },
+    "weight": 2.75,
+    "default": "most open"
+   }
+  },
+  {
+   "size": 23,
+   "score": 245.26129201241395,
+   "file": "prune-base-2.jsonl",
+   "card": {
+    "keep": [
+     [
+      [
+       "four or more of a kind"
+      ],
+      "most"
+     ],
+     [
+      [
+       "four or more in a row",
+       "LS open"
+      ],
+      "run"
+     ],
+     [
+      [
+       "its upper box is open",
+       "two rolls left",
+       "a pair or more"
+      ],
+      "most"
+     ],
+     [
+      [
+       "four or more in a row",
+       "SS open"
+      ],
+      "all"
+     ],
+     [
+      [
+       "the most common face is 4 or more",
+       "its upper box is open"
+      ],
+      "most"
+     ],
+     [
+      [
+       "three or fewer boxes open",
+       "FH open",
+       "a pair or more"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "two pair",
+       "on pace for the bonus",
+       "1s filled"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "a pair or more",
+       "one roll left",
+       "FH open"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "its upper box is open"
+      ],
+      "most"
+     ],
+     [
+      [
+       "three or fewer boxes open",
+       "SS open",
+       "3K filled"
+      ],
+      "run"
+     ],
+     [
+      [
+       "three or more of a kind",
+       "FH open"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "a full house",
+       "the most common face is 3 or less"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "3K filled",
+       "4K filled",
+       "three or more of a kind"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "three or more of a kind",
+       "the most common face is 1"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "three or more of a kind"
+      ],
+      "most"
+     ],
+     [
+      [
+       "on pace for the bonus",
+       "three or fewer boxes open",
+       "SS filled"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "one roll left",
+       "C open",
+       "SS filled"
+      ],
+      "fives"
+     ],
+     [
+      [
+       "three or fewer boxes open",
+       "LS open",
+       "3K filled"
+      ],
+      "run"
+     ],
+     [
+      [
+       "the most common face is 5 or more",
+       "3K open",
+       "a pair or more"
+      ],
+      "most"
+     ],
+     [
+      [
+       "4s open"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "three or more in a row",
+       "SS open"
+      ],
+      "run"
+     ],
+     [
+      [
+       "the bonus is made",
+       "C open"
+      ],
+      "fives"
+     ],
+     [
+      [
+       "the most common face is 2 or less",
+       "3K open"
+      ],
+      "high"
+     ]
+    ],
+    "box": [],
+    "par": {
+     "aces": 4,
+     "twos": 6,
+     "threes": 9,
+     "fours": 11,
+     "fives": 14,
+     "sixes": 17,
+     "three_kind": 23,
+     "four_kind": 15,
+     "full_house": 15,
+     "small_straight": 29,
+     "large_straight": 15,
+     "yahtzee": 11,
+     "chance": 27
+    },
+    "weight": 2.75,
+    "default": "most open"
+   }
+  },
+  {
+   "size": 24,
+   "score": 245.2957065036851,
+   "file": "prune-base-2.jsonl",
+   "card": {
+    "keep": [
+     [
+      [
+       "four or more of a kind"
+      ],
+      "most"
+     ],
+     [
+      [
+       "four or more in a row",
+       "LS open"
+      ],
+      "run"
+     ],
+     [
+      [
+       "its upper box is open",
+       "two rolls left",
+       "a pair or more"
+      ],
+      "most"
+     ],
+     [
+      [
+       "four or more in a row",
+       "SS open"
+      ],
+      "all"
+     ],
+     [
+      [
+       "the most common face is 4 or more",
+       "its upper box is open"
+      ],
+      "most"
+     ],
+     [
+      [
+       "three or fewer boxes open",
+       "FH open",
+       "a pair or more"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "two pair",
+       "on pace for the bonus",
+       "1s filled"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "a pair or more",
+       "one roll left",
+       "FH open"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "its upper box is open"
+      ],
+      "most"
+     ],
+     [
+      [
+       "three or fewer boxes open",
+       "SS open",
+       "3K filled"
+      ],
+      "run"
+     ],
+     [
+      [
+       "three or more of a kind",
+       "FH open"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "a full house",
+       "the most common face is 3 or less"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "3K filled",
+       "4K filled",
+       "three or more of a kind"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "three or more of a kind",
+       "the most common face is 1"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "three or more of a kind"
+      ],
+      "most"
+     ],
+     [
+      [
+       "on pace for the bonus",
+       "three or fewer boxes open",
+       "SS filled"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "one roll left",
+       "C open",
+       "SS filled"
+      ],
+      "fives"
+     ],
+     [
+      [
+       "three or fewer boxes open",
+       "LS open",
+       "3K filled"
+      ],
+      "run"
+     ],
+     [
+      [
+       "two pair",
+       "the dice total 22 or more"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "the most common face is 5 or more",
+       "3K open",
+       "a pair or more"
+      ],
+      "most"
+     ],
+     [
+      [
+       "4s open"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "three or more in a row",
+       "SS open"
+      ],
+      "run"
+     ],
+     [
+      [
+       "the bonus is made",
+       "C open"
+      ],
+      "fives"
+     ],
+     [
+      [
+       "the most common face is 2 or less",
+       "3K open"
+      ],
+      "high"
+     ]
+    ],
+    "box": [],
+    "par": {
+     "aces": 4,
+     "twos": 6,
+     "threes": 9,
+     "fours": 11,
+     "fives": 14,
+     "sixes": 17,
+     "three_kind": 23,
+     "four_kind": 15,
+     "full_house": 15,
+     "small_straight": 29,
+     "large_straight": 15,
+     "yahtzee": 11,
+     "chance": 27
+    },
+    "weight": 2.75,
+    "default": "most open"
+   }
+  },
+  {
+   "size": 25,
+   "score": 245.3058681913436,
+   "file": "prune-base-2.jsonl",
+   "card": {
+    "keep": [
+     [
+      [
+       "four or more of a kind"
+      ],
+      "most"
+     ],
+     [
+      [
+       "four or more in a row",
+       "LS open"
+      ],
+      "run"
+     ],
+     [
+      [
+       "its upper box is open",
+       "two rolls left",
+       "a pair or more"
+      ],
+      "most"
+     ],
+     [
+      [
+       "four or more in a row",
+       "SS open"
+      ],
+      "all"
+     ],
+     [
+      [
+       "the most common face is 4 or more",
+       "its upper box is open"
+      ],
+      "most"
+     ],
+     [
+      [
+       "three or fewer boxes open",
+       "FH open",
+       "a pair or more"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "two pair",
+       "on pace for the bonus",
+       "1s filled"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "a pair or more",
+       "one roll left",
+       "FH open"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "its upper box is open"
+      ],
+      "most"
+     ],
+     [
+      [
+       "three or fewer boxes open",
+       "SS open",
+       "3K filled"
+      ],
+      "run"
+     ],
+     [
+      [
+       "three or more of a kind",
+       "FH open"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "a full house",
+       "the most common face is 3 or less"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "3K filled",
+       "4K filled",
+       "three or more of a kind"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "three or more of a kind",
+       "the most common face is 1"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "three or more of a kind"
+      ],
+      "most"
+     ],
+     [
+      [
+       "on pace for the bonus",
+       "three or fewer boxes open",
+       "SS filled"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "one roll left",
+       "C open",
+       "SS filled"
+      ],
+      "fives"
+     ],
+     [
+      [
+       "three or fewer boxes open",
+       "LS open",
+       "3K filled"
+      ],
+      "run"
+     ],
+     [
+      [
+       "two pair",
+       "the dice total 22 or more"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "the most common face is 5 or more",
+       "3K open",
+       "a pair or more"
+      ],
+      "most"
+     ],
+     [
+      [
+       "4s open"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "FH open"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "three or more in a row",
+       "SS open"
+      ],
+      "run"
+     ],
+     [
+      [
+       "the bonus is made",
+       "C open"
+      ],
+      "fives"
+     ],
+     [
+      [
+       "the most common face is 2 or less",
+       "3K open"
+      ],
+      "high"
+     ]
+    ],
+    "box": [],
+    "par": {
+     "aces": 4,
+     "twos": 6,
+     "threes": 9,
+     "fours": 11,
+     "fives": 14,
+     "sixes": 17,
+     "three_kind": 23,
+     "four_kind": 15,
+     "full_house": 15,
+     "small_straight": 29,
+     "large_straight": 15,
+     "yahtzee": 11,
+     "chance": 27
+    },
+    "weight": 2.75,
+    "default": "most open"
+   }
+  },
+  {
+   "size": 26,
+   "score": 245.31320993615066,
+   "file": "prune-base-2.jsonl",
+   "card": {
+    "keep": [
+     [
+      [
+       "four or more of a kind"
+      ],
+      "most"
+     ],
+     [
+      [
+       "four or more in a row",
+       "LS open"
+      ],
+      "run"
+     ],
+     [
+      [
+       "its upper box is open",
+       "two rolls left",
+       "a pair or more"
+      ],
+      "most"
+     ],
+     [
+      [
+       "four or more in a row",
+       "SS open"
+      ],
+      "all"
+     ],
+     [
+      [
+       "the most common face is 4 or more",
+       "its upper box is open"
+      ],
+      "most"
+     ],
+     [
+      [
+       "three or fewer boxes open",
+       "FH open",
+       "a pair or more"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "two pair",
+       "on pace for the bonus",
+       "1s filled"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "a pair or more",
+       "one roll left",
+       "FH open"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "its upper box is open"
+      ],
+      "most"
+     ],
+     [
+      [
+       "three or fewer boxes open",
+       "SS open",
+       "3K filled"
+      ],
+      "run"
+     ],
+     [
+      [
+       "three or more of a kind",
+       "1s open"
+      ],
+      "most"
+     ],
+     [
+      [
+       "three or more of a kind",
+       "FH open"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "a full house",
+       "the most common face is 3 or less"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "3K filled",
+       "4K filled",
+       "three or more of a kind"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "three or more of a kind",
+       "the most common face is 1"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "three or more of a kind"
+      ],
+      "most"
+     ],
+     [
+      [
+       "on pace for the bonus",
+       "three or fewer boxes open",
+       "SS filled"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "one roll left",
+       "C open",
+       "SS filled"
+      ],
+      "fives"
+     ],
+     [
+      [
+       "three or fewer boxes open",
+       "LS open",
+       "3K filled"
+      ],
+      "run"
+     ],
+     [
+      [
+       "two pair",
+       "the dice total 22 or more"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "the most common face is 5 or more",
+       "3K open",
+       "a pair or more"
+      ],
+      "most"
+     ],
+     [
+      [
+       "4s open"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "FH open"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "three or more in a row",
+       "SS open"
+      ],
+      "run"
+     ],
+     [
+      [
+       "the bonus is made",
+       "C open"
+      ],
+      "fives"
+     ],
+     [
+      [
+       "the most common face is 2 or less",
+       "3K open"
+      ],
+      "high"
+     ]
+    ],
+    "box": [],
+    "par": {
+     "aces": 4,
+     "twos": 6,
+     "threes": 9,
+     "fours": 11,
+     "fives": 14,
+     "sixes": 17,
+     "three_kind": 23,
+     "four_kind": 15,
+     "full_house": 15,
+     "small_straight": 29,
+     "large_straight": 15,
+     "yahtzee": 11,
+     "chance": 27
+    },
+    "weight": 2.75,
+    "default": "most open"
+   }
+  },
+  {
+   "size": 38,
+   "score": 245.3380444339305,
+   "file": "learn-base-3.jsonl",
+   "card": {
+    "keep": [
+     [
+      [
+       "four or more of a kind"
+      ],
+      "most"
+     ],
+     [
+      [
+       "five of a kind"
+      ],
+      "all"
+     ],
+     [
+      [
+       "five in a row",
+       "LS open"
+      ],
+      "all"
+     ],
+     [
+      [
+       "its upper box is open",
+       "three or fewer boxes open",
+       "SS filled"
+      ],
+      "most"
+     ],
+     [
+      [
+       "four or more in a row",
+       "LS open"
+      ],
+      "run"
+     ],
+     [
+      [
+       "its upper box is open",
+       "two rolls left",
+       "a pair or more"
+      ],
+      "most"
+     ],
+     [
+      [
+       "two pair",
+       "on pace for the bonus",
+       "1s filled"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "four or more in a row",
+       "SS open"
+      ],
+      "all"
+     ],
+     [
+      [
+       "the most common face is 4 or more",
+       "its upper box is open"
+      ],
+      "most"
+     ],
+     [
+      [
+       "one roll left",
+       "FH open",
+       "a pair or more"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "its upper box is open"
+      ],
+      "most"
+     ],
+     [
+      [
+       "the most common face is 5 or more",
+       "3K open",
+       "a pair or more"
+      ],
+      "most"
+     ],
+     [
+      [
+       "two pair",
+       "FH open",
+       "4K filled"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "three or more of a kind",
+       "FH open"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "the most common face is 2 or less",
+       "on pace for the bonus"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "three or fewer boxes open",
+       "SS open",
+       "4K filled"
+      ],
+      "run"
+     ],
+     [
+      [
+       "three or more of a kind",
+       "the most common face is 1"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "a full house",
+       "the most common face is 3 or less"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "3K filled",
+       "4K filled",
+       "three or more of a kind"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "three or more of a kind"
+      ],
+      "most"
+     ],
+     [
+      [
+       "one roll left",
+       "C open",
+       "the most common face is 5 or more"
+      ],
+      "fives"
+     ],
+     [
+      [
+       "4s open"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "the most common face is 5 or more",
+       "on pace for the bonus"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "three or more in a row",
+       "SS open"
+      ],
+      "run"
+     ],
+     [
+      [
+       "on pace for the bonus"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "3s open"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "the most common face is 2 or less",
+       "3K open"
+      ],
+      "high"
+     ],
+     [
+      [
+       "the most common face is 3 or less",
+       "C open",
+       "2s filled"
+      ],
+      "fives"
+     ],
+     [
+      [
+       "5s open"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "FH open"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "the most common face is 5 or more",
+       "4K open"
+      ],
+      "most"
+     ],
+     [
+      [
+       "SS open"
+      ],
+      "run"
+     ],
+     [
+      [
+       "3K open"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "4K filled",
+       "C open"
+      ],
+      "fives"
+     ],
+     [
+      [
+       "three or fewer boxes open",
+       "LS open",
+       "4s filled"
+      ],
+      "run"
+     ],
+     [
+      [
+       "three or more in a row",
+       "SS open"
+      ],
+      "run"
+     ]
+    ],
+    "box": [
+     [
+      [
+       "five of a kind",
+       "it scores"
+      ],
+      "large_straight"
+     ],
+     [
+      [
+       "a full house",
+       "it scores"
+      ],
+      "full_house"
+     ]
+    ],
+    "par": {
+     "aces": 4,
+     "twos": 6,
+     "threes": 9,
+     "fours": 11,
+     "fives": 14,
+     "sixes": 16,
+     "three_kind": 21,
+     "four_kind": 13,
+     "full_house": 20,
+     "small_straight": 31,
+     "large_straight": 30,
+     "yahtzee": 10,
+     "chance": 26
+    },
+    "weight": 2.25,
+    "default": "most open"
+   }
+  },
+  {
+   "size": 39,
+   "score": 245.35652002134665,
+   "file": "learn-base-3.jsonl",
+   "card": {
+    "keep": [
+     [
+      [
+       "four or more of a kind"
+      ],
+      "most"
+     ],
+     [
+      [
+       "five of a kind"
+      ],
+      "all"
+     ],
+     [
+      [
+       "five in a row",
+       "LS open"
+      ],
+      "all"
+     ],
+     [
+      [
+       "its upper box is open",
+       "three or fewer boxes open",
+       "SS filled"
+      ],
+      "most"
+     ],
+     [
+      [
+       "four or more in a row",
+       "LS open"
+      ],
+      "run"
+     ],
+     [
+      [
+       "its upper box is open",
+       "two rolls left",
+       "a pair or more"
+      ],
+      "most"
+     ],
+     [
+      [
+       "two pair",
+       "on pace for the bonus",
+       "1s filled"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "four or more in a row",
+       "SS open"
+      ],
+      "all"
+     ],
+     [
+      [
+       "the most common face is 4 or more",
+       "its upper box is open"
+      ],
+      "most"
+     ],
+     [
+      [
+       "one roll left",
+       "FH open",
+       "a pair or more"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "its upper box is open"
+      ],
+      "most"
+     ],
+     [
+      [
+       "the most common face is 5 or more",
+       "3K open",
+       "a pair or more"
+      ],
+      "most"
+     ],
+     [
+      [
+       "two pair",
+       "on pace for the bonus"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "two pair",
+       "FH open",
+       "4K filled"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "three or more of a kind",
+       "FH open"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "the most common face is 2 or less",
+       "on pace for the bonus"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "three or fewer boxes open",
+       "SS open",
+       "4K filled"
+      ],
+      "run"
+     ],
+     [
+      [
+       "three or more of a kind",
+       "the most common face is 1"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "a full house",
+       "the most common face is 3 or less"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "3K filled",
+       "4K filled",
+       "three or more of a kind"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "three or more of a kind"
+      ],
+      "most"
+     ],
+     [
+      [
+       "one roll left",
+       "C open",
+       "the most common face is 5 or more"
+      ],
+      "fives"
+     ],
+     [
+      [
+       "4s open"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "the most common face is 5 or more",
+       "on pace for the bonus"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "three or more in a row",
+       "SS open"
+      ],
+      "run"
+     ],
+     [
+      [
+       "on pace for the bonus"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "3s open"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "the most common face is 2 or less",
+       "3K open"
+      ],
+      "high"
+     ],
+     [
+      [
+       "the most common face is 3 or less",
+       "C open",
+       "2s filled"
+      ],
+      "fives"
+     ],
+     [
+      [
+       "5s open"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "FH open"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "the most common face is 5 or more",
+       "4K open"
+      ],
+      "most"
+     ],
+     [
+      [
+       "SS open"
+      ],
+      "run"
+     ],
+     [
+      [
+       "3K open"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "4K filled",
+       "C open"
+      ],
+      "fives"
+     ],
+     [
+      [
+       "three or fewer boxes open",
+       "LS open",
+       "4s filled"
+      ],
+      "run"
+     ],
+     [
+      [
+       "three or more in a row",
+       "SS open"
+      ],
+      "run"
+     ]
+    ],
+    "box": [
+     [
+      [
+       "five of a kind",
+       "it scores"
+      ],
+      "large_straight"
+     ],
+     [
+      [
+       "a full house",
+       "it scores"
+      ],
+      "full_house"
+     ]
+    ],
+    "par": {
+     "aces": 4,
+     "twos": 6,
+     "threes": 9,
+     "fours": 11,
+     "fives": 14,
+     "sixes": 16,
+     "three_kind": 21,
+     "four_kind": 13,
+     "full_house": 20,
+     "small_straight": 31,
+     "large_straight": 30,
+     "yahtzee": 10,
+     "chance": 26
+    },
+    "weight": 2.25,
+    "default": "most open"
+   }
+  },
+  {
+   "size": 40,
+   "score": 245.37399377331437,
+   "file": "learn-base-3.jsonl",
+   "card": {
+    "keep": [
+     [
+      [
+       "four or more of a kind"
+      ],
+      "most"
+     ],
+     [
+      [
+       "five of a kind"
+      ],
+      "all"
+     ],
+     [
+      [
+       "five in a row",
+       "LS open"
+      ],
+      "all"
+     ],
+     [
+      [
+       "its upper box is open",
+       "three or fewer boxes open",
+       "SS filled"
+      ],
+      "most"
+     ],
+     [
+      [
+       "four or more in a row",
+       "LS open"
+      ],
+      "run"
+     ],
+     [
+      [
+       "its upper box is open",
+       "two rolls left",
+       "a pair or more"
+      ],
+      "most"
+     ],
+     [
+      [
+       "two pair",
+       "on pace for the bonus",
+       "1s filled"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "four or more in a row",
+       "SS open"
+      ],
+      "all"
+     ],
+     [
+      [
+       "the most common face is 4 or more",
+       "its upper box is open"
+      ],
+      "most"
+     ],
+     [
+      [
+       "one roll left",
+       "FH open",
+       "a pair or more"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "its upper box is open"
+      ],
+      "most"
+     ],
+     [
+      [
+       "the most common face is 5 or more",
+       "3K open",
+       "a pair or more"
+      ],
+      "most"
+     ],
+     [
+      [
+       "two pair",
+       "on pace for the bonus"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "two pair",
+       "FH open",
+       "4K filled"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "three or more of a kind",
+       "FH open"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "the most common face is 2 or less",
+       "on pace for the bonus"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "three or fewer boxes open",
+       "SS open",
+       "4K filled"
+      ],
+      "run"
+     ],
+     [
+      [
+       "three or more of a kind",
+       "the most common face is 1"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "a full house",
+       "the most common face is 3 or less"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "three or more of a kind",
+       "C open"
+      ],
+      "most"
+     ],
+     [
+      [
+       "3K filled",
+       "4K filled",
+       "three or more of a kind"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "three or more of a kind"
+      ],
+      "most"
+     ],
+     [
+      [
+       "one roll left",
+       "C open",
+       "the most common face is 5 or more"
+      ],
+      "fives"
+     ],
+     [
+      [
+       "4s open"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "the most common face is 5 or more",
+       "on pace for the bonus"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "three or more in a row",
+       "SS open"
+      ],
+      "run"
+     ],
+     [
+      [
+       "on pace for the bonus"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "3s open"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "the most common face is 2 or less",
+       "3K open"
+      ],
+      "high"
+     ],
+     [
+      [
+       "the most common face is 3 or less",
+       "C open",
+       "2s filled"
+      ],
+      "fives"
+     ],
+     [
+      [
+       "5s open"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "FH open"
+      ],
+      "pairs"
+     ],
+     [
+      [
+       "the most common face is 5 or more",
+       "4K open"
+      ],
+      "most"
+     ],
+     [
+      [
+       "SS open"
+      ],
+      "run"
+     ],
+     [
+      [
+       "3K open"
+      ],
+      "most open"
+     ],
+     [
+      [
+       "4K filled",
+       "C open"
+      ],
+      "fives"
+     ],
+     [
+      [
+       "three or fewer boxes open",
+       "LS open",
+       "4s filled"
+      ],
+      "run"
+     ],
+     [
+      [
+       "three or more in a row",
+       "SS open"
+      ],
+      "run"
+     ]
+    ],
+    "box": [
+     [
+      [
+       "five of a kind",
+       "it scores"
+      ],
+      "large_straight"
+     ],
+     [
+      [
+       "a full house",
+       "it scores"
+      ],
+      "full_house"
+     ]
+    ],
+    "par": {
+     "aces": 4,
+     "twos": 6,
+     "threes": 9,
+     "fours": 11,
+     "fives": 14,
+     "sixes": 16,
+     "three_kind": 21,
+     "four_kind": 13,
+     "full_house": 17,
+     "small_straight": 31,
+     "large_straight": 30,
+     "yahtzee": 10,
+     "chance": 26
+    },
+    "weight": 2.25,
+    "default": "most open"
+   }
+  }
+ ],
+ "cheat": {
+  "card": {
+   "keep": [
+    [
+     [
+      "four or more in a row",
+      "LS open"
+     ],
+     "run"
+    ],
+    [
+     [
+      "four or more in a row",
+      "SS open"
+     ],
+     "all"
+    ],
+    [
+     [
+      "the most common face is 4 or more",
+      "its upper box is open"
+     ],
+     "most"
+    ],
+    [
+     [
+      "a pair or more",
+      "one roll left",
+      "FH open"
+     ],
+     "pairs"
+    ],
+    [
+     [
+      "three or fewer boxes open",
+      "SS open",
+      "3K filled"
+     ],
+     "run"
+    ],
+    [
+     [
+      "3K filled",
+      "4K filled",
+      "three or more of a kind"
+     ],
+     "most open"
+    ],
+    [
+     [
+      "three or more of a kind"
+     ],
+     "most"
+    ],
+    [
+     [
+      "the most common face is 5 or more",
+      "3K open",
+      "a pair or more"
+     ],
+     "most"
+    ]
+   ],
+   "box": [],
+   "par": {
+    "aces": 4,
+    "twos": 6,
+    "threes": 9,
+    "fours": 11,
+    "fives": 14,
+    "sixes": 17,
+    "three_kind": 23,
+    "four_kind": 15,
+    "full_house": 15,
+    "small_straight": 29,
+    "large_straight": 15,
+    "yahtzee": 11,
+    "chance": 27
+   },
+   "weight": 2.75,
+   "default": "most open"
+  },
+  "score": 243.17773407019826,
+  "summary": {
+   "mean": 243.1777340701982,
+   "sd": 61.777937868756524,
+   "median": 236,
+   "min": 13,
+   "max": 1575,
+   "mode": 244
+  },
+  "boxes": {
+   "aces": 2.1420445505760064,
+   "twos": 5.133031394467917,
+   "threes": 8.62048936340427,
+   "fours": 11.992845515311148,
+   "fives": 15.590757556062995,
+   "sixes": 19.292050819215678,
+   "three_kind": 20.421093299247524,
+   "four_kind": 12.432317234973741,
+   "full_house": 21.91506729325873,
+   "small_straight": 29.16304398554108,
+   "large_straight": 29.567030668711975,
+   "yahtzee": 17.177295405952847,
+   "chance": 20.887797418824373
+  },
+  "upper_bonus": 0.544639049903109,
+  "yahtzee_bonus": 9.780502818041255,
+  "split": {
+   "optimal keeps": 252.2284257648834,
+   "optimal boxes": 245.55775922646768
+  },
+  "simulated": {
+   "games": 20000,
+   "seed": 1,
+   "mean": 242.6074,
+   "half": 0.8546455058065299
+  }
+ },
+ "optimal_boxes": {
+  "score": 254.58960948196284,
+  "boxes": {
+   "aces": 1.8812876062770312,
+   "twos": 5.282452277649637,
+   "threes": 8.569289499771047,
+   "fours": 12.158285172833615,
+   "fives": 15.687383571554557,
+   "sixes": 19.188556337477795,
+   "three_kind": 21.66146118596187,
+   "four_kind": 13.09770417127161,
+   "full_house": 22.591800822513225,
+   "small_straight": 29.461210852387154,
+   "large_straight": 32.711323126531006,
+   "yahtzee": 16.86827633003465,
+   "chance": 22.009139622612757
+  },
+  "upper_bonus": 0.6811809332311675,
+  "yahtzee_bonus": 9.58010624199586
+ },
+ "cards_found": 220
+}
