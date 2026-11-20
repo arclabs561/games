@@ -8,7 +8,7 @@ Most results in this repository are exact and run in seconds on a laptop. The ex
 - **Plans** are in `plans/<id>.md`, one per experiment. Each names its question, metric, seeds and held-out partners. A plan is merged before its runs and is not changed after; a later change goes in a dated amendment at its end. `METHOD.md` gives the rules all plans share.
 - **Summaries** (small JSON files with every number a README quotes) go in the game's own `results/` folder, committed with the README that uses them.
 - **Artifacts** that are large or whose license forbids publishing (vectors, fine-tuned adapters, model outputs, downloaded datasets) go in the private Hugging Face dataset `arclabs561/games-runs`, under `runs/<experiment>/<run>/`, with a `manifest.json` that records the commit, command, hardware, GPU and run time.
-- **Runner outputs** from GitHub Actions are committed to the branch `compute/<name>` that ran them, as `compute/codenames-embed` does for the Hugging Face vectors. A summary that a README quotes is copied into the game's `results/`.
+- **Runner outputs** from GitHub Actions are committed to the branch `compute/<name>` that ran them. Outputs that later work reads are kept, without that branch's history, on `outputs/<name>`: `outputs/codenames-embed` holds the Hugging Face vectors and `outputs/hanabi-h1` the H1 runs. A summary that a README quotes is copied into the game's `results/`.
 
 ## How runs are launched
 
@@ -25,7 +25,7 @@ Costs are recorded per run. A number from a run that did not happen is never rep
 | Id | Question | Compute | Plan | Status |
 |---|---|---|---|---|
 | C1 | Do the Codenames results on human guesses hold when the games, not the turns, are split? | CPU | [C1](plans/C1.md) | done (PR #41): the published split leaks; the linear adapter's gain holds |
-| C2 | Does fine-tuning an embedding model (LoRA) on human games beat the linear adapter, on C1's split? | A10G, about $2.50 | [C2](plans/C2.md) | done (PR #42): null; LoRA ties the linear adapter |
+| C2 | Does fine-tuning an embedding model (LoRA) on human games beat the linear adapter, on C1's split? | A10G, about $2.50 | [C2](plans/C2.md) | done (PR #42): null; no detectable difference from the linear adapter (−4.1 to 2.8 points) |
 | C3 | Does a clue giver trained against several guessers do better with held-out guessers, across five seeds and fourteen held-out choices? | CPU (GitHub Actions) | [C3](plans/C3.md) | done (PR #48): yes; held-out value 0.31 (0.26 to 0.36) higher than self-play, in all 70 runs, at a cost of 0.50 with the giver's own model |
 | C4 | Do hosted language models match human guesses better than embeddings, and how do they fare as givers with guessers they have never met? | Inference Providers, about $1 to $3 | [C4](plans/C4.md) | done (PR #43): language models guess better, give worse clues |
 | C5 | Does reinforcement learning of a small language model, rewarded by a population of guessers, give clues that held-out guessers understand? | L4, about $9 | [C5](plans/C5.md) | not run: C4's giver test failed |

@@ -15,7 +15,7 @@ the same 120 actions on the same board.
   is clue i with count n.
 
 Computing the list needs the proposer's vectors (`codenames/vectors/`, from the branch
-`compute/codenames-embed`). A job without them reads the list from a text file written
+`outputs/codenames-embed`). A job without them reads the list from a text file written
 by `action_lines`: one line per board, `seed board clue_1 ... clue_K`.
 
     uv run python -m codenames.actions --seed 6004 --n 200 --out actions-6004.txt

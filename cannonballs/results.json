@@ -1,5 +1,5 @@
 {
- "bounds": {"brute": 10000000, "digits": 10000, "coincide": 1000000, "cubes": 1000000, "tops": 100000, "oblong_rule": 10000, "oblong_residues": 300},
+ "bounds": {"brute": 10000000, "digits": 10000, "coincide": 1000000, "cubes": 1000000, "tops": 100000, "oblong_rule": 10000, "oblong_residues": 300, "shapes": 100000, "euler": 10000},
  "table": [[1, 1, 1, 1, 1], [2, 3, 4, 4, 5], [3, 6, 9, 10, 14], [4, 10, 16, 20, 30], [5, 15, 25, 35, 55], [6, 21, 36, 56, 91], [7, 28, 49, 84, 140], [8, 36, 64, 120, 204], [9, 45, 81, 165, 285], [10, 55, 100, 220, 385]],
  "pile24": {"balls": 4900, "root": 70, "touching_pairs": 26496, "balls_by_neighbors": {"3": 4, "4": 1, "5": 88, "7": 88, "8": 484, "9": 924, "12": 3311}},
  "tetrahedral48": 19600,
@@ -12,6 +12,8 @@
  "coincidences": {"tetrahedral / square": [1, 2, 48], "tetrahedral / triangle": [1, 3, 8, 20, 34], "tetrahedral / cube": [1], "square pile / square": [1, 24], "square pile / triangle": [1, 5, 6, 85], "square pile / cube": [1]},
  "tetrahedral_is_square_pile": [[1, 1]],
  "square_pile_cubes": [1],
+ "cube_cases_blocked_mod_7": ["231", "321"],
+ "euler_cube_solutions": [[-1, 0], [1, 1]],
  "cube_cases": {"123": null, "213": null, "161": null, "611": null, "231": 7, "321": 7},
  "truncated": [[1, "found", 1], [2, "found", 3], [3, "blocked", 3], [4, "blocked", 4], [5, "blocked", 4], [6, "blocked", 4], [7, "blocked", 16], [8, "blocked", 9], [9, "blocked", 9], [10, "blocked", 25], [11, "found", 18], [12, "blocked", 3], [13, "blocked", 4], [14, "blocked", 4], [15, "blocked", 25], [16, "blocked", 16], [17, "blocked", 9], [18, "blocked", 9], [19, "blocked", 8], [20, "blocked", 4], [21, "blocked", 3], [22, "blocked", 4], [23, "found", 7], [24, "found", 1], [25, "square", null], [26, "found", 25], [27, "blocked", 27], [28, "blocked", 4], [29, "blocked", 4], [30, "blocked", 3]],
  "truncated_found": [1, 2, 11, 23, 24, 26],
@@ -20,6 +22,9 @@
  "oblong_rule_agrees_with_residues": true,
  "oblong_with_square": 5832,
  "oblong_100": [[1, 100], [4, 11], [5, 8]],
+ "oblong_shapes": {"1": [], "2": [7, 14, 168], "3": [5, 15, 49], "4": [], "5": [6, 24], "6": [], "7": [4, 528], "8": [], "9": [], "10": [31], "11": [], "12": [], "13": [960], "14": [], "15": [23], "16": [49], "17": [24], "18": [], "19": [], "20": []},
+ "oblong_shapes_with_square": [2, 3, 5, 7, 10, 13, 15, 16, 17],
+ "oblong_ridge": [1, 6, 49],
  "contacts": {"2": [8, 6], "3": [36, 24], "4": [96, 60], "5": [200, 120], "10": [1800, 990], "24": [26496, 13800]},
  "tetra10_balls_by_neighbors": {"3": 4, "6": 48, "9": 112, "12": 56}
 }

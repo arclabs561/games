@@ -10,7 +10,7 @@ Exploratory. These metrics were added after C1's test turns had been scored for 
 
 ## What is measured
 
-Each guesser is a Luce guesser: it gives word w the probability exp(s(w)/τ) divided by the sum over the unrevealed words, where s is its similarity to the clue. τ and the template are those of `calibrate-game.json`: τ was fitted on the train turns and the template chosen on the val turns. The EAT guesser uses association counts plus ε = 0.1 instead. The two linear maps are C1's, retrained here with seeds 1 to 5. Their top-1 on each seed equals C1's to the last digit, as does every untrained model's.
+Each guesser is a Luce guesser: it gives word w the probability exp(s(w)/τ) divided by the sum over the unrevealed words, where s is its similarity to the clue. τ and the template are those of `calibrate-game.json`: τ was fitted on the train turns and the template chosen on the val turns. The EAT guesser uses association counts plus ε = 0.1 instead. The two linear maps are C1's, retrained here with seeds 1 to 5. Their top-1 on each seed equals C1's to the last digit, as does every untrained embedding model's. EAT's does not: 0.334 here against C1's 0.309. On a clue that is not an EAT cue every word has the same weight, and this note takes the first word of the board as the top word, which is the person's on 14 of those 277 test turns. C1 counts such a turn as a miss (recomputed from `calibrate-game.json` and the test turns).
 
 For each test turn, with q the guesser's distribution and the person's word fixed:
 
@@ -85,7 +85,7 @@ Computed exactly on the pairs; 95% percentile intervals from 10,000 resamples of
 
 What this estimates, and what it does not:
 
-- It is agreement on the words two boards share, about 6 of them, not on a full board of 20 to 25. It is not a ceiling for the top-1 of section 1, and it says nothing about how much higher than 0.63 a guesser could score there.
+- It is agreement on the words two boards share, about 6 of them, not on a full board of 20 to 25. It is not a ceiling for the top-1 of [c1.md](c1.md), and it says nothing about how much higher than 0.63 a guesser could score there.
 - The selection keeps pairs where each pick is on the other board, which favors clues with one obvious target. Clues that appear often contribute many pairs; the estimate weights each pair equally.
 - It rests on the choice axiom and on one p shared by everyone. The giver's count is not in the data and differs between the two rows. Players are identified by their survey answers, and one person may appear under two ids, so a few pairs may be one person twice.
 - It does show, on the same items, that people agree with each other 4.6 to 16.1 points more often than a guesser agrees with a person. That gap is room that a guesser could still close.
