@@ -76,7 +76,8 @@ def share(k, n):
     return f"{p:.1%} +- {1.96 * (p * (1 - p) / n) ** 0.5:.1%}"
 
 
-def readings(name, cards, seed, n=N):
+def readings(cards, seed, n=N):
+    """Deals stuck with addition only and with + and -, and how the + and - failures look."""
     rng = random.Random(seed)
     add = pm = parity = one = 0
     for _ in range(n):
@@ -89,13 +90,11 @@ def readings(name, cards, seed, n=N):
             pm += 1
             one += left == 1
             parity += sum(v % 2 for v in hand) % 2 == 1 and all(c % 2 == 0 for c in center)
-    print(f"{name}: addition only stuck {share(add, n)}; + and - stuck {share(pm, n)}")
-    print(
-        f"{name}: of the {pm:,} + and - failures, {parity:,} are the parity obstruction and {one:,} leave exactly one card"
-    )
+    return {"deals": n, "addition": add, "plus_minus": pm, "parity": parity, "one_left": one}
 
 
 def pairs_first(cards, seed, n=N):
+    """Of n deals that clear with +, - and x, how many grabbing the pairs first strands."""
     rng = random.Random(seed)
     done = bad = 0
     while done < n:
@@ -116,7 +115,7 @@ def pairs_first(cards, seed, n=N):
             rest.append(5)
         if rest and solve(tuple(sorted(rest)), center) is None:
             bad += 1
-    print(f"cards 0 to 10: grabbing pairs first strands a card {share(bad, n)}")
+    return {"deals": n, "stranded": bad}
 
 
 @cache
@@ -147,7 +146,8 @@ def full_groups(hand, center, makes10, largest=8):
     return out
 
 
-def restricted(name, cards, seed, n=N):
+def restricted(cards, seed, n=N):
+    """Deals that clear with groups of at most three or four cards, or with running totals."""
     rng = random.Random(seed)
     three = four = running = 0
     for _ in range(n):
@@ -156,21 +156,45 @@ def restricted(name, cards, seed, n=N):
         three += most_erased(7, full_groups(hand, center, lambda g: make(g, 10), 3)) == 7
         four += most_erased(7, full_groups(hand, center, lambda g: make(g, 10), 4)) == 7
         running += most_erased(7, full_groups(hand, center, lambda g: 10 in chain(g))) == 7
-    print(
-        f"{name}: clears with groups of at most three cards {share(three, n)}; at most four {share(four, n)} ({four:,} of {n:,})"
-    )
-    print(
-        f"{name}: clears with every group a running total (no brackets) in {running:,} of {n:,} deals"
-    )
+    return {"deals": n, "three": three, "four": four, "running": running}
+
+
+ZERO = [v for v in range(11) for _ in range(4)]
+NO_ZERO = [v for v in range(1, 11) for _ in range(4)]
+
+
+def run(n=N):
+    """Every simulated figure, with the seeds the paper used."""
+    return {
+        "zero": readings(ZERO[:], 1, n),
+        "no_zero": readings(NO_ZERO[:], 2, n),
+        "pairs_first": pairs_first(ZERO[:], 3, n),
+        "small_zero": restricted(ZERO[:], 4, n),
+        "small_no_zero": restricted(NO_ZERO[:], 5, n),
+    }
 
 
 def main():
     n = int(sys.argv[1]) if len(sys.argv) > 1 else N
-    readings("cards 0 to 10", [v for v in range(11) for _ in range(4)], 1, n)
-    readings("cards 1 to 10", [v for v in range(1, 11) for _ in range(4)], 2, n)
-    pairs_first([v for v in range(11) for _ in range(4)], 3, n)
-    restricted("cards 0 to 10", [v for v in range(11) for _ in range(4)], 4, n)
-    restricted("cards 1 to 10", [v for v in range(1, 11) for _ in range(4)], 5, n)
+    r = run(n)
+    for name, key in (("cards 0 to 10", "zero"), ("cards 1 to 10", "no_zero")):
+        x = r[key]
+        print(
+            f"{name}: addition only stuck {share(x['addition'], n)}; "
+            f"+ and - stuck {share(x['plus_minus'], n)}"
+        )
+        print(
+            f"{name}: of the {x['plus_minus']:,} + and - failures, {x['parity']:,} are the "
+            f"parity obstruction and {x['one_left']:,} leave exactly one card"
+        )
+    print(f"cards 0 to 10: grabbing pairs first strands a card {share(r['pairs_first']['stranded'], n)}")
+    for name, key in (("cards 0 to 10", "small_zero"), ("cards 1 to 10", "small_no_zero")):
+        x = r[key]
+        print(
+            f"{name}: clears with groups of at most three cards {share(x['three'], n)}; "
+            f"at most four {share(x['four'], n)} ({x['four']:,} of {n:,})"
+        )
+        print(f"{name}: clears with every group a running total (no brackets) in {x['running']:,} of {n:,} deals")
 
 
 if __name__ == "__main__":
