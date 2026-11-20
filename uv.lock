@@ -1318,6 +1318,12 @@ hanabi-jax = [
     { name = "numpy" },
     { name = "optax" },
 ]
+maps = [
+    { name = "matplotlib" },
+    { name = "numpy" },
+    { name = "scikit-learn" },
+    { name = "scipy" },
+]
 mastermind = [
     { name = "matplotlib" },
     { name = "numpy" },
@@ -1400,6 +1406,12 @@ hanabi-jax = [
     { name = "jaxmarl", specifier = "==0.2.0" },
     { name = "numpy", specifier = ">=2.5" },
     { name = "optax", specifier = ">=0.2" },
+]
+maps = [
+    { name = "matplotlib", specifier = ">=3.11" },
+    { name = "numpy", specifier = ">=2.5" },
+    { name = "scikit-learn", specifier = ">=1.9" },
+    { name = "scipy", specifier = ">=1.18" },
 ]
 mastermind = [
     { name = "matplotlib", specifier = ">=3.11" },
