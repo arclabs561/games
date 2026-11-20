@@ -1,0 +1,55 @@
+name: hanabi-six
+# The open-game ceiling with six colors (60 cards, top score 30): classifies seeded deals
+# 0 to 19,999 of Rules(colors=6) for two to five players with Solver A (hanabi.solver)
+# and Solver B (hanabi.dfs_solver), the same budgets as plan H1, and commits one JSON list
+# per quarter block to this branch under hanabi/results/six-runs/. Each job runs four
+# processes, one per quarter of its block of 2,000 seeds. Free GitHub-hosted runners.
+on:
+  push:
+    branches: ["compute/hanabi-six-suits"]
+    paths: [".github/workflows/hanabi-six.yml"]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  classify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+      matrix:
+        players: [2, 3, 4, 5]
+        block: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          python-version: "3.14"
+      - name: Classify the block
+        env:
+          PLAYERS: ${{ matrix.players }}
+          BLOCK: ${{ matrix.block }}
+        run: |
+          dir=hanabi/results/six-runs
+          mkdir -p $dir
+          for q in 0 1 2 3; do
+            start=$((BLOCK * 2000 + q * 500))
+            timeout 20500 uv run --no-project python -m hanabi.upper_bound --sample "$PLAYERS" 500 \
+              --start "$start" --colors 6 --solver both \
+              --json "$dir/p${PLAYERS}-$(printf %05d $start).json" &
+          done
+          wait || true
+          ls -l $dir
+          echo "$GITHUB_SHA" > "$dir/p${PLAYERS}-block${BLOCK}.commit"
+      - name: Commit the records to this branch
+        if: always()
+        run: |
+          git config user.name arclabs561
+          git config user.email arclabs561@users.noreply.github.com
+          git add hanabi/results/six-runs
+          git commit -q -m "hanabi: six-color records, ${{ matrix.players }} players, block ${{ matrix.block }}"
+          for i in $(seq 1 40); do
+            git pull -q --rebase && git push -q && break
+            sleep $((RANDOM % 20 + 5))
+          done
