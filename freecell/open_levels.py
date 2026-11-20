@@ -44,6 +44,11 @@ from freecell.rules import Rules, replay
 
 SOLVER_C = Path(__file__).with_name("solver_c.c")
 
+HERE = Path(__file__).parent
+# Fish (2012), "The 2-Freecell Deal No. 982 Was Slain!!", fc-solve-discuss, 23 May 2012: the
+# dbm_fc_solver, with single-card moves and Horne's rule, visits 3,095,862,346 positions.
+FISH_982 = 3_095_862_346
+
 # The undecided levels: (deal, free cells, the verdict in Pringle's list).
 OPEN = [
     (9499, 1, "won"),
@@ -201,10 +206,57 @@ def run_job(job: str, out: Path, budget: int, cap: int) -> dict:
     return rec
 
 
+def summary(folder: Path = HERE / "results" / "runs") -> dict:
+    """Verdicts on the open levels from every record in `folder` (open-*.jsonl), and the
+    survey's counts by level with them. A win needs a line that replays; a loss needs
+    Solver C and Solver B by layers to count the same positions."""
+    recs = [json.loads(x) for p in sorted(folder.glob("open-*.jsonl")) for x in p.open()]
+    survey = json.loads((HERE / "results" / "f1.json").read_text())["either solver"]
+    table = {int(k): dict(v) for k, v in survey.items()}
+    levels = []
+    for deal, cells, published in OPEN:
+        mine = [r for r in recs if (r["deal"], r["cells"]) == (deal, cells)]
+        lost = {r["solver"]: r["states"] for r in mine if r["verdict"] == "lost"}
+        wins = [r for r in mine if r["verdict"] == "won" and r.get("replay")]
+        if wins:
+            verdict = "won"
+        elif "c" in lost and lost.get("bl") == lost["c"]:
+            verdict = "lost"
+        elif "c" in lost or "bl" in lost:
+            verdict = "lost by one solver"
+        else:
+            verdict = "undecided"
+        row = {"deal": deal, "cells": cells, "verdict": verdict, "published": published}
+        row["positions"] = {k: lost[k] for k in sorted(lost)}
+        row["runs"] = sorted({r["run"] for r in mine})
+        if wins:
+            best = min(wins, key=lambda r: r["moves"])
+            row |= {"moves": best["moves"], "found by": best["solver"], "line": best["line"]}
+        c = next((r for r in mine if r["solver"] == "c" and r["verdict"] == "lost"), None)
+        if c:
+            row |= {"most_home": c["most_home"], "frozen": c["frozen"]}
+            row["largest_layer"] = c["largest_layer"]
+        if verdict in ("won", "lost"):
+            table[cells][verdict] += 1
+            table[cells]["undecided"] -= 1
+        levels.append(row)
+    agree = [r for r in levels if r["verdict"] in ("won", "lost")]
+    return {
+        "levels": levels,
+        "decided": len(agree),
+        "agree with the published list": sum(r["verdict"] == r["published"] for r in agree),
+        "differ from the published list": [
+            [r["deal"], r["cells"]] for r in agree if r["verdict"] != r["published"]
+        ],
+        "fish 982 positions": FISH_982,
+        "by level": table,
+    }
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument(
-        "jobs", nargs="+", help="jobs such as c-982-2, bl-982-2, w-9499-1 or b-9499-1-3"
+        "jobs", nargs="+", help="jobs such as c-982-2, bl-982-2, w-9499-1, or the word summary"
     )
     ap.add_argument(
         "--budget", type=int, default=0, help="Solver B and the hunt: most positions stored"
@@ -212,6 +264,11 @@ def main() -> None:
     ap.add_argument("--cap", type=int, default=0, help="Solver C: most positions in a layer")
     ap.add_argument("--out", type=Path, default=Path("."))
     args = ap.parse_args()
+    if args.jobs == ["summary"]:
+        out = HERE / "results" / "open_levels.json"
+        out.write_text(json.dumps(summary(), indent=1) + "\n")
+        print(json.dumps({k: v for k, v in summary().items() if k != "levels"}, indent=1))
+        return
     args.out.mkdir(parents=True, exist_ok=True)
     for job in args.jobs:
         rec = run_job(job, args.out, args.budget, args.cap)

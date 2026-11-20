@@ -32,12 +32,22 @@ WORDS = HERE / "enable1.txt"
 STEPS, T0, T1 = 300_000, 300.0, 5.0
 
 
+def compiler() -> str | None:
+    """The C compiler, if there is one."""
+    return os.environ.get("CC") or shutil.which("cc") or shutil.which("gcc")
+
+
+def compiler_missing() -> bool:
+    """True when no C compiler is found (the tests that need one are skipped)."""
+    return compiler() is None
+
+
 def binary() -> Path:
     """The compiled annealer, built once per version of the source."""
     digest = hashlib.sha256(SOURCE.read_bytes()).hexdigest()[:12]
     out = Path(tempfile.gettempdir()) / f"boggle-anneal-{digest}"
     if not out.exists():
-        cc = os.environ.get("CC") or shutil.which("cc") or shutil.which("gcc")
+        cc = compiler()
         if cc is None:
             raise RuntimeError("anneal.c needs a C compiler (cc)")
         tmp = out.with_suffix(f".{os.getpid()}")
