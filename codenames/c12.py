@@ -223,7 +223,9 @@ def give(
             else "keep"
         )
         if repeat and times:
-            s["repeat"] = repeat_givers(hosted, arm, bs[:repeat], seed, times, rows[:repeat])
+            s["repeat"] = repeat_givers(
+                hosted, arm, bs[:repeat], seed, times, rows[:repeat], workers
+            )
         summary["arms"][arm] = s
         print(arm, seed, s["why"], f"cut {s['cut_share']}", f"${meter.spent:.4f}", flush=True)
         log = out / f"calls-{GIVER}-{arm}.jsonl"
@@ -245,25 +247,38 @@ def give(
     return summary
 
 
-def repeat_givers(hosted, arm: str, bs, seed: int, times: int, rows) -> dict:
-    """The first prompt of the first boards sent `times` more times: how often the clue
-    read from it changed, with empty and cut replies."""
-    changed = empty = cut = 0
-    for i, (b, row) in enumerate(zip(bs, rows, strict=True)):
-        if row.get("stopped"):
+def repeat_givers(hosted, arm: str, bs, seed: int, times: int, rows, workers: int = 8) -> dict:
+    """The first prompt of the first boards sent `times` more times, in parallel: how often
+    the clue read from it changed, with empty and cut replies."""
+    jobs = [
+        (prompt_for(arm, b), {"part": f"repeat-{t + 1}", "arm": arm, "seed": seed, "board": i})
+        for i, (b, row) in enumerate(zip(bs, rows, strict=True))
+        if not row.get("stopped")
+        for t in range(times)
+    ]
+    recs = c4.run_many(hosted.call, jobs, workers)
+    seen: dict[int, set] = {}
+    empty = cut = sent = 0
+    for (_, tag), rec in zip(jobs, recs, strict=True):
+        i = int(tag["board"])
+        first = rows[i]["first"]
+        seen.setdefault(i, {(first.get("word"), first.get("count"))})
+        if rec is None:
             continue
-        seen = {(row["first"].get("word"), row["first"].get("count"))}
-        for t in range(times):
-            rec = hosted.call(
-                prompt_for(arm, b),
-                {"part": f"repeat-{t + 1}", "arm": arm, "seed": seed, "board": i},
-            )
-            r = read_strict(rec.get("reply", ""), b)
-            seen.add((r.get("word"), r.get("count")))
-            empty += r["status"] == "empty"
-            cut += rec.get("finish") == "length"
-        changed += len(seen) > 1
-    return {"prompts": len(bs), "times": times, "changed": changed, "empty": empty, "cut": cut}
+        sent += 1
+        r = read_strict(rec.get("reply", ""), bs[i])
+        seen[i].add((r.get("word"), r.get("count")))
+        empty += r["status"] == "empty"
+        cut += rec.get("finish") == "length"
+    changed = sum(len(v) > 1 for v in seen.values())
+    return {
+        "prompts": len(seen),
+        "times": times,
+        "sent": sent,
+        "changed": changed,
+        "empty": empty,
+        "cut": cut,
+    }
 
 
 # Guessing (in a job).
