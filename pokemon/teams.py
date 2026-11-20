@@ -213,6 +213,7 @@ def solve(m: Matrix, start: Sequence[Team], teams: np.ndarray | None = None) -> 
         "best_responses": ties,
         "restricted_unique": has_unique_certificate(gx, xs, ys, v),
         "w": w,
+        "c": c,
         "teams_checked": len(teams),
     }
 
@@ -302,6 +303,8 @@ def summarize(paths: Sequence[Path]) -> dict:
             else:
                 row["ties"] += 1
             row["hp"] = str(Fraction(row["hp"]) + hp)
+            if len(meta["teams"][0]) == 1:  # one-on-one: keep each battle, for the bootstrap
+                row.setdefault("each", []).append(round(float(hp), 4))
             checks.update({k: v for k, v in b["checks"].items() if k in ("agree", "differ")})
             checks.update({k: v for k, v in b["checks"].items() if k.startswith("differ:")})
             problems |= set(b["stat_problems"])
@@ -333,6 +336,15 @@ def bootstrap_pairs(summary: dict, k: int, rng: np.random.Generator) -> np.ndarr
         g[i, j] = (w - lo) / n
         g[j, i] = -g[i, j]
     return g
+
+
+def teams_field_w(teams: Sequence[Team], sigma: Sequence[Fraction], n: int) -> list[Fraction]:
+    """Chance that each Pokémon is on a team drawn from the mix."""
+    w = [Fraction(0)] * n
+    for t, p in zip(teams, sigma, strict=True):
+        for u in t:
+            w[u] += p
+    return w
 
 
 def gradient_share_float(g: np.ndarray) -> float:
@@ -426,15 +438,30 @@ def run(n: int = POOL) -> dict:
     teams = all_teams(n)
     mats = {level: teams_model.matrix(ss, level) for level in teams_model.LEVELS}
     duels = json.loads(DUELS_JSON.read_text()) if DUELS_JSON.exists() else None
+    level5_bootstrap = None
     if duels:
         assert duels["pool"] == n and duels["teams"] == [[i] for i in range(n)]
         mats[5] = pair_matrix(duels, n, "hp")
+        rng = np.random.default_rng(BOOTSTRAP_SEED)
+        m4 = np.array(mats[4], dtype=float)
+        shares, taus = [], []
+        for _ in range(BOOTSTRAP):
+            r = np.zeros((n, n))
+            for key, row in duels["pairs"].items():
+                i, j = map(int, key.split("-"))
+                each = np.array(row["each"])
+                r[i, j] = each[rng.integers(0, len(each), len(each))].mean()
+                r[j, i] = -r[i, j]
+            shares.append(gradient_share_float(r))
+            taus.append(float(kendalltau(r.mean(axis=1), m4.mean(axis=1)).statistic))
+        level5_bootstrap = {"gradient_share": interval(shares), "tau_4_5": interval(taus)}
     levels = {}
     for level, m in mats.items():
         t0 = time.time()
         levels[level] = {"unit": unit_summary(m, names), "team": team_level(m, ladder, teams)}
         print(f"level {level}: {time.time() - t0:.0f} s")
-    out: dict = {"pool": names, "usage": use, "levels": levels, "matrices": mats, "duels": duels}
+    out: dict = {"pool": names, "usage": use, "levels": levels, "matrices": mats, "duels": duels,
+                 "level5_bootstrap": level5_bootstrap}  # fmt: skip
     pool_teams = common_pool(levels, n)
     out["common"] = {"teams": pool_teams, "levels": {}}
     for level, m in mats.items():
@@ -454,11 +481,13 @@ def run(n: int = POOL) -> dict:
         reps = [bootstrap_pairs(battles, k, rng) for _ in range(BOOTSTRAP)]
         top = max(range(k), key=lambda i: x[i])
         weights = [lp_strategy(r.tolist())[0][top] for r in reps]
+        boot_shares = [gradient_share_float(r) for r in reps]
         out["common"]["battles"] = {
             "equilibrium": x,
             "unique": has_unique_certificate(g, x, y, v),
             "gradient_share": hodge.gradient_share(g),
-            "gradient_share_interval": interval([gradient_share_float(r) for r in reps]),
+            "gradient_share_interval": interval(boot_shares),
+            "gradient_share_boot_mean": float(np.mean(boot_shares)),
             "score": hodge.score(g),
             "matrix": g,
             "top": top,
@@ -526,17 +555,18 @@ def note(res: dict) -> str:
             f"{res['levels']['1']['teams_checked']:,} teams, found by double oracle and checked "
             "exactly against every team. The ladder is "
             f"{res['field']['teams']:,} teams drawn by use (seed {res['field']['seed']}).", "",
-            "| level | teams in the equilibrium | heaviest team (weight) | best against the ladder (score) | best against random teams (score) |",
-            "|---|---:|---|---|---|"]  # fmt: skip
+            "| level | teams in the equilibrium | heaviest team (weight) | best against the ladder (score) | best against random teams (score) | six most used, against the equilibrium |",
+            "|---|---:|---|---|---|---:|"]  # fmt: skip
     for lv, r in res["levels"].items():
         t, p = r["team_support"][0]
         out.append(f"| {lv} | {len(r['team_support'])} | {short(t)} ({pct(p)}) | "
                    f"{short(r['best_vs_ladder'])} ({float(Fraction(r['best_vs_ladder_score'])):.3f}) | "
-                   f"{short(r['best_vs_random'])} ({float(Fraction(r['best_vs_random_score'])):.3f}) |")  # fmt: skip
+                   f"{short(r['best_vs_random'])} ({float(Fraction(r['best_vs_random_score'])):.3f}) | "
+                   f"{float(Fraction(r['usage_team_score'])):.3f} |")  # fmt: skip
     out += ["", "Chance that each Pokémon is on the equilibrium team (the eight largest):", "",
             "| level | Pokémon |", "|---|---|"]  # fmt: skip
     for lv, r in res["levels"].items():
-        top = sorted(r["team_marginals"].items(), key=lambda kv: -Fraction(kv[1]))[:8]
+        top = sorted(r["team_marginals"].items(), key=lambda kv: (-Fraction(kv[1]), kv[0]))[:8]
         out.append(f"| {lv} | " + ", ".join(f"{k} {pct(v)}" for k, v in top) + " |")
     out += ["", "Solver details: rounds of double oracle, teams in the restricted game, whether "
             "its equilibrium is unique (exact certificate), and teams tied with the best score "
@@ -551,27 +581,35 @@ def note(res: dict) -> str:
             f"{len(c['teams'])} teams: the six most used Pokémon (team 0), each level's "
             "equilibrium teams and best teams, and random teams (seed "
             f"{RANDOM_SEED}). Each level plays the same round robin.", "",
-            "| level | ranking share | teams in the equilibrium | τ with full battles |",
-            "|---|---:|---:|---:|"]  # fmt: skip
+            "| level | ranking share | teams in the equilibrium | rank of the six most used | τ with full battles |",
+            "|---|---:|---:|---:|---:|"]  # fmt: skip
     for lv, r in c["levels"].items():
         tau = res.get("kendall_tau_common", {}).get(lv)
         out.append(f"| {lv} | {pct(r['gradient_share'])} | {len(r['support'])} | "
-                   f"{'' if tau is None else f'{tau:.2f}'} |")  # fmt: skip
+                   f"{res['levels'][lv]['usage_team_rank']} | {'' if tau is None else f'{tau:.2f}'} |")  # fmt: skip
     if "battles" in c:
         b = c["battles"]
         lo, hi = b["gradient_share_interval"]
         out.append(f"| full battles | {pct(b['gradient_share'])} ({lo:.1%} to {hi:.1%}) | "
-                   f"{len(b['equilibrium'])} | 1 |")  # fmt: skip
+                   f"{len(b['equilibrium'])} | {b['usage_team_rank']} | 1 |")  # fmt: skip
         out += ["", f"Full battles: {b['games']} per pair of teams, seed {b['seed']}, sides "
                 "alternating; payoff wins minus losses over battles. The interval is a 95% "
                 f"bootstrap over battles within each pair ({res['bootstrap']['resamples']} "
                 f"resamples, seed {res['bootstrap']['seed']}). Equilibrium "
                 f"{'unique' if b['unique'] else 'not shown unique'}:", "",
                 "| team | weight | Pokémon |", "|---:|---:|---|"]  # fmt: skip
-        for i, p in sorted(b["equilibrium"].items(), key=lambda kv: -Fraction(kv[1])):
+        for i, p in sorted(b["equilibrium"].items(), key=lambda kv: (-Fraction(kv[1]), int(kv[0]))):
             out.append(f"| {i} | {pct(p)} | {short(c['teams'][int(i)])} |")
+        top8 = sorted(b["marginals"].items(), key=lambda kv: (-Fraction(kv[1]), kv[0]))[:8]
+        out += ["", "Chance that each Pokémon is on the equilibrium team (the eight largest): "
+                + ", ".join(f"{k} {pct(v)}" for k, v in top8) + "."]  # fmt: skip
         lo, hi = b["top_weight_interval"]
-        out += ["", f"The heaviest team's weight over the bootstrap: {lo:.1%} to {hi:.1%}."]
+        est = float(Fraction(b["gradient_share"]))
+        out += ["", f"The heaviest team's weight over the bootstrap: {lo:.1%} to {hi:.1%}.", "",
+                f"The bootstrap copies of the ranking share average {b['gradient_share_boot_mean']:.1%}, "
+                f"below the estimate of {est:.1%}: noise from sampling adds to the cyclic part. The "
+                "estimate is biased the same way, so the share without noise is likely higher; the "
+                f"usual bias correction gives {2 * est - b['gradient_share_boot_mean']:.1%}."]  # fmt: skip
     out += ["", "## Agreement with use (exploratory)", "",
             "Spearman's ρ over the 40 Pokémon between use and each level's ranking score, and "
             "between use and the chance of being on the equilibrium team, with 95% bootstrap "
@@ -590,7 +628,12 @@ def note(res: dict) -> str:
                 f"{d['seed']}. Damage checks: {d['damage_checks'].get('agree', 0):,} hits "
                 f"agree with level 4's rolls, {d['damage_checks'].get('differ', 0)} differ. Stats "
                 f"that differ from Showdown's: {len(d['stat_problems'])}. Choices Showdown "
-                f"refused: {d['choice_errors']}."]  # fmt: skip
+                f"refused: {d['choice_errors']}.",
+                f"- Level 5's ranking share, resampling battles within each pair: "
+                f"{d['bootstrap']['gradient_share'][0]:.1%} to {d['bootstrap']['gradient_share'][1]:.1%}; "
+                f"Kendall's τ between levels 4 and 5: {d['bootstrap']['tau_4_5'][0]:.2f} to "
+                f"{d['bootstrap']['tau_4_5'][1]:.2f} (95%, {res['bootstrap']['resamples']} resamples, "
+                f"seed {res['bootstrap']['seed']})."]  # fmt: skip
         if "battles" in c:
             b = c["battles"]
             out.append(f"- Full battles: damage checks {b['damage_checks'].get('agree', 0):,} agree, "
@@ -670,7 +713,10 @@ def jsonable(out: dict, ss: Sequence[teams_model.Set]) -> dict:
             "best_vs_ladder_score": fr(t["best_vs_ladder_score"]),
             "best_vs_random": team(t["best_vs_random"]),
             "best_vs_random_score": fr(t["best_vs_random_score"]),
-        }
+            "usage_team_score": fr(score(out["matrices"][level], t["w"], t["c"], tuple(range(TEAM)))),
+            "usage_team_rank": 1 + sorted(range(len(out["common"]["teams"])),
+                                          key=lambda i: -out["common"]["levels"][level]["score"][i]).index(0),
+        }  # fmt: skip
     keys = list(out["levels"])
     tau = {f"{a}-{b}": kendall(out["levels"][a]["unit"]["score"], out["levels"][b]["unit"]["score"])
            for a in keys for b in keys if a < b}  # fmt: skip
@@ -698,7 +744,8 @@ def jsonable(out: dict, ss: Sequence[teams_model.Set]) -> dict:
         d = out["duels"]
         res["duels"] = {"games": d["games"], "seed": d["seed"], "pairs": len(d["pairs"]),
                         "damage_checks": d["damage_checks"], "stat_problems": d["stat_problems"],
-                        "choice_errors": d["choice_errors"]}  # fmt: skip
+                        "choice_errors": d["choice_errors"],
+                        "bootstrap": out["level5_bootstrap"]}  # fmt: skip
     if "battles" in common:
         b = common["battles"]
         s = b["summary"]
@@ -708,8 +755,15 @@ def jsonable(out: dict, ss: Sequence[teams_model.Set]) -> dict:
             "unique": b["unique"],
             "gradient_share": fr(b["gradient_share"]),
             "gradient_share_interval": b["gradient_share_interval"],
+            "gradient_share_boot_mean": b["gradient_share_boot_mean"],
             "top": b["top"], "top_weight_interval": b["top_weight_interval"],
             "score": [fr(x) for x in b["score"]],
+            "usage_team_rank": 1 + sorted(range(len(b["score"])), key=lambda i: -b["score"][i]).index(0),
+            "marginals": {
+                ss[u].name: fr(w)
+                for u, w in enumerate(teams_field_w(common["teams"], b["equilibrium"], len(ss)))
+                if w
+            },
             "damage_checks": s["damage_checks"], "stat_problems": s["stat_problems"],
             "choice_errors": s["choice_errors"],
         }  # fmt: skip
@@ -735,7 +789,9 @@ def main() -> None:
             for x in args.paths
             for p in (sorted(x.rglob("battles-*.json")) if x.is_dir() else [x])
         ]
-        args.out.write_text(json.dumps(summarize(paths), indent=1, sort_keys=True) + "\n")
+        args.out.write_text(
+            json.dumps(summarize(paths), sort_keys=True, separators=(",", ":")) + "\n"
+        )
         print(f"{args.out}: {len(paths)} files")
         return
     out = run(args.pool)

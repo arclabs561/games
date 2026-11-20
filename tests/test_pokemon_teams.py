@@ -270,6 +270,7 @@ def test_summary_counts_sides(tmp_path):
         "ties": 0,
         "hp": "1/4",
         "turns": 2,
+        "each": [0.5, -0.25],
     }
     assert teams.pair_matrix(s, 2, "hp")[0][1] == F(1, 8)
 
@@ -297,7 +298,7 @@ def test_committed_team_equilibria_hold():
     # Each level's committed mix: no team in the committed restricted support beats it, and
     # the brute-force check over every team found a best score of exactly 0.
     r = results()
-    for level, lv in r["levels"].items():
+    for lv in r["levels"].values():
         assert lv["team_best_score"] == "0"
         assert lv["teams_checked"] == math.comb(teams.POOL, 6)
         assert sum(F(p) for _, p in lv["team_support"]) == 1
@@ -308,3 +309,42 @@ def test_simulator_checks_passed():
     for part in (r["duels"], r["common"]["battles"]):
         assert part["stat_problems"] == [] and part["choice_errors"] == 0
         assert part["damage_checks"].get("differ", 0) == 0 and part["damage_checks"]["agree"] > 1000
+
+
+def test_note_is_what_the_script_writes():
+    assert (teams.RESULTS / "teams.md").read_text() == teams.note(results())
+
+
+def test_committed_figures_are_what_the_script_writes(tmp_path):
+    from pokemon import teams_figures
+
+    teams_figures.main(tmp_path)
+    for name in ("teams-cards.svg", "teams-graph.svg", "teams-ranks.svg"):
+        assert (tmp_path / name).read_bytes() == (
+            teams_figures.HERE / "figures" / name
+        ).read_bytes()
+
+
+def test_readme_quotes_the_results():
+    r = results()
+    readme = (teams.HERE / "README.md").read_text()
+    lv = r["levels"]
+    b = r["common"]["battles"]
+    eq = sorted(b["equilibrium"].values(), key=lambda p: -F(p))
+    quoted = [
+        f"{math.comb(teams.POOL, 6):,}",
+        *(f"{float(F(lv[k]['unit_gradient_share'])):.1%}" for k in "12345"),
+        f"τ = {r['kendall_tau']['1-4']:.2f}",
+        f"τ = {r['kendall_tau']['4-5']:.2f}",
+        f"{float(F(eq[0])):.1%}",
+        f"{float(F(b['equilibrium']['0'])):.1%}",
+        f"{float(F(b['gradient_share'])):.1%}",
+        f"{r['duels']['damage_checks']['agree'] + b['damage_checks']['agree']:,}",
+        f"{r['sets_vs_usage']['same_ability']} of the 40",
+        f"{sum(r['sets_vs_usage']['move_overlap']) / 40:.2f}",
+        *(f"−{-float(F(lv[k]['usage_team_score'])):.3f}" for k in "12345"),
+    ]
+    for q in quoted:
+        assert q in readme, q
+    assert [len(lv[k]["team_support"]) for k in "12345"] == [3, 11, 11, 15, 11]
+    assert len(b["equilibrium"]) == 15 and b["unique"]

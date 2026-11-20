@@ -2,7 +2,8 @@
 
     uv run --group pokemon python -m pokemon.teams_figures   # writes figures/teams-*.svg
 
-- ``teams-cards.svg``: a team as six cards, colored by type, with each set's ability and moves.
+- ``teams-cards.svg``: the heaviest team of the full-battle equilibrium as six cards, colored
+  by type, with each set's ability and moves.
 - ``teams-graph.svg``: the teams of the full-battle equilibrium, with an arrow from each team
   to every team it beats on average.
 - ``teams-ranks.svg``: each Pokémon's rank by its ranking score at every level, next to its
@@ -39,8 +40,12 @@ LEVEL_NAMES = {"1": "types", "2": "moves", "3": "abilities", "4": "stats", "5": 
 
 
 def title(identifier: str) -> str:
-    """'great-tusk' -> 'Great Tusk'."""
-    return " ".join(w.capitalize() for w in identifier.replace("-mask", "").split("-"))
+    """A Pokémon's name as Showdown writes it ('ting-lu' -> 'Ting-Lu'); for a move or an
+    ability, the words capitalized ('close-combat' -> 'Close Combat')."""
+    from pokemon import teams_model
+
+    names = {p.identifier: p.showdown for p in teams_model.all_pokemon()}
+    return names.get(identifier) or " ".join(w.capitalize() for w in identifier.split("-"))
 
 
 def load() -> dict:
@@ -88,18 +93,21 @@ def draw_cards(data: dict, team: list[str], caption: str) -> Figure:
     return fig
 
 
-def draw_graph(data: dict) -> Figure:
-    """The full-battle equilibrium's teams on a circle; an arrow from T to U when T beats U."""
+def draw_graph(data: dict, shown: int = 7) -> Figure:
+    """The heaviest teams of the full-battle equilibrium on a circle; an arrow from T to U
+    when T beats U on average, as wide as the margin."""
     b = data["common"]["battles"]
     teams = data["common"]["teams"]
-    support = sorted(b["equilibrium"], key=lambda i: -Fraction(b["equilibrium"][i]))
+    support = sorted(b["equilibrium"], key=lambda i: (-Fraction(b["equilibrium"][i]), int(i)))[
+        :shown
+    ]
     k = len(support)
     pos = {i: (math.cos(math.pi / 2 - 2 * math.pi * n / k), math.sin(math.pi / 2 - 2 * math.pi * n / k))
            for n, i in enumerate(support)}  # fmt: skip
     m = data["common"]["battles_matrix"]
-    fig, ax = plt.subplots(figsize=(8, 5.2))
-    ax.set_xlim(-1.35, 3.4)
-    ax.set_ylim(-1.3, 1.3)
+    fig, ax = plt.subplots(figsize=(8, 4.3))
+    ax.set_xlim(-1.3, 3.4)
+    ax.set_ylim(-1.15, 1.3)
     ax.set_aspect("equal")
     ax.axis("off")
     for i in support:
@@ -107,8 +115,9 @@ def draw_graph(data: dict) -> Figure:
             v = Fraction(m[int(i)][int(j)])
             if v > 0:
                 ax.add_patch(FancyArrowPatch(pos[i], pos[j], arrowstyle="-|>", mutation_scale=9,
-                                             lw=0.4 + 3 * float(v), color="#777777",
-                                             shrinkA=14, shrinkB=14, alpha=0.8))  # fmt: skip
+                                             lw=0.3 + 4 * float(v), color="#777777",
+                                             shrinkA=18, shrinkB=18, alpha=0.8,
+                                             connectionstyle="arc3,rad=0.08"))  # fmt: skip
     for n, i in enumerate(support):
         x, y = pos[i]
         w = float(Fraction(b["equilibrium"][i]))
@@ -116,10 +125,12 @@ def draw_graph(data: dict) -> Figure:
             plt.Circle((x, y), 0.07 + 0.25 * math.sqrt(w), fc="#4a7ab8", ec="white", zorder=3)
         )
         ax.text(x, y, f"T{n + 1}", ha="center", va="center", color="white", fontsize=8, zorder=4)
-        ax.text(1.55, 1.15 - n * 0.24, f"T{n + 1}  {w:.0%}: " + ", ".join(title(p) for p in teams[int(i)]),
-                fontsize=6.5, va="center")  # fmt: skip
-    ax.text(1.55, 1.15 - k * 0.24 - 0.05, "circle area: equilibrium weight\narrow T → U: T beats U on average",
-            fontsize=6.5, va="top", color="#555555")  # fmt: skip
+        members = [title(p) for p in teams[int(i)]]
+        ax.text(1.4, 1.15 - n * 0.3, f"T{n + 1}  {w:.0%}  " + ", ".join(members[:3]) + ",\n"
+                + "            " + ", ".join(members[3:]), fontsize=6.5, va="center")  # fmt: skip
+    ax.text(1.4, 1.15 - k * 0.3, f"the {k} heaviest of {len(b['equilibrium'])} teams in the equilibrium\n"
+            "circle area: weight; arrow T to U: T wins more often, wider for a larger margin",
+            fontsize=6.5, va="center", color="#555555")  # fmt: skip
     fig.tight_layout(pad=0.2)
     return fig
 
@@ -160,16 +171,17 @@ def draw_ranks(data: dict, highlight: int = 8) -> Figure:
 
 
 def figures(data: dict) -> dict:
-    lv = max(data["levels"])
-    out = {
-        "teams-ranks.svg": draw_ranks(data),
-        "teams-cards.svg": draw_cards(
-            data,
-            data["levels"][lv]["best_vs_ladder"],
-            f"The best team against the ladder at level {lv} ({LEVEL_NAMES[lv]}): fixed sets, no items",
-        ),
-    }
+    out = {"teams-ranks.svg": draw_ranks(data)}
     if "battles" in data["common"]:
+        b = data["common"]["battles"]
+        top = max(b["equilibrium"], key=lambda i: Fraction(b["equilibrium"][i]))
+        w = float(Fraction(b["equilibrium"][top]))
+        out["teams-cards.svg"] = draw_cards(
+            data,
+            data["common"]["teams"][int(top)],
+            f"The heaviest team ({w:.0%}) of the equilibrium of full simulated battles: "
+            "fixed sets, no items",
+        )
         out["teams-graph.svg"] = draw_graph(data)
     return out
 

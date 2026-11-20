@@ -392,9 +392,9 @@ def play(jobs: Sequence[tuple[str, Sequence[int], Sequence[int]]], sim: Path, n:
 
     while queue and len(battles) < CONCURRENT:
         start()
-    proc.stdin.flush()
+    stdin.flush()
     while battles:
-        line = proc.stdout.readline()
+        line = stdout.readline()
         if not line:
             raise RuntimeError("the simulator stopped")
         msg = json.loads(line)
@@ -416,14 +416,14 @@ def play(jobs: Sequence[tuple[str, Sequence[int], Sequence[int]]], sim: Path, n:
             del battles[msg["id"]]
             if queue:
                 start()
-            proc.stdin.flush()
+            stdin.flush()
             continue
         for out in b.read(msg["chunk"]):
-            proc.stdin.write(json.dumps({"id": msg["id"], "write": out}) + "\n")
+            stdin.write(json.dumps({"id": msg["id"], "write": out}) + "\n")
         if b.turns > 500:  # a battle that does not end
             b.winner = "limit"
-            proc.stdin.write(json.dumps({"id": msg["id"], "write": ">forcetie"}) + "\n")
-        proc.stdin.flush()
+            stdin.write(json.dumps({"id": msg["id"], "write": ">forcetie"}) + "\n")
+        stdin.flush()
     proc.stdin.close()
     proc.wait()
     return results
