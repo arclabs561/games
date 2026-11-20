@@ -1,0 +1,388 @@
+{
+ "source": "AH2AC2 open human dataset (Dizdarevic et al., 2025), ah2ac2/datasets on Hugging Face; only numbers derived from each game are kept here",
+ "budgets": [
+  20000,
+  300000
+ ],
+ "players": {
+  "2": {
+   "games": 1858,
+   "replay_matches": 1858,
+   "games_that_end": 1517,
+   "ceiling_exact": 1858,
+   "ceiling_open": [],
+   "deal_below_25": 19,
+   "deal_below_25_share": 0.01022604951560818,
+   "deal_below_25_wilson": [
+    0.006556314324331633,
+    0.015916918629535114
+   ],
+   "ceilings": {
+    "22": 1,
+    "23": 3,
+    "24": 15,
+    "25": 1839
+   },
+   "certificates": {
+    "pooled": 19,
+    "storage": 2,
+    "time": 10
+   },
+   "below_25_without_certificate": 0,
+   "mean_ceiling": 24.98708288482239,
+   "mean_ceiling_ci": [
+    24.980624327233585,
+    24.993003229278795
+   ],
+   "mean_score": 23.368137782561895,
+   "mean_score_ci": [
+    23.282561894510227,
+    23.451560818083962
+   ],
+   "mean_score_all_games": 23.368137782561895,
+   "mean_gap": 1.6318622174381054,
+   "ruled_out_by_deal": 0.012917115177610334,
+   "ruled_out_by_deal_ci": [
+    0.006996770721205597,
+    0.0193756727664155
+   ],
+   "below_ceiling": 1.6189451022604953,
+   "below_ceiling_ci": [
+    1.536060279870829,
+    1.7034445640473628
+   ],
+   "deal_share_of_gap": 0.0079155672823219,
+   "deal_share_of_gap_ci": [
+    0.0043463724506853894,
+    0.011976047904191617
+   ],
+   "perfect": 731,
+   "winnable": 1839,
+   "perfect_of_winnable": 731,
+   "reached_ceiling": 736,
+   "score_above_ceiling": 0,
+   "perfect_games_with_ceiling_below_25": 0,
+   "info_mean_score": 15.060818083961248,
+   "info_mean_score_ci": [
+    14.952099031216362,
+    15.170613562970937
+   ],
+   "info_below_ceiling": 9.92626480086114,
+   "info_perfect": 0,
+   "human_minus_info": 8.307319698600645,
+   "human_minus_info_ci": [
+    8.179224973089344,
+    8.43649085037675
+   ],
+   "human_ahead_of_info": 1846,
+   "info_ahead_of_human": 5,
+   "reached_ceiling_wilson": [
+    0.3741217275953779,
+    0.41855666137176084
+   ],
+   "perfect_of_winnable_wilson": [
+    0.375367397623545,
+    0.4200572335547397
+   ],
+   "traced_games": 1816,
+   "untraced_games": [
+    325,
+    5723,
+    11714,
+    12523,
+    13289,
+    14578,
+    16358,
+    17528,
+    19737,
+    21346,
+    22579,
+    26011,
+    26928,
+    32251,
+    32314,
+    33041,
+    34289,
+    35145,
+    41042,
+    41371,
+    45474,
+    48738,
+    52694,
+    55879,
+    62394,
+    63389,
+    64058,
+    65001,
+    66248,
+    72051,
+    72321,
+    77213,
+    83027,
+    86168,
+    87965,
+    88954,
+    90780,
+    91729,
+    95804,
+    98168,
+    98932,
+    100616
+   ],
+   "drops": 2879,
+   "drops_by_kind": {
+    "critical discard": 876,
+    "discard": 1130,
+    "hint": 310,
+    "play": 188,
+    "strike": 375
+   },
+   "drops_by_phase": {
+    "deck 20 or more": 1139,
+    "deck 10 to 19": 537,
+    "deck 1 to 9": 888,
+    "final round": 315
+   },
+   "drops_by_phase_and_kind": {
+    "deck 20 or more": {
+     "critical discard": 533,
+     "discard": 437,
+     "hint": 20,
+     "play": 11,
+     "strike": 138
+    },
+    "deck 10 to 19": {
+     "critical discard": 265,
+     "discard": 117,
+     "hint": 30,
+     "play": 14,
+     "strike": 111
+    },
+    "deck 1 to 9": {
+     "critical discard": 76,
+     "discard": 511,
+     "hint": 82,
+     "play": 146,
+     "strike": 73
+    },
+    "final round": {
+     "critical discard": 2,
+     "discard": 65,
+     "hint": 178,
+     "play": 17,
+     "strike": 53
+    }
+   },
+   "games_with_a_drop": 1080,
+   "first_drop_turn_median": 37,
+   "first_drop_share_of_game_mean": 0.5896962463700317,
+   "strikes_per_game": 0.8040904198062433,
+   "strikes_per_game_ci": [
+    0.767491926803014,
+    0.8390742734122713
+   ],
+   "games_by_strikes": {
+    "0": 779,
+    "1": 664,
+    "2": 415
+   },
+   "critical_discards_per_game": 0.3202368137782562,
+   "critical_discards_per_game_ci": [
+    0.2900968783638321,
+    0.35091496232508074
+   ],
+   "games_with_critical_discard": 425,
+   "critical_by_rank": {
+    "1": 1,
+    "2": 36,
+    "3": 90,
+    "4": 182,
+    "5": 286
+   },
+   "strikes_by_rank": {
+    "1": 501,
+    "2": 313,
+    "3": 326,
+    "4": 304,
+    "5": 50
+   }
+  },
+  "3": {
+   "games": 1221,
+   "replay_matches": 1221,
+   "games_that_end": 900,
+   "ceiling_exact": 1221,
+   "ceiling_open": [],
+   "deal_below_25": 0,
+   "deal_below_25_share": 0.0,
+   "deal_below_25_wilson": [
+    0.0,
+    0.0031364055564409308
+   ],
+   "ceilings": {
+    "25": 1221
+   },
+   "certificates": {},
+   "below_25_without_certificate": 0,
+   "mean_ceiling": 25.0,
+   "mean_ceiling_ci": [
+    25.0,
+    25.0
+   ],
+   "mean_score": 23.254709254709255,
+   "mean_score_ci": [
+    23.144144144144143,
+    23.36036036036036
+   ],
+   "mean_score_all_games": 23.254709254709255,
+   "mean_gap": 1.7452907452907453,
+   "ruled_out_by_deal": 0.0,
+   "ruled_out_by_deal_ci": [
+    0.0,
+    0.0
+   ],
+   "below_ceiling": 1.7452907452907453,
+   "below_ceiling_ci": [
+    1.6396396396396395,
+    1.8558558558558558
+   ],
+   "deal_share_of_gap": 0.0,
+   "deal_share_of_gap_ci": [
+    0.0,
+    0.0
+   ],
+   "perfect": 445,
+   "winnable": 1221,
+   "perfect_of_winnable": 445,
+   "reached_ceiling": 445,
+   "score_above_ceiling": 0,
+   "perfect_games_with_ceiling_below_25": 0,
+   "info_mean_score": 22.217854217854217,
+   "info_mean_score_ci": [
+    22.12940212940213,
+    22.307944307944307
+   ],
+   "info_below_ceiling": 2.7821457821457822,
+   "info_perfect": 65,
+   "human_minus_info": 1.0368550368550369,
+   "human_minus_info_ci": [
+    0.904995904995905,
+    1.1654381654381654
+   ],
+   "human_ahead_of_info": 764,
+   "info_ahead_of_human": 279,
+   "reached_ceiling_wilson": [
+    0.3379238744193486,
+    0.39183710038751624
+   ],
+   "perfect_of_winnable_wilson": [
+    0.3379238744193486,
+    0.39183710038751624
+   ],
+   "traced_games": 1196,
+   "untraced_games": [
+    106026,
+    108896,
+    109990,
+    112506,
+    114123,
+    115581,
+    119591,
+    119921,
+    125899,
+    127722,
+    129824,
+    130879,
+    131409,
+    131903,
+    133236,
+    133348,
+    134542,
+    136356,
+    136585,
+    137629,
+    139081,
+    141405,
+    141429,
+    144846,
+    146511
+   ],
+   "drops": 2063,
+   "drops_by_kind": {
+    "critical discard": 568,
+    "discard": 524,
+    "hint": 347,
+    "play": 233,
+    "strike": 391
+   },
+   "drops_by_phase": {
+    "deck 20 or more": 354,
+    "deck 10 to 19": 541,
+    "deck 1 to 9": 968,
+    "final round": 200
+   },
+   "drops_by_phase_and_kind": {
+    "deck 20 or more": {
+     "critical discard": 207,
+     "discard": 37,
+     "hint": 1,
+     "strike": 109
+    },
+    "deck 10 to 19": {
+     "critical discard": 281,
+     "discard": 102,
+     "hint": 31,
+     "play": 8,
+     "strike": 119
+    },
+    "deck 1 to 9": {
+     "critical discard": 77,
+     "discard": 338,
+     "hint": 235,
+     "play": 207,
+     "strike": 111
+    },
+    "final round": {
+     "critical discard": 3,
+     "discard": 47,
+     "hint": 80,
+     "play": 18,
+     "strike": 52
+    }
+   },
+   "games_with_a_drop": 751,
+   "first_drop_turn_median": 42,
+   "first_drop_share_of_game_mean": 0.6624621795250949,
+   "strikes_per_game": 0.8157248157248157,
+   "strikes_per_game_ci": [
+    0.773955773955774,
+    0.8583128583128583
+   ],
+   "games_by_strikes": {
+    "0": 486,
+    "1": 474,
+    "2": 261
+   },
+   "critical_discards_per_game": 0.2882882882882883,
+   "critical_discards_per_game_ci": [
+    0.25634725634725636,
+    0.32186732186732187
+   ],
+   "games_with_critical_discard": 276,
+   "critical_by_rank": {
+    "1": 1,
+    "2": 14,
+    "3": 72,
+    "4": 102,
+    "5": 163
+   },
+   "strikes_by_rank": {
+    "1": 265,
+    "2": 175,
+    "3": 218,
+    "4": 234,
+    "5": 104
+   }
+  }
+ }
+}
