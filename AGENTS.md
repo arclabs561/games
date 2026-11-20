@@ -17,6 +17,7 @@ uv run ruff check . && uv run ruff format --check . && TY_UV=scripts uv run ty c
 
 - One folder per game, run as `uv run python -m <game>.<module>`. Third-party packages go in the dependency group named after the folder; a test enforces this. A new game is added to `module-name` in `pyproject.toml` and gets a row in the root README.
 - Tests are `tests/test_<game>*.py`. Code a notebook uses lives in a module that the notebook and the tests both import.
+- Figure scripts draw inside `matplotlib.style.context("default")`, and no module changes matplotlib's global settings when imported. pytest imports every test module before running any, so a global change leaks into other games' byte-for-byte figure tests.
 - Results that a README quotes are written by a script to the game's folder or its `results/`. A test checks that the committed file is what the script writes.
 - Experiments with a cost or a learned model follow `experiments/METHOD.md`, with a plan merged before the run.
 

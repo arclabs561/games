@@ -78,7 +78,8 @@ FIGURES = {
 def main(folder: Path = HERE / "figures") -> None:
     folder.mkdir(exist_ok=True)
     for name, make in FIGURES.items():
-        save_svg(make(), folder / name)
+        with mpl.style.context("default"):  # unaffected by styles other modules set
+            save_svg(make(), folder / name)
         print("wrote", folder / name)
 
 
