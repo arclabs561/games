@@ -24,6 +24,8 @@ build/
 erase/certificates.jsonl.gz
 erase/paper/erase.html
 cannonballs/cannonballs.html
+peggle/peggle.html
+tenzi/tenzi.html
 
 # Plots that --plot writes, and the page images from typst_vendor.py --png
 mastermind/mastermind_strategies.png
