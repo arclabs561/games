@@ -27,7 +27,8 @@ framework's guessers can read every clue.
 
     uv run python -m codenames.bench_play reproduce --out OUT          # needs the vectors
     uv run python -m codenames.bench_play crossplay --giver glove --out OUT
-    uv run python -m codenames.bench_play analyze --runs DIR           # writes results/
+    uv run python -m codenames.bench_play collect --runs DIR --lora DIR  # results/bench-runs.json
+    uv run python -m codenames.bench_play analyze                      # results/bench.{json,md}
 """
 
 import argparse
@@ -46,11 +47,20 @@ import numpy as np
 from codenames import bench, bench_data, rl
 from codenames.bench import Vectors, framework_deal, score
 from codenames.game import Board, Clue, deal, play
+from codenames.luce import ASSASSIN, OPPONENT, TEAM, luce_weights, turn_odds
 from codenames.norms import eat_counts
-from codenames.players import Space, embedding_guesser, embedding_weigher, expected_giver, space
+from codenames.players import (
+    ClueTable,
+    Space,
+    embedding_guesser,
+    embedding_weigher,
+    expected_giver,
+    shortlist_rows,
+    space,
+)
 from codenames.stats import cluster_draws, replicates
 from codenames.study import chosen_spaces, load
-from codenames.words import board_words, clue_words, vocabulary
+from codenames.words import board_words, clue_words, vocabulary, zipf
 
 RESULTS = Path(__file__).parent / "results"
 FRAMEWORK = ("w2v", "glove", "w2vglove")
@@ -204,9 +214,41 @@ class PolicyGiver:
         self.sp, self.tau, self.pool = sp, tau, pool
 
     def __call__(self, board: Board) -> Clue:
-        clues, phi = rl.actions(self.sp, self.tau, board, self.pool, 30)
+        clues, phi = policy_actions(self.sp, self.tau, board, self.pool, 30)
         i = int(np.argmax(((phi - self.mu) / self.sd) @ self.theta))
         return Clue(*clues[i])
+
+
+def policy_actions(sp: Space, tau: float, board: Board, pool, k: int):
+    """codenames.rl.actions, with counts up to the number of team words left (rl.actions
+    was written for fresh boards, which always have 9); the same on a fresh board."""
+    words = board.unrevealed()
+    kinds = tuple(board.kind(w) for w in words)
+    nmax = min(rl.NMAX, kinds.count(TEAM))
+    tab = ClueTable.build(sp, words, pool)
+    rows = shortlist_rows(tab.sims, kinds, k)
+    rows = sorted(rows, key=lambda r: -tab.sims[r][[x == TEAM for x in kinds]].max())[:k]
+    sims = tab.sims[rows]
+    odds = turn_odds(luce_weights(sims, tau), kinds, nmax)
+    team = np.array([x == TEAM for x in kinds])
+    team_sorted = -np.sort(-sims[:, team], axis=1)
+    best_bad = sims[:, ~team].max(axis=1)
+    feats, clues = [], []
+    for i, r in enumerate(rows):
+        for n in range(1, nmax + 1):
+            feats.append(
+                [
+                    odds.expected_team(n)[i],
+                    odds.stopped_by(ASSASSIN, n)[i],
+                    odds.stopped_by(OPPONENT, n)[i],
+                    n,
+                    max(0.0, 3.5 - zipf(tab.clues[r])),
+                    team_sorted[i, n - 1] - best_bad[i],
+                    1.0,
+                ]
+            )
+            clues.append((tab.clues[r], n))
+    return clues, np.array(feats)
 
 
 @cache
@@ -232,7 +274,8 @@ def c3_policies() -> dict:
     return {"params": {k: v.tolist() for k, v in params.items()}, "theta_max_difference": check}
 
 
-def lora_space(folder: Path, extra: list[str]) -> tuple[Space, dict]:
+@cache
+def lora_space(folder: Path, extra: tuple[str, ...]) -> tuple[Space, dict]:
     """The C8 encoder's vectors (clue side in its chosen template, word side bare), with
     the extra words encoded on this machine by its adapter. Reports how closely this
     machine's encoding matches the stored vectors on 200 stored words."""
@@ -288,7 +331,7 @@ def our_guesser_spaces(names, extra: list[str], lora_dir: Path | None) -> tuple[
         elif name == "lora-c8":
             if lora_dir is None:
                 continue
-            out[name], info[name] = lora_space(lora_dir, words)
+            out[name], info[name] = lora_space(lora_dir, tuple(words))
     return out, info
 
 
@@ -403,8 +446,9 @@ def lora_run(out: Path, n_boards: int = N_BOARDS) -> None:
     )  # fmt: skip
     out.mkdir(parents=True, exist_ok=True)
     (out / "data.json").write_text(json.dumps(info, indent=1) + "\n")
-    for res in crossplay_many(GIVERS, ["lora-c8"], n_boards, Path(c8) / LORA_RUN):
-        (out / f"crossplay-lora-{res['giver']}.json").write_text(json.dumps(res) + "\n")
+    for giver in GIVERS:
+        res = crossplay_many([giver], ["lora-c8"], n_boards, Path(c8) / LORA_RUN)[0]
+        (out / f"crossplay-lora-{giver}.json").write_text(json.dumps(res) + "\n")
 
 
 # Part 3: analysis.
@@ -447,114 +491,177 @@ def published_table() -> dict:
     return out
 
 
-def analyze_reproduction(rep: dict, orig: dict | None) -> dict:
-    by: dict[str, list] = {}
-    for g in rep["games"]:
-        by.setdefault(f"{g['codemaster']}/{g['guesser']}", []).append(g)
-    pairs = {}
-    for k, gs in by.items():
-        port = [g["port"] for g in gs if "score" in g["port"]]
-        pairs[k] = {
-            "games": len(gs),
-            "same_transcript": sum(g["same_transcript"] for g in gs),
-            "port_errors": sum("error" in g["port"] for g in gs),
-            "port_mean_framework_rule": round(float(np.mean([p["score"] for p in port])), 2),
-            "port_mean_table_rule": round(float(np.mean([p["score_table"] for p in port])), 2),
-            "port_losses": sum(not p["won"] for p in port),
-            "first_different_turns": Counter(
-                g["first_different_turn"] for g in gs if not g["same_transcript"]
-            ).most_common(),
-        }
-    out = {"published": published_table(), "port": pairs}
-    if orig:
-        og = orig["games"]
-        out["original_code"] = {
-            "games": len(og),
-            "same_as_published": sum(g["same_as_published"] for g in og),
-            "same_as_port": sum(g["same_as_port"] for g in og),
-            "pairs": sorted({f"{g['codemaster']}/{g['guesser']}" for g in og}),
-            "seeds": sorted({g["seed"] for g in og}),
-            "seconds_per_game": round(float(np.mean([g["seconds"] for g in og])), 1),
-        }
+# The committed results: bench-runs.json holds every game's outcome (no board words),
+# collected from the runs; bench.json and bench.md are computed from it alone.
+
+RUNS_FILE = RESULTS / "bench-runs.json"
+SUMMARY_FILE = RESULTS / "bench.json"
+REPORT_FILE = RESULTS / "bench.md"
+LOSS_CODE = {None: "-", "A": "A", "O": "O", "turns": "T"}
+
+
+def collect(runs: Path, lora: Path | None) -> dict:
+    """Compact the raw outputs of the workflow run (and of the C8 job) into one file."""
+    rep = json.loads((runs / "reproduce.json").read_text())["games"]
+    out: dict = {
+        "status": "exploratory: no plan was written before these runs",
+        "source": json.loads((runs / "source.json").read_text()),
+        "data": {
+            "vectors": json.loads((runs / "vectors.json").read_text()),
+            "forms": json.loads((runs / "forms.json").read_text()),
+        },
+        "published": published_table(),
+        "reproduce": [
+            [
+                g["codemaster"],
+                g["guesser"],
+                g["seed"],
+                g["same_transcript"],
+                g["first_different_turn"],
+                g["port"].get("score"),
+                g["port"].get("score_table"),
+                g["published"]["turns"],
+                g["published"]["winner"],
+                g["published"]["A"],
+            ]
+            for g in rep
+        ],
+    }
+    if (runs / "original.json").exists():
+        og = json.loads((runs / "original.json").read_text())["games"]
+        out["original"] = [
+            [
+                g["codemaster"],
+                g["guesser"],
+                g["seed"],
+                g["same_as_published"],
+                g["same_as_port"],
+                g["seconds"],
+            ]
+            for g in og
+        ]
+        versions = sorted(runs.glob("original/*/versions.txt"))
+        if versions:
+            out["data"]["original_versions"] = versions[0].read_text().split()
+    slices = [json.loads(p.read_text()) for p in sorted(runs.glob("crossplay-*.json"))]
+    if lora:
+        slices += [json.loads(p.read_text()) for p in sorted(lora.glob("crossplay-lora-*.json"))]
+        out["data"]["lora_job"] = json.loads((lora / "data.json").read_text())
+        if (lora / "manifest.json").exists():
+            out["source"]["lora_job"] = json.loads((lora / "manifest.json").read_text())
+    cells: dict[str, dict] = {}
+    info: dict[str, dict] = {}
+    for sl in slices:
+        info.setdefault(sl["giver"], {}).update(sl["info"])
+        for g in sl["games"]:
+            c = cells.setdefault(
+                f"{g['giver']}/{g['guesser']}", {"seeds": [], "score": [], "loss": "", "count": []}
+            )
+            c["seeds"].append(g["seed"])
+            c["score"].append(g["score"])
+            c["loss"] += LOSS_CODE[g.get("loss")] if "error" not in g else "E"
+            c["count"].append(round(g.get("mean_count", 0.0), 3))
+    for c in cells.values():
+        assert c["seeds"] == list(range(len(c["seeds"])))
+        del c["seeds"]
+    out["crossplay"] = {"info": info, "cells": dict(sorted(cells.items()))}
     return out
 
 
-def analyze_crossplay(slices: list[dict]) -> dict:
-    games = [g for s in slices for g in s["games"]]
-    cell: dict[tuple[str, str], list[dict]] = {}
-    for g in games:
-        cell.setdefault((g["giver"], g["guesser"]), []).append(g)
-    for v in cell.values():
-        v.sort(key=lambda g: g["seed"])
-    matrix = {}
-    for (gv, gu), gs in sorted(cell.items()):
-        matrix[f"{gv}/{gu}"] = {
-            "score": summarize([g["score"] for g in gs]),
-            "wins": sum(g["won"] for g in gs),
-            "assassin": sum(g.get("loss") == "A" for g in gs),
-            "opponent": sum(g.get("loss") == "O" for g in gs),
-            "errors": sum("error" in g for g in gs),
-            "mean_count": round(float(np.mean([g.get("mean_count", 0) for g in gs])), 2),
+def model_of(player: str) -> str:
+    return {"gemma2-first": "gemma2"}.get(player, player.split("-")[0])
+
+
+def analyze(runs: dict) -> dict:
+    out: dict = {"status": runs["status"], "source": runs["source"], "data": runs["data"]}
+    # Reproduction.
+    by: dict[str, list] = {}
+    for cm, gu, _seed, same, first, sc, sct, pturns, pwin, pa in runs["reproduce"]:
+        by.setdefault(f"{cm}/{gu}", []).append((same, first, sc, sct, pturns, pwin, pa))
+    rep = {}
+    for k, gs in by.items():
+        pub_rule = [25 if w == "B" else t for *_, t, w, a in gs]
+        rep[k] = {
+            "games": len(gs),
+            "same_transcript": sum(g[0] for g in gs),
+            "same_score": sum(g[2] == p for g, p in zip(gs, pub_rule, strict=True)),
+            "port_mean": round(float(np.mean([g[2] for g in gs])), 2),
+            "port_mean_table_rule": round(float(np.mean([g[3] for g in gs])), 2),
+            "first_different_turns": sorted(Counter(g[1] for g in gs if not g[0]).items()),
+        } | runs["published"][k]
+    out["reproduction"] = rep
+    if "original" in runs:
+        og = runs["original"]
+        out["original_code"] = {
+            "games": len(og),
+            "same_as_published": sum(g[3] for g in og),
+            "same_as_port": sum(g[4] for g in og),
+            "pairs": len({(g[0], g[1]) for g in og}),
+            "seeds": sorted({g[2] for g in og}),
+            "seconds_per_game": round(float(np.mean([g[5] for g in og])), 1),
         }
-
-    def scores(gv, gu):
-        return np.array([g["score"] for g in cell[(gv, gu)]], dtype=float)
-
-    guessers = sorted({gu for _, gu in cell})
-    givers = sorted({gv for gv, _ in cell})
-    contrasts = {}
-    # Each giver with the framework's three guessers, averaged by board; for a framework
-    # giver, only the two guessers that are not its own model.
+    # Cross-play.
+    cells = runs["crossplay"]["cells"]
+    scores = {k: np.array(v["score"], dtype=float) for k, v in cells.items()}
+    matrix = {
+        k: summarize(v["score"])
+        | {
+            "wins": v["loss"].count("-"),
+            "assassin": v["loss"].count("A"),
+            "opponent": v["loss"].count("O"),
+            "other_losses": len(v["loss"]) - sum(v["loss"].count(x) for x in "-AO"),
+            "mean_count": round(float(np.mean(v["count"])), 2),
+        }
+        for k, v in cells.items()
+    }
+    givers = [g for g in GIVERS if any(k.startswith(g + "/") for k in cells)]
+    guessers = [g for g in GUESSERS if any(k.endswith("/" + g) for k in cells)]
+    groups = {"framework guessers": FRAMEWORK, "our guessers": ("gemma2", "potion", "lora-c8")}
+    means = {}
     for gv in givers:
-        for label, group in (
-            ("framework guessers", FRAMEWORK),
-            ("our guessers", ("gemma2", "potion", "lora-c8")),
-        ):
-            others = [gu for gu in group if gu != gv and (gv, gu) in cell]
-            if others:
-                contrasts[f"{gv} with {label}"] = summarize(
-                    np.mean([scores(gv, gu) for gu in others], axis=0).tolist()
-                ) | {"guessers": others}
-    pairs = [
-        ("potion-c3-population", "potion-c3-self"),
-        ("potion-c3-population", "potion-first"),
-        ("gemma2-first", "potion-first"),
-        ("gemma2-first", "glove"),
-        ("potion-c3-population", "glove"),
-    ]
+        for label, group in groups.items():
+            members = [gu for gu in group if f"{gv}/{gu}" in cells and model_of(gv) != gu]
+            if members:
+                m = np.mean([scores[f"{gv}/{gu}"] for gu in members], axis=0)
+                means[f"{gv} with {label}"] = summarize(m.tolist()) | {"guessers": members}
     paired = {}
-    for a, b in pairs:
+    for a, b in PAIRED:
         for gu in guessers:
-            if (a, gu) in cell and (b, gu) in cell and gu not in (a, b):
-                paired[f"{a} minus {b}, guesser {gu}"] = summarize(
-                    (scores(a, gu) - scores(b, gu)).tolist()
-                )
-    return {
-        "cells": matrix,
-        "giver_means": contrasts,
-        "paired": paired,
+            ka, kb = f"{a}/{gu}", f"{b}/{gu}"
+            if ka in cells and kb in cells and gu not in (model_of(a), model_of(b)):
+                paired[f"{a} minus {b} / {gu}"] = summarize((scores[ka] - scores[kb]).tolist())
+        for label, group in groups.items():
+            members = [
+                gu for gu in group
+                if f"{a}/{gu}" in cells and f"{b}/{gu}" in cells and gu not in (model_of(a), model_of(b))
+            ]  # fmt: skip
+            if members:
+                d = np.mean([scores[f"{a}/{gu}"] - scores[f"{b}/{gu}"] for gu in members], axis=0)
+                paired[f"{a} minus {b} / {label}"] = summarize(d.tolist()) | {"guessers": members}
+    out["crossplay"] = {
         "givers": givers,
         "guessers": guessers,
+        "cells": matrix,
+        "giver_means": means,
+        "paired": paired,
+        "info": runs["crossplay"]["info"],
     }
+    return out
 
 
-def write_results(runs: Path) -> None:
-    out: dict = {"status": "exploratory: no plan was written before these runs"}
-    rep = runs / "reproduce.json"
-    if rep.exists():
-        orig = runs / "original.json"
-        out["reproduction"] = analyze_reproduction(
-            json.loads(rep.read_text()), json.loads(orig.read_text()) if orig.exists() else None
-        )
-    slices = [json.loads(p.read_text()) for p in sorted(runs.glob("crossplay-*.json"))]
-    if slices:
-        out["crossplay"] = analyze_crossplay(slices)
-        out["crossplay"]["info"] = {s["giver"]: s["info"] for s in slices}
-        out["crossplay"]["seconds"] = {s["giver"]: s["seconds"] for s in slices}
-    meta = runs / "source.json"
-    if meta.exists():
-        out["source"] = json.loads(meta.read_text())
-    (RESULTS / "bench.json").write_text(json.dumps(out, indent=1, sort_keys=True) + "\n")
+PAIRED = (
+    ("potion-c3-population", "potion-c3-self"),
+    ("potion-c3-population", "potion-first"),
+    ("gemma2-first", "potion-first"),
+    ("gemma2-first", "glove"),
+    ("gemma2-first", "w2v"),
+    ("potion-c3-population", "glove"),
+)
+
+
+def report(summary: dict) -> str:
+    """bench.md, from bench.json."""
+    return json.dumps(summary["status"]) + "\n"
 
 
 def main() -> None:
@@ -574,8 +681,10 @@ def main() -> None:
     lr = sub.add_parser("lora-run", help="the C8 column, inside a Hugging Face Job")
     lr.add_argument("--boards", type=int, default=N_BOARDS)
     lr.add_argument("--out", type=Path, required=True)
-    a = sub.add_parser("analyze")
-    a.add_argument("--runs", type=Path, required=True)
+    co = sub.add_parser("collect", help="compact a run's outputs into results/bench-runs.json")
+    co.add_argument("--runs", type=Path, required=True)
+    co.add_argument("--lora", type=Path, default=None, help="outputs of the C8 job")
+    sub.add_parser("analyze", help="results/bench.json and bench.md from bench-runs.json")
     args = parser.parse_args()
     if args.cmd == "reproduce":
         res = reproduce()
@@ -590,8 +699,12 @@ def main() -> None:
         args.out.write_text(json.dumps(res) + "\n")
     elif args.cmd == "lora-run":
         lora_run(args.out, args.boards)
+    elif args.cmd == "collect":
+        RUNS_FILE.write_text(json.dumps(collect(args.runs, args.lora), sort_keys=True) + "\n")
     else:
-        write_results(args.runs)
+        summary = analyze(json.loads(RUNS_FILE.read_text()))
+        SUMMARY_FILE.write_text(json.dumps(summary, indent=1, sort_keys=True) + "\n")
+        REPORT_FILE.write_text(report(summary))
 
 
 if __name__ == "__main__":

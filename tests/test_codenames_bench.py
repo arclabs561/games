@@ -295,3 +295,39 @@ def test_published_transcript():
         ("imperial", 2, ["RULER", "CHINA"]),
         ("creek", 1, ["BEACH"]),
     ]
+
+
+def synthetic_space(seed=0, n=120, dims=16):
+    from codenames.players import Space
+
+    rng = np.random.default_rng(seed)
+    words = [f"w{i:03d}" for i in range(n)]
+    v = rng.standard_normal((n, dims)).astype(np.float32)
+    v /= np.linalg.norm(v, axis=1, keepdims=True)
+    return Space("synthetic", v, v, words), words
+
+
+def test_policy_actions_match_rl_on_a_fresh_board():
+    from codenames import bench_play, rl
+
+    sp, words = synthetic_space()
+    board = bench.framework_deal(words[:60], 4)
+    pool = tuple(words[60:])
+    a_clues, a_phi = rl.actions(sp, 0.05, board, pool, 10)
+    b_clues, b_phi = bench_play.policy_actions(sp, 0.05, board, pool, 10)
+    assert a_clues == b_clues and np.array_equal(a_phi, b_phi)
+    # With two team words left, only counts 1 and 2 are offered.
+    team = [w for w in board.words if board.kind(w) == TEAM]
+    board.revealed |= set(team[:7])
+    clues, phi = bench_play.policy_actions(sp, 0.05, board, pool, 10)
+    assert {n for _, n in clues} == {1, 2} and phi.shape == (len(clues), len(rl.FEATURES))
+
+
+def test_bootstrap_interval_and_summary():
+    from codenames import bench_play
+
+    s = bench_play.summarize([5.0] * 50)
+    assert s == {"mean": 5.0, "ci": [5.0, 5.0], "n": 50}
+    x = np.r_[np.full(50, 4.0), np.full(50, 6.0)]
+    lo, hi = bench_play.boot(x)
+    assert lo < 5.0 < hi and hi - lo == pytest.approx(2 * 1.96 * 1.0 / 10, abs=0.06)
