@@ -11,11 +11,21 @@ description: "Build Typst papers with fletcher, lilaq, codly and cetz when the p
 - If `packages.typst.org` is unreachable, use `typst_vendor.py`: it sparse-checks out
   `github.com/typst/packages`, follows each package entrypoint's local imports (not docs or
   examples), loops `while todo - done`, skips git when already vendored, and compiles with a local
-  package path. Usage: `python3 typst_vendor.py doc.typ [--png]`. Cache: `~/.cache/typst-vendored`.
+  package path. Usage: `uv run tools/typst_vendor.py doc.typ [--png] [--all]`. Cache: `~/.cache/typst-vendored`.
 - Pin versions that exist in the registry (fletcher 0.5.8, not the 0.5.9 dev version; lilaq 0.6.0;
   codly 1.3.0; cetz 0.4.2). WebAssembly plugins (lilaq's komet and suiji, diagraph) work through
   the Python package.
 - For web pages about Typst (typst.app, Universe), WebFetch may be refused; Firecrawl works.
+
+## Editions
+
+- Every paper should build three editions from one source, as Erase does:
+  - print (US letter);
+  - phone, a narrow page readable at a phone's size (`sys.inputs.edition == "phone"`);
+  - HTML, where drawings become inline SVG through `html.frame`.
+- `--all` builds the three; CI checks that each committed file rebuilds byte for byte.
+- Peggle and Tenzi have only print so far. Copy Erase's edition switch, `fitw` and side-box
+  definitions rather than inventing new ones, so the papers look alike.
 
 ## House style that worked
 

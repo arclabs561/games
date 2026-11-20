@@ -1,0 +1,15 @@
+{
+ "price_per_hour": {"a10g-small": 1.0, "l4x1": 0.8},
+ "how": "seconds from the job's created_at to finished_at (Hugging Face Jobs), times the hourly price; module seconds from each run's manifest.json",
+ "jobs": [
+  {"run": "pilot (l4x1)", "job_id": "6aff5e91efaf5e14f4b20827", "flavor": "l4x1", "commit": "5486c6b09c95c004b8abfdc419e67af815b004c0", "status": "cancelled after 70 minutes waiting for hardware; never ran", "seconds": 0, "cost": 0.0},
+  {"run": "pilot", "job_id": "6aff6ac14fdc5ab3c55a5a34", "flavor": "a10g-small", "commit": "5486c6b09c95c004b8abfdc419e67af815b004c0", "created": "2026-11-19T21:31:45Z", "finished": "2026-11-19T21:43:13Z", "seconds": 688, "module_seconds": 548.2, "cost": 0.19},
+  {"run": "arm-0.01", "job_id": "6aff6dbe4fdc5ab3c55a5cd6", "flavor": "a10g-small", "commit": "41f3ba714716feb4154d38ac2c9859a84cd84e86", "created": "2026-11-19T21:44:30Z", "finished": "2026-11-19T22:42:54Z", "seconds": 3504, "module_seconds": 3460.6, "import_seconds": 7.6, "train_seconds": 3451.5, "first_chunk_seconds": 87.57, "chunk_seconds": 10.89, "updates": 1525, "steps_per_seed": 199884800, "steps_per_second_all_seeds": 481440, "peak_device_bytes": 12209248000, "cost": 0.97},
+  {"run": "arm-0.05", "job_id": "6aff6dc0efaf5e14f4b21b95", "flavor": "a10g-small", "commit": "41f3ba714716feb4154d38ac2c9859a84cd84e86", "created": "2026-11-19T21:44:33Z", "finished": "2026-11-19T22:42:46Z", "seconds": 3493, "module_seconds": 3452.4, "train_seconds": 3442.9, "first_chunk_seconds": 79.7, "chunk_seconds": 10.89, "updates": 1525, "steps_per_seed": 199884800, "steps_per_second_all_seeds": 481440, "peak_device_bytes": 12207150592, "cost": 0.97},
+  {"run": "evaluate", "job_id": "6aff83f94fdc5ab3c55a707b", "flavor": "a10g-small", "commit": "41f3ba714716feb4154d38ac2c9859a84cd84e86", "created": "2026-11-19T23:19:21Z", "finished": "2026-11-19T23:23:38Z", "seconds": 257, "module_seconds": 212.1, "play_seconds": {"greedy": 29.7, "sampled": 13.3}, "games": 1024000, "cost": 0.07}
+ ],
+ "total_seconds": 7942,
+ "total_cost": 2.21,
+ "cap": 6.4,
+ "h4_json_sha256": "5dbcd6cb8e9b5e705b80df6cabcf29dae0d815cc623b8f981388b5aebcef06c3"
+}
