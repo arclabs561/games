@@ -40,11 +40,18 @@ def deals(zero: bool = True) -> dict:
     return {"stuck": stuck, "total": total, "one_in": one_in(stuck, total)}
 
 
-def wild(stuck: int) -> dict:
+def wild(stuck: int, stuck_no_zero: int) -> dict:
     """With four wild kings, only deals without a king can be stuck (proved in the paper), and
-    those are the ordinary deals, so the stuck count is unchanged and the total grows."""
+    those are the ordinary deals, so the stuck count is unchanged and the total grows. The
+    same holds for the deck of 1 to 10 with four kings."""
     total = comb(48, 7) * comb(41, 4)
-    return {"stuck": stuck, "total": total, "one_in": one_in(stuck, total)}
+    total_no_zero = comb(44, 7) * comb(37, 4)
+    return {
+        "stuck": stuck,
+        "total": total,
+        "one_in": one_in(stuck, total),
+        "no_zero_one_in": one_in(stuck_no_zero, total_no_zero),
+    }
 
 
 def certificates() -> dict:
@@ -91,30 +98,38 @@ def simulated() -> dict:
     return {"seeds": [1, 2, 3, 4, 5], **simulate.run()}
 
 
-def targets_section(old: dict | None, only: list[int] | None) -> dict:
-    by = dict(old["by_target"]) if old else {}
-    for t in only or TARGETS:
-        by[str(t)] = targets.summary(t, MAX_CARDS)
-        print(f"  target {t}: threshold {by[str(t)]['threshold']}", flush=True)
+def targets_summary(by: dict) -> dict:
+    """The targets section, from one summary per target (targets.summary)."""
     by = {str(t): by[str(t)] for t in TARGETS if str(t) in by}
     thresholds = [x["threshold"] for x in by.values()]
     return {
         "max_cards": MAX_CARDS,
+        "thresholds": sorted(set(thresholds)),
         "threshold_counts": {str(s): thresholds.count(s) for s in sorted(set(thresholds))},
         "by_target": by,
     }
 
 
+def targets_section(data: dict, only: list[int] | None = None) -> dict:
+    by = dict(data["targets"]["by_target"]) if "targets" in data else {}
+    for t in only or TARGETS:
+        by[str(t)] = targets.summary(t, MAX_CARDS)
+        print(f"  target {t}: threshold {by[str(t)]['threshold']}", flush=True)
+    return targets_summary(by)
+
+
+# Each section is computed from the results so far (wild reuses the two counts of deals).
 SECTIONS = {
-    "deals": lambda: deals(True),
-    "no_zero": lambda: deals(False),
-    "wild": None,  # from the deals section
-    "certificates": certificates,
-    "twenty_four": twenty_four_counts,
-    "countdown": countdown_counts,
-    "simulated": simulated,
+    "deals": lambda data: deals(True),
+    "no_zero": lambda data: deals(False),
+    "wild": lambda data: wild(data["deals"]["stuck"], data["no_zero"]["stuck"]),
+    "certificates": lambda data: certificates(),
+    "twenty_four": lambda data: twenty_four_counts(),
+    "countdown": lambda data: countdown_counts(),
+    "simulated": lambda data: simulated(),
+    "targets": targets_section,
 }
-ORDER = [*SECTIONS, "targets"]
+ORDER = list(SECTIONS)
 
 
 def dump(data: dict) -> str:
@@ -128,6 +143,7 @@ def dump(data: dict) -> str:
             rows = ",\n".join(f'   "{t}": {json.dumps(x)}' for t, x in v["by_target"].items())
             body = (
                 f'  "max_cards": {v["max_cards"]},\n'
+                f'  "thresholds": {json.dumps(v["thresholds"])},\n'
                 f'  "threshold_counts": {json.dumps(v["threshold_counts"])},\n'
                 f'  "by_target": {{\n{rows}\n  }}'
             )
@@ -149,11 +165,9 @@ def main() -> None:
     for name in a.sections or ORDER:
         print(f"{name} ...", flush=True)
         if name == "targets":
-            data[name] = targets_section(data.get("targets"), a.targets)
-        elif name == "wild":
-            data[name] = wild(data["deals"]["stuck"])
+            data[name] = targets_section(data, a.targets)
         else:
-            data[name] = SECTIONS[name]()
+            data[name] = SECTIONS[name](data)
     a.out.write_text(dump(data))
     print(f"wrote {a.out}")
 
