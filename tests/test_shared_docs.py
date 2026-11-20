@@ -39,6 +39,8 @@ def test_placeholder_formats():
 
 def test_papers_include_only_sections_the_readme_has():
     for typ in [*ROOT.glob("*/*.typ"), *ROOT.glob("*/paper/*.typ")]:
+        if typ.parent.name == "tools":
+            continue
         text = typ.read_text()
         names = re.findall(r'shared\(readme, "([\w-]+)"', text)
         if not names:

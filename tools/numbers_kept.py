@@ -15,15 +15,17 @@ writes, so that numbers the paper reads from results.json are seen as printed.
 
 import argparse
 import html
+import importlib.util
 import re
 import subprocess
-import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 NUMBER = re.compile(r"\d+(?:[.,]\d+)*")
-sys.path.insert(0, str(ROOT / "tools"))
-from sync_docs import fragments  # noqa: E402
+_spec = importlib.util.spec_from_file_location("sync_docs", ROOT / "tools" / "sync_docs.py")
+assert _spec and _spec.loader
+sync_docs = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(sync_docs)
 
 
 def numbers(text: str) -> set[str]:
@@ -49,7 +51,9 @@ def main() -> None:
         capture_output=True,
         text=True,
     ).stdout
-    now = (ROOT / a.game / "README.md").read_text() + "\n".join(fragments(a.game).values())
+    now = (ROOT / a.game / "README.md").read_text() + "\n".join(
+        sync_docs.fragments(a.game).values()
+    )
     papers = "\n".join(page_text(p) for p in a.paper)
     have_readme, have_paper = numbers(now), numbers(papers)
     lost = sorted(numbers(old) - have_readme - have_paper, key=lambda n: (len(n), n))

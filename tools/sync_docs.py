@@ -99,9 +99,11 @@ def fill(text: str, data: dict, where: str) -> str:
 def games() -> list[str]:
     """Folders with a README and Markdown fragments in docs/."""
     return sorted(
-        p.parent.parent.name
-        for p in ROOT.glob("*/docs/*.md")
-        if (p.parent.parent / "README.md").exists()
+        {
+            p.parent.parent.name
+            for p in ROOT.glob("*/docs/*.md")
+            if (p.parent.parent / "README.md").exists()
+        }
     )
 
 
