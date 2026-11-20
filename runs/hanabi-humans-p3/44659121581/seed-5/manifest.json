@@ -1,0 +1,27 @@
+{
+ "experiment": "hanabi-humans-p3",
+ "run": "seed-5",
+ "commit": "4b2b933a32571c4d0e19b4651fecc9f05231370d",
+ "platform": "actions",
+ "command": [
+  "python",
+  "-m",
+  "hanabi.humans",
+  "run",
+  "--players",
+  "3",
+  "--part",
+  "SEED",
+  "--parts",
+  "8",
+  "--fetch",
+  "--out",
+  "OUT"
+ ],
+ "returncode": 0,
+ "seconds": 453.0,
+ "job_id": "44659121581",
+ "hardware": "GitHub Actions 1000099397",
+ "gpu": null,
+ "python": "3.14.4"
+}
