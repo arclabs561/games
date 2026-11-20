@@ -18,4 +18,5 @@ def test_no_number_lost():
 
 
 def test_no_number_new():
-    assert unexplained("pokemon", NOTES, set()) == []
+    # years and an arXiv number of two added citations, and the revision date of Schmitz's post
+    assert unexplained("pokemon", NOTES, {"2017", "2022", "2206.07520", "29"}) == []

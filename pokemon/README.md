@@ -23,7 +23,7 @@ The last column links the note in [`results/`](results/README.md) with the detai
 | Among existing typings, Steel/Fairy takes the least damage summed over the 18 attacking types: 53/4, against 18 for a type with no weaknesses or resistances. It holds from Generation 6 to 9. In Generations 2 to 5 the least is Flying/Steel's 12 of 17; in Generation 1, 14 of 15, shared by Psychic and Electric/Flying. | Exact | [chart](results/chart.md) |
 | Attack game: the attacker can guarantee an average multiplier of 4158/3979 ≈ 1.045, with a unique equilibrium led by Ground (attacker) and Normal (defender). Over all 171 defending typings the value is 13207/13501 ≈ 0.978. | Exact: LP support, then fractions and a uniqueness certificate | [games](results/games.md) |
 | Duel game: unique equilibrium on 11 types, led by Steel 627/2653 ≈ 0.236; the 7 types left out and every weight match Schmitz (2021) to three decimals. | Exact; agrees with a cited source | [games](results/games.md) |
-| Duel over all 171 typings: unique, on 23 typings led by Electric/Flying (12.9%). Schmitz (2023) reports 27 typings led by Water/Flying; both of his leaders lose against this equilibrium. | Exact; disagrees with a cited source, cause unknown | [games](results/games.md) |
+| Duel over all 171 typings: unique, on 23 typings led by Electric/Flying (12.9%). Schmitz (2023) reports 27 typings led by Water/Flying; both of his leaders lose against this equilibrium. His text describes a 324 × 324 game of ordered type pairs and 162 combinations, so his set of typings differs from this one. | Exact; disagrees with a cited source, whose game is not the same | [games](results/games.md) |
 | Log-ratio game: unique at k = 1; for k = 2, 3, 4, 6 and 10 the optimal strategies form a segment, along which Ghost's weight runs from 0 to a bound such as 5/79. | Exact, with the segment proved | [games](results/games.md) |
 | 16 rock-paper-scissors triangles of super-effective types, 5 of them with each type also resisting the one it hits. | Exact, by two methods | [games](results/games.md) |
 | The ranking part of the chart carries 14/297 (4.7%) of its squared norm with k = 1 and 89/1701 (5.2%) with k = 2; Steel ranks first. | Exact, checked against least squares | [ranking](results/ranking.md) |
@@ -106,19 +106,21 @@ Emerald Kaizo is a ROM hack of Pokémon Emerald. Its question: how many wild Pok
 
 ## Related work
 
-- Schmitz, ["The Objectively Best Pokemon Type, According to Game Theory"](https://quantimschmitzcom.wordpress.com/2021/07/30/the-objectively-best-pokemon-type-according-to-game-theory/) (2021) and ["The best Pokemon type combinations according to game theory"](https://quantimschmitzcom.wordpress.com/2023/08/12/the-best-pokemon-type-combinations-according-to-game-theory/) (2023): the duel over single types is reproduced exactly; the duel over typings is not, and the cause is open.
+- Schmitz, ["The Objectively Best Pokemon Type, According to Game Theory"](https://quantimschmitzcom.wordpress.com/2021/07/30/the-objectively-best-pokemon-type-according-to-game-theory/) (2021) and ["The best Pokemon type combinations according to game theory"](https://quantimschmitzcom.wordpress.com/2023/08/12/the-best-pokemon-type-combinations-according-to-game-theory/) (2023): the duel over single types is reproduced exactly; the duel over typings is not; his text describes a game over 324 ordered pairs of types and 162 combinations (read 2026-11-20; the post was revised 2025-10-29).
+- A. J. Liu and S. Marschner, "Balancing Zero-Sum Games with One Variable per Strategy", AIIDE 2017, use the attack game, an attacking type against a defending type with the chart as payoff, as their worked example, and report Ground as the most dominant attack type of its equilibrium, as here. Their chart and generation were not compared number by number.
+- A. Strang, D. SeWell, A. Kim, K. Alcedo and D. Rosenbluth, "Principal Trade-off Analysis" (arXiv:2206.07520, 2022), split Pokémon battle outcomes into transitive and cyclic parts, as `hodge.py` does for the chart, and find the chart's cycles among the types.
 - Jiang, Lim, Yao and Ye, ["Statistical ranking and combinatorial Hodge theory"](https://doi.org/10.1007/s10107-010-0419-x), *Mathematical Programming* 127 (2011) 203–244, give the ranking split used by `hodge.py`; Candogan, Menache, Ozdaglar and Parrilo, ["Flows and decompositions of games: harmonic and potential games"](https://doi.org/10.1287/moor.1110.0500), *Mathematics of Operations Research* 36 (2011) 474–503, give a related split of whole games.
 - H. B. McMahan, G. J. Gordon and A. Blum, "Planning in the presence of cost functions controlled by an adversary", ICML 2003: the double oracle method used by `teams.py`.
 - Pokémon Showdown (smogon/pokemon-showdown) is the simulator of level 5; its damage agrees with level 4's formula on every hit checked.
 
 ## Questions left open
 
-- **Schmitz's typing duel.** His matchup table is an image; reading it would settle whether his game or his solver differs from the one here.
-- **Weighted scores.** Weighting the notebook's sums by Showdown usage would change which typings and Pokémon rank first.
-- **Sets beyond damage.** Setup moves, recovery, hazards, items, Terastallization, and a policy that switches by choice. The six most used Pokémon do far better in full battles than under perfect switching.
-- **Beyond 63 teams.** A double oracle whose best response is searched in the simulator would say whether some other team beats the full-battle equilibrium.
-- **Level 4 played out**, through six-against-six battles with the level-5 policy, to separate perfect switching from Showdown's mechanics; and **a larger pool** of 60 or 80 Pokémon.
-- **Emerald Kaizo encounters.** How often each species appears, and the generator's timing.
+- **Schmitz's typing duel.** Which typings does his game include, and does his solver differ from the one here? His matchup table is an image; reading it would settle that.
+- **Weighted scores.** Would weighting the notebook's sums by Showdown usage change which typings and Pokémon rank first?
+- **Sets beyond damage.** How do setup moves, recovery, hazards, items, Terastallization, and a policy that switches by choice change the team results? The six most used Pokémon do far better in full battles than under perfect switching.
+- **Beyond 63 teams.** Does some other team beat the full-battle equilibrium? A double oracle whose best response is searched in the simulator would say.
+- **Level 4 played out.** How much of the gap between levels comes from perfect switching and how much from Showdown's mechanics? Six-against-six battles with the level-5 policy, and a larger pool of 60 or 80 Pokémon, would separate them.
+- **Emerald Kaizo encounters.** How often does each species appear, and how is the generator timed?
 
 ## Usage
 
