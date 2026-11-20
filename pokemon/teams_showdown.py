@@ -20,6 +20,33 @@ critical hits, misses, secondary effects, every ability, weather and terrain fro
   Pokémon in play; if that one has fainted too, against the opposing team's survivors.
 - Anything else Showdown asks (a move locked in by Outrage, a recharge): Showdown's default.
 
+**Policy S, switching** (plan P2, ``--policy switch``): the policy above with one change, the
+voluntary switch of poke-env's ``SimpleHeuristicsPlayer`` (poke-env 0.17.0,
+``src/poke_env/player/baselines.py``), ported here (``matchup``, ``should_switch``). Before
+choosing a move, it switches out when some bench Pokémon has a matchup above 0 against the
+opposing Pokémon and the active one has a matchup below -2, or its Defense or Special
+Defense stage is -3 or lower, or the stage of its stronger attacking stat is -3 or lower;
+it switches in the bench Pokémon with the highest matchup. The move choice stays the
+damage policy's, so the two policies differ in switching only. poke-env's notice:
+
+    MIT License, Copyright (c) 2019 hsahovic. Permission is hereby granted, free of
+    charge, to any person obtaining a copy of this software and associated documentation
+    files (the "Software"), to deal in the Software without restriction, including without
+    limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
+    and/or sell copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions: The above copyright notice
+    and this permission notice shall be included in all copies or substantial portions of
+    the Software. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+    OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR
+    A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+    HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+    CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
+    OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+``--policy`` names the policy of the first team of each pair and ``--opponent`` that of the
+second (the same by default); sides alternate, so each policy plays both sides.
+``--turn-limit L`` stops a battle when it reaches turn L and counts it as a tie.
+
 **Checks.** For every hit that lands with no critical hit, no stat stages, weather, terrain,
 status or ability activation on either side, no Blaze-like boost at low HP, and one damage
 line, the damage Showdown dealt
@@ -29,6 +56,10 @@ Showdown's requests must equal ``Pokemon.stats``.
     uv run --group pokemon python -m pokemon.teams_showdown setup --dir /tmp/showdown
     uv run --group pokemon python -m pokemon.teams_showdown play --teams teams.json \\
         --games 40 --slice 1 --slices 8 --showdown /tmp/showdown --out OUT
+    ... play --teams teams.json --games 40 --seed p2-switch --policy switch \\
+        --turn-limit 300 --slice 1 --slices 20 --showdown /tmp/showdown --out OUT
+    ... play --teams teams.json --games 40 --seed p2-strength --mirror --policy switch \\
+        --opponent damage --turn-limit 300 --showdown /tmp/showdown --out OUT
 
 The battles run on GitHub Actions (``experiment.yml``); ``teams.py`` reads the outputs.
 """
@@ -57,6 +88,12 @@ FORMAT = "gen9customgame"
 CONCURRENT = 24  # battles in flight per simulator process
 PINCH = ("blaze", "torrent", "overgrow", "swarm")
 SD_STAT = {"atk": "atk", "def": "def", "spa": "spa", "spd": "spd", "spe": "spe"}
+POLICIES = ("damage", "switch")
+LIMIT = 500  # turns, the published run's limit (a battle past it is a tie)
+# poke-env's SimpleHeuristicsPlayer constants.
+SPEED_TIER = 0.1
+HP_FRACTION = 0.4
+SWITCH_OUT_MATCHUP = -2
 
 
 # Setting up the simulator.
@@ -128,8 +165,19 @@ def species(details: str) -> str:
 class Battle:
     """One battle's state, read from Showdown's full (omniscient) log, and both players."""
 
-    def __init__(self, key: str, teams: tuple[Sequence[int], Sequence[int]], n: int):
+    def __init__(
+        self,
+        key: str,
+        teams: tuple[Sequence[int], Sequence[int]],
+        n: int,
+        policies: tuple[str, str] = ("damage", "damage"),
+    ):
+        """policies: those of the p1 and p2 players."""
         self.key, self.n = key, n
+        assert all(p in POLICIES for p in policies), policies
+        self.policy = dict(zip(("p1", "p2"), policies, strict=True))
+        self.switches: dict[str, int] = {"p1": 0, "p2": 0}
+        self.limited = False  # stopped at the turn limit
         ss = pool_sets(n)
         self.sets: dict[str, list[tm.Set]] = {
             side: [ss[i] for i in t] for side, t in zip(("p1", "p2"), teams, strict=True)
@@ -324,8 +372,15 @@ class Battle:
         if opp_name is None:
             return [f">{side} default"]
         foe_set = self.set_of(foe, opp_name)
-        fa, fd = pair(me, foe_set)
         hp = self.hp.get((foe, opp_name), (1, 1))
+        if self.policy[side] == "switch" and not (
+            active.get("trapped") or active.get("maybeTrapped")
+        ):
+            k = self.voluntary_switch(side, req, me, foe_set, hp[0] / hp[1])
+            if k is not None:
+                self.switches[side] += 1
+                return [f">{side} switch {k}"]
+        fa, fd = pair(me, foe_set)
         best, best_d = None, None
         for k, mv in enumerate(active["moves"], start=1):
             if mv.get("disabled"):
@@ -339,6 +394,24 @@ class Battle:
             if best_d is None or d > best_d:
                 best, best_d = k, d
         return [f">{side} move {best}" if best else f">{side} default"]
+
+    def voluntary_switch(
+        self, side: str, req: dict, me: tm.Set, foe: tm.Set, foe_hp: float
+    ) -> int | None:
+        """Policy S: the request index of the bench Pokémon to switch in, or None to stay."""
+        own_hp = next(
+            (hp_fraction(p["condition"]) for p in req["side"]["pokemon"] if p["active"]), 1.0
+        )
+        bench = [
+            (k, self.set_of(side, p["ident"][4:]), hp_fraction(p["condition"]))
+            for k, p in enumerate(req["side"]["pokemon"], start=1)
+            if not p["active"] and not p["condition"].endswith("fnt")
+        ]
+        values = [matchup(s, foe, h, foe_hp) for _, s, h in bench]
+        if not should_switch(me, self.boosts[side], matchup(me, foe, own_hp, foe_hp), values):
+            return None
+        best = max(range(len(bench)), key=lambda i: (values[i], -i))
+        return bench[best][0]
 
     def switch_choice(self, side: str, req: dict) -> int:
         """The bench Pokémon with the best level-4 matchup against what it will face."""
@@ -369,11 +442,69 @@ def _title(identifier: str) -> str:
     return identifier.replace("-", "")
 
 
+# Policy S's switch, ported from poke-env's SimpleHeuristicsPlayer.
+
+
+def matchup(a: tm.Set, b: tm.Set, hp_a: float, hp_b: float) -> float:
+    """poke-env's _estimate_matchup of a against b: the best multiplier of a's types against
+    b, minus b's against a; 0.1 more if a's base Speed is higher, 0.1 less if lower; plus 0.4
+    times a's HP fraction, minus 0.4 times b's."""
+    from pokemon.equilibrium import best_multiplier
+
+    ta, tb = a.pokemon.typing, b.pokemon.typing
+    score = float(best_multiplier(ta, tb)) - float(best_multiplier(tb, ta))
+    sa, sb = a.pokemon.base[5], b.pokemon.base[5]
+    score += SPEED_TIER if sa > sb else -SPEED_TIER if sb > sa else 0.0
+    return score + HP_FRACTION * hp_a - HP_FRACTION * hp_b
+
+
+def should_switch(
+    active: tm.Set, boosts: dict[str, int], own: float, bench: Sequence[float]
+) -> bool:
+    """poke-env's _should_switch_out: a bench option with matchup above 0, and a reason to
+    leave (own matchup below -2, a defensive stage at -3 or lower, or the stronger attacking
+    stat's stage at -3 or lower; ties of Attack and Special Attack count for both)."""
+    if not any(v > 0 for v in bench):
+        return False
+    st = active.pokemon.stats
+    b = {k: boosts.get(k, 0) for k in ("atk", "def", "spa", "spd")}
+    return (
+        b["def"] <= -3
+        or b["spd"] <= -3
+        or (b["atk"] <= -3 and st["atk"] >= st["spa"])
+        or (b["spa"] <= -3 and st["atk"] <= st["spa"])
+        or own < SWITCH_OUT_MATCHUP
+    )
+
+
+def hp_fraction(condition: str) -> float:
+    """'123/456 par' -> 123/456; '0 fnt' -> 0."""
+    hp = condition.split()[0]
+    if "/" not in hp:
+        return 0.0
+    a, b = hp.split("/")
+    return int(a) / int(b)
+
+
 # Running battles.
 
 
-def play(jobs: Sequence[tuple[str, Sequence[int], Sequence[int]]], sim: Path, n: int) -> list[dict]:
-    """Play battles in one simulator process, CONCURRENT at a time; one result per job."""
+def side_policies(key: str, policies: tuple[str, str]) -> tuple[str, str]:
+    """The p1 and p2 policies of a battle: policies are those of the pair's first and second
+    team, and the first team is on p1 in even-numbered games."""
+    g = int(key.rsplit("-", 1)[1])
+    return policies if g % 2 == 0 else (policies[1], policies[0])
+
+
+def play(
+    jobs: Sequence[tuple[str, Sequence[int], Sequence[int]]],
+    sim: Path,
+    n: int,
+    policies: tuple[str, str] = ("damage", "damage"),
+    turn_limit: int | None = None,
+) -> list[dict]:
+    """Play battles in one simulator process, CONCURRENT at a time; one result per job.
+    With turn_limit L, a battle is stopped at turn L and is a tie; without, after turn 500."""
     proc = subprocess.Popen(["node", str(DRIVER), str(sim)], stdin=subprocess.PIPE,
                             stdout=subprocess.PIPE, text=True, bufsize=1)  # fmt: skip
     assert proc.stdin and proc.stdout
@@ -384,7 +515,7 @@ def play(jobs: Sequence[tuple[str, Sequence[int], Sequence[int]]], sim: Path, n:
 
     def start() -> None:
         k, (key, a, b) = queue.pop(0)
-        battles[k] = Battle(key, (a, b), n)
+        battles[k] = Battle(key, (a, b), n, side_policies(key, policies))
         msg = {"id": k, "start": {"formatid": FORMAT, "seed": seed(key)},
                "p1": [showdown_set(pool_sets(n)[i], i) for i in a],
                "p2": [showdown_set(pool_sets(n)[i], i) for i in b]}  # fmt: skip
@@ -411,6 +542,9 @@ def play(jobs: Sequence[tuple[str, Sequence[int], Sequence[int]]], sim: Path, n:
                     "hp": b.winner_hp(),
                     "checks": dict(b.checks),
                     "stat_problems": b.stat_problems,
+                    "policies": b.policy,
+                    "switches": b.switches,
+                    "limited": b.limited,
                 }  # fmt: skip
             )
             del battles[msg["id"]]
@@ -420,8 +554,8 @@ def play(jobs: Sequence[tuple[str, Sequence[int], Sequence[int]]], sim: Path, n:
             continue
         for out in b.read(msg["chunk"]):
             stdin.write(json.dumps({"id": msg["id"], "write": out}) + "\n")
-        if b.turns > 500:  # a battle that does not end
-            b.winner = "limit"
+        if (b.turns >= turn_limit if turn_limit else b.turns > LIMIT) and not b.limited:
+            b.winner, b.limited = "limit", True
             stdin.write(json.dumps({"id": msg["id"], "write": ">forcetie"}) + "\n")
         stdin.flush()
     proc.stdin.close()
@@ -429,7 +563,9 @@ def play(jobs: Sequence[tuple[str, Sequence[int], Sequence[int]]], sim: Path, n:
     return results
 
 
-def schedule(teams: Sequence[Sequence[int]], games: int, base: int) -> list[tuple[str, list, list]]:
+def schedule(
+    teams: Sequence[Sequence[int]], games: int, base: int | str
+) -> list[tuple[str, list, list]]:
     """Every unordered pair of teams plays ``games`` battles, sides alternating. A team may
     be a single Pokémon, for one-on-one battles."""
     jobs = []
@@ -441,9 +577,19 @@ def schedule(teams: Sequence[Sequence[int]], games: int, base: int) -> list[tupl
     return jobs
 
 
+def mirror_schedule(
+    teams: Sequence[Sequence[int]], games: int, base
+) -> list[tuple[str, list, list]]:
+    """Each team against itself, ``games`` battles: with --policy and --opponent, the
+    strength check of plan P2."""
+    return [
+        (f"{base}-{i}-{i}-{g}", list(t), list(t)) for i, t in enumerate(teams) for g in range(games)
+    ]
+
+
 def _worker(args: tuple) -> list[dict]:
-    jobs, sim, n = args
-    return play(jobs, Path(sim), n)
+    jobs, sim, n, policies, limit = args
+    return play(jobs, Path(sim), n, policies, limit)
 
 
 def main() -> None:
@@ -457,7 +603,11 @@ def main() -> None:
         "--duels", type=int, help="instead of teams: every Pokémon of a pool of N, alone"
     )
     p.add_argument("--games", type=int, default=40)
-    p.add_argument("--seed", type=int, default=0)
+    p.add_argument("--seed", default="0", help="label that every battle's key and seed start with")
+    p.add_argument("--policy", choices=POLICIES, default="damage", help="the first team's")
+    p.add_argument("--opponent", choices=POLICIES, help="the second team's (default: --policy)")
+    p.add_argument("--turn-limit", type=int, help="stop a battle at this turn, as a tie")
+    p.add_argument("--mirror", action="store_true", help="each team against itself")
     p.add_argument("--slice", type=int, default=1)
     p.add_argument("--slices", type=int, default=1)
     p.add_argument("--workers", type=int, default=max(1, multiprocessing.cpu_count()))
@@ -476,10 +626,17 @@ def main() -> None:
     sim = setup(args.showdown)
     pool_sets(n)
     level4_matrix(n)
-    jobs = schedule(teams, args.games, args.seed)
+    policies = (args.policy, args.opponent or args.policy)
+    if args.mirror:
+        jobs = mirror_schedule(teams, args.games, args.seed)
+    else:
+        jobs = schedule(teams, args.games, int(args.seed) if args.seed.isdigit() else args.seed)
     mine = jobs[args.slice - 1 :: args.slices][: args.limit]
     t0 = time.time()
-    chunks = [(mine[k :: args.workers], str(sim), n) for k in range(args.workers)]
+    chunks = [
+        (mine[k :: args.workers], str(sim), n, policies, args.turn_limit)
+        for k in range(args.workers)
+    ]
     with multiprocessing.Pool(args.workers) as pool:
         results = [r for part in pool.map(_worker, chunks) for r in part]
     results.sort(key=lambda r: r["key"])
@@ -489,7 +646,10 @@ def main() -> None:
         else args.out
     )
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps({"pool": n, "teams": teams, "games": args.games, "seed": args.seed,
+    seed_out = int(args.seed) if args.seed.isdigit() else args.seed
+    out.write_text(json.dumps({"pool": n, "teams": teams, "games": args.games, "seed": seed_out,
+                               "policies": list(policies), "turn_limit": args.turn_limit,
+                               "mirror": args.mirror,
                                "format": FORMAT, "showdown_commit": SHOWDOWN_COMMIT,
                                "slice": args.slice, "slices": args.slices,
                                "seconds": time.time() - t0, "battles": results}) + "\n")  # fmt: skip

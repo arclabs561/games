@@ -286,8 +286,9 @@ def summarize(paths: Sequence[Path]) -> dict:
     for path in sorted(paths):
         d = json.loads(path.read_text())
         meta = {k: d[k] for k in ("pool", "teams", "games", "seed", "format", "showdown_commit")}
+        meta |= {k: d[k] for k in ("policies", "turn_limit", "mirror") if k in d}
         for b in d["battles"]:
-            _, i, j, g = b["key"].split("-")
+            _, i, j, g = b["key"].rsplit("-", 3)
             row = pairs.setdefault(f"{i}-{j}", {"games": 0, "wins": 0, "losses": 0, "ties": 0,
                                                 "hp": "0", "turns": 0})  # fmt: skip
             i_side = "p1" if int(g) % 2 == 0 else "p2"
@@ -303,6 +304,11 @@ def summarize(paths: Sequence[Path]) -> dict:
             else:
                 row["ties"] += 1
             row["hp"] = str(Fraction(row["hp"]) + hp)
+            if "switches" in b:  # plan P2: voluntary switches by the pair's first team's side
+                j_side = "p2" if i_side == "p1" else "p1"
+                row["switches_i"] = row.get("switches_i", 0) + b["switches"][i_side]
+                row["switches_j"] = row.get("switches_j", 0) + b["switches"][j_side]
+                row["turn_limit"] = row.get("turn_limit", 0) + bool(b.get("limited"))
             if len(meta["teams"][0]) == 1:  # one-on-one: keep each battle, for the bootstrap
                 row.setdefault("each", []).append(round(float(hp), 4))
             checks.update({k: v for k, v in b["checks"].items() if k in ("agree", "differ")})
