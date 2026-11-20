@@ -3,7 +3,7 @@
 In solitaire Yahtzee one player plays the thirteen turns of a game alone and tries to score as much as possible on average. The game is small enough to solve exactly by dynamic programming, as Verhoeff (1999), Woodward (2003) and Glenn (2006) did. This folder repeats that computation and checks it against brute force and the published values. It then asks what the mean leaves out: the distribution of the score, what each bonus rule is worth, what to keep after the first roll, how often optimal play makes a Yahtzee, and how far a greedy player falls behind. Last, it asks what a player at the table can use: a short list of rules to memorize, and what common advice costs.
 
 - Optimal play scores 254.5896 on average (exact).
-- The [cheat sheet](#the-cheat-sheet) below has 8 rules and a table of par values. It scores 243.18 on average, 11.41 below optimal (exact). The best card found with 12 rules scores 243.95. No card the search found came within 9 points of optimal: 30 rules reach 245.31 and 40 rules 245.37. The targets of 1, 3 and 5 points below optimal were not reached.
+- The [cheat sheet](#the-cheat-sheet) below has 8 rules and a table of par values. It scores 243.18 on average, 11.41 below optimal (exact). The best card found with 12 rules scores 243.95. No card the search found came within 9 points of optimal: 30 rules reach 245.31 and 40 rules 245.37.
 - Glenn's published rule lists for a human player score 226.09 under the readings taken here; he reports 218.18.
 - Of 17 pieces of common advice, 9 cost less than half a point each. Three cost more than 9 points: always prefer a lower box, never put fewer than three dice in an upper box, and stop rolling on three of a kind.
 
