@@ -1,0 +1,21 @@
+{
+ "experiment": "mtg-build-BLB",
+ "run": "seed-1",
+ "commit": "9005c6e1a79e4cd08ffe36836337c968852f714c",
+ "platform": "actions",
+ "command": [
+  "python",
+  "-m",
+  "mtg_decks.build",
+  "--set",
+  "BLB",
+  "--out",
+  "OUT"
+ ],
+ "returncode": 0,
+ "seconds": 117.0,
+ "job_id": "44790718317",
+ "hardware": "GitHub Actions 1000101427",
+ "gpu": null,
+ "python": "3.14.4"
+}
