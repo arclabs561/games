@@ -1,6 +1,6 @@
 # FreeCell
 
-Which numbered Microsoft FreeCell deals cannot be won? Among the first 32,000, deal 11982 is the only one lost with the standard four free cells, and 199 are lost with three. Both counts are exact here: every deal is decided at these levels, the two solvers agree wherever both decide, and the counts match the published ones. With fewer free cells, 6,618 deals are lost with two and 25,710 with one, with 1 and 3 deals left undecided. With no free cell, 31,931 are lost. Every number decided here matches the published per-deal list. Of the 31,931 deals lost with no free cell, 18,656 have a short reason that a separate program checks in milliseconds. The rest, and every loss with a free cell, rest on exhaustive search.
+Which numbered Microsoft FreeCell deals cannot be won? Among the first 32,000, deal 11982 is the only one lost with the standard four free cells, and 199 are lost with three. Both counts are exact here: every deal is decided at these levels, the two solvers agree wherever both decide, and the counts match the published ones. With fewer free cells, 6,618 deals are lost with two and 25,710 with one, with 1 and 3 deals undecided, respectively. With no free cell, 31,931 are lost. Every number decided here matches the published per-deal list. Of the 31,931 deals lost with no free cell, 18,656 have a short reason that a separate program checks in milliseconds. Every other loss, with or without free cells, is shown by exhaustive search.
 
 ![Deal 11982 dealt into eight columns, with eight cards shaded: the ace and queen of clubs at the bottom of the fourth column, the ace of spades, three of hearts and six of hearts at the bottom of the second, the four of hearts and queen of spades at the bottom of the third, and the six of spades at the bottom of the sixth.](results/deal-11982.svg)
 
@@ -48,7 +48,7 @@ Four of the eight are decided here, and each agrees with the published list. Dea
 | 20410 | 1 | lost | Solver C and Solver B by layers each list 652,740,362 positions; the ten of spades never moves | lost |
 | 24966 | 1 | undecided | every search ran out of memory | lost |
 | 27708 | 1 | lost | both list 277,578,773 positions; every card moves in some line, and still none wins | lost |
-| 982 | 2 | undecided | every search ran out of memory | lost; Fish (2012) counts 3,095,862,346 positions with Horne's rule |
+| 982 | 2 | undecided | every search ran out of memory | lost; Fish's post of 23 May 2012 counts 3,095,862,346 positions with Horne's rule |
 | 17760 | 2 | won | a line of 136 moves that replays; the search visited 85,327,707 positions | won |
 
 The table with these levels decided:
@@ -102,7 +102,7 @@ How many lost deals each kind explains. Fence sizes are Solver B's positions wit
 
 - **Blocked deals.** The FAQ reports 1,325 deals blocked at the start with no free cell, the first being 1, 23, 25, 28, 46 and 51; 1,325 are found here too. Every blocked deal also has stuck cards, so the stuck-card set explains 18,656 deals. In 88 of them no ace is stuck, but some other card is.
 - **Soundness.** No stuck card is ever moved by Solver B, in any of the 18,656 deals. On small decks the stuck cards are never more than the cards that never move (table below).
-- **No frozen card.** In a fence, the cards that no position ever moves give a short summary of where a deal is stuck. For most lost deals at least one card never moves. It is not so for 14 deals lost with one free cell, 12 with two and one (8927) with three. Every card of such a deal moves in some line, and still no line finishes.
+- **No card that never moves.** In a fence, the cards that no position ever moves give a short summary of where a deal is stuck. For most lost deals at least one card never moves. It is not so for 14 deals lost with one free cell, 12 with two and one (8927) with three. Every card of such a deal moves in some line, and still no line finishes.
 - **What is left to trust.** The fences of the survey were not stored, so the losses in the first table rest on two independent exhaustive searches that agree. `fence.py` checks both solvers' fences on sample deals in the tests.
 
 ## How the results are checked
@@ -155,6 +155,7 @@ Deal n seeds the Microsoft C library's random number generator with n. Its rule 
 - M. Keller, "FreeCell FAQ", solitairelaboratory.com/fcfaq.html. Deal 11982 and the Internet FreeCell Project, and the counts with fewer free cells. It states that every deal except 11982 is solvable.
 - Rosetta Code, "Deal cards for FreeCell"; S. Fish, the fc-solve FAQ (fc-solve.shlomifish.org/faq.html), with the layout of deal 11982 and a partial list of solvers that found no win.
 - S. Fish, "Two Freecell Solvability Report for the First 400,000 Deals", fc-solve.blogspot.com, 2 September 2012. With two free cells, 25,381 of the first 32,000 deals are solved and 6,619 are impossible.
+- S. Fish, ["The 2-Freecell Deal No. 982 Was Slain!!"](https://fc-solve.shlomifish.org/mail-lists/fc-solve-discuss/archive/1043.html), fc-solve-discuss, 23 May 2012. Deal 982 is lost with two free cells; its graph spans 3,095,862,346 positions, some pruned by Horne's rule.
 - T. Pringle, "MicrosoftFreeCell32000-minimal-freecells", github.com/shlomif/MicrosoftFreeCell32000-minimal-freecells, 2016 (MIT license).
 - S. Fish, "Report: The solvability statistics of the Freecell Pro 4-Freecells Deals", fc-solve.shlomifish.org, 2016, updated 2018. It counts 102,075 impossible deals among 8,589,934,591 FreeCell Pro deals.
 - C. Sells, "So You're Saying There's A Chance: FreeCell Game #11982", sellsbrothers.com, 24 October 2026. A Lean proof that 11982 is lost, by a checked fence. It quotes an exhaustive search of 1995 that reached at most two cards home.
@@ -165,14 +166,14 @@ Reproduced here: the deal generator; the published per-deal least numbers of fre
 
 ## Open questions
 
-- **The four open levels.** Deals 13167 and 13599 with one free cell (won in the published list), 24966 with one (lost) and 982 with two (lost) are still undecided. Split into groups, their largest group of positions held more than 32 GB could store. Fish (2012) decided 982 on a machine with 512 GB. A disk-backed table for the largest group, or a finer split of it, could decide them here.
+- **The four open levels.** Deals 13167 and 13599 with one free cell (won in the published list), 24966 with one (lost) and 982 with two (lost) are still undecided. Split into groups, their largest group of positions held more than 32 GB could store. Fish decided 982 in May 2012 on a computer with 512 GB of memory (fc-solve-discuss, 23 May 2012). A disk-backed table for the largest group, or a finer split of it, could decide them here.
 - **A short certificate with free cells.** No proof that 11982 is lost avoids listing positions. Sells (2026) tried counting free places at the moment a stuck card must move; he found that it fails once a column can be emptied. With a free cell, the only certificate here is the fence. A short argument like the stuck-card set would need to bound how long cards can stay in free cells.
-- **Deals with no frozen card.** In 27 lost deals of the survey every card moves in some line, and deal 27708 with one free cell is another. What makes deal 8927 lost with three free cells?
-- **Further deals.** Fish (2012) reports 82,126 deals lost with two free cells among the first 400,000. Pringle and Fish (2018) count 102,075 deals lost with four among all FreeCell Pro deals. Neither is rerun here. A survey of the first million deals with four free cells was started and cancelled before it finished; no result of it is reported.
+- **Deals with no card that never moves.** In 27 lost deals of the survey every card moves in some line, and deal 27708 with one free cell is another. What makes deal 8927 lost with three free cells?
+- **Further deals.** Fish (2012) reports 82,126 deals lost with two free cells among the first 400,000. Fish (2016, updated 2018) counts 102,075 deals lost with four among all FreeCell Pro deals. Neither is rerun here. Is any deal above 32,000 lost with four free cells besides those reported? A survey of the first million deals with four free cells was started and canceled before it finished; no result of it is reported.
 
 ## Usage
 
-The solvers and the survey use only the standard library; Solver B needs a C compiler (`cc`), which `native.py` calls once. Times are from one run on a shared two-core machine.
+The solvers and the survey use only the standard library; Solver B needs a C compiler (`cc`), which `native.py` calls once. Times are from one run on a two-core computer.
 
 ```bash
 uv run python -m freecell.deals 1 11982            # print deals
@@ -181,8 +182,15 @@ uv run python -m freecell.fence 11982 4            # both solvers' fences for 11
 uv run python -m freecell.small                    # small decks, all engines (about 10 min)
 uv run python -m freecell.survey --solver b --start 1 --stop 101 --out runs/   # 100 deals, all levels
 uv run python -m freecell.survey --solver a --levels 3 --deals 982,9499 --out runs/
-uv run python -m freecell.report --a runs/ --b runs/   # writes results/f1.json and results/least_cells.tsv
-uv run python -m freecell.draw                     # writes the two pictures from results/
+uv run python -m freecell.report --a runs/ --b runs/ --out runs/   # a summary of these runs, beside them
+uv run python -m freecell.draw                     # rewrites the two pictures from results/least_cells.tsv
+```
+
+Without `--out`, `freecell.report` writes `results/f1.json` and `results/least_cells.tsv`, the committed summary of the whole survey, so run it that way only on the survey's own records. They are on the branches `compute/F1-b-44619090164`, `compute/F1-b2-44643061114` and `compute/F1-a-44619109023`, under `runs/`. With those folders and `results/runs/`, the report writes the committed files byte for byte:
+
+```bash
+for b in F1-b-44619090164 F1-b2-44643061114 F1-a-44619109023; do git archive origin/compute/$b runs | tar -x -C /tmp; done
+uv run python -m freecell.report --a /tmp/runs/F1-a freecell/results/runs --b /tmp/runs/F1-b /tmp/runs/F1-b2 freecell/results/runs
 ```
 
 The eight undecided levels ran through `freecell.open_levels`, one job per solver and level, on GitHub Actions (runs 44707374026, 44716155623, 44730671526 and 44738412060) and on Hugging Face Jobs (cpu-upgrade, 8 vCPU and 32 GB). Their records are in `results/runs/open-*.jsonl`, and `open_levels summary` writes `results/open_levels.json` from them.
@@ -195,7 +203,7 @@ uv run python -m freecell.open_levels summary                             # writ
 
 Jobs that ran out of memory are reported without numbers. On 16 GB runners: Solver C on 24966 and 982 with whole layers, Solver B by layers on 24966 and 982, and both hunts on 13167 and 13599. On Hugging Face Jobs with 32 GB: Solver C on 24966 and 982 with whole layers and with sublayers, Solver B by layers on 982 (stopped), and the hunt with most cards home first on 13167 and 13599. Solver B's depth-first search with seeds 1, 2 and 3 and a budget of 260 million positions left all four winnable levels undecided (run 44707374026).
 
-The full survey ran on GitHub Actions through `.github/workflows/experiment.yml`. Solver B ran in 20 slices of 1,600 deals, each slice in under 100 minutes; run 44619090164, budget 150 million positions. The 49 deals it left open were run again with safe cards played home and a budget of 260 million (run 44643061114). Solver A ran in 40 slices of 800 deals, each slice in under 110 minutes; run 44619109023, last-search budget 4 million. The files in `results/runs/` come from `--levels` runs of Solver A on this machine for the eight undecided deals, with a last-search budget of 1 to 2 million. A further Solver A search with one free cell for 9499, 13167 and 13599 was stopped after 30 minutes without a verdict.
+The full survey ran on GitHub Actions through `.github/workflows/experiment.yml`. Solver B ran in 20 slices of 1,600 deals, each slice in under 100 minutes; run 44619090164, budget 150 million positions. The 49 deals it left open were run again with safe cards played home and a budget of 260 million (run 44643061114). Solver A ran in 40 slices of 800 deals, each slice in under 110 minutes; run 44619109023, last-search budget 4 million. The files `results/runs/survey-*.jsonl` come from `--levels` runs of Solver A on a two-core computer for the eight undecided deals, with a last-search budget of 1 to 2 million. A further Solver A search with one free cell for 9499, 13167 and 13599 was stopped after 30 minutes without a verdict.
 
 ## Files
 
