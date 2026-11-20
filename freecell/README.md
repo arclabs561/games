@@ -1,6 +1,6 @@
 # FreeCell
 
-Which numbered Microsoft FreeCell deals cannot be won? Among the first 32,000, deal 11982 is the only one lost with the standard four free cells, and 199 are lost with three. Both counts are exact here: two solvers decide every deal at these levels, and they agree with each other and with the published counts. With fewer free cells, 6,618 deals are lost with two and 25,708 with one, with 2 and 6 deals left undecided. With no free cell, 31,931 are lost. Every number decided here matches the published per-deal list. Of the 31,931 deals lost with no free cell, 18,656 have a short reason that a separate program checks in milliseconds. The rest, and every loss with a free cell, rest on exhaustive search.
+Which numbered Microsoft FreeCell deals cannot be won? Among the first 32,000, deal 11982 is the only one lost with the standard four free cells, and 199 are lost with three. Both counts are exact here: every deal is decided at these levels, the two solvers agree wherever both decide, and the counts match the published ones. With fewer free cells, 6,618 deals are lost with two and 25,708 with one, with 2 and 6 deals left undecided. With no free cell, 31,931 are lost. Every number decided here matches the published per-deal list. Of the 31,931 deals lost with no free cell, 18,656 have a short reason that a separate program checks in milliseconds. The rest, and every loss with a free cell, rest on exhaustive search.
 
 ![Deal 11982 dealt into eight columns, with eight cards shaded: the ace and queen of clubs at the bottom of the fourth column, the ace of spades, three of hearts and six of hearts at the bottom of the second, the four of hearts and queen of spades at the bottom of the third, and the six of spades at the bottom of the sixth.](results/deal-11982.svg)
 
@@ -34,7 +34,7 @@ Lost deals among the first 32,000, by the number of free cells. Exact: a win is 
 
 - **Agreement.** Solver A and Solver B decide the least number of free cells for 31,768 deals together, and they agree on every one. They also list the same cards that never move, on each of the 64,386 lost levels that both decide.
 - **The published list.** Theodore Pringle's list gives the least winning number of free cells for each of the 32,000 deals. Solver B's number for each of its 31,986 decided deals equals it. The 69 deals won with no free cell are the FAQ's 69. The deals below 1000 that need all four are the FAQ's eleven.
-- **Undecided.** Eight deals are left undecided at one level, by both solvers, with the same budgets. With one free cell: 9499, 13167 and 13599, which the published list says are won, and 20410, 24966 and 27708, which it says are lost. With two: 982, which Fish (2012) reports lost, and 17760, which the list says is won. Each of the eight is won with one more free cell than its undecided level, by a line that replays.
+- **Undecided.** Eight deals are left undecided at one level by both solvers, within the budgets given under Usage. With one free cell: 9499, 13167 and 13599, which the published list says are won, and 20410, 24966 and 27708, which it says are lost. With two: 982, which Fish (2012) reports lost, and 17760, which the list says is won. Each of the eight is won with one more free cell than its undecided level, by a line that replays.
 
 ## Deal 11982
 
@@ -117,7 +117,7 @@ Deal n seeds the Microsoft C library's random number generator with n. Its rule 
 | Source | What it is | License | Committed |
 |---|---|---|---|
 | Pringle, MicrosoftFreeCell32000-minimal-freecells (GitHub) | The least number of free cells that wins each of the first 32,000 deals | MIT (`data/LICENSE-msfc32k-min-fc`) | yes, unchanged, as `data/msfc32k-min-fc` |
-| FreeCell FAQ (Keller) | The 69 deals won with no free cell and the 11 below 1000 that need four, typed into `report.py` | not stated | as lists of deal numbers |
+| FreeCell FAQ (Keller) | The 69 deals won with no free cell and the 11 below 1000 that need four, typed into `report.py` | unknown; the page states none | as lists of deal numbers |
 | Survey runs on GitHub Actions | One record per deal and level | this repository | on branches `compute/F1-b-44619090164`, `compute/F1-b2-44643061114` and `compute/F1-a-44619109023`; small reruns in `results/runs/` |
 
 ## Sources
@@ -155,7 +155,7 @@ uv run python -m freecell.report --a runs/ --b runs/   # writes results/f1.json 
 uv run python -m freecell.draw                     # writes the two pictures from results/
 ```
 
-The full survey ran on GitHub Actions through `.github/workflows/experiment.yml`. Solver B ran in 20 slices of 1,600 deals, each slice in under 100 minutes; run 44619090164, budget 150 million positions. The 49 deals it left open were run again with safe cards played home and a budget of 260 million (run 44643061114). Solver A ran in 40 slices of 800 deals, each slice in under 110 minutes; run 44619109023, last-search budget 4 million. The files in `results/runs/` come from the `--levels` commands for the eight undecided deals.
+The full survey ran on GitHub Actions through `.github/workflows/experiment.yml`. Solver B ran in 20 slices of 1,600 deals, each slice in under 100 minutes; run 44619090164, budget 150 million positions. The 49 deals it left open were run again with safe cards played home and a budget of 260 million (run 44643061114). Solver A ran in 40 slices of 800 deals, each slice in under 110 minutes; run 44619109023, last-search budget 4 million. The files in `results/runs/` come from `--levels` runs of Solver A on this machine for the eight undecided deals, with a last-search budget of 1 to 2 million. A further Solver A search with one free cell for 9499, 13167 and 13599 was stopped after 30 minutes without a verdict.
 
 ## Files
 
