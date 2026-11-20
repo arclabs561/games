@@ -19,8 +19,8 @@ after its tries gets the fallback: E's best strictly legal clue for one word.
 
 `give` writes `give-<arm>-<seed>.json` (every reply, its reading and the retry) and
 `clues.txt`: one line per arm and seed with the clue each board is played with (the
-fallback substituted), and a line `<arm>-status` with why (ok, retry, or the reason for
-the fallback). The validation job's summary applies the cap rule: an arm whose replies
+fallback substituted), and `status.txt`: a line `<arm>-status` per arm with why (ok,
+retry, or the reason for the fallback). The validation job's summary applies the cap rule: an arm whose replies
 reached the token cap on more than 5% of boards moves to the next cap in the test.
 """
 
@@ -43,6 +43,7 @@ HERE = Path(__file__).parent
 RESULTS = HERE / "results"
 E_LINES = RESULTS / "c12-e.txt"
 CLUES = RESULTS / "c12-clues.txt"
+STATUS = RESULTS / "c12-status.txt"
 GUESSES = RESULTS / "c12-guesses.txt"
 RUNS = RESULTS / "c12-runs.json"
 OUT = RESULTS / "c12.json"
@@ -227,15 +228,16 @@ def give(
         print(arm, seed, s["why"], f"cut {s['cut_share']}", f"${meter.spent:.4f}", flush=True)
         log = out / f"calls-{GIVER}-{arm}.jsonl"
         s["calls"] = c4.call_stats(log) if log.exists() else {"calls": 0}
-    lines = []
+    lines, status = [], []
     for arm, rows in given.items():
         cells = [f"{r['clue']}/{r['count']}" if not r.get("stopped") else "-/stopped" for r in rows]
         lines.append(" ".join([arm, str(seed), *cells]))
-        lines.append(
+        status.append(
             " ".join([f"{arm}-status", str(seed), *(r.get("why", "stopped") for r in rows)])
         )
     text = "\n".join(lines) + "\n"
     (out / "clues.txt").write_text(text)
+    (out / "status.txt").write_text("\n".join(status) + "\n")
     summary["clues_sha256"] = sha256(text)
     summary["spent"], summary["cap"] = meter.spent, meter.cap
     (out / "give.json").write_text(json.dumps(summary, indent=1, sort_keys=True) + "\n")
@@ -379,7 +381,7 @@ def score(clues_path: Path = CLUES, guesses: Path = GUESSES, runs: Path = RUNS) 
 
     text = clues_path.read_text() + E_LINES.read_text()
     g = read_guesses(guesses.read_text())
-    status = read_status(clues_path.read_text())
+    status = read_status(STATUS.read_text())
     arms = ("E", "A0", "A2", "A3")
     ex = exact_values(text, TEST, arms)
     played = {
