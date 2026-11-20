@@ -275,10 +275,20 @@ def described(status: int, headers: dict, body: dict) -> dict:
     }
 
 
+def router_providers(listing: dict) -> list[dict] | None:
+    """The provider entries of one model in the router's listing, whose `data` is the
+    model itself or a list holding it."""
+    data = listing.get("data", listing)
+    if isinstance(data, list):
+        data = data[0] if data else {}
+    found = data.get("providers") if isinstance(data, dict) else None
+    return found if isinstance(found, list) else None
+
+
 def check_one(repo, provider, or_id, extra, auth, token, cap, spent, repeats, results, listings):
     """Read the listings of one model and send its variants; return the new spending."""
     listing = get(f"{ROUTER}/v1/models/{repo}", auth)
-    providers = listing.get("providers") or (listing.get("data") or [{}])[0].get("providers")
+    providers = router_providers(listing)
     endpoints = get(OPENROUTER_ENDPOINTS.format(id=or_id))
     listings[repo] = {
         "router_providers": providers or listing,

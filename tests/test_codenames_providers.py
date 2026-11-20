@@ -5,7 +5,15 @@ import json
 import pytest
 
 from codenames.hosted import served_by
-from codenames.providers import audit, id_shape, linear_fit, main, normalize, variants
+from codenames.providers import (
+    audit,
+    id_shape,
+    linear_fit,
+    main,
+    normalize,
+    router_providers,
+    variants,
+)
 
 
 def test_id_shapes():
@@ -115,3 +123,11 @@ def test_pincheck_variants_name_the_provider_each_way():
     assert v["suffix"]["model"] == "org/m:deepinfra"
     assert v["object"]["provider"] == {"order": ["deepinfra"], "allow_fallbacks": False}
     assert v["object+impossible quantization"]["provider"]["quantizations"] == ["fp32"]
+
+
+def test_router_listing_shapes():
+    entry = {"provider": "deepinfra", "pricing": {"input": 0.1, "output": 0.5}}
+    assert router_providers({"data": {"id": "m", "providers": [entry]}}) == [entry]
+    assert router_providers({"data": [{"id": "m", "providers": [entry]}]}) == [entry]
+    assert router_providers({"id": "m", "providers": [entry]}) == [entry]
+    assert router_providers({"error_text": "HTTPError: 404"}) is None
