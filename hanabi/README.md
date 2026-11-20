@@ -178,6 +178,73 @@ Limits: the prompt was fixed in advance and not tuned; every seat holds the same
 
 Per-game scores, token counts and costs are in `results/h2-runs/`, one folder per run, and `results/h2.json` holds every number above. Every prompt and reply is kept in a private dataset, with the commit that each run used.
 
+## Independent PPO in a two-color game
+
+Plan H4 ([plan](../experiments/plans/H4.md), with two dated amendments) asks whether a larger entropy bonus makes policies trained apart play well together. Forkel et al. (2025) train independent PPO on the full two-player game. They report that an entropy coefficient α of 0.05 instead of 0.01 lifts the mean score of two policies from different training seeds from 15.45 to 24.45 out of 25. One seed takes them more than 40 hours on an L40S. H4 makes the same comparison on a smaller game: two colors with the usual copies of ranks 1 to 5, so 20 cards, two players with hands of 5, 8 tokens and 3 lives. The top score is 10.
+
+**Two engines, one game.** Training and play use JaxMARL's Hanabi (`jaxmarl` 0.2.0). `jax_bridge.py` turns deals and actions of one engine into those of the other. Before any training, JaxMARL played 1,000 games of random legal play on seeded decks and 1,000 on its own deals, and `rules.py` replayed them. The two engines agree on the legal moves at every turn, on the length of every game and on every score. Random play loses its third life in most games. So 1,000 more games of each kind use a player that sees its own cards and plays a card that fits whenever it holds one. All of these games reach the end of the deck, 85% of them score 10, and the engines agree on them too. The test ran on a CPU here and again on the GPU. Every game of the evaluation below, 1,024,000 in all, was replayed in `rules.py` as well, with the same score each time.
+
+**Ceilings.** Of the 2,000 test deals (seeds 400,000 to 401,999), 1,957 reach 10 with every card in view: 97.85%, with a Wilson interval of 97.1% to 98.4% for the share over all deals. Solver A and Solver B agree on every deal. Of the other 43 deals, 37 reach 9 at best, 5 reach 8 and 1 reaches 7. For each of them a line reaching that score was found and the next score was proved out of reach, so every ceiling is exact. The mean ceiling is 9.975. `results/h4-ceilings.json` has the ceiling of each deal.
+
+**Training.** `ippo.py` is JaxMARL's recurrent IPPO baseline, written again. All its settings are the baseline's except three: an LSTM in place of its GRU, λ = 0.9 for the advantage, and an actor loss and entropy bonus averaged over the turns where the agent acts, as Forkel et al. do. Both seats share one network. Each arm trained seeds 1 to 8 side by side on one A10G for 1,525 updates of 1,024 games of 128 steps: 1.999 × 10⁸ steps a seed. Seed s starts from the same random key in both arms, so the two arms start from the same networks. The policies play greedily, each choosing its most likely action, as Forkel et al. evaluate.
+
+| Greedy play, 2,000 deals | α = 0.01 | α = 0.05 | α = 0.05 minus α = 0.01 |
+|---|---:|---:|---:|
+| Cross-play: seeds of one arm, paired with each other | 7.74 (7.52 to 7.96) | 8.86 (8.66 to 9.06) | **1.12 (0.83 to 1.41)** |
+| Self-play: each seed with itself | 8.43 (8.22 to 8.62) | 9.20 (9.07 to 9.33) | 0.77 (0.53 to 1.01) |
+| Self-play minus cross-play | 0.69 (0.48 to 0.95) | 0.34 (0.22 to 0.45) | |
+| Gap to the ceiling, cross-play | 2.24 (2.01 to 2.45) | 1.12 (0.92 to 1.31) | −1.12 (−1.41 to −0.83) |
+| Perfect games, cross-play | 8.7% (5.9 to 12.4) | 32.6% (26.6 to 39.8) | 23.9 points (17.0 to 31.7) |
+| Perfect games, self-play | 17.3% (12.5 to 21.9) | 44.7% (38.3 to 52.0) | 27.4 points (19.6 to 36.1) |
+| Cross-play, interquartile mean of the 56 pairs | 7.72 | 8.86 | |
+| Sampled play, cross-play | 7.68 (7.47 to 7.90) | 8.73 (8.53 to 8.93) | 1.05 (0.76 to 1.34) |
+| Sampled play, self-play | 8.37 (8.17 to 8.56) | 9.09 (8.96 to 9.23) | 0.72 (0.49 to 0.96) |
+
+Cross-play averages the 56 ordered pairs of different seeds of an arm; each pair plays every deal with the first seed in seat 0. Intervals are 95% bootstrap intervals that resample the deals (the same deals for both arms) and, within each arm, its 8 seeds, rebuilding the pairs from the resampled seeds (10,000 resamples, seed 0). They cover the spread of seeds as well as of deals. The first row is the plan's primary metric.
+
+- **The primary result.** With α = 0.05, seeds of one arm score 1.12 points more with each other than with α = 0.01 (0.83 to 1.41), and the interval lies above 0. The larger entropy bonus raises cross-play in the two-color game.
+- **Compatible, but not fully.** The larger bonus also raises self-play, by 0.77 points, so part of the gain is better play in general. At α = 0.05, self-play still beats cross-play by 0.34 points (0.22 to 0.45). That is about half the gap at α = 0.01. Forkel et al. find their gap closed at α = 0.05 (24.48 against 24.45).
+- **Clusters at α = 0.01.** The 16 × 16 matrix (`results/h4.json`) shows that the low-entropy seeds are not all strangers to each other. Seeds 2, 4 and 7 score 8.25 to 8.35 together, nearly as much as with themselves (8.44 to 8.61). With the α = 0.05 seeds they score 5.8 to 7.3. Seeds 3 and 8 of the low-entropy arm average 7.94 and 8.03 with the α = 0.05 seeds; the other six average 6.35 to 7.43. Across the two arms the mean is 7.16 (secondary, no interval).
+- **Distance from the ceiling.** Cross-play at α = 0.05 stays 1.12 points below the ceiling (0.92 to 1.31), and self-play 0.78. Every deal but 43 can reach 10 with the cards in view, so most of that gap comes from play, not from the deal.
+- **Undertrained.** The training curves have not flattened. Over the last 16% of training, the mean score of training games rose by up to 0.31 points for α = 0.01 seeds 4 and 7 and by up to 0.14 for α = 0.05 seeds 2 and 7. Forkel et al. train each seed for 10¹⁰ steps, 50 times as long. The comparison is of policies trained for 2 × 10⁸ steps.
+
+**Behavior.** `h4.py` replays each game in `rules.py` and counts, for each seat, its plays, misplays, discards and hints, the hand slots it plays and discards, and whether a hint is followed by a play of a card it touched. Counts per game below are per seat in greedy self-play.
+
+| Greedy self-play, per seat and game | α = 0.01 (range over seeds) | α = 0.05 (range over seeds) |
+|---|---|---|
+| Color hints, share of hints | 0 to 2.6% | 13.8% to 20.9% |
+| Hints | 4.50 to 4.73 | 4.59 to 4.75 |
+| Plays | 4.59 to 4.96 | 4.80 to 5.02 |
+| Misplays | 0.52 to 0.66 | 0.26 to 0.40 |
+| Discards | 0.87 to 1.34 | 0.66 to 0.97 |
+| Rank hint followed by a play of a touched card | 61% to 76% | 60% to 70% |
+| Color hint followed by a play of a touched card | (few color hints) | 38% to 64% |
+| Plays of the newest card, share of plays | 0 for six seeds; 21% and 20% for seeds 3 and 8 | 20% to 28% |
+
+- **Hints.** At α = 0.01 almost every hint is a rank hint, and about two in three are followed at once by a play of a card they touched. At α = 0.05 one hint in five or six is a color hint. With two colors, a color hint leaves five kinds of card possible and a rank hint two. Policies that explore less may settle on rank hints for that reason. These runs do not test it.
+- **The newest card.** Six of the eight low-entropy seeds never play the card they drew last. Seeds 3 and 8 do, in a fifth of their plays, as every high-entropy seed does. These two are also the low-entropy seeds that play best with the high-entropy arm. This is an observation on 16 policies, not a test.
+- **Discards.** Where a policy discards from varies more between seeds than any other count here, in both arms. At α = 0.05, seed 6 takes 49% of its discards from the oldest slot and seed 7 takes 4%. Yet the two score 8.83 and 8.85 together. Seeds can thus differ in this habit without losing much in cross-play.
+- **Seats.** In both arms the player who moves first gives more hints and, at α = 0.05, the second plays more: 5.12 plays a game against 4.72.
+
+**Comparison, without new runs.** Forkel et al.'s two-player numbers (their Table 1, full game, 4 seeds, scores out of 25) are 24.51 self-play and 15.45 cross-play at α = 0.01, and 24.48 and 24.45 at α = 0.05. Their gap at α = 0.01 is 36% of the top score; here it is 7%. Their higher bonus costs a little self-play; here it adds some. These numbers are not paired with the ones above, since much differs:
+
+- the game;
+- the network: layers of 512 and two LSTM layers there, one LSTM of 128 here;
+- γ: 0.999 there, 0.99 here;
+- the training length.
+
+**Compute.** H4 ran four GPU jobs on Hugging Face `a10g-small` ($1.00 an hour) through `experiments/hfrun.py`. The plan asked for an L4; a first pilot job waited 70 minutes for one and was cancelled before it started, at no cost. Each arm's job took about 58 minutes from creation to finish. Of these, 41 to 43 seconds went to cloning, installing the `hanabi-jax` group (JAX and its CUDA libraries) and uploading, about 8 seconds to imports, and 69 to 77 seconds to compiling the training step. Eight seeds then trained at 481,000 steps a second, 10.9 seconds for each 5 updates, for about 55 minutes. Setup and compilation are thus about 4% of a job. The evaluation played 1,024,000 games in 43 seconds and then replayed them in `rules.py`; its job took 4.3 minutes. The pilot, the two arms and the evaluation cost $2.21 in all, against a cap of $6.40 (`results/h4-jobs.json`). The 16 policies, their training curves and every game's actions are in the private dataset `arclabs561/games-runs` under `runs/h4/`. `results/h4.json` is the summary that the evaluation job wrote, copied from there and checked against its SHA-256.
+
+**Departures from the plan**, all recorded in its amendments before the runs they affect:
+
+- The A10G replaces the L4, and the timeouts are shorter, so that the worst case stays under the cap.
+- JaxMARL's baseline file is not in the package and does not run as written at v0.2.0, so `ippo.py` writes the algorithm again.
+- The actor loss and the entropy bonus are averaged over the turns where the agent acts, as Forkel et al. do. In the baseline, the seat whose turn it is not halves both with two players.
+- The pilot trained seeds 0 and 9 to 15 with α = 0.01 for 2 × 10⁷ steps and was scored on deals 500,000 to 501,999. It is exploratory. Its policies reached 5.1 to 5.9 points and scored 5.32 in cross-play and 5.46 in self-play.
+- The agreement test adds the careful random games. The summary in git holds aggregates, the matrix, the behavior counts and the curves; the per-game scores stay in the private dataset.
+
+Limits: one game and one reading of the baseline, with a smaller network and far fewer steps than Forkel et al.; one network shared by both seats, so a policy always meets a copy of itself in self-play and its own seat habits in both seats; 8 seeds an arm; and greedy play, which the plan fixes.
+
 ## Checks
 
 - The rules engine has tests for each rule above, including the extra round after the last card and the score of 0 on the third life.
@@ -187,6 +254,8 @@ Per-game scores, token counts and costs are in `results/h2-runs/`, one folder pe
 - Solver B (`dfs_solver.py`) agrees with brute force on every deal of the four smaller decks, with and without its bounds, and with `winnable` on every deal of the decks in the table. The two new certificates never hold for a won deal there. A test checks greedy scheduling against an exhaustive search of the schedule on 200 random deals.
 - On the full game, Solver A and Solver B give the same verdict on every one of the 79,396 deals both decide (plan H1, below). Every win of either solver is replayed by the rules engine.
 - The constraint model of `solver_cp.py` agrees with brute force on every deal of three small decks (540 deals); a test checks some of them when OR-Tools is installed.
+- JaxMARL's two-color game and `rules.py` agree on legal moves, game length and score in 4,000 random games (`tests/test_hanabi_jax.py`), and on the score of each of the 1,024,000 games of plan H4's evaluation. Action numbers convert both ways for two to four players. A tiny training run, its evaluation and its summary run end to end on a CPU in the tests.
+- The bootstrap of plan H4 is checked on matrices with known answers. The committed ceilings of the H4 test deals match a fresh solve on a sample of them.
 
 The two solvers share the rules engine, so a bug there would fool both. The rules engine has its own tests, and the information strategy matches HanSim game by game, which checks the rules from outside.
 
@@ -195,6 +264,8 @@ The two solvers share the rules engine, so a bug there would fool both. The rule
 - Settle the 23 deals still undecided (listed above). No certificate here proves any of them lost, and 13 are won in the free-order game, so many may be won; a search guided by the free-order game's winning line might find a real one.
 - The free-order game drops tokens. No full deal here is lost to tokens alone, but some small decks are: with three players, hands of one card and one token, 24 of the 180 orderings of a four-card deck are lost though the free-order game wins them.
 - The best real (not open-information) score for each deal is unknown; Endgame-Analyzer on [git.abstractnonsen.se](https://git.abstractnonsen.se/Hanabi/Endgame-Analyzer) solves the case where players know their own cards but not the deck, for endgames.
+- Plan H4's policies were still improving when training stopped. Whether the gap between self-play and cross-play at α = 0.05 closes with more steps, as in Forkel et al., is open; 10⁹ steps a seed would take about 4.6 hours an arm on an A10G at the speed measured.
+- Whether playing the newest card is the habit that separates the clusters of low-entropy seeds could be tested by forcing or forbidding it in one policy and replaying the cross-play games.
 
 ## Usage
 
@@ -222,6 +293,18 @@ uv run python -m hanabi.h2 report --runs hanabi/results/h2-runs --out hanabi/res
 
 `h2 play` needs `HF_TOKEN` and network access to Hugging Face; the runs above were launched with `experiments/hfrun.py` on Hugging Face Jobs. `h2 report` runs here in a few seconds.
 
+Plan H4 needs the `hanabi` group (JAX, Flax, Optax and JaxMARL; CPU builds) and, on a GPU, `hanabi-jax`, which adds JAX's CUDA libraries:
+
+```bash
+uv run --group hanabi python -m hanabi.jax_bridge --games 1000     # the agreement test, about 1 min
+uv run --group hanabi python -m hanabi.ippo smoke                  # a tiny run of everything, about 1 min
+uv run python -m hanabi.h4 ceilings                                 # the ceilings of the test deals, 20 s
+# on a GPU (the runs used hfrun.py with GROUP=hanabi-jax on an a10g-small)
+uv run --group hanabi-jax python -m hanabi.ippo train --ent-coef 0.05 --seeds 1-8 --steps 2e8 --deadline-minutes 95 --out OUT
+uv run --group hanabi-jax python -m hanabi.ippo evaluate --runs hf:runs/h4/arm-0.01 hf:runs/h4/arm-0.05 --deals 400000-401999 --out OUT
+uv run python -m hanabi.h4 check hanabi/results/h4.json <sha256>    # the copied summary matches the job's
+```
+
 ## Files
 
 | File | Contents |
@@ -240,6 +323,11 @@ uv run python -m hanabi.h2 report --runs hanabi/results/h2-runs --out hanabi/res
 | `hosted.py` | Hosted models through Inference Providers, with retries and a cost meter |
 | `h2.py` | Experiment H2: plays the games and writes the report |
 | `results/` | `h2.json` and the per-game summaries of each H2 run |
+| `jax_bridge.py` | JaxMARL's Hanabi beside `rules.py`: deals, action numbers, replay, and the agreement test |
+| `ippo.py` | Plan H4: recurrent IPPO in JaxMARL, training several seeds at once, and the evaluation of every pair |
+| `h4.py` | Plan H4: ceilings of the test deals, replay of every game, behavior counts and the paired bootstrap |
+| `results/h4.json` | Plan H4: every number of its README section, the 16 × 16 matrices, behavior per policy and training curves |
+| `results/h4-ceilings.json`, `results/h4-jobs.json` | The ceiling of each H4 test deal; the H4 jobs, their times and costs |
 
 ## Sources
 
@@ -249,6 +337,7 @@ uv run python -m hanabi.h2 report --runs hanabi/results/h2-runs --out hanabi/res
 - B. Bouzy, "Playing Hanabi Near-Optimally", *Advances in Computer Games*, 2017. He relaxes the hint rule (a hint may touch no card) and reports 24.74 for his "hat information" player with five players and 81.30% perfect games, and 92% perfect games with a depth-one search.
 - N. Bard et al., "The Hanabi Challenge: A New Frontier for AI Research", *Artificial Intelligence* 280, 2020 (arXiv:1902.00506).
 - H. Hu, J. Foerster, "Simplified Action Decoder for Deep Multi-Agent Reinforcement Learning", ICLR 2020; A. Lerer, H. Hu, J. Foerster, N. Brown, "Improving Policies via Search in Cooperative Partially Observable Games", AAAI 2020; H. Hu et al., "Off-Belief Learning", ICML 2021.
-- J. Forkel, C. Ruhdorfer, M. Beukman, A. Bulling, J. Foerster, "High entropy leads to symmetry-equivariant policies in Dec-POMDPs", arXiv:2511.22581, Table 1.
+- J. Forkel, C. Ruhdorfer, M. Beukman, A. Bulling, J. Foerster, "High entropy leads to symmetry-equivariant policies in Dec-POMDPs", arXiv:2511.22581 (v5, 2026-05-05): Table 1, and Appendix F for their settings.
 - M. Ramesh et al., "Sparks of Cooperative Reasoning: LLMs as Strategic Hanabi Agents", arXiv:2601.18077; F. Liang et al., "LLM-Hanabi", arXiv:2510.04980; T. Dizdarević et al., "Ad-Hoc Human-AI Coordination Challenge", arXiv:2506.21490.
 - W. D. Harvey, M. L. Ginsberg, "Limited Discrepancy Search", IJCAI 1995.
+- A. Rutherford et al., "JaxMARL: Multi-Agent RL Environments and Algorithms in JAX", NeurIPS 2024 Datasets and Benchmarks; `jaxmarl` 0.2.0 (Apache 2.0). `ippo.py` writes again the algorithm of its `baselines/IPPO/ippo_rnn_hanabi.py`, which builds on PureJaxRL (C. Lu et al., "Discovered Policy Optimisation", NeurIPS 2022); both are under Apache 2.0.

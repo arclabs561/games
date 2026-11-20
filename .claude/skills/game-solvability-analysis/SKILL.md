@@ -1,12 +1,13 @@
 ---
 name: "game-solvability-analysis"
-description: "Method for proving and counting which states of a small card or number game are unsolvable, with exact counts, invariants, certificates and machine-checked lemmas."
+description: "Method for exact answers about games: which states are unsolvable or optimal, with exact counts, invariants, certificates, two independent solvers and machine-checked lemmas, plus techniques for dice, solitaire, hidden-information and symmetry problems."
 ---
 
 # Game solvability analysis
 
-Worked out on the card game Erase (make 10 with +, −, ×). The same method fits other
-"make a target from these numbers" games (24, Make 10, Krypto, Countdown).
+Worked out on the card game Erase (make 10 with +, −, ×), and since applied to every game in
+this repository. Sections 1 to 8 are the Erase method; section 9 gives the techniques that
+other kinds of games needed, and section 10 the mistakes made along the way.
 
 ## 1. Pin down the rules
 
@@ -111,8 +112,8 @@ Worked out on the card game Erase (make 10 with +, −, ×). The same method fit
 - Standard-library solver and counter; z3 scripts separate and optional.
 - ruff check and format, pytest smoke tests (a dead deal, a cleared deal with its groups
   re-evaluated, the exception, a slice of freshly generated certificates through the checker).
-- README humble and dry: rules as modeled, results, how each result is checked, usage with
-  timings, files table.
+- README shape: see the `results-readme` skill (findings first, a results table that says how
+  each number is known, a picture of the game).
 - One commit on a feature branch; amend rather than stack while the PR is unpublished.
 - Code a notebook relies on lives in a module that both the notebook and the tests import;
   tests that execute notebook cells break silently when a cell is renamed.
@@ -138,3 +139,52 @@ solver, and compare with the text:
 - The facts quoted about related games, recomputed where a short script can do it (how many
   solvable sets need a fraction, whether distinct digits always work), and checked against
   their sources otherwise.
+## 9. Other kinds of games
+
+- **Dice and other chance solitaire** (Yahtzee, Tenzi, Peggle's stopping rules): dynamic
+  programming over states reduced by symmetry, such as dice as multisets, open boxes as a
+  set and the upper total capped at the bonus.
+  - Give the whole distribution, not only the mean.
+  - Price each rule by solving again without it.
+  - Check against the published value (Yahtzee 254.5896), in exact fractions where it is
+    feasible, as Kelly and Liese did.
+  - Error rates of a stopping rule come exactly from a dynamic program over (games, wins),
+    not from simulation.
+- **Solitaire search** (FreeCell):
+  - Reproduce the published deal generator exactly, and check it against published layouts.
+  - Hash a canonical form of the state, and keep a transposition table.
+  - Allow only automatic moves that are proved never to lose.
+  - Check a second, independently written solver on decks with fewer ranks or suits, where
+    brute force decides every deal.
+  - A lost deal gets a checkable reason where one exists.
+- **Hidden information, cooperation** (Hanabi): the open-hand optimum on a deal bounds every
+  convention from above, so it is the ceiling to report scores against.
+  - Below the maximum, emit a certificate per deal.
+  - Report deals where the solver gave up as undecided, never as lost.
+- **Counting up to symmetry** (Drive Ya Nuts, Spot It):
+  - Burnside's lemma, weighted by any statistic that is constant on orbits.
+  - Check it against direct orbit listing on smaller sizes. Also check that every weighted
+    sum is divisible by the group's order.
+  - Say which symmetries are counted, such as rotation, relabeling and reflection.
+- **Equilibria and optimization** (Pokémon type chart, EV Nova trade routes):
+  - Solve linear programs in floats, then verify the solution in exact rationals.
+  - Treat best routes as maximum-ratio cycles. Check any published route against the solver.
+- **Termination** (Egyptian Ratscrew, beggar-my-neighbour): detect cycles in the full state.
+  Look up current results before claiming an open problem: the beggar-my-neighbour question
+  was settled by Casella et al. in 2024.
+- **What can appear at all** (Boggle):
+  - A word is possible exactly when its faces can be matched to distinct cubes.
+  - Build a witness board for each possible word, and run the solver on it.
+  - Chances of an exact board come from a permanent of face counts (Ryser's formula).
+
+## 10. Mistakes made here
+
+- A critique's script mirrored the Drive Ya Nuts pieces and reported a wrong mean. Rerun any
+  objection on the original definitions before acting on it.
+- Task briefs carried errors: a wrong co-author, a wrong parameter value, and "every state
+  ends", which is false for Ratscrew. Check a brief's factual claims against primary sources,
+  as against any other source.
+- Simulations meant as independent checks shared their seeds, which made them one check. See
+  the `preregistered-experiments` skill.
+- A guess on Math StackExchange about which symmetries fix a set was wrong, and the exact
+  count showed it. A published or posted claim is evidence, not proof.

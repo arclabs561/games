@@ -181,7 +181,7 @@ With $n$ players who roll together, the game ends on the first turn on which som
   caption: [A race in which the face is named first, exact, against the slides @slides. The slides label each row with the number of other players. Their race means count the first roll, unlike their single-player mean. With switching, the winning turn comes about one turn sooner: 11.68 for two players and 5.89 for thirty.],
 ) <tab-race>
 
-The slides' figures differ from the exact ones by up to 0.1 turns and 0.05 players, as a simulation would. A seeded simulation of 20,000 races of four players gives $10.515 plus.minus 0.041$, $0.107 plus.minus 0.004$ and $1.208 plus.minus 0.013$, against the exact 10.542, 0.103 and 1.216.
+The slides' figures differ from the exact ones by up to 0.1 turns and 0.05 players, as a simulation would. A seeded simulation of 20,000 races of four players gives $10.506 plus.minus 0.041$, $0.107 plus.minus 0.004$ and $1.214 plus.minus 0.013$, against the exact 10.542, 0.103 and 1.216.
 
 = The best strategy
 
@@ -219,12 +219,12 @@ A strategy that is best for every deadline is best for any race. Suppose the oth
     table.hline(),
     [strategy], [exact mean], [simulated mean (95% interval)],
     table.hline(stroke: 0.5pt),
-    [face named first], [16.565], [16.535 ± 0.042],
-    [fixed face], [15.349], [15.319 ± 0.042],
-    [switching], [15.294], [15.255 ± 0.042],
+    [face named first], [16.565], [16.556 ± 0.042],
+    [fixed face], [15.349], [15.363 ± 0.042],
+    [switching], [15.294], [15.278 ± 0.042],
     table.hline(),
   ),
-  caption: [Exact means and simulated ones; each exact mean lies inside its simulated interval. Game $i$ of each simulation is seeded with $i$.],
+  caption: [Exact means and simulated ones; each exact mean lies inside its simulated interval. Each simulation draws its games from its own generator, seeded with 1, 2 and 3, so the three share no random numbers and are independent checks.],
 ) <tab-checks>
 
 The tests check that each distribution sums to 1 within $10^(-12)$, that its mean agrees with the value from the equations above, that the committed `turns.csv` matches what the script writes, that the race agrees with a seeded simulation of 3,000 races, that policy iteration agrees with value iteration on small games, and that the deadline program agrees with brute force on small games and gives switching's own chances for ten dice. They check the Fourier identity of @sec-harmonic to 30 digits for 10, 20 and 50 dice, and every number quoted from it.

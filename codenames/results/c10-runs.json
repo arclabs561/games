@@ -1,0 +1,164 @@
+{
+ "plan": "experiments/plans/C10.md",
+ "cap": 1.5,
+ "how_known": "each job's cost meter (codenames/hosted.py): the tokens each provider reported times the price the router listed when the job started; no provider reported a cost. For the two failed jobs, the sum of the logged calls' costs; at most 17 calls each were in flight and not logged, at most $0.00018 each",
+ "runs": [
+  {
+   "run": "pilot",
+   "job_id": "6aff489eefaf5e14f4b1e55e",
+   "commit": "0360fba010b688bf16d01a053e5f492e9e107aa5",
+   "cap": 0.05,
+   "spent": 0.00466,
+   "seconds": 190.0,
+   "what": "listen and speak on the 5 boards of seed 9999; not scored"
+  },
+  {
+   "run": "c4-val-prefixes",
+   "job_id": "6aff48a04fdc5ab3c55a2a7a",
+   "commit": "0360fba010b688bf16d01a053e5f492e9e107aa5",
+   "cap": 0.0,
+   "spent": 0.0,
+   "seconds": 5.7,
+   "what": "C4's stored replies read with the tail rule; no model calls"
+  },
+  {
+   "run": "val-0-50",
+   "job_id": "6aff49b3efaf5e14f4b1e732",
+   "commit": "9d9a8c3c72cc0df640478abc715cd28562720237",
+   "cap": 0.15,
+   "spent": 0.058617,
+   "seconds": 1799.5,
+   "what": "listener, validation boards 0 to 49 with K = 20, and the repeat check"
+  },
+  {
+   "run": "val-50-100",
+   "job_id": "6aff49b5efaf5e14f4b1e73b",
+   "commit": "9d9a8c3c72cc0df640478abc715cd28562720237",
+   "cap": 0.15,
+   "spent": 0.04065,
+   "seconds": 1192.0,
+   "what": "listener, validation boards 50 to 99 with K = 20"
+  },
+  {
+   "run": "test-0-50 (failed)",
+   "job_id": "6aff524a4fdc5ab3c55a3d8e",
+   "commit": "292b87500b80c557f725d2d14659de843ae95cf1",
+   "cap": 0.1,
+   "spent": 0.0,
+   "seconds": null,
+   "what": "failed while cloning: no space left on the job's disk; no calls"
+  },
+  {
+   "run": "test-50-100 (failed)",
+   "job_id": "6aff524cefaf5e14f4b1f941",
+   "commit": "292b87500b80c557f725d2d14659de843ae95cf1",
+   "cap": 0.1,
+   "spent": 0.009855,
+   "seconds": 809.5,
+   "what": "failed writing its log (no space left) after 312 logged calls; not read, not scored; the cost is that of the logged calls"
+  },
+  {
+   "run": "test-100-150 (failed)",
+   "job_id": "6aff524e4fdc5ab3c55a3d90",
+   "commit": "292b87500b80c557f725d2d14659de843ae95cf1",
+   "cap": 0.1,
+   "spent": 0.003118,
+   "seconds": 302.0,
+   "what": "failed writing its log (no space left) after 105 logged calls; not read, not scored; the cost is that of the logged calls"
+  },
+  {
+   "run": "test-0-50",
+   "job_id": "6aff5c184fdc5ab3c55a48f7",
+   "commit": "292b87500b80c557f725d2d14659de843ae95cf1",
+   "cap": 0.1,
+   "spent": 0.017693,
+   "seconds": 1618.3,
+   "what": "listener, test boards 0 to 49, K = 10"
+  },
+  {
+   "run": "test-50-100-rerun",
+   "job_id": "6aff5e804fdc5ab3c55a4be2",
+   "commit": "292b87500b80c557f725d2d14659de843ae95cf1",
+   "cap": 0.1,
+   "spent": 0.020618,
+   "seconds": 1651.7,
+   "what": "listener, test boards 50 to 99, K = 10"
+  },
+  {
+   "run": "test-100-150-rerun",
+   "job_id": "6aff650d4fdc5ab3c55a534c",
+   "commit": "292b87500b80c557f725d2d14659de843ae95cf1",
+   "cap": 0.1,
+   "spent": 0.01972,
+   "seconds": 1470.9,
+   "what": "listener, test boards 100 to 149, K = 10"
+  },
+  {
+   "run": "test-150-200",
+   "job_id": "6aff5519efaf5e14f4b1fc03",
+   "commit": "292b87500b80c557f725d2d14659de843ae95cf1",
+   "cap": 0.1,
+   "spent": 0.017834,
+   "seconds": 1657.7,
+   "what": "listener, test boards 150 to 199, K = 10"
+  },
+  {
+   "run": "test-200-250",
+   "job_id": "6aff551b4fdc5ab3c55a408b",
+   "commit": "292b87500b80c557f725d2d14659de843ae95cf1",
+   "cap": 0.1,
+   "spent": 0.020266,
+   "seconds": 1627.1,
+   "what": "listener, test boards 200 to 249, K = 10"
+  },
+  {
+   "run": "test-250-300",
+   "job_id": "6aff6780efaf5e14f4b214ae",
+   "commit": "292b87500b80c557f725d2d14659de843ae95cf1",
+   "cap": 0.1,
+   "spent": 0.020976,
+   "seconds": 1502.0,
+   "what": "listener, test boards 250 to 299, K = 10"
+  },
+  {
+   "run": "test-speak",
+   "job_id": "6aff6c36efaf5e14f4b21acf",
+   "commit": "292b87500b80c557f725d2d14659de843ae95cf1",
+   "cap": 0.05,
+   "spent": 0.012282,
+   "seconds": 707.4,
+   "what": "S: gpt-oss-120b chooses among the 10 kept clues, 300 test boards"
+  },
+  {
+   "run": "test-choose-qwen",
+   "job_id": "6aff6e2eefaf5e14f4b21c6b",
+   "commit": "292b87500b80c557f725d2d14659de843ae95cf1",
+   "cap": 0.05,
+   "spent": 0.032842,
+   "seconds": 47.0,
+   "what": "C: Qwen3.8-27B chooses among the 30 clues, 300 test boards"
+  },
+  {
+   "run": "failed-run-costs",
+   "job_id": "6aff6e5eefaf5e14f4b21cbe",
+   "commit": null,
+   "cap": 0.0,
+   "spent": 0.0,
+   "seconds": null,
+   "what": "an inline script that summed the logged costs of the two failed jobs that made calls; no model calls"
+  },
+  {
+   "run": "crossguess-llama-deepseek",
+   "job_id": "6aff70e54fdc5ab3c55a6070",
+   "commit": "3e103e7f945102c6fb19ca3afdb78b62844ed70f",
+   "cap": 0.3,
+   "spent": 0.084681,
+   "seconds": 402.5,
+   "what": "Llama 3.3 and DeepSeek-V3.2 guess once on each distinct clue of the six arms (1,217 per guesser)"
+  }
+ ],
+ "model_calls": 0.363812,
+ "model_calls_upper_bound": 0.369932,
+ "cpu_basic_hours": 4.45,
+ "cpu_note": "the modules' run times plus about a minute of setup per job; at about $0.01 an hour, the rate C4 and C6 used, about $0.05"
+}

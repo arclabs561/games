@@ -10,13 +10,14 @@
 Typst Universe packages are published from the GitHub monorepo typst/packages,
 so the exact files the registry serves can be fetched with git instead:
 
-    uv run typst_vendor.py erase.typ          # vendor every @preview import, then compile erase.pdf
-    uv run typst_vendor.py erase.typ --png    # also render one PNG per page
-    uv run typst_vendor.py erase.typ --all    # also erase-phone.pdf and erase.html
+    uv run tools/typst_vendor.py erase/paper/erase.typ          # vendor every @preview import, then compile the PDF
+    uv run tools/typst_vendor.py erase/paper/erase.typ --png    # also render one PNG per page
+    uv run tools/typst_vendor.py erase/paper/erase.typ --all    # also the phone PDF and the HTML page
 
-With network access to the registry, plain `typst compile --ignore-system-fonts
---font-path fonts erase.typ` gives the same PDF; add `--input edition=phone` for the phone
-edition, or `--features html --format html` for HTML.
+Every paper in the repository is built with it. Fonts come only from Typst's own set and
+from a fonts/ folder beside the document. With network access to the registry, plain
+`typst compile --ignore-system-fonts --font-path <dir>/fonts <doc>.typ` gives the same PDF;
+add `--input edition=phone` for the phone edition, or `--features html --format html` for HTML.
 
 It scans the document for "@preview/name:version" imports, sparse-checks-out just
 those package directories, scans them for their own imports (recursively), and

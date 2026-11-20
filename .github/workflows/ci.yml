@@ -27,7 +27,7 @@ jobs:
           python-version: ${{ matrix.python }}
       - name: Install the locked environment
         # The CUDA build of torch (codenames-gpu) is for Hugging Face Jobs only.
-        run: uv sync --locked --all-groups --no-group codenames-gpu
+        run: uv sync --locked --all-groups --no-group codenames-gpu --no-group hanabi-jax
       - name: Lint
         run: uv run ruff check
       - name: Format check
@@ -57,8 +57,8 @@ jobs:
           python-version: "3.14"
       - name: Rebuild the PDFs
         run: |
-          uv run erase/paper/typst_vendor.py erase/paper/erase.typ --all
-          uv run erase/paper/typst_vendor.py peggle/peggle.typ
-          uv run erase/paper/typst_vendor.py tenzi/tenzi.typ
+          uv run tools/typst_vendor.py erase/paper/erase.typ --all
+          uv run tools/typst_vendor.py peggle/peggle.typ
+          uv run tools/typst_vendor.py tenzi/tenzi.typ
       - name: The committed PDFs are current
         run: git diff --exit-code --stat -- '*.pdf'

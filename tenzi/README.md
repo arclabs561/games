@@ -47,7 +47,7 @@ A race rewards finishing by the turn the others finish, which a lower mean does 
 
 ## Checks
 
-Each exact mean lies inside the 95% interval of a seeded simulation of 100,000 games (16.535 ± 0.042 with the face named first). A simulation of 20,000 races of four players agrees too: 10.515 ± 0.041 for the winning turn, 0.107 ± 0.004 for a tie and 1.208 ± 0.013 for players with one die left.
+Each exact mean lies inside the 95% interval of a seeded simulation of 100,000 games: 16.556 ± 0.042 with the face named first (exact 16.565), 15.363 ± 0.042 with the fixed face (15.349) and 15.278 ± 0.042 with switching (15.294). A simulation of 20,000 races of four players with the face named first agrees too: 10.506 ± 0.041 for the winning turn (10.542), 0.107 ± 0.004 for a tie (0.103) and 1.214 ± 0.013 for players with one die left (1.216). Each simulation draws its games from its own generator, with seeds 1 to 5 in `tenzi.SEEDS`, so the simulations share no random numbers and are independent checks.
 
 ## Files
 
@@ -61,5 +61,5 @@ uv run python -m tenzi.tenzi
 uv run python -m tenzi.optimal
 uv run python -m tenzi.maximum
 uv run --group tenzi python -m tenzi.tenzi --plot   # also a histogram with a fitted gamma density
-uv run erase/paper/typst_vendor.py tenzi/tenzi.typ    # rebuilds tenzi.pdf
+uv run tools/typst_vendor.py tenzi/tenzi.typ    # rebuilds tenzi.pdf
 ```

@@ -53,7 +53,17 @@ ev_nova = [
     "numpy>=2.5",
 ]
 hanabi = [
+    "flax>=0.12",
     "huggingface-hub>=2.4",
+    "jax>=0.11",
+    "jaxmarl==0.2.0",
+    "numpy>=2.5",
+    "optax>=0.2",
+]
+# JAX with its CUDA libraries, for the GPU jobs of plan H4 (hanabi/ippo.py).
+hanabi-jax = [
+    { include-group = "hanabi" },
+    "jax[cuda12]>=0.11",
 ]
 egyptian_ratscrew = [
     "matplotlib>=3.11",

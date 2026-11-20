@@ -87,3 +87,191 @@ waldwolfowitz:
     issue: 3
   serial-number:
     doi: 10.1214/aoms/1177730197
+readme:
+  type: web
+  title: Peggle Deluxe Readme
+  author: PopCap Games
+  date: 2008
+  url: https://web.archive.org/web/20100511044925/www.popcap.com/faq/peggle/1033/pc/readme.html
+wiki:
+  type: web
+  title: Duel mode
+  organization: Peggle Wiki (Fandom)
+  url: https://peggle.fandom.com/wiki/Duel_mode
+windowscentral:
+  type: article
+  title: Peggle 2 – Hands on with the new 'Duels mode' on the Xbox One
+  author: Acevedo, Paul
+  date: 2014-03-06
+  parent:
+    type: periodical
+    title: Windows Central
+  url: https://www.windowscentral.com/peggle-2-duels-mode-and-xbox-360-announced
+bayes:
+  type: article
+  title: An essay towards solving a problem in the doctrine of chances
+  author: Bayes, Thomas
+  date: 1763
+  page-range: 370-418
+  parent:
+    type: periodical
+    title: Philosophical Transactions of the Royal Society of London
+    volume: 53
+stigler:
+  type: article
+  title: Thomas Bayes's Bayesian inference
+  author: Stigler, Stephen M.
+  date: 1982
+  page-range: 250-258
+  parent:
+    type: periodical
+    title: Journal of the Royal Statistical Society, Series A
+    volume: 145
+    issue: 2
+  serial-number:
+    doi: 10.2307/2981538
+polya:
+  type: article
+  title: Über die Statistik verketteter Vorgänge
+  author:
+    - Eggenberger, Florian
+    - Pólya, Georg
+  date: 1923
+  page-range: 279-289
+  parent:
+    type: periodical
+    title: Zeitschrift für Angewandte Mathematik und Mechanik
+    volume: 3
+    issue: 4
+  serial-number:
+    doi: 10.1002/zamm.19230030407
+jeffreys:
+  type: article
+  title: An invariant form for the prior probability in estimation problems
+  author: Jeffreys, Harold
+  date: 1946
+  page-range: 453-461
+  parent:
+    type: periodical
+    title: Proceedings of the Royal Society of London, Series A
+    volume: 186
+els:
+  type: article
+  title: Bayesian statistical inference for psychological research
+  author:
+    - Edwards, Ward
+    - Lindman, Harold
+    - Savage, Leonard J.
+  date: 1963
+  page-range: 193-242
+  parent:
+    type: periodical
+    title: Psychological Review
+    volume: 70
+    issue: 3
+  serial-number:
+    doi: 10.1037/h0044139
+lindley:
+  type: article
+  title: A statistical paradox
+  author: Lindley, D. V.
+  date: 1957
+  page-range: 187-192
+  parent:
+    type: periodical
+    title: Biometrika
+    volume: 44
+kieferweiss:
+  type: article
+  title: Some properties of generalized sequential probability ratio tests
+  author:
+    - Kiefer, J.
+    - Weiss, Lionel
+  date: 1957
+  page-range: 57-74
+  parent:
+    type: periodical
+    title: The Annals of Mathematical Statistics
+    volume: 28
+    issue: 1
+  serial-number:
+    doi: 10.1214/aoms/1177707037
+weiss:
+  type: article
+  title: On sequential tests which minimize the maximum expected sample size
+  author: Weiss, Lionel
+  date: 1962
+  page-range: 551-566
+  parent:
+    type: periodical
+    title: Journal of the American Statistical Association
+    volume: 57
+  serial-number:
+    doi: 10.1080/01621459.1962.10500543
+elo:
+  type: book
+  title: The Rating of Chessplayers, Past and Present
+  author: Elo, Arpad E.
+  date: 1978
+  publisher: Arco
+  location: New York
+bradleyterry:
+  type: article
+  title: "Rank analysis of incomplete block designs: I. The method of paired comparisons"
+  author:
+    - Bradley, Ralph Allan
+    - Terry, Milton E.
+  date: 1952
+  page-range: 324-345
+  parent:
+    type: periodical
+    title: Biometrika
+    volume: 39
+glickmanjones:
+  type: article
+  title: Rating the chess rating system
+  author:
+    - Glickman, Mark E.
+    - Jones, Albyn C.
+  date: 1999
+  page-range: 21-28
+  parent:
+    type: periodical
+    title: Chance
+    volume: 12
+    issue: 2
+davidsonbeaver:
+  type: article
+  title: On extending the Bradley–Terry model to incorporate within-pair order effects
+  author:
+    - Davidson, Roger R.
+    - Beaver, Robert J.
+  date: 1977
+  page-range: 693-702
+  parent:
+    type: periodical
+    title: Biometrics
+    volume: 33
+glickman:
+  type: article
+  title: Parameter estimation in large dynamic paired comparison experiments
+  author: Glickman, Mark E.
+  date: 1999
+  page-range: 377-394
+  parent:
+    type: periodical
+    title: Journal of the Royal Statistical Society, Series C (Applied Statistics)
+    volume: 48
+hoeffding:
+  type: article
+  title: On the distribution of the number of successes in independent trials
+  author: Hoeffding, Wassily
+  date: 1956
+  page-range: 713-721
+  parent:
+    type: periodical
+    title: The Annals of Mathematical Statistics
+    volume: 27
+    issue: 3
+  serial-number:
+    doi: 10.1214/aoms/1177728178
