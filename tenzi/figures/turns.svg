@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="630" height="360" viewBox="0 0 630 360" role="img" font-family="Helvetica, Arial, sans-serif">
+<title>The chance that a game of Tenzi ends on each turn, for three rules</title>
+<desc>Three exact distributions over turns 1 to 50. Keeping the most common face and switching to a larger group both peak at turn 12; naming the face before the first roll shifts the curve later. Means: 15.35, 15.29 and 16.56 turns.</desc>
+<rect width="630" height="360" fill="#ffffff"/>
+<line x1="60" y1="310" x2="600" y2="310" stroke="#d9d8d4"/>
+<text x="52" y="314" font-size="11" fill="#52514e" text-anchor="end">0.00</text>
+<line x1="60" y1="250" x2="600" y2="250" stroke="#d9d8d4"/>
+<text x="52" y="254" font-size="11" fill="#52514e" text-anchor="end">0.02</text>
+<line x1="60" y1="190" x2="600" y2="190" stroke="#d9d8d4"/>
+<text x="52" y="194" font-size="11" fill="#52514e" text-anchor="end">0.04</text>
+<line x1="60" y1="130" x2="600" y2="130" stroke="#d9d8d4"/>
+<text x="52" y="134" font-size="11" fill="#52514e" text-anchor="end">0.06</text>
+<line x1="60" y1="70" x2="600" y2="70" stroke="#d9d8d4"/>
+<text x="52" y="74" font-size="11" fill="#52514e" text-anchor="end">0.08</text>
+<text x="60" y="326" font-size="11" fill="#52514e" text-anchor="middle">1</text>
+<text x="159.18" y="326" font-size="11" fill="#52514e" text-anchor="middle">10</text>
+<text x="269.39" y="326" font-size="11" fill="#52514e" text-anchor="middle">20</text>
+<text x="379.59" y="326" font-size="11" fill="#52514e" text-anchor="middle">30</text>
+<text x="489.8" y="326" font-size="11" fill="#52514e" text-anchor="middle">40</text>
+<text x="600" y="326" font-size="11" fill="#52514e" text-anchor="middle">50</text>
+<text x="330" y="346" font-size="12" fill="#52514e" text-anchor="middle">turn on which the game ends (the first roll is turn 1)</text>
+<text x="10" y="20" font-size="12" fill="#52514e">chance</text>
+<polyline points="60,310 71.02,309.98 82.04,309.49 93.06,306.38 104.08,296.57 115.1,276.76 126.12,247.06 137.14,211.18 148.16,174.63 159.18,142.57 170.2,118.49 181.22,103.86 192.24,98.5 203.27,101.12 214.29,109.94 225.31,123.08 236.33,138.83 247.35,155.81 258.37,172.97 269.39,189.56 280.41,205.1 291.43,219.32 302.45,232.1 313.47,243.42 324.49,253.34 335.51,261.95 346.53,269.37 357.55,275.73 368.57,281.15 379.59,285.76 390.61,289.66 401.63,292.95 412.65,295.72 423.67,298.05 434.69,300.01 445.71,301.65 456.73,303.03 467.76,304.18 478.78,305.14 489.8,305.95 500.82,306.62 511.84,307.18 522.86,307.65 533.88,308.04 544.9,308.36 555.92,308.64 566.94,308.86 577.96,309.05 588.98,309.21 600,309.34" fill="none" stroke="#6250d6" stroke-width="2"/>
+<rect x="310" y="21" width="12" height="12" fill="#6250d6"/>
+<text x="328" y="32" font-size="12" fill="#0b0b0b">face named before the first roll: mean 16.56</text>
+<polyline points="60,310 71.02,309.88 82.04,307.82 93.06,298.41 104.08,276.83 115.1,243.59 126.12,204.06 137.14,165.14 148.16,132.54 159.18,109.52 170.2,97 181.22,94.15 192.24,99.22 203.27,110.13 214.29,124.87 225.31,141.75 236.33,159.41 247.35,176.9 258.37,193.55 269.39,208.97 280.41,222.95 291.43,235.42 302.45,246.41 313.47,255.99 324.49,264.27 335.51,271.38 346.53,277.47 357.55,282.64 368.57,287.03 379.59,290.73 390.61,293.86 401.63,296.49 412.65,298.7 423.67,300.56 434.69,302.11 445.71,303.41 456.73,304.5 467.76,305.41 478.78,306.17 489.8,306.81 500.82,307.34 511.84,307.78 522.86,308.15 533.88,308.46 544.9,308.71 555.92,308.93 566.94,309.11 577.96,309.25 588.98,309.38 600,309.48" fill="none" stroke="#2a78d6" stroke-width="2"/>
+<rect x="310" y="38" width="12" height="12" fill="#2a78d6"/>
+<text x="328" y="49" font-size="12" fill="#0b0b0b">keep the most common face: mean 15.35</text>
+<polyline points="60,310 71.02,309.88 82.04,307.82 93.06,298.3 104.08,276.33 115.1,242.48 126.12,202.34 137.14,163.07 148.16,130.46 159.18,107.75 170.2,95.71 181.22,93.41 192.24,99 203.27,110.35 214.29,125.42 225.31,142.51 236.33,160.3 247.35,177.84 258.37,194.49 269.39,209.87 280.41,223.79 291.43,236.19 302.45,247.09 313.47,256.59 324.49,264.8 335.51,271.84 346.53,277.86 357.55,282.98 368.57,287.31 379.59,290.98 390.61,294.06 401.63,296.66 412.65,298.85 423.67,300.68 434.69,302.21 445.71,303.5 456.73,304.57 467.76,305.47 478.78,306.22 489.8,306.85 500.82,307.37 511.84,307.81 522.86,308.17 533.88,308.48 544.9,308.73 555.92,308.94 566.94,309.12 577.96,309.26 588.98,309.39 600,309.49" fill="none" stroke="#d95926" stroke-width="2" stroke-dasharray="6 4"/>
+<rect x="310" y="55" width="12" height="12" fill="#d95926"/>
+<text x="328" y="66" font-size="12" fill="#0b0b0b">switch to a larger group (dashed): mean 15.29</text>
+</svg>

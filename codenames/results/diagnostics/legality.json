@@ -1,0 +1,1818 @@
+{
+ "c3_regeneration": {
+  "held_out_value_matches_c3": 56000,
+  "picks": 56000,
+  "share": 1.0,
+  "tolerance": 0.0001
+ },
+ "eat_coverage_c10": {
+  "F_illegal": {
+   "eat_cue": 0.2381,
+   "eat_value": -0.3505,
+   "picks": 21
+  },
+  "F_legal": {
+   "eat_cue": 0.6481,
+   "eat_value": 0.0393,
+   "picks": 270
+  },
+  "P_illegal": {
+   "eat_cue": 0.3929,
+   "eat_value": -0.2665,
+   "picks": 84
+  },
+  "P_legal": {
+   "eat_cue": 0.6346,
+   "eat_value": 0.118,
+   "picks": 208
+  }
+ },
+ "labels": {
+  "by_level": {
+   "borderline": {
+    "borderline": 22,
+    "illegal": 8,
+    "legal": 24,
+    "pairs": 54,
+    "precision_illegal": 0.1481,
+    "precision_illegal_or_borderline": 0.5556
+   },
+   "illegal": {
+    "borderline": 9,
+    "illegal": 86,
+    "legal": 1,
+    "pairs": 96,
+    "precision_illegal": 0.8958,
+    "precision_illegal_or_borderline": 0.9896
+   }
+  },
+  "by_relation": {
+   "affix": {
+    "borderline": 1,
+    "illegal": 1,
+    "legal": 1
+   },
+   "compound": {
+    "borderline": 1,
+    "illegal": 11,
+    "legal": 1
+   },
+   "compound3": {
+    "borderline": 2,
+    "illegal": 2,
+    "legal": 0
+   },
+   "derivation": {
+    "borderline": 8,
+    "illegal": 57,
+    "legal": 0
+   },
+   "inflection": {
+    "borderline": 0,
+    "illegal": 16,
+    "legal": 0
+   },
+   "prefix": {
+    "borderline": 15,
+    "illegal": 3,
+    "legal": 23
+   },
+   "stem": {
+    "borderline": 4,
+    "illegal": 2,
+    "legal": 0
+   },
+   "variant": {
+    "borderline": 0,
+    "illegal": 2,
+    "legal": 0
+   }
+  },
+  "flagged_pairs": 150,
+  "unflagged_labeled": 152,
+  "unflagged_misses": {
+   "borderline": [
+    "basic/base",
+    "basics/base",
+    "commodore/commander",
+    "empress/empire",
+    "feminine/female",
+    "hospitality/host",
+    "midst/middle",
+    "telegram/telephone",
+    "terrestrial/territory",
+    "wolverine/wolf"
+   ],
+   "illegal": [
+    "young/youth",
+    "younger/youth"
+   ]
+  },
+  "unlabeled_flagged_pairs": []
+ },
+ "pilot_before": {
+  "boards_with_a_flag": 16,
+  "borderline": 4,
+  "flagged": [
+   {
+    "arm": "P",
+    "board": "11010:5",
+    "clue": "residency",
+    "flags": [
+     "residence (derivation)"
+    ],
+    "level": "illegal"
+   },
+   {
+    "arm": "P",
+    "board": "11010:7",
+    "clue": "telecom",
+    "flags": [
+     "telephone (prefix)"
+    ],
+    "level": "borderline"
+   },
+   {
+    "arm": "F",
+    "board": "11010:10",
+    "clue": "countess",
+    "flags": [
+     "counter (derivation)",
+     "county (affix)"
+    ],
+    "level": "illegal"
+   },
+   {
+    "arm": "P",
+    "board": "11010:13",
+    "clue": "residency",
+    "flags": [
+     "residence (derivation)"
+    ],
+    "level": "illegal"
+   },
+   {
+    "arm": "F",
+    "board": "11010:14",
+    "clue": "regiment",
+    "flags": [
+     "region (prefix)"
+    ],
+    "level": "borderline"
+   },
+   {
+    "arm": "P",
+    "board": "11010:20",
+    "clue": "hiding",
+    "flags": [
+     "hide (inflection)"
+    ],
+    "level": "illegal"
+   },
+   {
+    "arm": "F",
+    "board": "11010:22",
+    "clue": "librarian",
+    "flags": [
+     "library (derivation)"
+    ],
+    "level": "illegal"
+   },
+   {
+    "arm": "P",
+    "board": "11010:23",
+    "clue": "winning",
+    "flags": [
+     "winner (derivation)"
+    ],
+    "level": "illegal"
+   },
+   {
+    "arm": "P",
+    "board": "11010:25",
+    "clue": "railway",
+    "flags": [
+     "railroad (compound)"
+    ],
+    "level": "illegal"
+   },
+   {
+    "arm": "F",
+    "board": "11010:28",
+    "clue": "owned",
+    "flags": [
+     "owner (inflection)"
+    ],
+    "level": "illegal"
+   },
+   {
+    "arm": "P",
+    "board": "11010:28",
+    "clue": "webcam",
+    "flags": [
+     "camera (compound3)"
+    ],
+    "level": "borderline"
+   },
+   {
+    "arm": "P",
+    "board": "11010:30",
+    "clue": "railroad",
+    "flags": [
+     "railway (compound)"
+    ],
+    "level": "illegal"
+   },
+   {
+    "arm": "F",
+    "board": "11010:31",
+    "clue": "governance",
+    "flags": [
+     "governor (derivation)"
+    ],
+    "level": "illegal"
+   },
+   {
+    "arm": "P",
+    "board": "11010:31",
+    "clue": "governing",
+    "flags": [
+     "governor (derivation)"
+    ],
+    "level": "illegal"
+   },
+   {
+    "arm": "F",
+    "board": "11010:37",
+    "clue": "actress",
+    "flags": [
+     "actor (derivation)"
+    ],
+    "level": "illegal"
+   },
+   {
+    "arm": "P",
+    "board": "11010:45",
+    "clue": "restroom",
+    "flags": [
+     "bathroom (compound)"
+    ],
+    "level": "illegal"
+   },
+   {
+    "arm": "P",
+    "board": "11010:48",
+    "clue": "telecom",
+    "flags": [
+     "telephone (prefix)"
+    ],
+    "level": "borderline"
+   },
+   {
+    "arm": "F",
+    "board": "11010:49",
+    "clue": "teaching",
+    "flags": [
+     "teacher (derivation)"
+    ],
+    "level": "illegal"
+   }
+  ],
+  "illegal": 14,
+  "items": 80,
+  "legal": 62
+ },
+ "pilot_now": {
+  "boards_with_a_flag": 0,
+  "borderline": 0,
+  "flagged": [],
+  "illegal": 0,
+  "items": 80,
+  "legal": 80
+ },
+ "rates": {
+  "C10": {
+   "C": {
+    "boards": 300,
+    "borderline": {
+     "ci": [
+      0.0067,
+      0.04
+     ],
+     "count": 7,
+     "mean": 0.0233,
+     "n": 300,
+     "rows": 300
+    },
+    "illegal": {
+     "ci": [
+      0.0467,
+      0.1033
+     ],
+     "count": 22,
+     "mean": 0.0733,
+     "n": 300,
+     "rows": 300
+    }
+   },
+   "F": {
+    "boards": 300,
+    "borderline": {
+     "ci": [
+      0.0133,
+      0.05
+     ],
+     "count": 9,
+     "mean": 0.03,
+     "n": 300,
+     "rows": 300
+    },
+    "illegal": {
+     "ci": [
+      0.0433,
+      0.1
+     ],
+     "count": 21,
+     "mean": 0.07,
+     "n": 300,
+     "rows": 300
+    }
+   },
+   "L": {
+    "boards": 300,
+    "borderline": {
+     "ci": [
+      0.0067,
+      0.04
+     ],
+     "count": 7,
+     "mean": 0.0233,
+     "n": 300,
+     "rows": 300
+    },
+    "illegal": {
+     "ci": [
+      0.0567,
+      0.12
+     ],
+     "count": 26,
+     "mean": 0.0867,
+     "n": 300,
+     "rows": 300
+    }
+   },
+   "LP": {
+    "boards": 300,
+    "borderline": {
+     "ci": [
+      0.0005,
+      0.0162
+     ],
+     "count": 14,
+     "mean": 0.0067,
+     "n": 300,
+     "rows": 2100
+    },
+    "illegal": {
+     "ci": [
+      0.1905,
+      0.2805
+     ],
+     "count": 492,
+     "mean": 0.2343,
+     "n": 300,
+     "rows": 2100
+    }
+   },
+   "LP (potion task)": {
+    "boards": 300,
+    "borderline": {
+     "ci": [
+      0.0,
+      0.0167
+     ],
+     "count": 2,
+     "mean": 0.0067,
+     "n": 300,
+     "rows": 300
+    },
+    "illegal": {
+     "ci": [
+      0.1967,
+      0.2933
+     ],
+     "count": 73,
+     "mean": 0.2433,
+     "n": 300,
+     "rows": 300
+    }
+   },
+   "P": {
+    "boards": 300,
+    "borderline": {
+     "ci": [
+      0.0038,
+      0.0214
+     ],
+     "count": 24,
+     "mean": 0.0114,
+     "n": 300,
+     "rows": 2100
+    },
+    "illegal": {
+     "ci": [
+      0.2257,
+      0.3176
+     ],
+     "count": 567,
+     "mean": 0.27,
+     "n": 300,
+     "rows": 2100
+    }
+   },
+   "P (potion task)": {
+    "boards": 300,
+    "borderline": {
+     "ci": [
+      0.01,
+      0.0467
+     ],
+     "count": 8,
+     "mean": 0.0267,
+     "n": 300,
+     "rows": 300
+    },
+    "illegal": {
+     "ci": [
+      0.23,
+      0.3333
+     ],
+     "count": 84,
+     "mean": 0.28,
+     "n": 300,
+     "rows": 300
+    }
+   },
+   "S": {
+    "boards": 300,
+    "borderline": {
+     "ci": [
+      0.0167,
+      0.06
+     ],
+     "count": 11,
+     "mean": 0.0367,
+     "n": 300,
+     "rows": 300
+    },
+    "illegal": {
+     "ci": [
+      0.0667,
+      0.1367
+     ],
+     "count": 30,
+     "mean": 0.1,
+     "n": 300,
+     "rows": 300
+    }
+   },
+   "oracle": {
+    "boards": 300,
+    "borderline": {
+     "ci": [
+      0.0,
+      0.0167
+     ],
+     "count": 2,
+     "mean": 0.0067,
+     "n": 300,
+     "rows": 300
+    },
+    "illegal": {
+     "ci": [
+      0.2333,
+      0.3367
+     ],
+     "count": 85,
+     "mean": 0.2833,
+     "n": 300,
+     "rows": 300
+    }
+   }
+  },
+  "C11-pilot": {
+   "F": {
+    "boards": 40,
+    "borderline": {
+     "ci": [
+      0.0,
+      0.0
+     ],
+     "count": 0,
+     "mean": 0.0,
+     "n": 40,
+     "rows": 40
+    },
+    "illegal": {
+     "ci": [
+      0.0,
+      0.0
+     ],
+     "count": 0,
+     "mean": 0.0,
+     "n": 40,
+     "rows": 40
+    }
+   },
+   "P": {
+    "boards": 40,
+    "borderline": {
+     "ci": [
+      0.0,
+      0.0
+     ],
+     "count": 0,
+     "mean": 0.0,
+     "n": 40,
+     "rows": 40
+    },
+    "illegal": {
+     "ci": [
+      0.0,
+      0.0
+     ],
+     "count": 0,
+     "mean": 0.0,
+     "n": 40,
+     "rows": 40
+    }
+   }
+  },
+  "C11-pilot-before": {
+   "F": {
+    "boards": 40,
+    "borderline": {
+     "ci": [
+      0.0,
+      0.075
+     ],
+     "count": 1,
+     "mean": 0.025,
+     "n": 40,
+     "rows": 40
+    },
+    "illegal": {
+     "ci": [
+      0.05,
+      0.275
+     ],
+     "count": 6,
+     "mean": 0.15,
+     "n": 40,
+     "rows": 40
+    }
+   },
+   "P": {
+    "boards": 40,
+    "borderline": {
+     "ci": [
+      0.0,
+      0.175
+     ],
+     "count": 3,
+     "mean": 0.075,
+     "n": 40,
+     "rows": 40
+    },
+    "illegal": {
+     "ci": [
+      0.075,
+      0.325
+     ],
+     "count": 8,
+     "mean": 0.2,
+     "n": 40,
+     "rows": 40
+    }
+   }
+  },
+  "C3": {
+   "Qwen3-Embedding-0.6B/population": {
+    "boards": 200,
+    "borderline": {
+     "ci": [
+      0.0,
+      0.0146
+     ],
+     "count": 34,
+     "mean": 0.0049,
+     "n": 200,
+     "rows": 7000
+    },
+    "illegal": {
+     "ci": [
+      0.0597,
+      0.1381
+     ],
+     "count": 678,
+     "mean": 0.0969,
+     "n": 200,
+     "rows": 7000
+    }
+   },
+   "Qwen3-Embedding-0.6B/population/rlvr": {
+    "boards": 200,
+    "borderline": {
+     "ci": [
+      0.0,
+      0.0226
+     ],
+     "count": 66,
+     "mean": 0.0094,
+     "n": 200,
+     "rows": 7000
+    },
+    "illegal": {
+     "ci": [
+      0.001,
+      0.0316
+     ],
+     "count": 100,
+     "mean": 0.0143,
+     "n": 200,
+     "rows": 7000
+    }
+   },
+   "Qwen3-Embedding-0.6B/self": {
+    "boards": 200,
+    "borderline": {
+     "ci": [
+      0.0,
+      0.015
+     ],
+     "count": 35,
+     "mean": 0.005,
+     "n": 200,
+     "rows": 7000
+    },
+    "illegal": {
+     "ci": [
+      0.0,
+      0.029
+     ],
+     "count": 84,
+     "mean": 0.012,
+     "n": 200,
+     "rows": 7000
+    }
+   },
+   "Qwen3-Embedding-0.6B/start": {
+    "boards": 200,
+    "borderline": {
+     "ci": [
+      0.0,
+      0.015
+     ],
+     "count": 35,
+     "mean": 0.005,
+     "n": 200,
+     "rows": 7000
+    },
+    "illegal": {
+     "ci": [
+      0.0,
+      0.035
+     ],
+     "count": 105,
+     "mean": 0.015,
+     "n": 200,
+     "rows": 7000
+    }
+   },
+   "potion/population": {
+    "boards": 200,
+    "borderline": {
+     "ci": [
+      0.0,
+      0.0
+     ],
+     "count": 0,
+     "mean": 0.0,
+     "n": 200,
+     "rows": 7000
+    },
+    "illegal": {
+     "ci": [
+      0.1163,
+      0.2191
+     ],
+     "count": 1165,
+     "mean": 0.1664,
+     "n": 200,
+     "rows": 7000
+    }
+   },
+   "potion/population/rlvr": {
+    "boards": 200,
+    "borderline": {
+     "ci": [
+      0.0,
+      0.0
+     ],
+     "count": 0,
+     "mean": 0.0,
+     "n": 200,
+     "rows": 7000
+    },
+    "illegal": {
+     "ci": [
+      0.0147,
+      0.0656
+     ],
+     "count": 264,
+     "mean": 0.0377,
+     "n": 200,
+     "rows": 7000
+    }
+   },
+   "potion/self": {
+    "boards": 200,
+    "borderline": {
+     "ci": [
+      0.0,
+      0.0
+     ],
+     "count": 0,
+     "mean": 0.0,
+     "n": 200,
+     "rows": 7000
+    },
+    "illegal": {
+     "ci": [
+      0.01,
+      0.06
+     ],
+     "count": 245,
+     "mean": 0.035,
+     "n": 200,
+     "rows": 7000
+    }
+   },
+   "potion/start": {
+    "boards": 200,
+    "borderline": {
+     "ci": [
+      0.0,
+      0.0
+     ],
+     "count": 0,
+     "mean": 0.0,
+     "n": 200,
+     "rows": 7000
+    },
+    "illegal": {
+     "ci": [
+      0.015,
+      0.07
+     ],
+     "count": 280,
+     "mean": 0.04,
+     "n": 200,
+     "rows": 7000
+    }
+   }
+  },
+  "C4": {
+   "deepseek-v3.2": {
+    "boards": 200,
+    "borderline": {
+     "ci": [
+      0.01,
+      0.055
+     ],
+     "count": 6,
+     "mean": 0.03,
+     "n": 200,
+     "rows": 200
+    },
+    "illegal": {
+     "ci": [
+      0.135,
+      0.245
+     ],
+     "count": 38,
+     "mean": 0.19,
+     "n": 200,
+     "rows": 200
+    }
+   },
+   "embeddinggemma-2": {
+    "boards": 200,
+    "borderline": {
+     "ci": [
+      0.015,
+      0.06
+     ],
+     "count": 7,
+     "mean": 0.035,
+     "n": 200,
+     "rows": 200
+    },
+    "illegal": {
+     "ci": [
+      0.01,
+      0.06
+     ],
+     "count": 7,
+     "mean": 0.035,
+     "n": 200,
+     "rows": 200
+    }
+   },
+   "gpt-oss-120b": {
+    "boards": 200,
+    "borderline": {
+     "ci": [
+      0.0,
+      0.015
+     ],
+     "count": 1,
+     "mean": 0.005,
+     "n": 200,
+     "rows": 200
+    },
+    "illegal": {
+     "ci": [
+      0.0,
+      0.015
+     ],
+     "count": 1,
+     "mean": 0.005,
+     "n": 200,
+     "rows": 200
+    }
+   },
+   "llama-3.3-70b": {
+    "boards": 200,
+    "borderline": {
+     "ci": [
+      0.005,
+      0.05
+     ],
+     "count": 5,
+     "mean": 0.025,
+     "n": 200,
+     "rows": 200
+    },
+    "illegal": {
+     "ci": [
+      0.135,
+      0.24
+     ],
+     "count": 37,
+     "mean": 0.185,
+     "n": 200,
+     "rows": 200
+    }
+   },
+   "qwen3-32b": {
+    "boards": 200,
+    "borderline": {
+     "ci": [
+      0.0,
+      0.035
+     ],
+     "count": 3,
+     "mean": 0.015,
+     "n": 200,
+     "rows": 200
+    },
+    "illegal": {
+     "ci": [
+      0.02,
+      0.075
+     ],
+     "count": 9,
+     "mean": 0.045,
+     "n": 200,
+     "rows": 200
+    }
+   }
+  },
+  "C6": {
+   "deepseek-v3.2": {
+    "boards": 250,
+    "borderline": {
+     "ci": [
+      0.012,
+      0.056
+     ],
+     "count": 8,
+     "mean": 0.032,
+     "n": 250,
+     "rows": 250
+    },
+    "illegal": {
+     "ci": [
+      0.076,
+      0.152
+     ],
+     "count": 28,
+     "mean": 0.112,
+     "n": 250,
+     "rows": 250
+    }
+   },
+   "first": {
+    "boards": 250,
+    "borderline": {
+     "ci": [
+      0.016,
+      0.06
+     ],
+     "count": 9,
+     "mean": 0.036,
+     "n": 250,
+     "rows": 250
+    },
+    "illegal": {
+     "ci": [
+      0.072,
+      0.148
+     ],
+     "count": 27,
+     "mean": 0.108,
+     "n": 250,
+     "rows": 250
+    }
+   },
+   "gemma-4-31b": {
+    "boards": 250,
+    "borderline": {
+     "ci": [
+      0.0,
+      0.028
+     ],
+     "count": 3,
+     "mean": 0.012,
+     "n": 250,
+     "rows": 250
+    },
+    "illegal": {
+     "ci": [
+      0.008,
+      0.044
+     ],
+     "count": 6,
+     "mean": 0.024,
+     "n": 250,
+     "rows": 250
+    }
+   },
+   "gpt-oss-120b": {
+    "boards": 250,
+    "borderline": {
+     "ci": [
+      0.008,
+      0.048
+     ],
+     "count": 7,
+     "mean": 0.028,
+     "n": 250,
+     "rows": 250
+    },
+    "illegal": {
+     "ci": [
+      0.08,
+      0.16
+     ],
+     "count": 30,
+     "mean": 0.12,
+     "n": 250,
+     "rows": 250
+    }
+   },
+   "llama-3.3-70b": {
+    "boards": 250,
+    "borderline": {
+     "ci": [
+      0.008,
+      0.048
+     ],
+     "count": 7,
+     "mean": 0.028,
+     "n": 250,
+     "rows": 250
+    },
+    "illegal": {
+     "ci": [
+      0.176,
+      0.276
+     ],
+     "count": 56,
+     "mean": 0.224,
+     "n": 250,
+     "rows": 250
+    }
+   },
+   "oracle_h": {
+    "boards": 250,
+    "borderline": {
+     "ci": [
+      0.0,
+      0.028
+     ],
+     "count": 3,
+     "mean": 0.012,
+     "n": 250,
+     "rows": 250
+    },
+    "illegal": {
+     "ci": [
+      0.024,
+      0.076
+     ],
+     "count": 12,
+     "mean": 0.048,
+     "n": 250,
+     "rows": 250
+    }
+   },
+   "oracle_s": {
+    "boards": 250,
+    "borderline": {
+     "ci": [
+      0.0,
+      0.028
+     ],
+     "count": 3,
+     "mean": 0.012,
+     "n": 250,
+     "rows": 250
+    },
+    "illegal": {
+     "ci": [
+      0.252,
+      0.364
+     ],
+     "count": 77,
+     "mean": 0.308,
+     "n": 250,
+     "rows": 250
+    }
+   },
+   "qwen3-32b": {
+    "boards": 250,
+    "borderline": {
+     "ci": [
+      0.016,
+      0.06
+     ],
+     "count": 9,
+     "mean": 0.036,
+     "n": 250,
+     "rows": 250
+    },
+    "illegal": {
+     "ci": [
+      0.176,
+      0.276
+     ],
+     "count": 56,
+     "mean": 0.224,
+     "n": 250,
+     "rows": 250
+    }
+   },
+   "qwen3.8-27b": {
+    "boards": 250,
+    "borderline": {
+     "ci": [
+      0.0,
+      0.028
+     ],
+     "count": 3,
+     "mean": 0.012,
+     "n": 250,
+     "rows": 250
+    },
+    "illegal": {
+     "ci": [
+      0.08,
+      0.16
+     ],
+     "count": 30,
+     "mean": 0.12,
+     "n": 250,
+     "rows": 250
+    }
+   }
+  },
+  "C7": {
+   "arm1": {
+    "boards": 200,
+    "borderline": {
+     "ci": [
+      0.02,
+      0.075
+     ],
+     "count": 27,
+     "mean": 0.045,
+     "n": 200,
+     "rows": 600
+    },
+    "illegal": {
+     "ci": [
+      0.2,
+      0.32
+     ],
+     "count": 156,
+     "mean": 0.26,
+     "n": 200,
+     "rows": 600
+    }
+   },
+   "arm2": {
+    "boards": 200,
+    "borderline": {
+     "ci": [
+      0.041,
+      0.112
+     ],
+     "count": 74,
+     "mean": 0.074,
+     "n": 200,
+     "rows": 1000
+    },
+    "illegal": {
+     "ci": [
+      0.246,
+      0.373
+     ],
+     "count": 309,
+     "mean": 0.309,
+     "n": 200,
+     "rows": 1000
+    }
+   }
+  }
+ },
+ "reanalysis_c10": {
+  "boards": 300,
+  "boards_clean": 188,
+  "boards_strict_clean": 178,
+  "embedding_advantage": {
+   "strangers_minus_eat": {
+    "all": {
+     "ci": [
+      0.1497,
+      0.323
+     ],
+     "mean": 0.2364,
+     "n": 300,
+     "p": 0.0
+    },
+    "clean": {
+     "ci": [
+      0.0951,
+      0.325
+     ],
+     "mean": 0.2075,
+     "n": 188,
+     "p": 0.0004
+    },
+    "flagged_minus_clean": {
+     "ci": [
+      -0.094,
+      0.2466
+     ],
+     "mean": 0.0774,
+     "n": [
+      112,
+      188
+     ],
+     "p": 0.3696
+    },
+    "strict_clean": {
+     "ci": [
+      0.0826,
+      0.3204
+     ],
+     "mean": 0.2001,
+     "n": 178,
+     "p": 0.0004
+    }
+   },
+   "strangers_minus_human": {
+    "all": {
+     "ci": [
+      0.025,
+      0.1743
+     ],
+     "mean": 0.0991,
+     "n": 300,
+     "p": 0.0084
+    },
+    "clean": {
+     "ci": [
+      0.0062,
+      0.2009
+     ],
+     "mean": 0.1028,
+     "n": 188,
+     "p": 0.0374
+    },
+    "flagged_minus_clean": {
+     "ci": [
+      -0.1669,
+      0.1404
+     ],
+     "mean": -0.0097,
+     "n": [
+      112,
+      188
+     ],
+     "p": 0.894
+    },
+    "strict_clean": {
+     "ci": [
+      -0.0233,
+      0.1656
+     ],
+     "mean": 0.07,
+     "n": 178,
+     "p": 0.1454
+    }
+   },
+   "strangers_minus_llm": {
+    "all": {
+     "ci": [
+      0.0884,
+      0.334
+     ],
+     "mean": 0.2144,
+     "n": 300,
+     "p": 0.0008
+    },
+    "clean": {
+     "ci": [
+      0.0341,
+      0.33
+     ],
+     "mean": 0.1845,
+     "n": 188,
+     "p": 0.0192
+    },
+    "flagged_minus_clean": {
+     "ci": [
+      -0.1904,
+      0.3411
+     ],
+     "mean": 0.0801,
+     "n": [
+      112,
+      188
+     ],
+     "p": 0.5392
+    },
+    "strict_clean": {
+     "ci": [
+      0.0435,
+      0.3297
+     ],
+     "mean": 0.1862,
+     "n": 178,
+     "p": 0.0118
+    }
+   }
+  },
+  "flagged_by_arm": {
+   "F_illegal": 21,
+   "P_any_task_illegal": 108,
+   "P_potion_task_illegal": 84
+  },
+  "flagged_minus_clean": {
+   "eat": {
+    "ci": [
+     -0.2254,
+     0.1085
+    ],
+    "mean": -0.0586,
+    "n": [
+     112,
+     188
+    ],
+    "p": 0.4714
+   },
+   "human": {
+    "ci": [
+     -0.1475,
+     0.2131
+    ],
+    "mean": 0.0286,
+    "n": [
+     112,
+     188
+    ],
+    "p": 0.751
+   },
+   "llm": {
+    "ci": [
+     -0.321,
+     0.2209
+    ],
+    "mean": -0.0613,
+    "n": [
+     112,
+     188
+    ],
+    "p": 0.6394
+   },
+   "strangers": {
+    "ci": [
+     -0.0662,
+     0.1069
+    ],
+    "mean": 0.0188,
+    "n": [
+     112,
+     188
+    ],
+    "p": 0.6702
+   }
+  },
+  "p_minus_f": {
+   "eat": {
+    "all": {
+     "ci": [
+      -0.0808,
+      0.087
+     ],
+     "mean": 0.003,
+     "n": 300,
+     "p": 0.939
+    },
+    "clean": {
+     "ci": [
+      -0.0851,
+      0.132
+     ],
+     "mean": 0.0249,
+     "n": 188,
+     "p": 0.6536
+    },
+    "strict_clean": {
+     "ci": [
+      -0.0857,
+      0.1419
+     ],
+     "mean": 0.0311,
+     "n": 178,
+     "p": 0.5768
+    }
+   },
+   "human": {
+    "all": {
+     "ci": [
+      0.0537,
+      0.2286
+     ],
+     "mean": 0.1403,
+     "n": 300,
+     "p": 0.0008
+    },
+    "clean": {
+     "ci": [
+      0.0191,
+      0.243
+     ],
+     "mean": 0.1296,
+     "n": 188,
+     "p": 0.0214
+    },
+    "strict_clean": {
+     "ci": [
+      0.0524,
+      0.2702
+     ],
+     "mean": 0.1612,
+     "n": 178,
+     "p": 0.0044
+    }
+   },
+   "llm": {
+    "all": {
+     "ci": [
+      -0.095,
+      0.1533
+     ],
+     "mean": 0.025,
+     "n": 300,
+     "p": 0.7118
+    },
+    "clean": {
+     "ci": [
+      -0.0931,
+      0.1968
+     ],
+     "mean": 0.0479,
+     "n": 188,
+     "p": 0.5386
+    },
+    "strict_clean": {
+     "ci": [
+      -0.0927,
+      0.1854
+     ],
+     "mean": 0.0449,
+     "n": 178,
+     "p": 0.5428
+    }
+   },
+   "strangers": {
+    "all": {
+     "ci": [
+      0.1979,
+      0.2818
+     ],
+     "mean": 0.2394,
+     "n": 300,
+     "p": 0.0
+    },
+    "clean": {
+     "ci": [
+      0.1805,
+      0.284
+     ],
+     "mean": 0.2324,
+     "n": 188,
+     "p": 0.0
+    },
+    "strict_clean": {
+     "ci": [
+      0.1787,
+      0.2834
+     ],
+     "mean": 0.2312,
+     "n": 178,
+     "p": 0.0
+    }
+   }
+  }
+ },
+ "refilter_c10": {
+  "K": 10,
+  "arm_means": {
+   "F": {
+    "eat": -0.0027,
+    "human": 1.1843,
+    "strangers": 0.7651
+   },
+   "P": {
+    "eat": 0.1301,
+    "human": 1.3233,
+    "strangers": 0.9804
+   },
+   "oracle": {
+    "eat": 0.1495,
+    "human": 1.4285,
+    "strangers": 1.1104
+   }
+  },
+  "arm_means_c10": {
+   "F": {
+    "eat": -0.001,
+    "human": 1.1544,
+    "strangers": 0.7759
+   },
+   "P": {
+    "eat": 0.0021,
+    "human": 1.2948,
+    "strangers": 1.0153
+   },
+   "oracle": {
+    "eat": 0.0307,
+    "human": 1.4113,
+    "strangers": 1.1429
+   }
+  },
+  "boards": 300,
+  "change_in_p_minus_f": {
+   "eat": {
+    "ci": [
+     0.0772,
+     0.1864
+    ],
+    "mean": 0.1297,
+    "n": 300,
+    "p": 0.0
+   },
+   "human": {
+    "ci": [
+     -0.0528,
+     0.0497
+    ],
+    "mean": -0.0012,
+    "n": 300,
+    "p": 0.966
+   },
+   "strangers": {
+    "ci": [
+     -0.049,
+     0.001
+    ],
+    "mean": -0.0241,
+    "n": 300,
+    "p": 0.0618
+   }
+  },
+  "embedding_advantage": {
+   "strangers_minus_eat": {
+    "c10": {
+     "ci": [
+      0.1497,
+      0.323
+     ],
+     "mean": 0.2364,
+     "n": 300,
+     "p": 0.0
+    },
+    "change": {
+     "ci": [
+      -0.2155,
+      -0.0943
+     ],
+     "mean": -0.1539,
+     "n": 300,
+     "p": 0.0
+    },
+    "strict": {
+     "ci": [
+      -0.0101,
+      0.1778
+     ],
+     "mean": 0.0825,
+     "n": 300,
+     "p": 0.0842
+    }
+   },
+   "strangers_minus_human": {
+    "c10": {
+     "ci": [
+      0.025,
+      0.1743
+     ],
+     "mean": 0.0991,
+     "n": 300,
+     "p": 0.0084
+    },
+    "change": {
+     "ci": [
+      -0.0683,
+      0.0232
+     ],
+     "mean": -0.0229,
+     "n": 300,
+     "p": 0.324
+    },
+    "strict": {
+     "ci": [
+      0.0061,
+      0.147
+     ],
+     "mean": 0.0762,
+     "n": 300,
+     "p": 0.0324
+    }
+   }
+  },
+  "oracle_minus_f": {
+   "eat": {
+    "ci": [
+     0.0654,
+     0.2406
+    ],
+    "mean": 0.1522,
+    "n": 300,
+    "p": 0.0012
+   },
+   "human": {
+    "ci": [
+     0.168,
+     0.3237
+    ],
+    "mean": 0.2442,
+    "n": 300,
+    "p": 0.0
+   },
+   "strangers": {
+    "ci": [
+     0.3087,
+     0.3829
+    ],
+    "mean": 0.3452,
+    "n": 300,
+    "p": 0.0
+   }
+  },
+  "p_minus_f": {
+   "eat": {
+    "ci": [
+     0.0417,
+     0.2241
+    ],
+    "mean": 0.1328,
+    "n": 300,
+    "p": 0.0036
+   },
+   "human": {
+    "ci": [
+     0.0582,
+     0.2231
+    ],
+    "mean": 0.1391,
+    "n": 300,
+    "p": 0.0006
+   },
+   "strangers": {
+    "ci": [
+     0.1731,
+     0.2583
+    ],
+    "mean": 0.2153,
+    "n": 300,
+    "p": 0.0
+   }
+  },
+  "p_minus_f_c10": {
+   "eat": {
+    "ci": [
+     -0.0808,
+     0.087
+    ],
+    "mean": 0.003,
+    "n": 300,
+    "p": 0.939
+   },
+   "human": {
+    "ci": [
+     0.0537,
+     0.2286
+    ],
+    "mean": 0.1403,
+    "n": 300,
+    "p": 0.0008
+   },
+   "strangers": {
+    "ci": [
+     0.1979,
+     0.2818
+    ],
+    "mean": 0.2394,
+    "n": 300,
+    "p": 0.0
+   }
+  },
+  "rule": "every arm chooses among codenames.legality.strict_legal clues",
+  "same_F_as_c10": 257,
+  "same_P_potion_as_c10": 201
+ },
+ "rule": "codenames.legality.relation; levels illegal and borderline",
+ "rulebook": [
+  {
+   "agrees": true,
+   "clue": "break",
+   "old_rule_legal": false,
+   "relation": "same",
+   "rulebook_legal": false,
+   "strict_legal": false,
+   "word": "break"
+  },
+  {
+   "agrees": true,
+   "clue": "broken",
+   "old_rule_legal": true,
+   "relation": "inflection",
+   "rulebook_legal": false,
+   "strict_legal": false,
+   "word": "break"
+  },
+  {
+   "agrees": true,
+   "clue": "breakage",
+   "old_rule_legal": false,
+   "relation": "substring",
+   "rulebook_legal": false,
+   "strict_legal": false,
+   "word": "break"
+  },
+  {
+   "agrees": true,
+   "clue": "breakdown",
+   "old_rule_legal": false,
+   "relation": "substring",
+   "rulebook_legal": false,
+   "strict_legal": false,
+   "word": "break"
+  },
+  {
+   "agrees": true,
+   "clue": "horse",
+   "old_rule_legal": false,
+   "relation": "substring",
+   "rulebook_legal": false,
+   "strict_legal": false,
+   "word": "horseshoe"
+  },
+  {
+   "agrees": true,
+   "clue": "shoe",
+   "old_rule_legal": false,
+   "relation": "substring",
+   "rulebook_legal": false,
+   "strict_legal": false,
+   "word": "horseshoe"
+  },
+  {
+   "agrees": true,
+   "clue": "unhorsed",
+   "old_rule_legal": true,
+   "relation": "compound",
+   "rulebook_legal": false,
+   "strict_legal": false,
+   "word": "horseshoe"
+  },
+  {
+   "agrees": true,
+   "clue": "snowshoe",
+   "old_rule_legal": true,
+   "relation": "compound",
+   "rulebook_legal": false,
+   "strict_legal": false,
+   "word": "horseshoe"
+  },
+  {
+   "agrees": true,
+   "clue": "theatre",
+   "old_rule_legal": true,
+   "relation": "variant",
+   "rulebook_legal": false,
+   "strict_legal": false,
+   "word": "theater"
+  },
+  {
+   "agrees": true,
+   "clue": "island",
+   "old_rule_legal": true,
+   "relation": null,
+   "rulebook_legal": true,
+   "strict_legal": true,
+   "word": "england"
+  },
+  {
+   "agrees": false,
+   "clue": "land",
+   "old_rule_legal": false,
+   "relation": "substring",
+   "rulebook_legal": true,
+   "strict_legal": false,
+   "word": "england"
+  },
+  {
+   "agrees": false,
+   "clue": "sparrow",
+   "old_rule_legal": false,
+   "relation": "substring",
+   "rulebook_legal": true,
+   "strict_legal": false,
+   "word": "row"
+  },
+  {
+   "agrees": true,
+   "clue": "tree",
+   "old_rule_legal": true,
+   "relation": null,
+   "rulebook_legal": true,
+   "strict_legal": true,
+   "word": "nut"
+  },
+  {
+   "agrees": true,
+   "clue": "cashew",
+   "old_rule_legal": true,
+   "relation": null,
+   "rulebook_legal": true,
+   "strict_legal": true,
+   "word": "nut"
+  },
+  {
+   "agrees": true,
+   "clue": "strudel",
+   "old_rule_legal": true,
+   "relation": null,
+   "rulebook_legal": true,
+   "strict_legal": true,
+   "word": "apple"
+  }
+ ]
+}

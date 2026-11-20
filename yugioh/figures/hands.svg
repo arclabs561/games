@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="608" viewBox="0 0 760 608" font-family="Helvetica, Arial, sans-serif" role="img">
+<title>Six dealt hands and the needs each one meets</title>
+<rect width="760" height="608" fill="#fff"/>
+<text x="20.0" y="28.0" font-size="14" fill="#0b0b0b" text-anchor="start" font-weight="bold">Six hands of five from the example deck (12 S, 9 E, 3 B, 16 O), seed 1</text>
+<text x="392.0" y="58.0" font-size="12" fill="#52514e" text-anchor="middle" font-weight="normal">starter</text>
+<text x="512.0" y="58.0" font-size="12" fill="#52514e" text-anchor="middle" font-weight="normal">starter + extender</text>
+<text x="632.0" y="58.0" font-size="12" fill="#52514e" text-anchor="middle" font-weight="normal">no brick</text>
+<rect x="20" y="70" width="54" height="76" rx="6" fill="#d6e6f9" stroke="#52514e" stroke-width="1"><title>starter 2</title></rect>
+<text x="47.0" y="114.0" font-size="26" fill="#0b0b0b" text-anchor="middle" font-weight="bold">S</text>
+<text x="47.0" y="136.0" font-size="9" fill="#0b0b0b" text-anchor="middle" font-weight="normal">starter 2</text>
+<rect x="82" y="70" width="54" height="76" rx="6" fill="#d6e6f9" stroke="#52514e" stroke-width="1"><title>starter 3</title></rect>
+<text x="109.0" y="114.0" font-size="26" fill="#0b0b0b" text-anchor="middle" font-weight="bold">S</text>
+<text x="109.0" y="136.0" font-size="9" fill="#0b0b0b" text-anchor="middle" font-weight="normal">starter 3</text>
+<rect x="144" y="70" width="54" height="76" rx="6" fill="#d6e6f9" stroke="#52514e" stroke-width="1"><title>starter 3</title></rect>
+<text x="171.0" y="114.0" font-size="26" fill="#0b0b0b" text-anchor="middle" font-weight="bold">S</text>
+<text x="171.0" y="136.0" font-size="9" fill="#0b0b0b" text-anchor="middle" font-weight="normal">starter 3</text>
+<rect x="206" y="70" width="54" height="76" rx="6" fill="#fbe0d4" stroke="#52514e" stroke-width="1"><title>extender 2</title></rect>
+<text x="233.0" y="114.0" font-size="26" fill="#0b0b0b" text-anchor="middle" font-weight="bold">E</text>
+<text x="233.0" y="136.0" font-size="9" fill="#0b0b0b" text-anchor="middle" font-weight="normal">extender 2</text>
+<rect x="268" y="70" width="54" height="76" rx="6" fill="#ffffff" stroke="#52514e" stroke-width="1"><title>other 5</title></rect>
+<text x="295.0" y="114.0" font-size="26" fill="#0b0b0b" text-anchor="middle" font-weight="bold">O</text>
+<text x="295.0" y="136.0" font-size="9" fill="#0b0b0b" text-anchor="middle" font-weight="normal">other 5</text>
+<text x="392.0" y="116.0" font-size="15" fill="#0b0b0b" text-anchor="middle" font-weight="bold">yes</text>
+<text x="512.0" y="116.0" font-size="15" fill="#0b0b0b" text-anchor="middle" font-weight="bold">yes</text>
+<text x="632.0" y="116.0" font-size="15" fill="#0b0b0b" text-anchor="middle" font-weight="bold">yes</text>
+<rect x="20" y="158" width="54" height="76" rx="6" fill="#fbe0d4" stroke="#52514e" stroke-width="1"><title>extender 1</title></rect>
+<text x="47.0" y="202.0" font-size="26" fill="#0b0b0b" text-anchor="middle" font-weight="bold">E</text>
+<text x="47.0" y="224.0" font-size="9" fill="#0b0b0b" text-anchor="middle" font-weight="normal">extender 1</text>
+<rect x="82" y="158" width="54" height="76" rx="6" fill="#ffffff" stroke="#52514e" stroke-width="1"><title>other 1</title></rect>
+<text x="109.0" y="202.0" font-size="26" fill="#0b0b0b" text-anchor="middle" font-weight="bold">O</text>
+<text x="109.0" y="224.0" font-size="9" fill="#0b0b0b" text-anchor="middle" font-weight="normal">other 1</text>
+<rect x="144" y="158" width="54" height="76" rx="6" fill="#ffffff" stroke="#52514e" stroke-width="1"><title>other 2</title></rect>
+<text x="171.0" y="202.0" font-size="26" fill="#0b0b0b" text-anchor="middle" font-weight="bold">O</text>
+<text x="171.0" y="224.0" font-size="9" fill="#0b0b0b" text-anchor="middle" font-weight="normal">other 2</text>
+<rect x="206" y="158" width="54" height="76" rx="6" fill="#ffffff" stroke="#52514e" stroke-width="1"><title>other 3</title></rect>
+<text x="233.0" y="202.0" font-size="26" fill="#0b0b0b" text-anchor="middle" font-weight="bold">O</text>
+<text x="233.0" y="224.0" font-size="9" fill="#0b0b0b" text-anchor="middle" font-weight="normal">other 3</text>
+<rect x="268" y="158" width="54" height="76" rx="6" fill="#ffffff" stroke="#52514e" stroke-width="1"><title>other 3</title></rect>
+<text x="295.0" y="202.0" font-size="26" fill="#0b0b0b" text-anchor="middle" font-weight="bold">O</text>
+<text x="295.0" y="224.0" font-size="9" fill="#0b0b0b" text-anchor="middle" font-weight="normal">other 3</text>
+<text x="392.0" y="204.0" font-size="15" fill="#52514e" text-anchor="middle" font-weight="normal">no</text>
+<text x="512.0" y="204.0" font-size="15" fill="#52514e" text-anchor="middle" font-weight="normal">no</text>
+<text x="632.0" y="204.0" font-size="15" fill="#0b0b0b" text-anchor="middle" font-weight="bold">yes</text>
+<rect x="20" y="246" width="54" height="76" rx="6" fill="#d6e6f9" stroke="#52514e" stroke-width="1"><title>starter 1</title></rect>
+<text x="47.0" y="290.0" font-size="26" fill="#0b0b0b" text-anchor="middle" font-weight="bold">S</text>
+<text x="47.0" y="312.0" font-size="9" fill="#0b0b0b" text-anchor="middle" font-weight="normal">starter 1</text>
+<rect x="82" y="246" width="54" height="76" rx="6" fill="#d6e6f9" stroke="#52514e" stroke-width="1"><title>starter 3</title></rect>
+<text x="109.0" y="290.0" font-size="26" fill="#0b0b0b" text-anchor="middle" font-weight="bold">S</text>
+<text x="109.0" y="312.0" font-size="9" fill="#0b0b0b" text-anchor="middle" font-weight="normal">starter 3</text>
+<rect x="144" y="246" width="54" height="76" rx="6" fill="#ffffff" stroke="#52514e" stroke-width="1"><title>other 1</title></rect>
+<text x="171.0" y="290.0" font-size="26" fill="#0b0b0b" text-anchor="middle" font-weight="bold">O</text>
+<text x="171.0" y="312.0" font-size="9" fill="#0b0b0b" text-anchor="middle" font-weight="normal">other 1</text>
+<rect x="206" y="246" width="54" height="76" rx="6" fill="#ffffff" stroke="#52514e" stroke-width="1"><title>other 2</title></rect>
+<text x="233.0" y="290.0" font-size="26" fill="#0b0b0b" text-anchor="middle" font-weight="bold">O</text>
+<text x="233.0" y="312.0" font-size="9" fill="#0b0b0b" text-anchor="middle" font-weight="normal">other 2</text>
+<rect x="268" y="246" width="54" height="76" rx="6" fill="#ffffff" stroke="#52514e" stroke-width="1"><title>other 3</title></rect>
+<text x="295.0" y="290.0" font-size="26" fill="#0b0b0b" text-anchor="middle" font-weight="bold">O</text>
+<text x="295.0" y="312.0" font-size="9" fill="#0b0b0b" text-anchor="middle" font-weight="normal">other 3</text>
+<text x="392.0" y="292.0" font-size="15" fill="#0b0b0b" text-anchor="middle" font-weight="bold">yes</text>
+<text x="512.0" y="292.0" font-size="15" fill="#52514e" text-anchor="middle" font-weight="normal">no</text>
+<text x="632.0" y="292.0" font-size="15" fill="#0b0b0b" text-anchor="middle" font-weight="bold">yes</text>
+<rect x="20" y="334" width="54" height="76" rx="6" fill="#d6e6f9" stroke="#52514e" stroke-width="1"><title>starter 1</title></rect>
+<text x="47.0" y="378.0" font-size="26" fill="#0b0b0b" text-anchor="middle" font-weight="bold">S</text>
+<text x="47.0" y="400.0" font-size="9" fill="#0b0b0b" text-anchor="middle" font-weight="normal">starter 1</text>
+<rect x="82" y="334" width="54" height="76" rx="6" fill="#fbe0d4" stroke="#52514e" stroke-width="1"><title>extender 1</title></rect>
+<text x="109.0" y="378.0" font-size="26" fill="#0b0b0b" text-anchor="middle" font-weight="bold">E</text>
+<text x="109.0" y="400.0" font-size="9" fill="#0b0b0b" text-anchor="middle" font-weight="normal">extender 1</text>
+<rect x="144" y="334" width="54" height="76" rx="6" fill="#fbe0d4" stroke="#52514e" stroke-width="1"><title>extender 2</title></rect>
+<text x="171.0" y="378.0" font-size="26" fill="#0b0b0b" text-anchor="middle" font-weight="bold">E</text>
+<text x="171.0" y="400.0" font-size="9" fill="#0b0b0b" text-anchor="middle" font-weight="normal">extender 2</text>
+<rect x="206" y="334" width="54" height="76" rx="6" fill="#ffffff" stroke="#52514e" stroke-width="1"><title>other 2</title></rect>
+<text x="233.0" y="378.0" font-size="26" fill="#0b0b0b" text-anchor="middle" font-weight="bold">O</text>
+<text x="233.0" y="400.0" font-size="9" fill="#0b0b0b" text-anchor="middle" font-weight="normal">other 2</text>
+<rect x="268" y="334" width="54" height="76" rx="6" fill="#ffffff" stroke="#52514e" stroke-width="1"><title>other 5</title></rect>
+<text x="295.0" y="378.0" font-size="26" fill="#0b0b0b" text-anchor="middle" font-weight="bold">O</text>
+<text x="295.0" y="400.0" font-size="9" fill="#0b0b0b" text-anchor="middle" font-weight="normal">other 5</text>
+<text x="392.0" y="380.0" font-size="15" fill="#0b0b0b" text-anchor="middle" font-weight="bold">yes</text>
+<text x="512.0" y="380.0" font-size="15" fill="#0b0b0b" text-anchor="middle" font-weight="bold">yes</text>
+<text x="632.0" y="380.0" font-size="15" fill="#0b0b0b" text-anchor="middle" font-weight="bold">yes</text>
+<rect x="20" y="422" width="54" height="76" rx="6" fill="#d6e6f9" stroke="#52514e" stroke-width="1"><title>starter 1</title></rect>
+<text x="47.0" y="466.0" font-size="26" fill="#0b0b0b" text-anchor="middle" font-weight="bold">S</text>
+<text x="47.0" y="488.0" font-size="9" fill="#0b0b0b" text-anchor="middle" font-weight="normal">starter 1</text>
+<rect x="82" y="422" width="54" height="76" rx="6" fill="#d6e6f9" stroke="#52514e" stroke-width="1"><title>starter 3</title></rect>
+<text x="109.0" y="466.0" font-size="26" fill="#0b0b0b" text-anchor="middle" font-weight="bold">S</text>
+<text x="109.0" y="488.0" font-size="9" fill="#0b0b0b" text-anchor="middle" font-weight="normal">starter 3</text>
+<rect x="144" y="422" width="54" height="76" rx="6" fill="#fbe0d4" stroke="#52514e" stroke-width="1"><title>extender 3</title></rect>
+<text x="171.0" y="466.0" font-size="26" fill="#0b0b0b" text-anchor="middle" font-weight="bold">E</text>
+<text x="171.0" y="488.0" font-size="9" fill="#0b0b0b" text-anchor="middle" font-weight="normal">extender 3</text>
+<rect x="206" y="422" width="54" height="76" rx="6" fill="#ffffff" stroke="#52514e" stroke-width="1"><title>other 4</title></rect>
+<text x="233.0" y="466.0" font-size="26" fill="#0b0b0b" text-anchor="middle" font-weight="bold">O</text>
+<text x="233.0" y="488.0" font-size="9" fill="#0b0b0b" text-anchor="middle" font-weight="normal">other 4</text>
+<rect x="268" y="422" width="54" height="76" rx="6" fill="#ffffff" stroke="#52514e" stroke-width="1"><title>other 5</title></rect>
+<text x="295.0" y="466.0" font-size="26" fill="#0b0b0b" text-anchor="middle" font-weight="bold">O</text>
+<text x="295.0" y="488.0" font-size="9" fill="#0b0b0b" text-anchor="middle" font-weight="normal">other 5</text>
+<text x="392.0" y="468.0" font-size="15" fill="#0b0b0b" text-anchor="middle" font-weight="bold">yes</text>
+<text x="512.0" y="468.0" font-size="15" fill="#0b0b0b" text-anchor="middle" font-weight="bold">yes</text>
+<text x="632.0" y="468.0" font-size="15" fill="#0b0b0b" text-anchor="middle" font-weight="bold">yes</text>
+<rect x="20" y="510" width="54" height="76" rx="6" fill="#d6e6f9" stroke="#52514e" stroke-width="1"><title>starter 1</title></rect>
+<text x="47.0" y="554.0" font-size="26" fill="#0b0b0b" text-anchor="middle" font-weight="bold">S</text>
+<text x="47.0" y="576.0" font-size="9" fill="#0b0b0b" text-anchor="middle" font-weight="normal">starter 1</text>
+<rect x="82" y="510" width="54" height="76" rx="6" fill="#d6e6f9" stroke="#52514e" stroke-width="1"><title>starter 1</title></rect>
+<text x="109.0" y="554.0" font-size="26" fill="#0b0b0b" text-anchor="middle" font-weight="bold">S</text>
+<text x="109.0" y="576.0" font-size="9" fill="#0b0b0b" text-anchor="middle" font-weight="normal">starter 1</text>
+<rect x="144" y="510" width="54" height="76" rx="6" fill="#fbe0d4" stroke="#52514e" stroke-width="1"><title>extender 1</title></rect>
+<text x="171.0" y="554.0" font-size="26" fill="#0b0b0b" text-anchor="middle" font-weight="bold">E</text>
+<text x="171.0" y="576.0" font-size="9" fill="#0b0b0b" text-anchor="middle" font-weight="normal">extender 1</text>
+<rect x="206" y="510" width="54" height="76" rx="6" fill="#ffffff" stroke="#52514e" stroke-width="1"><title>other 1</title></rect>
+<text x="233.0" y="554.0" font-size="26" fill="#0b0b0b" text-anchor="middle" font-weight="bold">O</text>
+<text x="233.0" y="576.0" font-size="9" fill="#0b0b0b" text-anchor="middle" font-weight="normal">other 1</text>
+<rect x="268" y="510" width="54" height="76" rx="6" fill="#ffffff" stroke="#52514e" stroke-width="1"><title>other 2</title></rect>
+<text x="295.0" y="554.0" font-size="26" fill="#0b0b0b" text-anchor="middle" font-weight="bold">O</text>
+<text x="295.0" y="576.0" font-size="9" fill="#0b0b0b" text-anchor="middle" font-weight="normal">other 2</text>
+<text x="392.0" y="556.0" font-size="15" fill="#0b0b0b" text-anchor="middle" font-weight="bold">yes</text>
+<text x="512.0" y="556.0" font-size="15" fill="#0b0b0b" text-anchor="middle" font-weight="bold">yes</text>
+<text x="632.0" y="556.0" font-size="15" fill="#0b0b0b" text-anchor="middle" font-weight="bold">yes</text>
+</svg>
