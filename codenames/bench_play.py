@@ -35,6 +35,7 @@ import argparse
 import hashlib
 import importlib
 import json
+import os
 import random
 import sys
 import time
@@ -320,6 +321,8 @@ def lora_space(folder: Path, extra: tuple[str, ...]) -> tuple[Space, dict]:
     missing = sorted(w for w in extra if w not in have)
     st = importlib.import_module("sentence_transformers")
     torch = importlib.import_module("torch")
+    torch.set_num_threads(os.cpu_count() or 1)
+    t0 = time.perf_counter()
     model = st.SentenceTransformer(
         "Qwen/Qwen3-Embedding-0.6B", device="cpu", model_kwargs={"torch_dtype": torch.float32}
     )
@@ -349,6 +352,8 @@ def lora_space(folder: Path, extra: tuple[str, ...]) -> tuple[Space, dict]:
             else v.astype(np.float32)
         )
     sp = Space(f"lora-c8:{template}/bare", mats[template], mats["bare"], words + missing)
+    info["seconds"] = round(time.perf_counter() - t0)
+    print("C8 encoder:", json.dumps(info), flush=True)
     return sp, info
 
 
@@ -451,7 +456,7 @@ def crossplay(
     return crossplay_many([giver], guessers, n_boards, lora_dir, strict)[0]
 
 
-def lora_run(out: Path, n_boards: int = N_BOARDS) -> None:
+def lora_run(out: Path, n_boards: int = N_BOARDS, variants=("all", "strict")) -> None:
     """The column of the C8 encoder, inside a Hugging Face Job (its weights are in the
     private dataset). Builds the same inputs as the workflow's data job, from the same
     sources, and records their digests so that the two can be compared."""
@@ -479,6 +484,7 @@ def lora_run(out: Path, n_boards: int = N_BOARDS) -> None:
     with urllib.request.urlopen(bench_data.W2V_URL) as r, open(w2v, "wb") as fh:
         shutil.copyfileobj(r, fh, 1 << 22)
     info = bench_data.extract(glove, w2v)
+    print("vectors:", json.dumps(info), flush=True)
     subprocess.run(
         ["uv", "pip", "install", "-q", "--python", sys.executable, "nltk==3.10.4"], check=True
     )
@@ -493,7 +499,7 @@ def lora_run(out: Path, n_boards: int = N_BOARDS) -> None:
     )  # fmt: skip
     out.mkdir(parents=True, exist_ok=True)
     (out / "data.json").write_text(json.dumps(info, indent=1) + "\n")
-    for strict in (False, True):
+    for strict in [v == "strict" for v in variants]:
         for giver in GIVERS:
             res = crossplay_many([giver], ["lora-c8"], n_boards, Path(c8) / LORA_RUN, strict)[0]
             tag = "strict-" if strict else ""
@@ -958,6 +964,7 @@ def main() -> None:
     c.add_argument("--out", type=Path, required=True)
     lr = sub.add_parser("lora-run", help="the C8 column, inside a Hugging Face Job")
     lr.add_argument("--boards", type=int, default=N_BOARDS)
+    lr.add_argument("--variants", nargs="+", default=["all", "strict"], choices=["all", "strict"])
     lr.add_argument("--out", type=Path, required=True)
     co = sub.add_parser("collect", help="compact a run's outputs into results/bench-runs.json")
     co.add_argument(
@@ -978,7 +985,7 @@ def main() -> None:
         res = crossplay(args.giver, args.guessers, args.boards, args.lora, args.strict)
         args.out.write_text(json.dumps(res) + "\n")
     elif args.cmd == "lora-run":
-        lora_run(args.out, args.boards)
+        lora_run(args.out, args.boards, args.variants)
     elif args.cmd == "collect":
         RUNS_FILE.write_text(json.dumps(collect(args.runs, args.lora), sort_keys=True) + "\n")
     else:
