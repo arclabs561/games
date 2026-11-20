@@ -158,13 +158,17 @@ def call_logs(runs: Path) -> Iterable[tuple[str, str, str, Path]]:
 
 def audit(runs: Path) -> dict:
     groups: dict[tuple[str, str, str], list[dict]] = {}
+    unread: list[str] = []
     for experiment, run, name, path in call_logs(runs):
         rows = groups.setdefault((experiment, run, name), [])
-        with path.open() as f:
-            for line in f:
-                if line.strip():
-                    rows.append(normalize(json.loads(line)))
-    out: dict = {}
+        try:
+            with path.open() as f:
+                for line in f:
+                    if line.strip():
+                        rows.append(normalize(json.loads(line)))
+        except (OSError, ValueError, AttributeError) as e:  # recorded, the rest is read
+            unread.append(f"{path.relative_to(runs)}: {type(e).__name__}: {str(e)[:200]}")
+    out: dict = {"unread": unread} if unread else {}
     for (experiment, run, name), calls in sorted(groups.items()):
         manifest = runs / experiment / run / "manifest.json"
         info = json.loads(manifest.read_text()) if manifest.exists() else {}
@@ -271,53 +275,64 @@ def described(status: int, headers: dict, body: dict) -> dict:
     }
 
 
+def check_one(repo, provider, or_id, extra, auth, token, cap, spent, repeats, results, listings):
+    """Read the listings of one model and send its variants; return the new spending."""
+    listing = get(f"{ROUTER}/v1/models/{repo}", auth)
+    providers = listing.get("providers") or (listing.get("data") or [{}])[0].get("providers")
+    endpoints = get(OPENROUTER_ENDPOINTS.format(id=or_id))
+    listings[repo] = {
+        "router_providers": providers or listing,
+        "openrouter_endpoints": [
+            {k: e.get(k) for k in ("provider_name", "tag", "quantization", "status")}
+            for e in (endpoints.get("data") or {}).get("endpoints", [])
+        ]
+        or endpoints,
+    }
+    price = next(
+        (p.get("pricing") for p in providers or [] if p.get("provider") == provider), None
+    ) or {"input": 3.0, "output": 15.0}
+    pid = provider_id(repo, provider, token)
+    for name, url, body, headers in variants(repo, provider, extra, pid):
+        for attempt in range(repeats):
+            row = {"repo": repo, "provider": provider, "variant": name, "attempt": attempt}
+            if spent + (256 * price["output"] + 500 * price["input"]) / 1e6 > cap:
+                results.append(row | {"skipped": "cap"})
+                continue
+            start = time.time()
+            status, h, b = post(url, body, auth | headers)
+            usage = b.get("usage") or {}
+            cost = (
+                (usage.get("prompt_tokens") or 0) * price["input"]
+                + (usage.get("completion_tokens") or 0) * price["output"]
+            ) / 1e6
+            spent += cost
+            row |= described(status, h, b) | {"seconds": round(time.time() - start, 2)}
+            results.append(row | {"cost": cost})
+            print(json.dumps(results[-1])[:400], flush=True)
+    return spent
+
+
 def pincheck(cap: float, out: Path, repeats: int = 2) -> dict:
     token = os.environ["HF_TOKEN"]
     auth = {"Authorization": f"Bearer {token}"}
     spent, results = 0.0, []
     listings: dict[str, dict] = {}
     for repo, provider, or_id, extra in PINNED:
-        listing = get(f"{ROUTER}/v1/models/{repo}", auth)
-        providers = listing.get("providers") or (listing.get("data") or [{}])[0].get("providers")
-        listings[repo] = {
-            "router_providers": providers or listing,
-            "openrouter_endpoints": [
-                {k: e.get(k) for k in ("provider_name", "tag", "quantization", "status")}
-                for e in (get(OPENROUTER_ENDPOINTS.format(id=or_id)).get("data") or {}).get(
-                    "endpoints", []
-                )
-            ],
-        }
-        price = next(
-            (p.get("pricing") for p in providers or [] if p.get("provider") == provider), None
-        ) or {"input": 3.0, "output": 15.0}
-        pid = provider_id(repo, provider, token)
-        for name, url, body, headers in variants(repo, provider, extra, pid):
-            for attempt in range(repeats):
-                if spent + 256 * price["output"] / 1e6 + 500 * price["input"] / 1e6 > cap:
-                    results.append({"repo": repo, "provider": provider, "variant": name,
-                                    "skipped": "cap"})  # fmt: skip
-                    continue
-                start = time.time()
-                status, h, b = post(url, body, auth | headers)
-                usage = b.get("usage") or {}
-                cost = (
-                    (usage.get("prompt_tokens") or 0) * price["input"]
-                    + (usage.get("completion_tokens") or 0) * price["output"]
-                ) / 1e6
-                spent += cost
-                results.append(
-                    {"repo": repo, "provider": provider, "variant": name, "attempt": attempt}
-                    | described(status, h, b)
-                    | {"seconds": round(time.time() - start, 2), "cost": cost}
-                )
-                print(json.dumps(results[-1])[:400], flush=True)
+        try:
+            spent = check_one(
+                repo, provider, or_id, extra, auth, token, cap, spent, repeats, results, listings
+            )
+        except Exception:  # recorded; the other models are still checked
+            import traceback
+
+            results.append({"repo": repo, "provider": provider, "error": traceback.format_exc()})
+            print(results[-1]["error"], flush=True)
     report = {
         "what": "pinning check: one short prompt per model and way of pinning, sent twice",
         "time": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "prompt": PROMPT,
         "cost_method": "reported tokens times the router's listed price for the provider",
-        "spent": spent,
+        "spent": sum(r.get("cost", 0.0) for r in results),
         "cap": cap,
         "calls": results,
         "listings": listings,
@@ -345,7 +360,13 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     if args.runs is not None:
         args.out.mkdir(parents=True, exist_ok=True)
-        result = audit(args.runs)
+        try:
+            result = audit(args.runs)
+        except Exception:  # the pinning check still runs; the traceback is saved
+            import traceback
+
+            result = {"error": traceback.format_exc()}
+            print(result["error"], flush=True)
         (args.out / "providers.json").write_text(json.dumps(result, indent=1, sort_keys=True))
     report = pincheck(args.cap, args.out)
     print(json.dumps({"spent": report["spent"], "calls": len(report["calls"])}))
