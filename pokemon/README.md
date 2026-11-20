@@ -1,19 +1,67 @@
 # Pokémon
 
-Two separate analyses share this folder: the type chart, and catch odds for the Emerald Kaizo ROM hack.
+Which attacking types cover the type chart, which typings take the least damage, what the chart's equilibrium is when it is played as a game, and whether that equilibrium predicts what people play. Separately, `emerald_kaizo/` works out how many wild Pokémon to catch in the Emerald Kaizo ROM hack.
 
-## The type chart
+- No six attacking types are super-effective against all 18 types; ten sets of seven are, and all ten include Fighting and Ground. Steel/Fairy takes the least damage. Exact.
+- Played as a duel, the chart has a unique equilibrium on 11 types that matches every weight Schmitz (2021) published. Exact.
+- A ranking of the types, led by Steel, accounts for only 4.7% to 5.2% of the chart; the rest is cyclic. Exact.
+- The equilibrium does not predict which typings people use on the Showdown ladder: the number of Pokémon with a typing predicts its use better. Bootstrap interval, below.
 
-`pokemon_types.py` holds the Generation 6 chart: 18 types, and the multiplier when each attacks each. `chart(g)` gives the chart of any generation. Generation 1 had 15 types, and four of its multipliers differ: Bug and Poison hit each other for double damage, Ghost did nothing to Psychic, and Ice did normal damage to Fire. Generations 2 to 5 added Steel and Dark, and in them Steel resisted Ghost and Dark. Generation 6 added Fairy and dropped those two resistances. The charts agree pair by pair with PokeAPI's `type_efficacy.csv` and `type_efficacy_past.csv` and with Pokémon Showdown's per-generation chart files, for every generation from 1 to 9 (`sources.py`, below).
+![The Generation 6 type chart: attacking types down the side, defending types across the top. Colored cells are 2 (red), 1/2 (light blue) and 0 (black); blank cells are 1.](figures/type-chart.svg)
 
-- No set of six attacking types is super-effective against every single type, and ten sets of seven are. Fighting and Ground are in all ten. Exact, by checking every combination.
-- Among the typings that some Pokémon or form has, Steel/Fairy takes the least damage summed over the 18 attacking types: 53/4 = 13.25, against 18 for a type with no weaknesses or resistances. This holds from Generation 6, when Fairy arrived, through Generation 9. In Generations 2 to 5 the least is Flying/Steel's 12, out of 17. In Generation 1 it is 14 out of 15, shared by Psychic and Electric/Flying. Exact, `tests/test_pokemon_equilibrium.py`.
+*The Generation 6 chart, written by `figures.py`. Each row is an attacking type. Only 120 of the 324 cells are not neutral, and the table is not symmetric.*
+
+## Rules as modeled
+
+- **The chart.** `pokemon_types.py` holds the Generation 6 chart: 18 types, and the multiplier when each attacks each. `chart(g)` gives the chart of any generation (below). A move against a Pokémon with two types gets the product of the two multipliers, so it can be 4, 2, 1, 1/2, 1/4 or 0.
+- **Typings.** A typing is one type or a pair, 171 in all. The analyses use either all 171, or those that some Pokémon or form has in a given generation (146 as of Generation 7, 162 as of Generation 9).
+- **What is left out.** Base stats, abilities, moves, items, the bonus for a move of the user's own type and Terastallization are not modeled, except that the notebook's Pokémon scores use the total of the base stats. A typing is assumed to attack with moves of its own types.
+- **Arbitrary scores.** The notebook's coverage score and its attack and defense scores are sums chosen for simplicity; its rankings of Pokémon depend on them, and are not facts about the games.
+
+## Results
+
+| Result | How it is known |
+|---|---|
+| No set of six attacking types is super-effective against every type; ten sets of seven are, and Fighting and Ground are in all ten. | Exact: every set, checked a second time against the chart directly |
+| Among existing typings, Steel/Fairy takes the least damage summed over the 18 attacking types: 53/4, against 18 for a type with no weaknesses or resistances. It holds from Generation 6 to 9. In Generations 2 to 5 the least is Flying/Steel's 12 of 17; in Generation 1, 14 of 15, shared by Psychic and Electric/Flying. | Exact |
+| Attack game: the attacker can guarantee an average multiplier of 4158/3979 ≈ 1.045, with a unique equilibrium led by Ground (attacker) and Normal (defender). Over all 171 defending typings the value is 13207/13501 ≈ 0.978. | Exact: LP support, then fractions and a uniqueness certificate |
+| Duel game: unique equilibrium on 11 types, led by Steel 627/2653 ≈ 0.236; the 7 types left out and every weight match Schmitz (2021) to three decimals. | Exact; agrees with a cited source |
+| Duel over all 171 typings: unique, on 23 typings led by Electric/Flying (12.9%). Schmitz (2023) reports 27 typings led by Water/Flying; both of his leaders lose against this equilibrium. | Exact; disagrees with a cited source, cause unknown |
+| Log-ratio game: unique at k = 1; for k = 2, 3, 4, 6 and 10 the optimal strategies form a segment, along which Ghost's weight runs from 0 to a bound such as 5/79. | Exact, with the segment proved |
+| 16 rock-paper-scissors triangles of super-effective types, 5 of them with each type also resisting the one it hits. | Exact, by two methods |
+| The ranking part of the chart carries 14/297 (4.7%) of its squared norm with k = 1 and 89/1701 (5.2%) with k = 2; Steel ranks first. | Exact, checked against least squares |
+| Equilibrium weight against usage on `gen9ou`: Spearman's ρ is 0.08, against 0.40 for the number of Pokémon with each typing. The difference, Δρ, is −0.32, with interval −0.56 to −0.08, so the equilibrium does not predict use beyond availability. | Bootstrap over typings, 10,000 resamples, seed 0, 95% interval (plan P1) |
+| Fighting/Ice has the most conflicting types; Ground/Ice and Fighting/Ice attack best; Ice/Rock defends worst. | Exact, given the notebook's sums |
+| With the notebook's mix of base stats and typing, Empoleon is the best final starter of Generations 1 to 7, and Celesteela the best Pokémon new in Generation 7 that is not legendary. | Exact, given an arbitrary score |
+| Emerald Kaizo: a nature chosen in advance turns up 4% of the time, so 74 catches give a 95% chance of at least one. | Exact under the independent uniform IV model |
+
+## How the results are checked
+
+- **Covers.** `covers(k)` is compared in the tests with a search that reads the chart directly, and the notebook checks that no cover stays one after any of its types is dropped.
+- **Equilibria.** The floating-point LP only finds the support. The weights are then solved exactly with fractions on that support, and every equilibrium inequality is checked exactly. Uniqueness, unused types and weight ranges are proved exactly, as described under [The chart as a game](#the-chart-as-a-game).
+- **Charts by generation.** The charts agree pair by pair with PokeAPI's `type_efficacy.csv` and `type_efficacy_past.csv` and with Pokémon Showdown's per-generation chart files, for every generation from 1 to 9 (`sources.py`).
+- **Usage statistics.** `scipy.stats.spearmanr` gives the same Δρ to 15 decimal places. The bootstrap code agrees with an exact enumeration of all 256 resamples on four typings.
+- **Ranking part.** The scores are compared with numpy's least squares, and the absence of a harmonic part is checked exactly, not assumed.
+- **Notebook.** `pokemon.ipynb` imports `scoring.py`, which `tests/test_pokemon_scoring.py` tests, including the percentile rank against scipy's. CI reruns the notebook and compares its text and figures, and checks that the SVGs here are what `figures.py` writes.
+
+## The type chart and its typings
+
+`pokemon.ipynb` asks the questions a player would ask of the chart, in order: how many types there are, the smallest cover, a score for coverage, typings that take the least, typings whose two types disagree, attack and defense scores of typings, Pokémon and random teams, and the best starter.
+
+- **Covering.** No six types cover the chart. Of the ten covers of seven, Fighting and Ground are in all of them: Fighting is the only type super-effective against Normal, and only Ground hits Electric hard. The notebook also scores a set of attacking types: two points per type hit hard, minus one per type that resists, minus two per immune type. The score reaches at most 18, first with four sets of six types, and all 16 best sets include Ground and Fairy.
+- **Defense.** The ten typings that take the least are led by Steel/Fairy (53/4), Flying/Steel (27/2) and Dragon/Steel and Ghost/Steel (57/4 each); nine of the ten include Steel.
+- **Scores.** Over the 146 typings that exist as of Generation 7, attack and defense rescaled to run from 0 to 1 have correlation −0.20. Normal is at percentile 2.1 of their sum. Averaging over a random team of six typings (10,000 teams, seed 42) narrows the spread by a factor of about 2.5, close to √6.
+- **Pokémon.** The total of Blissey's base stats is at percentile 83.2 among the 955 forms. Toxapex's typing is at percentile 81.2 among typings, and its combined score at 90.2. Celesteela and Blacephalon, Ultra Beasts that the data does not mark as legendary, lead the forms that are neither legendary nor Mega.
+
+![Fairy/Steel: the best multiplier it deals to each type, sum 23, and the multiplier each type deals it, sum 53/4.](figures/steel-fairy.svg)
+
+*Steel/Fairy, the typing that takes the least. The top row is what it deals with moves of its own types; the bottom row is what moves of each type deal it, with two immunities (Poison and Dragon) and one 1/4 (Bug).*
 
 ## The chart as a game
 
-`equilibrium.py` treats the chart as a two-player zero-sum game and solves it with linear programming (scipy's HiGHS). The floating-point solution only finds the support. The weights are then solved exactly with fractions on that support, and every equilibrium inequality is checked exactly. Where the equilibrium is unique, an exact argument shows it: no unused strategy ties, and the equations on the support have one solution. Where that argument does not apply, the least and greatest weight of a strategy over all optimal strategies are found by LP and then proved exactly: the primal and dual solutions are rebuilt with fractions, checked, and their values must meet. So every claim below about uniqueness, about types never played, and about weight ranges is exact. Tests are in `tests/test_pokemon_equilibrium.py`.
+`equilibrium.py` treats the chart as a two-player zero-sum game and solves it with linear programming (scipy's HiGHS). The floating-point solution only finds the support. The weights are then solved exactly with fractions on that support, and every equilibrium inequality is checked exactly. Where the equilibrium is unique, an exact argument shows it: no unused strategy ties, and the equations on the support have one solution. Where that argument does not apply, the least and greatest weight of a strategy over all optimal strategies are found by LP and then proved exactly: the primal and dual solutions are rebuilt with fractions, checked, and their values must meet. Tests are in `tests/test_pokemon_equilibrium.py`.
 
-**Attack game.** One player picks an attacking type, the other a defending type, and the payoff is the multiplier. The attacker can guarantee an average multiplier of 4158/3979 (about 1.045), and the equilibrium is unique. The attacker mixes 11 types, led by Ground (19.5%). The defender mixes 11, led by Normal (28.4%), Fairy (14.9%) and Ghost (14.6%). Normal suits the defender because only Fighting is super-effective against it and Ghost cannot touch it. If the defender may pick any of the 171 typings (18 single types and 153 pairs), the value drops to 13207/13501 (about 0.978). Flying/Steel then leads the defender's mix at 19.9%.
+**Attack game.** One player picks an attacking type, the other a defending type, and the payoff is the multiplier. The attacker can guarantee an average multiplier of 4158/3979 (about 1.045), and the equilibrium is unique. The attacker mixes 11 types, led by Ground (19.5%). The defender mixes 11, led by Normal (28.4%), Fairy (14.9%) and Ghost (14.6%). Normal suits the defender because only Fighting is super-effective against it and Ghost cannot touch it. If the defender may pick any of the 171 typings, the value drops to 13207/13501 (about 0.978). Flying/Steel then leads the defender's mix at 19.9%.
 
 **Duel game.** This is the model of Schmitz, ["The Objectively Best Pokemon Type, According to Game Theory"](https://quantimschmitzcom.wordpress.com/2021/07/30/the-objectively-best-pokemon-type-according-to-game-theory/) (2021). Two Pokémon that differ only in type each attack with a move of their own type. If one deals multiplier a and takes b, with a > b, it wins and keeps 1 − b/a of its HP. The winner scores that share and the loser scores its negative; equal multipliers score 0. The game is symmetric, so its value is 0. The equilibrium is unique and matches every weight Schmitz published, to his three decimal places: Steel 627/2653 (0.236), Dragon 0.175, Water 0.161, Ground 0.127, Electric 0.083, Grass 0.070, Flying 0.068, Ghost 0.040, Fairy 0.038, Dark 0.002, Fighting 0.001. The same seven types get no weight: Normal, Fire, Poison, Psychic, Bug, Rock and Ice. Each of the seven loses on average against the equilibrium mix, so none ties.
 
@@ -31,48 +79,28 @@ Schmitz's follow-up, ["The best Pokemon type combinations according to game theo
 
 No two different types are super-effective against each other; only Dragon and Ghost are super-effective against themselves.
 
-## The games on earlier charts
+### Earlier charts and each generation's typings
 
-The same games, played on the chart of Generation 1 and on that of Generations 2 to 5. All exact; `uv run --group pokemon python -m pokemon.equilibrium` prints them.
+Generation 1 had 15 types, and four of its multipliers differ: Bug and Poison hit each other for double damage, Ghost did nothing to Psychic, and Ice did normal damage to Fire. Generations 2 to 5 added Steel and Dark, and in them Steel resisted Ghost and Dark. Generation 6 added Fairy and dropped those two resistances. `uv run --group pokemon python -m pokemon.equilibrium` prints the same games on each chart; all are exact.
 
 | | Generation 1 (15 types) | Generations 2–5 (17 types) | Generation 6 on (18 types) |
 |---|---|---|---|
 | Attack game, value | 1 | 52363/49845 ≈ 1.050 | 4158/3979 ≈ 1.045 |
-| Defender's mix leads with | Ghost 1/2, Normal 1/4, Psychic 1/4 | Dark 26.8%, Ghost 24.0% | Normal 28.4%, Fairy 14.9% |
-| Duel, types played | 9, led by Dragon 26.6%, Psychic 19.7%, Rock 18.4% | 9, led by Dragon 22.9%, Steel 17.7% | 11, led by Steel 23.6%, Dragon 17.5% |
+| Duel, types played | 9, led by Dragon 26.6% | 9, led by Dragon 22.9% | 11, led by Steel 23.6% |
 | Duel over all typings | 16 typings, not unique | 17, unique, led by Electric/Flying 16.0% | 23, unique, led by Electric/Flying 12.9% |
-| Log-ratio, k = 1, 2, 3, 4, 6, 10 | unique for each k | unique for each k | unique at k = 1, a segment for k ≥ 2 |
 
-- **Generation 1.** Nothing resisted Dragon, so Dragon alone guarantees the attacker an average multiplier of 1, and the value is exactly 1. The attacker's optimal strategy is not unique: Fire's weight can be anything from 0 to 32/97. In the duel, Psychic is second (94/477), since only Bug hit it for double damage and Ghost could not hit it at all. Normal, Fire, Electric, Grass, Poison and Ghost are never played. Over all 120 typings, Water/Dragon never loses a duel. So playing it alone is optimal, though no Pokémon had that typing until Generation 2.
-- **Steel and Dark arrive (Generation 2).** Steel goes straight to second place in the duel (48/271), and Psychic, Rock and Bug drop out of it. Dragon stays first. The defender in the attack game now leans on Dark and Ghost, which together take just over half the weight. Every equilibrium of the duel and the log-ratio game is unique.
-- **Fairy arrives, and Steel loses two resistances (Generation 6).** Steel moves to first place in the duel and Dragon to second, and Fairy enters at 3.8%. Normal becomes the defender's main type in the attack game. The log-ratio game's optimal set becomes a segment for k ≥ 2. The two changes pull in opposite directions. Applied alone to the Generations 2–5 chart, the loss of Steel's resistances puts Dark first in the duel (16.9%), while Fairy alone leaves Steel first (22.3%). `generation_6_split()` builds both charts.
+- In Generation 1 nothing resisted Dragon, so the attack game's value is exactly 1, and Water/Dragon never loses a duel against any of the 120 typings.
+- Steel arrives second in the duel in Generation 2 and moves to first in Generation 6, when Fairy arrives and Steel loses two resistances. The two changes pull in opposite directions.
+- With each generation's own Pokémon and chart, the duel over existing typings is unique from Generation 4 on, led by Water/Ground through Generation 8 and by Electric/Flying in Generation 9. In Generations 2 and 3, Water/Dragon (Kingdra's typing) loses no duel.
+- Nine of the 171 typings are still unused, among them Fire/Fairy, which the 171-typing equilibrium plays.
 
-## The typings of each generation
-
-The Pokémon data covers every generation through the newest games (Generation 9, including Legends: Z-A and its Mega Evolutions). A form counts as of generation g if it was introduced in g or earlier. Its typing is the one it had in g's games: Clefairy is Normal through Generation 5 and Fairy from 6. Each generation uses its own chart. Exact.
-
-| Generation | Forms | Typings | Duel over existing typings |
-|---|---|---|---|
-| 1 | 151 | 33 | unique, 13 typings, led by Ice/Psychic 19.7% |
-| 2 | 251 | 55 | Water/Dragon alone is optimal; not unique |
-| 3 | 392 | 75 | not unique; one equilibrium leads with Water/Ground |
-| 4 | 508 | 88 | unique, 15, led by Water/Ground 19.2% |
-| 5 | 673 | 110 | unique, 19, led by Water/Ground 16.0% |
-| 6 | 811 | 133 | unique, 21, led by Water/Ground 10.1% |
-| 7 | 955 | 146 | unique, 27, led by Water/Ground 10.8% |
-| 8 | 1,106 | 155 | unique, 29, led by Water/Ground 11.6% |
-| 9 | 1,303 | 162 | unique, 23, led by Electric/Flying 12.7% |
-
-- In Generations 2 and 3, Water/Dragon (Kingdra's typing) loses no duel against any typing that exists: its worst result is a tie. Dragon/Steel arrives in Generation 4 and beats it.
-- From Generation 7 to 9, 16 typings were added, among them Fire/Grass, Electric/Fighting and Fighting/Fairy, and all three enter the duel's equilibrium. Seven typings leave it, among them Flying/Dragon and Normal/Fairy. The Generation 9 equilibrium has 23 typings, as the 171-typing game's does, and 21 of them are the same. The 171-typing equilibrium also uses Fire/Fairy, which no Pokémon has, and Fighting/Ghost; the Generation 9 one uses Water/Dragon and Fighting/Fairy in their place.
-- Nine of the 171 typings are still unused: Bug/Dragon, Fire/Fairy, Ground/Fairy, Ice/Poison, Normal/Bug, Normal/Ice, Normal/Rock, Normal/Steel and Rock/Ghost.
-- As of Generation 7 the data gives exactly the 146 typings of the file it replaced (below), so the Generation 7 results above and in the notebook did not change.
+[`results/generations.md`](results/generations.md) has the full tables, the defender's mixes and the per-generation detail.
 
 ## Does the equilibrium predict what people play?
 
-No. This is plan P1 (`experiments/plans/P1.md`, with its amendments), run on Smogon's monthly usage statistics for the Pokémon Showdown ladder. The primary test uses `gen9ou` at rating cutoff 1500, with the twelve months 2025-11 to 2026-10 pooled with equal weight. A typing's usage share is the summed team share of its Pokémon, divided by 6. Its availability is the number of Pokémon and forms with that typing listed in any of the twelve files; 444 forms with 147 typings are listed. The equilibrium is the duel game's over those 147 typings, on the Generation 6 chart. It is unique, on 21 typings, led by Grass/Rock (13.6%) and Water/Ground (11.9%).
+No. This is plan P1 (`experiments/plans/P1.md`, with its amendments), run on Smogon's monthly usage statistics for the Pokémon Showdown ladder. The primary test uses `gen9ou` at rating cutoff 1500, with the twelve months 2025-11 to 2026-10 pooled with equal weight. A typing's usage share is the summed team share of its Pokémon, divided by 6. Its availability is the number of Pokémon and forms with that typing listed in any of the twelve files: 444 forms with 147 typings. The equilibrium is the duel game's over those 147 typings, on the Generation 6 chart; it is unique, on 21 typings.
 
-The plan's test compares two Spearman correlations with usage over the 147 typings, one for equilibrium weight and one for availability. Δρ is the first minus the second. The interval is a 95% percentile bootstrap over typings, with 10,000 resamples and seed 0.
+The test compares two Spearman correlations with usage over the 147 typings, one for equilibrium weight and one for availability. Δρ is the first minus the second. The interval is a 95% percentile bootstrap over typings, with 10,000 resamples and seed 0.
 
 | Correlation with usage share, over 147 typings | ρ | 95% interval |
 |---|---|---|
@@ -81,59 +109,82 @@ The plan's test compares two Spearman correlations with usage over the 147 typin
 | Highest base-stat total among them (secondary) | 0.59 | 0.46 to 0.69 |
 | **Δρ, equilibrium minus availability (primary)** | **−0.32** | **−0.56 to −0.08** |
 
-- **The primary result.** The interval for Δρ lies below 0. The plan counts the equilibrium as predicting use beyond availability only if the interval lies above 0, so it does not. The number of Pokémon with a typing predicts its use better than its equilibrium weight does, and base stats predict better still.
-- **Why.** 126 of the 147 typings get weight 0, so the equilibrium ranks most typings as tied. The most used typing, Fighting/Ground at 5.4% of team slots, is one of them: it loses 0.22 on average against the equilibrium mix, mostly to Ground/Flying, Electric/Flying and Water/Ground. Of the ten most used typings, three are in the support.
-- **Support mass (secondary).** The 21 typings in the support take 20.3% of usage and account for 11.0% of the available Pokémon.
-- **Stability (secondary).** Δρ is between −0.34 and −0.30 in each of the twelve months, with the pooled year's equilibrium and availability. At the other cutoffs it is −0.34 (cutoff 0, interval −0.58 to −0.10), −0.27 (1695, −0.50 to −0.04) and −0.34 (1825, −0.58 to −0.09).
-- **The attack game (secondary).** The defender's mix over the 147 typings gives Δρ = −0.30 (−0.52 to −0.09).
-- **Generation 1 (secondary, no test).** `gen1ou` uses all 33 Generation 1 typings, and its duel equilibrium is the unique one on 13 typings in the table above. At cutoff 1500, ρ is 0.30 for the equilibrium, 0.34 for availability and 0.51 for base stats; Δρ = −0.04 (−0.52 to 0.46). Generation 1 has no abilities, items or Terastallization, but its equilibrium does no better there.
+- **The primary result.** The interval for Δρ lies below 0. The plan counts the equilibrium as predicting use beyond availability only if the interval lies above 0, so it does not.
+- **Why.** 126 of the 147 typings get weight 0, so the equilibrium ranks most typings as tied. The most used typing, Fighting/Ground at 5.4% of team slots, is one of them.
+- **Secondary results.** Δρ is between −0.34 and −0.30 in each of the twelve months and at every other rating cutoff but one (−0.27 at 1695). The attack game gives −0.30. In `gen1ou`, Δρ is −0.04 with an interval from −0.52 to 0.46.
 
-These comparisons are outside the plan and are exploratory:
-
-- The log-ratio game over the 147 typings gives Δρ = −0.34 (k = 1) and −0.29 (k = 2), both with intervals below 0.
-- Over the 18 single types, each Pokémon's share is split equally between its types. Then the duel equilibrium's ρ with `gen9ou` usage is 0.61 (0.19 to 0.83), against 0.51 (0.01 to 0.84) for availability, and Δρ = 0.10 (−0.33 to 0.61). With 18 types the intervals are too wide to separate the two.
-
-**How the numbers are known.** The shares are sums of the published values, and the equilibria and their uniqueness are exact. Each correlation is exact given those inputs. The intervals come from the bootstrap. `scipy.stats.spearmanr` gives the same Δρ, to 15 decimal places. The bootstrap code agrees with exact enumeration of all 256 resamples on four typings (`tests/test_pokemon_usage.py`). Every number is in `results/p1.json`, and the per-typing table is in `results/usage-typings.json`.
-
-**What the chart leaves out.** Base stats, abilities, moves, items and Terastallization all shape what people use, and the chart models none of them. A null result was the expected outcome. Spearman's ρ also treats all 126 typings with weight 0 as tied, so the equilibrium can only separate its support from the rest.
+Base stats, abilities, moves, items and Terastallization all shape what people use, and the chart models none of them, so a null result was the expected outcome. [`results/p1.md`](results/p1.md) has the secondary and exploratory results in full.
 
 ## How much of the chart is a ranking
 
-`hodge.py` splits the chart into a ranking part and a cyclic part, following Jiang, Lim, Yao and Ye, ["Statistical ranking and combinatorial Hodge theory"](https://doi.org/10.1007/s10107-010-0419-x), *Mathematical Programming* 127 (2011) 203–244. The flow between types i and j is A(i, j) = log2(E(i, j)/E(j, i)), where E(i, j) is the multiplier when i attacks j; it is the payoff of the log-ratio game. Any such flow is the sum of a gradient s(i) − s(j), the least-squares fit of one score per type, and a remainder with no net flow at any type. On the complete graph the score is the row mean, s(i) = (1/18) Σⱼ A(i, j), and the remainder is a sum of cycles around triangles, with no "harmonic" part left over. The code checks both facts exactly rather than assuming them, and a test compares the scores with numpy's least squares.
+`hodge.py` splits the chart into a ranking part and a cyclic part, following Jiang, Lim, Yao and Ye, ["Statistical ranking and combinatorial Hodge theory"](https://doi.org/10.1007/s10107-010-0419-x), *Mathematical Programming* 127 (2011) 203–244. The flow between types i and j is A(i, j) = log2(E(i, j)/E(j, i)), where E(i, j) is the multiplier when i attacks j; it is the payoff of the log-ratio game. Any such flow is the sum of a gradient s(i) − s(j), the least-squares fit of one score per type, and a remainder with no net flow at any type. On the complete graph the score is the row mean, s(i) = (1/18) Σⱼ A(i, j), and the remainder is a sum of cycles around triangles, with no "harmonic" part left over. The code checks both facts exactly rather than assuming them.
 
 - **The ranking part is small.** It carries 14/297 (4.7%) of the squared norm with k = 1 and 89/1701 (5.2%) with k = 2. The share grows with k, to 601/7317 (8.2%) at k = 10, and tends to 5/54 (9.3%) as k grows without bound. It is a ratio of two quadratics in k, computed exactly. The other 91–95% is cyclic. On the Generations 2–5 chart the share is 128/2465 (5.2%) at k = 1; on Generation 1's, 22/515 (4.3%).
 - **What it ranks first.** Steel, for each k tried and on every chart since Generation 2. A type's score is what its attacks gain, in doublings, minus what attacks against it gain, averaged over the types. Steel hits 3 types hard and 4 weakly (net −1), and takes 3 super-effective hits, 10 resisted ones and one immunity, so its score is (6 + k)/18. Its rank comes from defense. Grass ranks last at k = 1 to 3, with −5/18. On Generation 1's chart, Psychic ranks first (tied with Dragon at k = 1).
 - **What the two parts mean as games.** In the ranking part alone, Steel beats or ties every type, so pure Steel is optimal. In the cyclic part alone, every type scores 0 against the uniform mix, so the uniform mix is optimal. The real chart sits between the two. That is consistent with what the equilibria show: Steel has the most weight in the duel, but the weight is spread over 10 or 11 types. This is a reading of the numbers, not a theorem. Candogan, Menache, Ozdaglar and Parrilo, ["Flows and decompositions of games: harmonic and potential games"](https://doi.org/10.1287/moor.1110.0500), *Mathematics of Operations Research* 36 (2011) 474–503, split a whole game this way into a potential and a harmonic part. Their split works on the game's strategy profiles, not on the types, so it is a related construction, not the same one.
 
-## Other analyses
-
-`graph.py` writes the chart as a directed graph, with 18 types and the 120 links that are not neutral, to `display/graph.json`, and serves `display/index.html`, which draws it. `graph_analysis.py` ranks the types by PageRank and betweenness with networkx. `pokemon.ipynb` scores types, type pairs, Pokémon and random teams.
-
 ## Emerald Kaizo
 
-`emerald_kaizo/` models IVs, stats and catch odds, to decide how many wild Pokémon of a species are worth catching for a given role. For example, a nature chosen in advance turns up 4% of the time, so 74 catches give a 95% chance of at least one. `iv_analysis.md` is the generated report, `lab_notes.md` the working notes, and `rom_fingerprint.md` identifies the ROM that was analyzed, which is not included.
+Emerald Kaizo is a ROM hack of Pokémon Emerald. Its question is a player's too, but it is not about the type chart: how many wild Pokémon of a species are worth catching to get one that fits a role.
+
+- **Model.** Six IVs, each independently uniform on 0 to 31, and one of 25 natures, also uniform. The tables of which species appear in grass, and failed throws, are not modeled, so the counts are per catch of the target species.
+- **Results.** One chosen nature turns up with chance 1/25 = 4%, so a player expects 25 catches, and 74 give a 95% chance of at least one. Two IVs that matter at 16 or more, with one of two acceptable natures, have chance 2%: 50 catches expected, 149 for 95%. Exact under the model; `iv_analysis.md` has the table and a simulation as a check.
+- **Caveat.** The game's random number generator is deterministic, so encounters at the same timing are not independent; the uniform model is a marginal approximation.
+
+`iv_analysis.md` is the generated report and `lab_notes.md` the working notes. `rom_fingerprint.md` identifies the ROM that was analyzed, which is not included.
 
 ## Data
 
-- `pokeapi_forms.csv`: 1,303 Pokémon and forms, from Bulbasaur through the newest games. Each row has the form's identifier, its species and National Pokédex number, the generation it was introduced in, legendary, mythical and Mega flags, its typing in each generation from 1 to 9 (blank before it existed), and its current base stats. `pokeapi_stats_past.csv` has the 235 earlier base stats, such as Generation 1's single Special stat and the stat changes of Generation 6. `pokedex.py` reads both.
-- `Pokemon.csv`: 800 Pokémon and forms through Generation 6 (number 721), with types and base stats. It matches `Pokemon.csv` in the Kaggle dataset [Pokemon with stats](https://www.kaggle.com/datasets/abcsds/pokemon) (version 2), which is released under [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/). Verified: the license shown on that page, and the file's header, first rows and size (44,028 bytes against the 44.03 kB listed). Not verified: a byte-for-byte comparison, since Kaggle needs a login to download. That page says the data was gathered from pokemon.com, pokemondb.net and Bulbapedia.
+| Source | What it is | License | Committed |
+|---|---|---|---|
+| [PokeAPI](https://github.com/PokeAPI/pokeapi) CSV files, commit `e98f2ad8` | `pokeapi_forms.csv` (1,303 forms, typings in each generation, current base stats) and `pokeapi_stats_past.csv` (235 earlier base stats) | BSD-style for the code; no license grants the data (below) | yes, facts only |
+| Kaggle, [Pokemon with stats](https://www.kaggle.com/datasets/abcsds/pokemon) (version 2) | `Pokemon.csv`, 800 forms through Generation 6 | CC0 1.0 | yes |
+| Smogon [usage statistics](https://www.smogon.com/stats/) | monthly "chaos" files for `gen9ou` and `gen1ou`, 2025-11 to 2026-10 | unknown | no; only derived shares |
+| Pokémon Showdown `pokedex.ts` | names and typings, to check the mapping of usage names | MIT | no |
 
-**Where `pokeapi_forms.csv` comes from.** `sources.py` builds both PokeAPI files from the CSV files of [PokeAPI](https://github.com/PokeAPI/pokeapi) at commit `e98f2ad8`, and checks the SHA-256 of each download. It leaves out Gigantamax, totem and Let's Go partner (`-starter`) rows, which are battle states of a species rather than forms with their own entry. It copies identifiers and numbers only: no names, Pokédex text or other prose. `uv run --group pokemon python -m pokemon.sources --check` downloads the inputs again, checks the type charts, and fails if either file would change.
+**PokeAPI.** `sources.py` builds both PokeAPI files from the CSV files of PokeAPI and checks the SHA-256 of each download. It leaves out Gigantamax, totem and Let's Go partner (`-starter`) rows, which are battle states of a species rather than forms with their own entry. It copies identifiers and numbers only: no names, Pokédex text or other prose. `uv run --group pokemon python -m pokemon.sources --check` downloads the inputs again, checks the type charts, and fails if either file would change. PokeAPI's repository has one license file, [`LICENSE.md`](https://github.com/PokeAPI/pokeapi/blob/master/LICENSE.md), copied here as `PokeAPI-LICENSE.md`. It is a BSD-style license, and its text speaks of source code and binary forms; it does not say whether it covers the data. PokeAPI's data began as a copy of the [veekun/pokedex](https://github.com/veekun/pokedex) data ([pokeapi.co/about](https://pokeapi.co/about)). The veekun README licenses its code under MIT and says the data "is the intellectual property of Nintendo, Creatures, inc., and GAME FREAK, inc." and is used "at your own legal risk". PokeAPI's contributors added the data for Generation 8 on, partly scraped from other sites. So no license grants the data itself. What is committed here is a table of facts (types, base stats, dates of introduction), with credit to PokeAPI and veekun and PokeAPI's notice.
 
-**License.** PokeAPI's repository has one license file, [`LICENSE.md`](https://github.com/PokeAPI/pokeapi/blob/master/LICENSE.md), copied here as `PokeAPI-LICENSE.md`. It is a BSD-style license, and its text speaks of source code and binary forms; it does not say whether it covers the data. PokeAPI's data began as a copy of the [veekun/pokedex](https://github.com/veekun/pokedex) data ([pokeapi.co/about](https://pokeapi.co/about)). The veekun README licenses its code under MIT and says the data "is the intellectual property of Nintendo, Creatures, inc., and GAME FREAK, inc." and is used "at your own legal risk". PokeAPI's contributors added the data for Generation 8 on, partly scraped from other sites. So no license grants the data itself. What is committed here is a table of facts (types, base stats, dates of introduction), with credit to PokeAPI and veekun and PokeAPI's notice.
+**Kaggle.** `Pokemon.csv` matches the file in the Kaggle dataset, which is released under [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/). Verified: the license shown on that page, and the file's header, first rows and size (44,028 bytes against the 44.03 kB listed). Not verified: a byte-for-byte comparison, since Kaggle needs a login to download. That page says the data was gathered from pokemon.com, pokemondb.net and Bulbapedia. The notebook only shows it for comparison.
 
-**Smogon's usage statistics.** `results/usage-typings.json` is derived from Smogon's monthly usage statistics for Pokémon Showdown ([smogon.com/stats](https://www.smogon.com/stats/)), the "chaos" JSON files for `gen9ou` and `gen1ou` from 2025-11 to 2026-10. It covers all four rating cutoffs of each format, 96 files in all. The license of these statistics is unknown: none was found on the stats pages or in the FAQ thread about them on Smogon's forums. So the raw files are not committed. `usage.py` downloads them, records each file's URL, SHA-256, size and number of battles, and keeps only usage shares by typing and by type, with the number of Pokémon behind each and the highest total of base stats among them. The machine that wrote this README cannot reach smogon.com, so the download ran on GitHub Actions, on the branch `compute/pokemon-p1`. Each file lists only Pokémon with at least 0.01% weighted usage; the listed shares sum to between 5.974 and 5.9996 per file, against 6 for a full count. Showdown names are mapped to the identifiers of `pokeapi_forms.csv`. Every name in the files was checked against Showdown's `pokedex.ts` (MIT license, the pinned commit of `sources.py`), with its typing in the format's generation. The same holds for every Showdown species except the Arceus and Silvally formes (`python -m pokemon.usage check`).
+**Smogon.** `results/usage-typings.json` is derived from the "chaos" JSON files for `gen9ou` and `gen1ou`, all four rating cutoffs of each format, 96 files in all. No license was found on the stats pages or in the FAQ thread about them on Smogon's forums. So the raw files are not committed. `usage.py` downloads them, records each file's URL, SHA-256, size and number of battles, and keeps only usage shares by typing and by type, with the number of Pokémon behind each and the highest total of base stats among them. The machine that wrote this README cannot reach smogon.com, so the download ran on GitHub Actions, on the branch `compute/pokemon-p1`. Each file lists only Pokémon with at least 0.01% weighted usage; the listed shares sum to between 5.974 and 5.9996 per file, against 6 for a full count. Showdown names are mapped to the identifiers of `pokeapi_forms.csv`. Every name in the files was checked against Showdown's `pokedex.ts`, at the pinned commit of `sources.py`, with its typing in the format's generation. The same holds for every Showdown species except the Arceus and Silvally formes (`python -m pokemon.usage check`).
 
-**The file it replaces.** Until this change the notebook used `pokemon_gen7.csv`, 1,061 rows from the Kaggle dataset [Pokemon Sun and Moon (Gen 7) Stats](https://www.kaggle.com/datasets/mylesoneill/pokemon-sun-and-moon-gen-7-stats), whose license is unknown: the page lists "Other (specified in description)", and the description names none. It also held Pokédex text. Taken as of Generation 7, the PokeAPI data has 955 forms and exactly the same 146 typings as that file, so every result about typings is unchanged, in the README and in the notebook. The notebook's results for single Pokémon did change, because the two files count forms differently: Blissey's stat-total percentile is now 83.2 (was 81.4), and Toxapex's combined percentile 90.2 (was 92.3). The notebook now names forms by PokeAPI identifier, such as `pumpkaboo-small`. It uses base stats as of Generation 7, and it takes legendary, mythical and Mega flags from the data rather than from a list typed into it.
+**The file the PokeAPI data replaced.** The notebook once used `pokemon_gen7.csv`, 1,061 rows from the Kaggle dataset [Pokemon Sun and Moon (Gen 7) Stats](https://www.kaggle.com/datasets/mylesoneill/pokemon-sun-and-moon-gen-7-stats). Its license is unknown: the page lists "Other (specified in description)", and the description names none. It also held Pokédex text. Taken as of Generation 7, the PokeAPI data has 955 forms and exactly the same 146 typings as that file, so every result about typings is unchanged. The results for single Pokémon did change, because the two files count forms differently: Blissey's stat-total percentile is now 83.2 (was 81.4), and Toxapex's combined percentile 90.2 (was 92.3).
+
+## Related work
+
+- Schmitz (2021 and 2023), cited above: the duel over single types is reproduced exactly; the duel over typings is not, and the cause is open.
+- Jiang, Lim, Yao and Ye (2011) give the ranking split used by `hodge.py`; Candogan, Menache, Ozdaglar and Parrilo (2011) give a related split of whole games.
+
+## Questions left open
+
+- **Schmitz's typing duel.** Why his 27-typing equilibrium differs from the unique one here. His matchup table is an image; reading it would settle whether the game or the solver differs.
+- **Weighted scores.** The notebook's sums treat every attacking type as equally likely. Weighting by Showdown usage would change which typings and Pokémon rank first.
+- **The best team.** A team of six chosen for coverage and defense together, with real movesets rather than one move per type.
+- **Emerald Kaizo encounters.** How often each species appears, and the generator's timing, which the independent model leaves out.
+
+## Usage
 
 ```bash
-uv run python -m pokemon.graph                       # writes display/graph.json, serves the page on port 8000
+uv run --group pokemon --with jupyter jupyter lab pokemon/pokemon.ipynb
+uv run --group pokemon python -m pokemon.figures       # the SVGs in figures/
+uv run python -m pokemon.graph                         # writes display/graph.json, serves the page on port 8000
 uv run --group pokemon python -m pokemon.graph_analysis
 uv run --group pokemon python -m pokemon.equilibrium   # the games above, in about a minute
 uv run --group pokemon python -m pokemon.hodge         # the ranking and cyclic parts, in seconds
 uv run --group pokemon python -m pokemon.sources       # rebuilds the data files from PokeAPI
-uv run python -m pokemon.usage build                  # downloads Smogon's files, writes results/usage-typings.json
+uv run python -m pokemon.usage build                   # downloads Smogon's files, writes results/usage-typings.json
 uv run --group pokemon python -m pokemon.p1            # plan P1 from that table, in about 30 seconds
-uv run python -m pokemon.emerald_kaizo.iv_analysis   # regenerates emerald_kaizo/iv_analysis.md
-uv run --group pokemon --with jupyter jupyter lab pokemon/pokemon.ipynb
+uv run python -m pokemon.emerald_kaizo.iv_analysis     # regenerates emerald_kaizo/iv_analysis.md
 ```
+
+## Files
+
+| File | Contents |
+|---|---|
+| `pokemon_types.py` | the Generation 6 chart, and `chart(g)` for every generation |
+| `scoring.py`, `figures.py` | covers, attack and defense scores, and the pictures; used by `pokemon.ipynb` |
+| `pokedex.py`, `sources.py` | reading and building the PokeAPI files |
+| `equilibrium.py`, `hodge.py` | the chart as a game, and its ranking split |
+| `usage.py`, `p1.py`, `results/` | plan P1 and its results |
+| `graph.py`, `graph_analysis.py`, `display/` | the chart as a directed graph, with PageRank and betweenness |
+| `emerald_kaizo/` | IV and catch odds for Emerald Kaizo |
