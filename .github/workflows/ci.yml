@@ -36,7 +36,14 @@ jobs:
         run: uv run ty check
       - name: Tests
         run: uv run pytest
+        env:
+          # BLAS splits a matrix product among threads, and the split changes its last bits.
+          OPENBLAS_NUM_THREADS: 1
+          OMP_NUM_THREADS: 1
       - name: Notebooks reproduce their committed text and figures
+        env:
+          OPENBLAS_NUM_THREADS: 1
+          OMP_NUM_THREADS: 1
         run: uv run pytest -p tests.nbval_figures --nbval --nbval-current-env --nbval-sanitize-with tests/nbval_sanitize.cfg $(git ls-files '*.ipynb')
       - name: Script lock files are current
         run: for lock in $(git ls-files '*.py.lock'); do uv lock --script "${lock%.lock}" --check; done

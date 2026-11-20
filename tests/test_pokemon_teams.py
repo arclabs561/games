@@ -327,7 +327,9 @@ def test_committed_figures_are_what_the_script_writes(tmp_path):
 
 def test_readme_quotes_the_results():
     r = results()
-    readme = (teams.HERE / "README.md").read_text()
+    readme = "\n".join(  # the README and the note that holds its section on teams
+        (teams.HERE / f).read_text() for f in ("README.md", "results/team-study.md")
+    )
     lv = r["levels"]
     b = r["common"]["battles"]
     eq = sorted(b["equilibrium"].values(), key=lambda p: -F(p))
