@@ -1,0 +1,27 @@
+{
+ "experiment": "ratscrew-traps8",
+ "run": "seed-1",
+ "commit": "415603310dedc640c3a3faa6789593cd154be338",
+ "platform": "actions",
+ "command": [
+  "python",
+  "-m",
+  "egyptian_ratscrew.traps",
+  "8",
+  "--players",
+  "2",
+  "3",
+  "--slice",
+  "SEED",
+  "--slices",
+  "8",
+  "--out",
+  "OUT"
+ ],
+ "returncode": 0,
+ "seconds": 88.0,
+ "job_id": "44709784813",
+ "hardware": "GitHub Actions 1000100593",
+ "gpu": null,
+ "python": "3.14.4"
+}

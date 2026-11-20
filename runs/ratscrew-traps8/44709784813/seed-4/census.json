@@ -1,0 +1,28 @@
+[
+ {
+  "cards": 8,
+  "players": 2,
+  "slice": [
+   4,
+   8
+  ],
+  "deck_types": 111,
+  "seconds": 28,
+  "with_traps": [],
+  "positions": 4693806,
+  "all_traps_slap_free": true
+ },
+ {
+  "cards": 8,
+  "players": 3,
+  "slice": [
+   4,
+   8
+  ],
+  "deck_types": 111,
+  "seconds": 105,
+  "with_traps": [],
+  "positions": 12394428,
+  "all_traps_slap_free": true
+ }
+]
