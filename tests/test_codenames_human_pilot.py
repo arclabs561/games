@@ -10,6 +10,7 @@ import pytest
 from codenames import c4
 from codenames import human_pilot as hp
 from codenames.game import deal
+from codenames.legality import flags, strict_legal
 from codenames.words import board_words, legal
 
 NAMES = ("boards.json", "key.json", "play.html")
@@ -60,6 +61,23 @@ def test_committed_boards_are_c4_deals_with_legal_distinct_clues():
         assert f[0] != p[0]
         for clue, n in (f, p):
             assert legal(clue, d.words) and 1 <= int(n) <= 4
+            # The amendment of 2026-11-19: no form of a board word, no shared part.
+            assert strict_legal(clue, d.words), (clue, flags(clue, d.words))
+    assert key["giver"]["clue_filter"].startswith("codenames.legality.strict_legal")
+
+
+def test_the_first_materials_had_the_flagged_clues_the_amendment_lists():
+    before = json.loads((hp.HERE / "results" / "diagnostics" / "pilot-before-key.json").read_text())
+    deals = c4.boards(hp.BOARD_SEED, 1 + before["boards"][-1]["seed_index"])
+    bad = sorted(
+        r[arm].split("/")[0]
+        for r in before["boards"]
+        for arm in hp.ARMS
+        if not strict_legal(r[arm].split("/")[0], deals[r["seed_index"]].words)
+    )
+    assert len(bad) == 18
+    for clue in ("residency", "librarian", "winning", "owned", "governance", "teaching"):
+        assert clue in bad
 
 
 def check_design(boards: dict, key: dict) -> None:
