@@ -76,19 +76,19 @@ Kendall's τ between the rankings of two levels:
 
 P(T, U) is the mean over U's six of T's best answer, minus the mean over T's six of U's best answer. The equilibrium is of the whole game over all 3,838,380 teams, found by double oracle and checked exactly against every team. The ladder is 20,000 teams drawn by use (seed 0).
 
-| level | teams in the equilibrium | heaviest team (weight) | best against the ladder (score) | best against random teams (score) |
-|---|---:|---|---|---|
-| 1 | 3 | kingambit, dragonite, iron-treads, zapdos, primarina, tyranitar (50.0%) | samurott-hisui, iron-treads, zapdos, walking-wake, primarina, garchomp (0.312) | kingambit, raging-bolt, iron-treads, zapdos, walking-wake, primarina (0.297) |
-| 2 | 11 | great-tusk, gholdengo, raging-bolt, slowking-galar, deoxys-speed, primarina (46.8%) | great-tusk, alomomola, zapdos, walking-wake, deoxys-speed, primarina (0.286) | great-tusk, gholdengo, alomomola, zapdos, deoxys-speed, primarina (0.269) |
-| 3 | 11 | great-tusk, gholdengo, raging-bolt, slowking-galar, deoxys-speed, primarina (35.9%) | great-tusk, alomomola, zapdos, deoxys-speed, primarina, weezing-galar (0.283) | great-tusk, gholdengo, alomomola, zapdos, deoxys-speed, primarina (0.261) |
-| 4 | 15 | zamazenta, kyurem, ting-lu, rillaboom, deoxys-speed, primarina (24.9%) | zamazenta, kyurem, landorus-therian, iron-moth, walking-wake, primarina (0.419) | zamazenta, kyurem, landorus-therian, darkrai, iron-moth, primarina (0.381) |
-| 5 | 11 | zamazenta, raging-bolt, ting-lu, iron-moth, deoxys-speed, primarina (23.2%) | zamazenta, kyurem, iron-moth, walking-wake, deoxys-speed, primarina (0.406) | zamazenta, raging-bolt, kyurem, iron-moth, walking-wake, primarina (0.385) |
+| level | teams in the equilibrium | heaviest team (weight) | best against the ladder (score) | best against random teams (score) | six most used, against the equilibrium |
+|---|---:|---|---|---|---:|
+| 1 | 3 | kingambit, dragonite, iron-treads, zapdos, primarina, tyranitar (50.0%) | samurott-hisui, iron-treads, zapdos, walking-wake, primarina, garchomp (0.312) | kingambit, raging-bolt, iron-treads, zapdos, walking-wake, primarina (0.297) | -0.240 |
+| 2 | 11 | great-tusk, gholdengo, raging-bolt, slowking-galar, deoxys-speed, primarina (46.8%) | great-tusk, alomomola, zapdos, walking-wake, deoxys-speed, primarina (0.286) | great-tusk, gholdengo, alomomola, zapdos, deoxys-speed, primarina (0.269) | -0.228 |
+| 3 | 11 | great-tusk, gholdengo, raging-bolt, slowking-galar, deoxys-speed, primarina (35.9%) | great-tusk, alomomola, zapdos, deoxys-speed, primarina, weezing-galar (0.283) | great-tusk, gholdengo, alomomola, zapdos, deoxys-speed, primarina (0.261) | -0.235 |
+| 4 | 15 | zamazenta, kyurem, ting-lu, rillaboom, deoxys-speed, primarina (24.9%) | zamazenta, kyurem, landorus-therian, iron-moth, walking-wake, primarina (0.419) | zamazenta, kyurem, landorus-therian, darkrai, iron-moth, primarina (0.381) | -0.251 |
+| 5 | 11 | zamazenta, raging-bolt, ting-lu, iron-moth, deoxys-speed, primarina (23.2%) | zamazenta, kyurem, iron-moth, walking-wake, deoxys-speed, primarina (0.406) | zamazenta, raging-bolt, kyurem, iron-moth, walking-wake, primarina (0.385) | -0.340 |
 
 Chance that each Pokémon is on the equilibrium team (the eight largest):
 
 | level | Pokémon |
 |---|---|
-| 1 | iron-treads 100.0%, zapdos 100.0%, primarina 100.0%, kingambit 50.0%, dragonite 50.0%, raging-bolt 50.0%, ting-lu 50.0%, tyranitar 50.0% |
+| 1 | iron-treads 100.0%, primarina 100.0%, zapdos 100.0%, dragonite 50.0%, kingambit 50.0%, raging-bolt 50.0%, ting-lu 50.0%, tyranitar 50.0% |
 | 2 | deoxys-speed 100.0%, great-tusk 95.5%, gholdengo 84.4%, slowking-galar 67.1%, raging-bolt 52.0%, tyranitar 48.0%, primarina 46.8%, zapdos 41.9% |
 | 3 | deoxys-speed 100.0%, great-tusk 92.7%, gholdengo 88.9%, slowking-galar 59.3%, raging-bolt 55.8%, tyranitar 36.9%, primarina 35.9%, zapdos 30.3% |
 | 4 | primarina 99.1%, zamazenta 76.7%, dragonite 61.1%, garchomp 58.6%, zapdos 58.2%, rillaboom 41.8%, ting-lu 34.8%, deoxys-speed 31.4% |
@@ -108,13 +108,40 @@ Solver details: rounds of double oracle, teams in the restricted game, whether i
 
 63 teams: the six most used Pokémon (team 0), each level's equilibrium teams and best teams, and random teams (seed 1). Each level plays the same round robin.
 
-| level | ranking share | teams in the equilibrium | τ with full battles |
-|---|---:|---:|---:|
-| 1 | 60.8% | 3 |  |
-| 2 | 78.4% | 11 |  |
-| 3 | 78.8% | 11 |  |
-| 4 | 82.1% | 15 |  |
-| 5 | 80.1% | 11 |  |
+| level | ranking share | teams in the equilibrium | rank of the six most used | τ with full battles |
+|---|---:|---:|---:|---:|
+| 1 | 60.8% | 3 | 55 | 0.07 |
+| 2 | 78.4% | 11 | 61 | -0.06 |
+| 3 | 78.8% | 11 | 62 | -0.08 |
+| 4 | 82.1% | 15 | 61 | 0.51 |
+| 5 | 80.1% | 11 | 58 | 0.51 |
+| full battles | 28.2% (26.0% to 27.8%) | 15 | 30 | 1 |
+
+Full battles: 20 per pair of teams, seed 0, sides alternating; payoff wins minus losses over battles. The interval is a 95% bootstrap over battles within each pair (1000 resamples, seed 0). Equilibrium unique:
+
+| team | weight | Pokémon |
+|---:|---:|---|
+| 2 | 26.8% | raging-bolt, iron-treads, ting-lu, zapdos, moltres, primarina |
+| 0 | 13.7% | great-tusk, gholdengo, kingambit, dragonite, zamazenta, iron-valiant |
+| 41 | 8.8% | zamazenta, kyurem, landorus-therian, darkrai, iron-moth, primarina |
+| 28 | 8.1% | dragonite, zamazenta, iron-moth, zapdos, primarina, garchomp |
+| 48 | 7.6% | zamazenta, raging-bolt, iron-treads, rillaboom, deoxys-speed, primarina |
+| 44 | 6.0% | zamazenta, raging-bolt, iron-treads, zapdos, deoxys-speed, primarina |
+| 51 | 4.6% | ting-lu, iron-moth, rillaboom, deoxys-speed, primarina, enamorus-incarnate |
+| 58 | 4.4% | zamazenta, slowking-galar, samurott-hisui, gliscor, glimmora, scizor |
+| 38 | 4.1% | kyurem, ting-lu, zapdos, primarina, enamorus-incarnate, iron-crown |
+| 36 | 3.7% | ting-lu, zapdos, deoxys-speed, primarina, enamorus-incarnate, iron-crown |
+| 47 | 3.6% | raging-bolt, kyurem, iron-treads, walking-wake, deoxys-speed, primarina |
+| 1 | 3.4% | kingambit, dragonite, iron-treads, zapdos, primarina, tyranitar |
+| 37 | 3.2% | iron-valiant, kyurem, ting-lu, rillaboom, clefable, iron-crown |
+| 49 | 1.3% | zamazenta, raging-bolt, zapdos, walking-wake, deoxys-speed, primarina |
+| 54 | 0.6% | zamazenta, raging-bolt, kyurem, iron-moth, walking-wake, primarina |
+
+Chance that each Pokémon is on the equilibrium team (the eight largest): primarina 78.7%, zapdos 53.5%, zamazenta 50.5%, iron-treads 47.4%, raging-bolt 45.9%, ting-lu 42.5%, deoxys-speed 26.9%, moltres 26.8%.
+
+The heaviest team's weight over the bootstrap: 20.4% to 32.2%.
+
+The bootstrap copies of the ranking share average 26.9%, below the estimate of 28.2%: noise from sampling adds to the cyclic part. The estimate is biased the same way, so the share without noise is likely higher; the usual bias correction gives 29.5%.
 
 ## Agreement with use (exploratory)
 
@@ -131,3 +158,5 @@ Spearman's ρ over the 40 Pokémon between use and each level's ranking score, a
 ## Simulator checks
 
 - One-on-one battles: 780 pairs, 50 battles each, seed 0. Damage checks: 35,758 hits agree with level 4's rolls, 0 differ. Stats that differ from Showdown's: 0. Choices Showdown refused: 0.
+- Level 5's ranking share, resampling battles within each pair: 21.5% to 22.3%; Kendall's τ between levels 4 and 5: 0.84 to 0.86 (95%, 1000 resamples, seed 0).
+- Full battles: damage checks 108,836 agree, 0 differ; stats that differ: 0; refused choices: 0.
