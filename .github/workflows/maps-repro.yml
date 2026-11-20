@@ -37,9 +37,3 @@ jobs:
           uv sync --locked --group maps
           uv run --group maps python -c "import numpy; numpy.show_runtime()"
           uv run --group maps python maps_probe/probe.py --full | tee "$RUNNER_TEMP/fix.txt"
-      - name: Probe main before the fix
-        shell: bash
-        run: |
-          git worktree add ../before 38a6f88
-          cp maps_probe/probe.py ../before/probe.py
-          cd ../before && uv sync --locked --group maps && uv run --group maps python probe.py | tee "$RUNNER_TEMP/before.txt"

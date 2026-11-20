@@ -65,7 +65,9 @@ if full:
     for name in ("pokemon", "words"):
         for label, y in study.embeddings(name).items():
             out[f"map {name} {label}"] = h(y)
-    out["sne section"] = hashlib.sha256(json.dumps(study.section("sne")).encode()).hexdigest()[:16]
+    for name in study.SECTIONS:
+        out[f"section {name}"] = hashlib.sha256(json.dumps(study.section(name)).encode()).hexdigest()[:16]
+    out["tsne seeds"] = study.rounded(study.tsne_seed_excess())
     from sklearn.manifold import TSNE
     sk = TSNE(perplexity=30, method="exact", init="random", random_state=0, learning_rate=100, early_exaggeration=4, max_iter=1000)
     y_sk = sk.fit_transform(stats)
