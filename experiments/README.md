@@ -8,7 +8,7 @@ Most results in this repository are exact and run in seconds on a laptop. The ex
 - **Plans** are in `plans/<id>.md`, one per experiment. Each names its question, metric, seeds and held-out partners. A plan is merged before its runs and is not changed after; a later change goes in a dated amendment at its end. `METHOD.md` gives the rules all plans share.
 - **Summaries** (small JSON files with every number a README quotes) go in the game's own `results/` folder, committed with the README that uses them.
 - **Artifacts** that are large or whose license forbids publishing (vectors, fine-tuned adapters, model outputs, downloaded datasets) go in the private Hugging Face dataset `arclabs561/games-runs`, under `runs/<experiment>/<run>/`, with a `manifest.json` that records the commit, command, hardware, GPU and run time.
-- **Runner outputs** from GitHub Actions are committed to the branch `compute/<name>` that ran them, as `compute/codenames-embed` does for the Hugging Face vectors. A summary that a README quotes is copied into the game's `results/`.
+- **Runner outputs** from GitHub Actions are committed to the branch `compute/<name>` that ran them. Outputs that later work reads are kept, without that branch's history, on `outputs/<name>`: `outputs/codenames-embed` holds the Hugging Face vectors and `outputs/hanabi-h1` the H1 runs. A summary that a README quotes is copied into the game's `results/`.
 
 ## How runs are launched
 

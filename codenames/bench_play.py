@@ -504,7 +504,7 @@ def lora_run(out: Path, n_boards: int = N_BOARDS, variants=("all", "strict")) ->
     tmp = Path("/tmp/bench")
     tmp.mkdir(parents=True, exist_ok=True)
     subprocess.run(
-        ["git", "clone", "-q", "--depth", "1", "--branch", "compute/codenames-embed",
+        ["git", "clone", "-q", "--depth", "1", "--branch", "outputs/codenames-embed",
          "https://github.com/arclabs561/games.git", str(tmp / "embed")],
         check=True,
     )  # fmt: skip
