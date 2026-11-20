@@ -11,6 +11,8 @@ Detail behind the [Hanabi README](../README.md). The notes marked "moved" hold t
 | [h2.md](h2.md) | Language-model players in self-play (moved) | `experiments/plans/H2.md` |
 | [h2-harness.md](h2-harness.md) | A dated note: the reply cap limits gpt-oss-120b's numbers in plan H2 | `experiments/plans/H2.md` |
 | [h4.md](h4.md) | Independent PPO in a two-color game, with behavior and compute (moved) | `experiments/plans/H4.md` |
+| [hat-gap.md](hat-gap.md) | Why the three-player information strategy trails hanabi.rs: rules read, two strategy differences measured | exploratory |
+| [six-suits.md](six-suits.md) | Six colors: the open-game ceiling by H1's method, and published strategies under the ceilings | exploratory |
 | [checks.md](checks.md) | Every check (moved) | |
 | [open-questions.md](open-questions.md) | Every open question (moved) | |
 | [usage.md](usage.md) | Every command, with times (moved) | |

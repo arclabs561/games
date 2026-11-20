@@ -31,6 +31,7 @@ Intervals are 95% intervals. The last column links the note in [`results/`](resu
 | Two-player deals that can reach 25: 0.9862 (0.9845 to 0.9877); 276 of 20,000 lost | Two solvers on seeded deals 0 to 19,999 (plan H1), with certificates added after the plan; Wilson interval | [h1](results/h1.md) |
 | Three, four and five players: 0.9988 to 0.9992, 0.99965 to 0.99985 and 0.99935 to 0.99995; 23 deals still undecided | Same | [h1](results/h1.md) |
 | No strategy averages more than 24.9838 ± 0.0021 with two players; 24.9990, 24.9998 and 24.9999 with three to five | Same | [h1](results/h1.md) |
+| Six colors (top score 30): two-player deals that can reach 30, 0.9718 to 0.9719 (562 of 20,000 lost); three to five players, 0.99905 or more; the hat bot's published 93.9% and 95.1% lie below | Two solvers on seeded deals 0 to 19,999 of each player count, H1's method; Wilson interval | [six-suits](results/six-suits.md) |
 | Human two-player games: the deal ruled out 0.013 (0.007 to 0.019) of 1.63 points below 25; 19 of 1,858 deals stop below 25, and none of 1,221 three-player deals | Exact search of each deal; bootstrap over games, 10,000 resamples, seed 0 | [humans](results/humans.md) |
 | gpt-oss-120b in self-play plays 18.63 (16.70 to 20.57) points below the ceiling; DeepSeek-V3.2 loses every game | Plan H2: 30 seeded deals, one game each; bootstrap over deals | [h2](results/h2.md) |
 | Listing what each own card can still be changes gpt-oss-120b's gap by −0.79 (−3.71 to 2.25) | Plan H2, paired on 24 deals | [h2](results/h2.md) |
@@ -84,6 +85,19 @@ Plan H1 ([plan](../experiments/plans/H1.md)) fixed the full-game measurement bef
 | 5 | 1 | 12 | 0.99935 to 0.99995 | 0.9989 to 1 | 24.9999 ± 0.0001 |
 
 The bound is optimistic, since real players do not see the deck. Still, it says how much of each agent's gap to 25 is out of reach for anyone: 1.7% for SAD with an auxiliary task (Hu and Foerster, 2020) and 4.1% for SAD with SPARTA search (Lerer et al., 2020), whose gaps are 0.92 and 0.39 points.
+
+## With six colors, which deals can reach 30?
+
+Fewer than with five, for two players. With a sixth color of the same ten cards (60 cards, top score 30), 562 of 20,000 seeded two-player deals are lost even with every card in view, against 276 with five colors. With three to five players the lost deals stay rare. The method is plan H1's, unchanged: the same two solvers, which agree on every deal both decide, the same budgets and the same certificates. Detail: [six-suits.md](results/six-suits.md).
+
+| Players | Lost | Undecided | Winnable share | 95% interval | Mean score at most |
+|---:|---:|---:|---|---|---|
+| 2 | 562 | 2 | 0.9718 to 0.9719 | 0.9694 to 0.9741 | 29.9632 ± 0.0033 |
+| 3 | 12 | 7 | 0.99905 to 0.9994 | 0.9985 to 0.9997 | 29.9992 ± 0.0005 |
+| 4 | 4 | 3 | 0.99965 to 0.9998 | 0.9993 to 0.9999 | 29.9998 ± 0.0002 |
+| 5 | 0 | 18 | 0.9991 to 1 | 0.9986 to 1 | 30.0000 ± 0.0000 |
+
+Every published strategy checked lies below its ceiling. With six colors, van Doorn's hat bot wins 93.9% of four-player and 95.1% of five-player games, by its documentation. With five colors, hanabi.rs wins 84.48%, 95.05% and 94.04% of three- to five-player games, so the deal rules out at most 0.5%, 0.3% and 0.1% of its gap to 25. The reruns of the undecided deals at 5,000,000 nodes were not finished when this table was made; they can only narrow its ranges.
 
 ## Human games: the deal or the table?
 
@@ -178,6 +192,7 @@ uv run python -m hanabi.hat_gap -n 10000 --out hanabi/results   # three players,
 | `hat_gap.py` | The same strategy with more hint values than the rules allow, to measure the gap to hanabi.rs |
 | `solver.py`, `dfs_solver.py`, `solver_cp.py` | Solver A, Solver B with the last-card and free-order certificates, and a constraint model for small decks |
 | `upper_bound.py`, `h1.py` | Exact counts on small decks, sampled verdicts on the full game, plan H1's summary |
+| `six_suits.py` | The same summary for six colors, with the published win rates it is compared with |
 | `humans_data.py`, `humans.py`, `ceiling.py` | The human games, their ceilings and the command line |
 | `llm.py`, `hosted.py`, `h2.py` | Plan H2: text observations, hosted models with a cost meter, the games and the report |
 | `jax_bridge.py`, `ippo.py`, `h4.py` | Plan H4: JaxMARL beside `rules.py`, recurrent IPPO, and the evaluation |

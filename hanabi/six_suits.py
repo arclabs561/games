@@ -38,13 +38,37 @@ def compare(summary: dict) -> dict:
         share_high = s["share"]["interval"][1]
         bound = s["mean_best_score_at_most"]
         out[p] = {
-            "hat bot win rate": wins / 100,
+            "hat bot win rate": round(wins / 100, 4),
             "hat bot mean": round(TOP - lost, 2),
             "winnable share, upper end of the interval": share_high,
             "mean best score at most": bound,
             "below the ceiling": wins / 100 <= share_high
             and TOP - lost <= bound["mean"] + bound["half_width"],
         }
+    return out
+
+
+def _share(x: float) -> str:
+    """A share as the README writes it: 1, or five decimals without a trailing zero."""
+    if x == 1:
+        return "1"
+    text = f"{x:.5f}"
+    return text[:-1] if text.endswith("0") else text
+
+
+def readme_rows(summary: dict) -> list[str]:
+    """The rows of the README's six-color table, from the summary of `six-suits.json`."""
+    out = []
+    for p in sorted(summary, key=int):
+        s = summary[p]["outside_the_plan"]
+        lo, hi = s["share"]["low"], s["share"]["high"]
+        share = _share(lo) if lo == hi else f"{_share(lo)} to {_share(hi)}"
+        a, b = (_share(round(x, 4)) for x in s["share"]["interval"])
+        m = s["mean_best_score_at_most"]
+        out.append(
+            f"| {p} | {s['lost']} | {s['undecided']} | {share} | {a} to {b} |"
+            f" {m['mean']:.4f} ± {m['half_width']:.4f} |"
+        )
     return out
 
 

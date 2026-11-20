@@ -80,3 +80,13 @@ def test_hat_gap_scores_replay():
         stored = data["widths"][str(w)]["scores"][:40]
         assert "".join(chr(65 + s) for s in hat_gap.scores(3, w, 40)) == stored
     assert data["widths"]["4"]["mean"] == 22.2538  # the README's 22.254, game by game
+
+
+def test_readme_table_is_the_committed_summary():
+    from hanabi.six_suits import readme_rows
+
+    readme = (RESULTS.parent / "README.md").read_text()
+    note = (RESULTS / "six-suits.md").read_text()
+    summary = json.loads((RESULTS / "six-suits.json").read_text())["summary"]["all seeds"]
+    for line in readme_rows(summary):
+        assert line in readme and line in note, line
