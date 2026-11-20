@@ -1,0 +1,71 @@
+name: hanabi-h1-rerun
+# Plan H1: the deals that Solver A (300,000 nodes) and Solver B (1,000,000 nodes) both left
+# undecided, with Solver A at 5,000,000 nodes, then the attempts outside the plan
+# (hanabi.upper_bound.rerun). Two processes per job, two deals each.
+on:
+  push:
+    branches: ["compute/hanabi-h1"]
+    paths: [".github/workflows/hanabi-h1-rerun.yml"]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  rerun:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {players: 2, id: "2-0", a: "202 4348", b: "1725 8238"}
+          - {players: 2, id: "2-1", a: "9646 11795", b: "10245 11893"}
+          - {players: 2, id: "2-2", a: "12193 14479", b: "12365 16333"}
+          - {players: 2, id: "2-3", a: "16633 17647", b: "17578 18356"}
+          - {players: 2, id: "2-4", a: "18650", b: "19935"}
+          - {players: 3, id: "3-0", a: "1144 3154", b: "2438 4071"}
+          - {players: 3, id: "3-1", a: "4830 6398", b: "5897 7748"}
+          - {players: 3, id: "3-2", a: "11087 18356", b: "17647 19522"}
+          - {players: 4, id: "4-0", a: "1493 4830", b: "3348 5348"}
+          - {players: 4, id: "4-1", a: "6595 11087", b: "6647 11339"}
+          - {players: 4, id: "4-2", a: "12041 17818", b: "12385 19522"}
+          - {players: 5, id: "5-0", a: "474 744", b: "545 987"}
+          - {players: 5, id: "5-1", a: "1219 3993", b: "1493 4129"}
+          - {players: 5, id: "5-2", a: "4830 6469", b: "5708 7748"}
+          - {players: 5, id: "5-3", a: "8450 11087", b: "9896 11220"}
+          - {players: 5, id: "5-4", a: "11339 12385", b: "12173 13315"}
+          - {players: 5, id: "5-5", a: "13688 14915", b: "14194 14963"}
+          - {players: 5, id: "5-6", a: "15750 17008", b: "16269 17818"}
+          - {players: 5, id: "5-7", a: "18356", b: "19522"}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          python-version: "3.14"
+      - name: Rerun the deals
+        env:
+          PLAYERS: ${{ matrix.players }}
+          ID: ${{ matrix.id }}
+          A: ${{ matrix.a }}
+          B: ${{ matrix.b }}
+        run: |
+          dir=hanabi/results/h1-runs
+          mkdir -p $dir
+          uv run --no-project python -m hanabi.upper_bound --sample "$PLAYERS" 0 --seeds $A \
+            --rerun --budgets 5000000 --json "$dir/p$PLAYERS-rerun-$ID-a.json" &
+          if [ -n "$B" ]; then
+            uv run --no-project python -m hanabi.upper_bound --sample "$PLAYERS" 0 --seeds $B \
+              --rerun --budgets 5000000 --json "$dir/p$PLAYERS-rerun-$ID-b.json" &
+          fi
+          wait
+          ls -l $dir/*rerun*
+          echo "$GITHUB_SHA" > "$dir/p$PLAYERS-rerun-$ID.commit"
+      - name: Commit the records to this branch
+        run: |
+          git config user.name arclabs561
+          git config user.email arclabs561@users.noreply.github.com
+          git add hanabi/results/h1-runs
+          git commit -q -m "hanabi: H1 rerun records, ${{ matrix.id }}"
+          for i in $(seq 1 40); do
+            git pull -q --rebase && git push -q && break
+            sleep $((RANDOM % 20 + 5))
+          done

@@ -1,0 +1,52 @@
+name: hanabi-h1
+# Plan H1 (experiments/plans/H1.md): classifies seeded Hanabi deals 0 to 19,999 for two
+# to five players with Solver A (hanabi.solver) and Solver B (hanabi.dfs_solver), and
+# commits one JSON list per block of 2,000 seeds to this branch under
+# hanabi/results/h1-runs/. Each job runs four processes, one per quarter of its block.
+# The exploratory records of an earlier run are under hanabi/results/raw/.
+on:
+  push:
+    branches: ["compute/hanabi-h1"]
+    paths: [".github/workflows/hanabi-h1.yml"]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  classify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    strategy:
+      fail-fast: false
+      matrix:
+        players: [2, 3, 4, 5]
+        block: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          python-version: "3.14"
+      - name: Classify the block
+        env:
+          PLAYERS: ${{ matrix.players }}
+          BLOCK: ${{ matrix.block }}
+        run: |
+          dir=hanabi/results/h1-runs
+          mkdir -p $dir
+          for q in 0 1 2 3; do
+            start=$((BLOCK * 2000 + q * 500))
+            uv run --no-project python -m hanabi.upper_bound --sample "$PLAYERS" 500 \
+              --start "$start" --solver both --json "$dir/p${PLAYERS}-$(printf %05d $start).json" &
+          done
+          wait
+          ls -l $dir
+          echo "$GITHUB_SHA" > "$dir/p${PLAYERS}-block${BLOCK}.commit"
+      - name: Commit the records to this branch
+        run: |
+          git config user.name arclabs561
+          git config user.email arclabs561@users.noreply.github.com
+          git add hanabi/results/h1-runs
+          git commit -q -m "hanabi: H1 records, ${{ matrix.players }} players, block ${{ matrix.block }}"
+          for i in $(seq 1 40); do
+            git pull -q --rebase && git push -q && break
+            sleep $((RANDOM % 20 + 5))
+          done

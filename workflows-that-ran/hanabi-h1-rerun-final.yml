@@ -1,0 +1,47 @@
+name: hanabi-h1-rerun-final
+# Plan H1: the 38 deals whose rerun jobs were cancelled (the extra attempts outside the plan
+# took too long), with Solver A at 5,000,000 nodes only, as the plan specifies. One job,
+# four processes. Records are written after each deal and committed even if the step
+# runs out of time.
+on:
+  push:
+    branches: ["compute/hanabi-h1"]
+    paths: [".github/workflows/hanabi-h1-rerun-final.yml"]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  rerun:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          python-version: "3.14"
+      - name: Rerun the deals
+        timeout-minutes: 320
+        run: |
+          dir=hanabi/results/h1-runs
+          mkdir -p $dir
+          uv run --no-project python -m hanabi.upper_bound --sample 3 0 --seeds 1144 2438 3154 4071 4830 5897 6398 7748 11087 17647 18356 19522 \
+            --rerun --no-extra --budgets 5000000 --json "$dir/p3-rerun-final-0.json" &
+          uv run --no-project python -m hanabi.upper_bound --sample 4 0 --seeds 1493 3348 4830 5348 12041 12385 17818 19522 \
+            --rerun --no-extra --budgets 5000000 --json "$dir/p4-rerun-final-1.json" &
+          uv run --no-project python -m hanabi.upper_bound --sample 5 0 --seeds 1219 3993 11339 12385 13688 14915 15750 17008 18356 \
+            --rerun --no-extra --budgets 5000000 --json "$dir/p5-rerun-final-2.json" &
+          uv run --no-project python -m hanabi.upper_bound --sample 5 0 --seeds 1493 4129 12173 13315 14194 14963 16269 17818 19522 \
+            --rerun --no-extra --budgets 5000000 --json "$dir/p5-rerun-final-3.json" &
+          wait
+      - name: Commit the records to this branch
+        if: always()
+        run: |
+          echo "$GITHUB_SHA" > hanabi/results/h1-runs/rerun-final.commit
+          git config user.name arclabs561
+          git config user.email arclabs561@users.noreply.github.com
+          git add hanabi/results/h1-runs
+          git commit -q -m "hanabi: H1 final rerun records"
+          for i in $(seq 1 40); do
+            git pull -q --rebase && git push -q && break
+            sleep $((RANDOM % 20 + 5))
+          done
