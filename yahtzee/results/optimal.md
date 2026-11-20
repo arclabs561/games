@@ -1,6 +1,6 @@
 # Optimal play
 
-The expected score and its check against published values, the distribution of the score, and how often optimal play makes a Yahtzee. Moved unchanged from the [Yahtzee README](../README.md), which keeps the short answers. "Exact" means computed by the dynamic program in double precision.
+The expected score and its check against published values, the distribution of the score, and how often optimal play makes a Yahtzee. The [Yahtzee README](../README.md) gives the short answers. "Exact" means computed by the dynamic program in double precision.
 
 ## The expected score
 
@@ -11,7 +11,7 @@ Optimal play scores 254.5896094820 on average. Verhoeff's [trivia page](https://
 
 The solver visits 536,448 states between turns, the number that Verhoeff gives for the states that need computing. Without the Yahtzee bonus and the Joker the value is 245.8707745141, which Verhoeff and Glenn give as 245.87.
 
-Verhoeff's trivia page also quotes an exact fraction for the optimal score, found by K. Kelly and J. Liese (["Let's Get Rolling! Exact Optimal Solitaire Yahtzee"](https://doi.org/10.1080/0025570X.2022.2055334), *Mathematics Magazine* 95, 2022). Its denominator is 2¹⁶⁹ · 3¹⁷⁹. The fraction equals 254.5893738837. That is 0.000236 below the value here and below Verhoeff's own 254.5896. None of the readings of the Joker tried here gives their number. The forced reading gives 254.5877 and no Joker gives 253.9702. Four other readings were tried and then dropped from the code; none came within 0.0002 of the fraction. Their paper was not read, so the rules they used are unknown here.
+Verhoeff's trivia page also prints an exact fraction for the optimal score, which it says J. Liese and K. Kelly determined on 12 June 2017 with Mathematica, adding "Publication to appear". The page does not cite their later paper (["Let's Get Rolling! Exact Optimal Solitaire Yahtzee"](https://doi.org/10.1080/0025570X.2022.2055334), *Mathematics Magazine* 95(3), 2022), whose summary says only that they computed expectations as rational numbers. The fraction's numerator has 139 digits; its denominator is 2¹⁶⁹ · 3¹⁷⁹. The fraction equals 254.5893738837. That is 0.000236 below the value here and below Verhoeff's own 254.5896. None of the readings of the Joker tried here gives their number. The forced reading gives 254.5877 and no Joker gives 253.9702. Four other readings were tried and then dropped from the code; none came within 0.0002 of the fraction. Their paper was not read (paywalled), so the rules they used are unknown here, and the disagreement is with the page's transcription, not with the paper.
 
 ## The distribution of the score
 

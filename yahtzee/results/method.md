@@ -1,10 +1,10 @@
 # How the solver works, and its checks
 
-The state space, the dynamic program, the exact distribution, and every check. Moved unchanged from the [Yahtzee README](../README.md), which keeps the short answers. "Exact" means computed by the dynamic program in double precision.
+The state space, the dynamic program, the exact distribution, and every check. The [Yahtzee README](../README.md) gives the short answers. "Exact" means computed by the dynamic program in double precision.
 
 ## How it works
 
-The state between turns is Glenn's triple: the set of filled boxes, the upper total capped at 63, and whether the Yahtzee box holds 50. A higher total earns no more, so 63 stands for 63 or more. There are 2¹³ · 64 · 2 = 1,048,576 triples, and 536,448 of them can occur. A total can be impossible for the filled upper boxes; for example, a total of 1 cannot come from the Twos box alone. And the Yahtzee box cannot hold 50 while it is open. Glenn says 1,260 of the 4,096 pairs of upper boxes and totals are impossible; the count here is 1,302. That gap was not resolved, but the state count matches Verhoeff's.
+The state between turns is Glenn's triple: the set of filled boxes, the upper total capped at 63, and whether the Yahtzee box holds 50. A higher total earns no more, so 63 stands for 63 or more. There are 2¹³ · 64 · 2 = 1,048,576 triples, and 536,448 of them can occur. A total can be impossible for the filled upper boxes; for example, a total of 1 cannot come from the Twos box alone. And the Yahtzee box cannot hold 50 while it is open. Glenn says 1,260 of the 4,096 pairs of upper boxes and totals are impossible; the count here is 1,302, with 63 standing for 63 or more as Glenn's own convention says, and a count without that cap gives 1,304. Neither reading gives 1,260. That gap was not resolved, but the state count matches Verhoeff's.
 
 Within a turn, a roll is a sorted multiset of dice (252 of them) and a keep is a multiset of zero to five dice (462). `solver.py` solves each turn backwards:
 

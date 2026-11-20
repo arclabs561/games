@@ -1,10 +1,10 @@
 # Yahtzee
 
-In solitaire Yahtzee one player plays the thirteen turns alone for the highest average score. Optimal play scores 254.5896 on average, as Verhoeff (1999) and Glenn (2006) computed; repeated here exactly and checked against brute force. A printable [cheat sheet](#the-cheat-sheet) of 8 rules scores 243.18, 11.41 below optimal, and no card the search found came within 9 points. Glenn's rule lists for people score 226.09 here against his reported 218.18. Of 17 pieces of common advice, 9 cost under half a point each and three cost more than 9 points. All exact unless marked.
+In solitaire Yahtzee one player plays the thirteen turns alone for the highest average score; play against others, where the aim is to win, is not treated here. Optimal play scores 254.5896 on average, as Verhoeff (1999) found and Glenn (2006) confirmed to two decimals; repeated here and checked against brute force. A printable [cheat sheet](#the-cheat-sheet) of 8 rules scores 243.18, 11.41 below optimal, and no card the search found came within 9 points. Glenn's rule lists for people score 226.09 here against his reported 218.18. Of 17 pieces of common advice, 9 cost under half a point each and three cost more than 9 points. All exact unless marked.
 
 <img src="scorecard.svg" width="420" alt="A Yahtzee score card listing the thirteen boxes and the two bonuses, with the cheat sheet's average points in each box beside optimal play's.">
 
-*The average points in each box, for the cheat sheet and for optimal play, both exact. The sheet earns the upper bonus in 54.46% of games against 68.12%, which is 4.78 points of its 11.41-point loss; Large Straight accounts for 3.14 more. The sheet makes slightly more Yahtzees than optimal play does.*
+*The average points in each box, for the cheat sheet and for optimal play, both exact. The sheet earns the upper bonus in 54.46% of games against 68.12%, which is 4.78 points of its 11.41-point loss; Large Straight accounts for 3.14 more. The sheet makes slightly more Yahtzees than optimal play does. Each row is rounded to two decimals, so the sheet's rows add to 243.17 against its total of 243.18.*
 
 ## Rules as modeled
 
@@ -12,7 +12,7 @@ The [Hasbro rules](https://www.hasbro.com/common/instruct/40958.pdf), as Verhoef
 
 - Each turn has up to three rolls of five dice. Before each reroll the player keeps any dice, not necessarily the ones kept before. The roll then goes in one open box, possibly for zero.
 - The upper boxes score the dice of their face. Three and Four of a Kind and Chance score the sum of the dice, Full House 25, Small Straight 30, Large Straight 40 and Yahtzee 50. A Yahtzee is not a full house.
-- 35 points if the six upper boxes total 63 or more.
+- The **upper bonus**: 35 points if the six upper boxes total 63 or more.
 - 100 points for each further Yahtzee once the Yahtzee box holds 50 (the **Yahtzee bonus**). It does not count toward the 63.
 - The **Joker**: once the Yahtzee box is filled (with 50 or 0) and the upper box of the Yahtzee's face is filled, a Yahtzee scores 25, 30 and 40 in Full House and the straights.
 
@@ -20,19 +20,19 @@ Verhoeff and Glenn let the player put a Yahtzee in any open box (**free choice**
 
 ## Results
 
-"Exact" means computed by the dynamic program in double precision; changing the order of the sums moves the mean by about 10⁻¹³. "Simulated" numbers give the number of games and a 95% interval. The last column links the note in [`results/`](results/README.md) with the detail.
+"Exact" here means computed by the dynamic program over every state and roll, with no sampling, in double precision. Changing the order of the sums moves the mean by about 10⁻¹³, so these are exact to about twelve significant digits, not exact fractions. "Simulated" numbers give the number of games and a 95% interval. The last column links the note in [`results/`](results/README.md) with the detail.
 
 | Result | How it is known | Detail |
 |---|---|---|
 | Optimal play scores 254.5896094820 on average; 245.8707745141 without the Yahtzee bonus and the Joker | Exact; agrees with Verhoeff (254.5896, 245.87) and Glenn (254.59), and with thirteen positions of Verhoeff's slides to two decimals | [optimal](results/optimal.md) |
-| Kelly and Liese's exact fraction, 254.5893738837, is 0.000236 below that | Exact; disagrees with a cited source, cause unknown | [optimal](results/optimal.md) |
+| A 139-digit fraction on Verhoeff's trivia page, credited there to Kelly and Liese (2017, "publication to appear"), equals 254.5893738837, 0.000236 below that and below the 254.5896 printed on the same page | Exact arithmetic on the quoted fraction. Their 2022 paper was not read (paywalled), so this is a disagreement with the page's transcription, not with the paper | [optimal](results/optimal.md) |
 | The score has standard deviation 59.6117 and median 248; it is 300 or more in 14.33% of games | Exact distribution; agrees with Verhoeff | [optimal](results/optimal.md) |
 | The Yahtzee box holds 50 in 33.74% of games; a Yahtzee bonus is earned in 8.245% | Exact | [optimal](results/optimal.md) |
 | The upper bonus is worth 16.75 points, the Yahtzee bonus 8.50 and the Joker 0.62; forced placement costs 0.0019 | Exact, one solve per variant | [variants](results/variants.md) |
-| Greedy play scores 217.3074, 37.28 below optimal; Glenn reports 218.54 | Exact; the gap depends on how ties are broken | [variants](results/variants.md) |
-| After the first roll, every die of the most common face is the best keep for 6,156 of 7,776 rolls | Exact | [openings](results/openings.md) |
+| Greedy play scores 217.31 to 219.05, 35.54 to 37.28 below optimal, depending on how ties between boxes are broken; Glenn's 218.54 lies inside that range | Exact for each of three tie rules | [variants](results/variants.md) |
+| After the first roll, every die of the most common face is the best keep for 6,156 of the 7,056 ordered rolls that hold a pair or more (7,776 rolls in all) | Exact | [openings](results/openings.md) |
 | The cheat sheet (8 rules) scores 243.18; the best card found with 40 rules, 245.37 | Exact for each card; the search is seeded, so "best found" | [card-search](results/card-search.md) |
-| Glenn's rule lists for people score 226.09 under the readings here; he reports 218.18 | Exact (20,000 seeded games: 226.01 ± 0.92); gap of 7.9 not resolved | [card-search](results/card-search.md) |
+| Glenn's rule lists for people score 226.09 under the readings here; he reports 218.18 | Exact (20,000 seeded games, seed 1: 226.01 ± 0.92); gap of 7.9 not resolved | [card-search](results/card-search.md) |
 | Of 17 pieces of advice, 9 cost under half a point; "stop rolling on three of a kind" costs 36.18 | Exact, one solve per piece | [advice](results/advice.md) |
 | Optimal play averages 254.80 ± 0.83 and greedy 217.42 ± 0.68 in seeded games | Simulated, 20,000 games, seed 1, 95% interval; contains the exact values | [variants](results/variants.md) |
 
@@ -50,6 +50,8 @@ Not done: exact rational arithmetic for the full game. That would test whether a
 
 This is the best card found with at most 8 rules. Print this section to play from it. Read each list from the top and follow the first rule that applies.
 
+The most common face is the face on the most dice, the higher one on a tie.
+
 Before each reroll, keep the dice of the first rule that applies.
 
 1. If the roll has four or more in a row and Large Straight is open: keep one die of each face in the longest run.
@@ -62,14 +64,10 @@ Before each reroll, keep the dice of the first rule that applies.
 8. If the most common face is 5 or more, Three of a Kind is open and the roll has a pair or more: keep every die of the most common face.
 9. Otherwise keep every die of the most common face among those whose upper box is open (the most common face if none is).
 
-After the last roll, score in the box of the first rule that applies.
-
-1. Otherwise the open box whose points minus par are largest.
+After the last roll, score in the open box whose points minus par are largest.
 
 Par: Aces 4, Twos 6, Threes 9, Fours 11, Fives 14, Sixes 17, Three of a Kind 23, Four of a Kind 15, Full House 15, Small Straight 29, Large Straight 15, Yahtzee 11, Chance 27.
 Until the bonus is made, count an upper box's points minus par 2.75 times.
-
-The most common face is the face on the most dice, the higher one on a tie.
 
 Its expected score is 243.18 (exact), with standard deviation 61.78 and median 236. In 20,000 seeded games (seed 1) it averaged 242.61 ± 0.85, which contains the exact value. The keeps lose more than the boxes. Played with the sheet's boxes and optimal keeps, the score would be 252.23. With the sheet's keeps and optimal boxes, it would be 245.56.
 
@@ -77,7 +75,7 @@ Its expected score is 243.18 (exact), with standard deviation 61.78 and median 2
 
 254.5896094820 on average, with standard deviation 59.6117 and median 248. The long right tail comes from Yahtzee bonuses: the score is 400 or more in 3.84% of games. `distribution.csv` lists the chance of every score; [optimal.md](results/optimal.md) has the quantiles, the per-box statistics and the comparison with Verhoeff's and Glenn's numbers.
 
-The exact fraction of Kelly and Liese, as Verhoeff quotes it, is 0.000236 lower. None of the readings of the Joker tried here gives it, and their paper was not read.
+Verhoeff's trivia page prints a fraction that it credits to Kelly and Liese (computed in 2017, "publication to appear"). It equals 254.5893738837, 0.000236 lower than the 254.5896 on the same page. None of the readings of the Joker tried here gives it. Their 2022 paper, which reports exact rational values, was not read, so the comparison is with the page's transcription only.
 
 ## What is each rule worth?
 
@@ -96,11 +94,11 @@ Optimal play earns the upper bonus's 35 points in 68.12% of games, 23.84 points 
 
 ## What should a player keep after the first roll?
 
-Every die of the most common face, for the 6,156 of the 7,776 ordered rolls that hold a pair or more, full houses included. In 900 rolls with a pair, the pair is given up for a straight draw or a single high die. `openings.csv` gives the best keep for each of the 252 first rolls; [openings.md](results/openings.md) has the examples and the closest decision.
+Of the 7,776 equally likely ordered rolls, 7,056 hold a pair or more. In 6,156 of them the best keep is every die of the most common face, full houses included. In the other 900 the pair is given up for a straight draw or a single high die. `openings.csv` gives the best keep for each of the 252 first rolls; [openings.md](results/openings.md) has the examples and the closest decision.
 
 ## How far behind is greedy play?
 
-37.28 points. Glenn's **greedy** strategy plays each turn for the most points that turn and ignores the upper bonus. With ties going to the first box on the card it scores 217.3074 (exact) and earns the upper bonus in only 2.62% of games. Glenn reports 218.54; with ties broken in his fallback order the value here is 219.05. Detail: [variants.md](results/variants.md).
+35.54 to 37.28 points, depending on how ties are broken. Glenn's **greedy** strategy plays each turn for the most points that turn and ignores the upper bonus. With ties going to the first box on the card it scores 217.3074 (exact) and earns the upper bonus in only 2.62% of games; with ties broken in Glenn's fallback order of boxes it scores 219.05. Glenn reports 218.54 and does not say how he breaks ties, so his value lies inside the range and need not disagree. Detail: [variants.md](results/variants.md).
 
 ## How close can a short card get?
 
@@ -150,19 +148,20 @@ Every other file here is computed by the code in this folder.
 
 ## Sources
 
-- T. Verhoeff, optimal solitaire Yahtzee: [trivia page](https://www-set.win.tue.nl/~wstomv/misc/yahtzee/trivia.html), [rules page](https://www-set.win.tue.nl/~wstomv/misc/yahtzee/rules.html), [slides](http://www.yahtzee.org.uk/optimal_yahtzee_TV.pdf) and [Proficiency Test](https://www-set.win.tue.nl/~wstomv/misc/yahtzee/instr-pt.html). Every value compared here agrees, except the share of games with no Yahtzee rolled (63.24% against 63.27%; he may count five of a kind after any roll).
-- J. Glenn, [technical report](https://www.cs.loyola.edu/~jglenn/research/optimal_yahtzee.pdf) (2006) and [CIG 2007](https://doi.org/10.1109/CIG.2007.368089): the optimal value agrees; his greedy value, his rule lists' score and his count of impossible upper states do not, for reasons not found.
-- K. Kelly and J. Liese, ["Let's Get Rolling! Exact Optimal Solitaire Yahtzee"](https://doi.org/10.1080/0025570X.2022.2055334), *Mathematics Magazine* 95, 2022, as quoted by Verhoeff; not read.
+- T. Verhoeff, optimal solitaire Yahtzee: [trivia page](https://www-set.win.tue.nl/~wstomv/misc/yahtzee/trivia.html) (which also prints the 2017 fraction credited to Kelly and Liese), [rules page](https://www-set.win.tue.nl/~wstomv/misc/yahtzee/rules.html), [slides](http://www.yahtzee.org.uk/optimal_yahtzee_TV.pdf) and [Proficiency Test](https://www-set.win.tue.nl/~wstomv/misc/yahtzee/instr-pt.html). Every value compared here agrees, except the share of games with no Yahtzee rolled (63.24% against 63.27%; he may count five of a kind after any roll).
+- J. Glenn, [technical report](https://www.cs.loyola.edu/~jglenn/research/optimal_yahtzee.pdf) (2006) and [CIG 2007](https://doi.org/10.1109/CIG.2007.368089): the optimal value agrees to his two decimals, and his greedy value lies inside the range set by tie rules; his rule lists' score and his count of impossible upper states do not agree, for reasons not found.
+- K. Kelly and J. Liese, ["Let's Get Rolling! Exact Optimal Solitaire Yahtzee"](https://doi.org/10.1080/0025570X.2022.2055334), *Mathematics Magazine* 95(3), 2022, 205–219; only its summary was read. The fraction compared here is the one Verhoeff's page prints, not a number from the paper.
 - P. Woodward, "Yahtzee: The Solution", *Chance* 16(1), 2003, also solved the solitaire game; not read.
-- Pawlewicz, ["Nearly Optimal Computer Play in Multi-player Yahtzee"](https://doi.org/10.1007/978-3-642-17928-0_23), *Computers and Games* 2010, treats the game for several players, where the aim is to win. His [slides](https://mimuw.edu.pl/~pan/papers/yahtzee-cg2010.pdf) estimate 12.7 trillion stored values for an optimal two-player strategy, and report that a nearly optimal player wins about 4 more games in 100 than the best human players of an online site.
+- J. Pawlewicz, ["Nearly Optimal Computer Play in Multi-player Yahtzee"](https://doi.org/10.1007/978-3-642-17928-0_23), *Computers and Games* 2010, treats the game for several players, where the aim is to win. His [slides](https://mimuw.edu.pl/~pan/papers/yahtzee-cg2010.pdf) estimate 12.7 trillion stored values for an optimal two-player strategy, and report that a nearly optimal player wins about 4 more games in 100 than the best human players of an online site.
 - Student reports at KTH give 221.68 ([Felldin and Sood 2012](https://www.csc.kth.se/utbildning/kth/kurser/DD143X/dkand12/Group5Mikael/report/MarkusFelldin_VinitSood.pdf)) and 211.04 ([Dahlbom Norgren and Svensson 2013](https://www.csc.kth.se/utbildning/kth/kurser/DD143X/dkand13/Group1Vahid/report/Optimal_Yahtzee_Nils_DN_&_Philip_S.pdf)) for heuristic programs without the Yahtzee bonus; not rescored here.
 
 ## Open questions
 
-- Why Glenn's rule lists score 7.9 points more here than he reports. His tables leave open what a keep rule such as "Small straight" keeps, and whether a "tripleton" may be four of a kind.
-- Which rules Kelly and Liese used, and whether exact rational arithmetic for the full game reproduces their fraction.
-- Whether a card can get closer than 9 points. The split of the sheet's loss suggests where to look: keeps that depend on more than the most common face, the longest run and the pairs.
-- Why Glenn counts 1,260 impossible pairs of upper boxes and totals where this solver counts 1,302, though the state count matches Verhoeff's.
+- Why do Glenn's rule lists score 7.9 points more here than he reports? His tables leave open what a keep rule such as "Small straight" keeps, and whether a "tripleton" may be four of a kind.
+- Which rules did Kelly and Liese use, what does their paper print, and does exact rational arithmetic for the full game reproduce the fraction on Verhoeff's page?
+- Can a card get closer than 9 points? The split of the sheet's loss suggests where to look: keeps that depend on more than the most common face, the longest run and the pairs.
+- Why does Glenn count 1,260 impossible pairs of upper boxes and totals, where this solver counts 1,302 with totals capped at 63 and a count without the cap gives 1,304? The state count matches Verhoeff's.
+- How should play change against an opponent, where the aim is to win? Maximizing the chance of scoring at least a target T, with the score so far added to the state, is a one-dimensional extension of the solver and a first step.
 
 ## Usage
 

@@ -96,24 +96,32 @@ PACE = (
 
 def sheet_lines(card: Strategy) -> list[str]:
     """The cheat sheet as plain lines, the way a player reads it."""
+    tests = {t for r in (*card.keep_rules, *card.box_rules) for t in r.tests}
     lines = ["Before each reroll, keep the dice of the first rule that applies.", ""]
+    if any(
+        "most common face" in SHEET_KEEPS[k]
+        for k in (*(r.keep for r in card.keep_rules), card.default)
+    ):
+        lines[0:0] = [MOST, ""]
     for i, r in enumerate(card.keep_rules, 1):
         lines.append(f"{i}. If {words(r.tests)}: keep {SHEET_KEEPS[r.keep]}.")
     lines.append(f"{len(card.keep_rules) + 1}. Otherwise keep {SHEET_KEEPS[card.default]}.")
-    lines += ["", "After the last roll, score in the box of the first rule that applies.", ""]
-    for i, r in enumerate(card.box_rules, 1):
-        where = "the upper box of that face" if r.box == "face" else NAMES[r.box]
-        lines.append(f"{i}. If {words(r.tests)}: {where}.")
-    n = len(card.box_rules) + 1
-    lines.append(f"{n}. Otherwise the open box whose points minus par are largest.")
+    best = "the open box whose points minus par are largest"
+    if card.box_rules:
+        lines += ["", "After the last roll, score in the box of the first rule that applies.", ""]
+        for i, r in enumerate(card.box_rules, 1):
+            where = "the upper box of that face" if r.box == "face" else NAMES[r.box]
+            lines.append(f"{i}. If {words(r.tests)}: {where}.")
+        lines.append(f"{len(card.box_rules) + 1}. Otherwise {best}.")
+    else:
+        lines += ["", f"After the last roll, score in {best}."]
     par = dict(card.par)
     lines += ["", "Par: " + ", ".join(f"{NAMES[c]} {par[c]:g}" for c in CATEGORIES) + "."]
     if card.weight != 1:
         lines.append(
             f"Until the bonus is made, count an upper box's points minus par {card.weight:g} times."
         )
-    tests = {t for r in (*card.keep_rules, *card.box_rules) for t in r.tests}
-    return lines + ["", MOST] + ([PACE] if "on pace for the bonus" in tests else [])
+    return lines + (["", PACE] if "on pace for the bonus" in tests else [])
 
 
 SHEET_KEEPS = KEEP_WORDS | {

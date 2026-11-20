@@ -1,9 +1,9 @@
 # Common advice, priced
 
-Seventeen pieces of advice from strategy pages, forums and rule booklets, each priced exactly; `advice.json` holds the numbers. Moved unchanged from the [Yahtzee README](../README.md), which keeps the short answers. "Exact" means computed by the dynamic program in double precision.
+Seventeen pieces of advice from strategy pages, forums and rule booklets, each priced exactly; `advice.json` holds the numbers. The [Yahtzee README](../README.md) gives the short answers. "Exact" means computed by the dynamic program in double precision.
 
 
-Each piece of advice below was taken from a strategy page, forum or rule booklet and made precise. A player follows it wherever it applies and plays optimally everywhere else, so the rest of the game adapts to it. Its **cost** is 254.5896 minus that player's exact expected score. The last two columns say how often per game the advice applies under optimal play, and how often optimal play does what it says anyway. Both come from the exact chances of reaching each decision. Quotes are short excerpts; "Advice, as tested" is the reading that was priced.
+Each piece of advice below was taken from a strategy page, forum or rule booklet and made precise. A player follows it wherever it applies and plays optimally everywhere else, so the rest of the game adapts to it. Its **cost** is 254.5896 minus that player's exact expected score. The last two columns say how often optimal play does what the advice says anyway, and how often per game the advice applies under optimal play. Both come from the exact chances of reaching each decision. Quotes are short excerpts; "Advice, as tested" is the reading that was priced.
 
 | Advice, as tested | Source and words | Cost | Optimal play obeys | Applies per game |
 |---|---|---:|---:|---:|
@@ -25,7 +25,7 @@ Each piece of advice below was taken from a strategy page, forum or rule booklet
 | Upper boxes take three or more of their face, or a zero | [Yahtzee Manifesto, strategy cheat sheet](https://www.yahtzeemanifesto.com/yahtzee-strategy.php): “Aim for at least 3-of-a-kind in every Upper box.” | 9.79 | 86% | 11.17 |
 | With three of a kind and the bonus not made, stop rolling | [dice-war.com strategy page](https://dice-war.com/yahtzee/strategy.html): “bank the sure points in Four of a Kind or Three of a Kind” | 36.18 | 6% | 5.95 |
 
-- Most advice that names one situation is cheap: nine pieces cost under half a point, and optimal play already follows them over 90% of the time.
+- Most advice that names one situation is cheap: nine pieces cost under half a point, and optimal play already follows seven of them over 90% of the time (the other two 64% and 65%).
 - The upper-section rules cost the most when read strictly. Never writing fewer than three of a face in an upper box, except as a zero, costs 9.79; optimal play writes fewer about 1.6 times per game. Always preferring a lower box that scores (Chance aside) costs 9.74.
 - Keeping two pair for the full house costs 3.82; optimal play keeps both pairs only 18% of the time. The opposite advice, from the Board Game Arena forum, costs 0.09.
 - "Bank the sure points" on three of a kind, read as stopping the roll, costs 36.18, about as much as playing greedily (37.28).

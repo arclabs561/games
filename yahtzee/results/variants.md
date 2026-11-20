@@ -1,6 +1,6 @@
 # Rule variants and greedy play
 
-What each bonus rule is worth, and Glenn's greedy strategy against optimal play. Moved unchanged from the [Yahtzee README](../README.md), which keeps the short answers. "Exact" means computed by the dynamic program in double precision.
+What each bonus rule is worth, and Glenn's greedy strategy against optimal play. The [Yahtzee README](../README.md) gives the short answers. "Exact" means computed by the dynamic program without sampling, in double precision (good to about 10⁻¹³).
 
 ## What each rule is worth
 
