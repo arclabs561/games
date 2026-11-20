@@ -193,12 +193,17 @@ def play_turn(board: Board, ranking: list[str], count: int, nmax: int = 4) -> tu
     return found, float(found)
 
 
-def crossguess(guessers, clues_text: str, seed: int, meter: Meter, out: Path) -> str:
+def crossguess(
+    guessers, clues_text: str, seed: int, meter: Meter, out: Path, distinct: bool = False
+) -> str:
     """Language-model guessers on clues from givers of other families: each guesser hears
     every board's clue from every giver in the file except itself, once, with the giver's
-    count. Returns one line per (giver, guesser): found/value per board."""
+    count. With distinct, a (board, clue, count) that two givers share is sent once and
+    its reply is used for both. Returns one line per (giver, guesser): found/value per
+    board."""
     given = read_clue_lines(clues_text)
     lines = []
+    heard: dict[tuple, dict | None] = {}
     for (giver, s), rows in sorted(given.items()):
         if s != seed:
             continue
@@ -216,7 +221,18 @@ def crossguess(guessers, clues_text: str, seed: int, meter: Meter, out: Path) ->
                 if word is not None and count is not None
             ]
             assert len(jobs) == len(rows), f"{giver} has boards without a clue"
-            recs = run_many(hosted.call, jobs, WORKERS.get(name, 8))
+            if distinct:
+                keys = [(name, i, w, c) for i, (w, c, _) in enumerate(rows)]
+                new = [n for n, key in enumerate(keys) if key not in heard]
+                for n, rec in zip(
+                    new,
+                    run_many(hosted.call, [jobs[n] for n in new], WORKERS.get(name, 8)),
+                    strict=True,
+                ):
+                    heard[keys[n]] = rec
+                recs = [heard[key] for key in keys]
+            else:
+                recs = run_many(hosted.call, jobs, WORKERS.get(name, 8))
             cells = []
             for b, (_, count, _), rec in zip(bs, rows, recs, strict=True):
                 if rec is None:

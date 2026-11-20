@@ -252,3 +252,56 @@ def test_new_rules_in_the_note_and_readme():
         assert "[" + "], [".join(cells) + "]" in note, cells
     cells = ["lead of 15", "none", "1", "225", f"{1 - float(worse):.3f}", f"{float(worse):.3f}"]
     assert "[" + "], [".join(cells) + f"], [{float(games):.1f}]" in note
+
+
+def test_safe_threshold_matches_a_search_over_every_threshold():
+    cap = 12
+    posteriors = sorted({better(k, n) for n in range(1, cap + 1) for k in range(n + 1)})
+    posteriors = [b for b in posteriors if b >= stopping.SURE]
+    for alpha in (Fraction(1, 20), Fraction(1, 50)):
+        chances = [brute_force(HALF, cap, stopping.posterior_rule(b)) for b in posteriors]
+        safe = [o.first + o.second <= alpha for o in chances]
+        i = safe.index(True)
+        assert all(safe[i:])  # a stricter threshold is never less safe
+        assert stopping.safe_threshold(cap, alpha) == (posteriors[i - 1], posteriors[i])
+
+
+def test_stricter_thresholds_in_the_note_and_readme():
+    alpha = Fraction(5, 100)
+    w, t = stopping.safe_threshold(100)
+    assert w < stopping.STRICT[100] <= t
+    lower = {100: Fraction("0.997037"), 1000: Fraction("0.9987002")}
+    for cap, shown in stopping.STRICT.items():
+        # The posterior just below the shown threshold, the largest one that is not safe.
+        below = max(
+            better(k - 1, n)
+            for n in range(1, cap + 1)
+            if 2 * (k := stopping.fewest_wins(n, shown)) - 2 > n
+        )
+        assert lower[cap] <= below < shown
+        chance = stopping.equal_verdict_chance(cap, stopping.posterior_rule(shown))
+        assert chance <= alpha < stopping.equal_verdict_chance(cap, stopping.posterior_rule(below))
+        assert f"{float(chance):.4f}" == "0.0497"
+    note = " ".join((Path(stopping.__file__).parent / "peggle.typ").read_text().split())
+    readme = (Path(stopping.__file__).parent / "README.md").read_text()
+    p55 = Fraction(55, 100)
+    cells = []
+    for cap, shown in stopping.STRICT.items():
+        rule = stopping.posterior_rule(shown)
+        equal, edge = stopping.outcome(HALF, cap, rule), stopping.outcome(p55, cap, rule)
+        row = [
+            f"posterior {shown.numerator / shown.denominator}",
+            f"{cap:,}",
+            f"{float(equal.first + equal.second):.3f}",
+            f"{float(equal.games):.1f}",
+            f"{float(edge.first):.3f}",
+            f"{float(edge.second):.3f}",
+            f"{float(edge.games):.1f}",
+        ]
+        assert "[" + "], [".join(row) + "]" in note, row
+        cells.append((f"{float(edge.first):.3f}", f"{float(edge.games):.1f}"))
+        assert f"{stopping.fewest_wins(cap, shown)} " in note
+    (a, ga), (b, gb) = cells
+    assert f"chance {a} and {b}, against 0.061 and 0.512" in note
+    assert f"after {ga} and {gb} games on average" in note
+    assert f"chance {a} (N = 100) or {b} (N = 1,000), after {ga} or {gb} games" in readme

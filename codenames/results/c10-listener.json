@@ -1,0 +1,31 @@
+{
+ "plan": "experiments/plans/C10.md",
+ "turns": 717,
+ "prefixes_sha256": "8e0a6a3b3511ce772c1f51362781ff2e80e603d277c071e6f8b961ffdd749406",
+ "grid": {
+  "from": 0.05,
+  "to": 20.0,
+  "points": 400,
+  "spacing": "even in log T"
+ },
+ "T": 2.0102385307983104,
+ "loglik_per_turn": -2.386613083819308,
+ "grid_index": 246,
+ "at_grid_edge": false,
+ "loglik_half_T": -2.609593950393568,
+ "loglik_double_T": -2.4957033602133727,
+ "loglik_uniform": -3.096176335027372,
+ "embeddinggemma_2": {
+  "tau": 0.02,
+  "loglik_per_turn": -1.780995373764622
+ },
+ "prefix_length": {
+  "mean": 10.072524407252441,
+  "median": 6,
+  "max": 24
+ },
+ "no_prefix": {
+  "=": 6
+ },
+ "top1_from_prefix": 0.6108786610878661
+}

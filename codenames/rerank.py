@@ -251,6 +251,9 @@ def main() -> None:
     parser.add_argument("--actions", type=Path, default=ACTIONS)
     parser.add_argument("--clues", type=Path, help="crossguess: clue lines of codenames.c4")
     parser.add_argument("--runs", type=Path, help="score: folder with the jobs' outputs")
+    parser.add_argument(
+        "--distinct", action="store_true", help="crossguess: send a shared clue once per board"
+    )
     parser.add_argument("--cap", type=float, default=0.0, help="dollars this job may spend")
     parser.add_argument("--out", type=Path, required=True)
     args = parser.parse_args()
@@ -272,7 +275,9 @@ def main() -> None:
     if args.what == "crossguess":
         guessers = GUESSERS if args.models == "all" else model_list(args.models)
         c4.price_models(guessers, args.out)
-        text = c4.crossguess(guessers, args.clues.read_text(), args.seed[0], meter, args.out)
+        text = c4.crossguess(
+            guessers, args.clues.read_text(), args.seed[0], meter, args.out, args.distinct
+        )
         (args.out / "crossguess.txt").write_text(text)
         stats = {m: call_stats(args.out / f"calls-{m}.jsonl") for m in guessers}
         record = {"spent": meter.spent, "cap": args.cap, "sha256": sha256(text), "calls": stats}

@@ -8,6 +8,20 @@ from math import comb, factorial
 
 import numpy as np
 
+from drive_ya_nuts.classes import (
+    action,
+    burnside_classes,
+    class_distribution,
+    count_rings,
+    cycle_type,
+    direct_classes,
+    fixed_count,
+    fixed_sets,
+    read_classes,
+    renamings,
+    stabilizer,
+    stabilizer_orders,
+)
 from drive_ya_nuts.exact import (
     Order,
     all_orders,
@@ -183,3 +197,80 @@ def test_check_sets_five_sides():
     fewer = np.delete(ranks, np.s_[::3])  # drop every third ring
     wrong = check_sets(fewer, 5, 200, 0, lambda pool: ring_count(pool, 5))
     assert wrong > 0
+
+
+# Classes of sets up to renaming the numbers (drive_ya_nuts/classes.py): Burnside's lemma
+# against a direct listing of every class for four and five sides.
+
+
+def direct_orbits(n: int) -> list[list[frozenset[Order]]]:
+    """Every class of sets of n + 1 nuts, found by renaming each unseen set in all n! ways."""
+    nuts = all_orders(n)
+
+    def renamed(g, nut):
+        o = [g[v - 1] for v in nut]
+        i = o.index(1)
+        return tuple(o[i:] + o[:i])
+
+    seen: set[frozenset[Order]] = set()
+    orbits = []
+    for s in combinations(nuts, n + 1):
+        if frozenset(s) in seen:
+            continue
+        orbit = {frozenset(renamed(g, nut) for nut in s) for g in permutations(range(1, n + 1))}
+        seen |= orbit
+        orbits.append(sorted(orbit, key=sorted))
+    return orbits
+
+
+def test_classes_by_burnside_match_direct_listing():
+    for n in (4, 5):
+        found = all_rings(n)
+        orbits = direct_orbits(n)
+        assert sum(len(o) for o in orbits) == comb(factorial(n - 1), n + 1)
+        assert burnside_classes(n) == len(orbits)
+        # Solutions are the same throughout a class.
+        assert all(len({found[s] for s in orbit}) == 1 for orbit in orbits)
+        by_solutions = Counter(found[orbit[0]] for orbit in orbits)
+        assert class_distribution(n, exact_distribution(n)) == {0: 0, **by_solutions}
+        assert direct_classes(n, 1) == {k: v for k, v in sorted(by_solutions.items()) if k}
+        by_symmetry = Counter(factorial(n) // len(orbit) for orbit in orbits)
+        assert stabilizer_orders(n) == dict(sorted(by_symmetry.items()))
+    assert len(direct_orbits(5)) == 1176
+
+
+def test_count_rings_agrees_with_brute_force():
+    rng = random.Random(4)
+    for _ in range(40):
+        pool = rng.sample(all_orders(6), 7)
+        assert count_rings(pool, 6) == brute_force(pool), pool
+
+
+def test_six_sided_classes():
+    assert burnside_classes(6) == 82_628_379
+    # Only renamings of cycle types (6), (3, 3) and (2, 2, 2) fix any set of seven nuts.
+    fixing = {cycle_type(g): fixed_count(action(g, 6), 7) for g in renamings(6)}
+    assert {t: f for t, f in fixing.items() if f} == {
+        (6,): 44, (3, 3): 4788, (2, 2, 2): 311_144, (1,) * 6: comb(120, 7)
+    }  # fmt: skip
+    original = [nut.canonical_order() for nut in nuts]
+    assert stabilizer(original, 6) == [(1, 2, 3, 4, 5, 6)]
+
+
+def test_recorded_classes_are_consistent_with_the_set_counts():
+    classes, sets = read_classes(), read_csv()
+    assert sum(classes.values()) == burnside_classes(6)
+    assert classes[1] == 4_417_343
+    # 720 times the classes with k solutions is the number of pairs (renaming, set with k
+    # solutions it fixes). Leaving out the identity leaves the fixed sets of the others.
+    others = {k: 720 * classes[k] - sets[k] for k in sets}
+    assert sum(others.values()) == 120 * 44 + 40 * 4788 + 15 * 311_144
+    # Solve the sets fixed by one 6-cycle and one (3, 3) renaming; the rest must come from
+    # the fifteen renamings of type (2, 2, 2).
+    rest = Counter(others)
+    orders = all_orders(6)
+    for kind, many in ((6,), 120), ((3, 3), 40):
+        g = next(g for g in renamings(6) if cycle_type(g) == kind)
+        for s in fixed_sets(action(g, 6), 7):
+            rest[count_rings([orders[j] for j in s], 6)] -= many
+    assert all(v >= 0 and v % 15 == 0 for v in rest.values()), rest
