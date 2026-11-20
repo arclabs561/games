@@ -9,7 +9,8 @@ one; its coverage on real games is measured, not assumed.
 - The **likelihood interval** holds the ratings whose log-likelihood is within 1.92 of the
   maximum (a 95% interval if the moves were independent and the model were right).
 - The **posterior** uses a flat prior over the grid; its mean and 2.5% and 97.5% points give a
-  second estimate and interval.
+  second estimate and interval. On the pilot games its mean had the smaller error, so it is the
+  estimate reported first; the choice was made before the test games were scored.
 
 Everything here is plain arithmetic on a (moves, ratings) array of log-probabilities.
 """
@@ -51,15 +52,23 @@ def likelihood_interval(xs: np.ndarray, ys: np.ndarray, drop: float = DROP) -> t
 
 
 def posterior(xs: np.ndarray, ys: np.ndarray) -> tuple[float, float, float]:
-    """Mean and central 95% interval of the posterior with a flat prior on the grid points."""
+    """Mean and central 95% interval of the posterior with a flat prior.
+
+    Each grid point's mass is spread evenly over the cell of width one grid step around it,
+    so the quantiles are interpolated within cells rather than rounded to grid points.
+    """
     w = np.exp(ys - ys.max())
     w /= w.sum()
-    cdf = np.cumsum(w)
-    return (
-        float(w @ xs),
-        float(xs[np.searchsorted(cdf, 0.025)]),
-        float(xs[np.searchsorted(cdf, 0.975)]),
-    )
+    step = xs[1] - xs[0]
+    edges = np.concatenate([[xs[0] - step / 2], xs + step / 2])
+    cdf = np.concatenate([[0.0], np.cumsum(w)])
+
+    def quantile(q: float) -> float:
+        i = int(np.searchsorted(cdf, q)) - 1
+        i = min(max(i, 0), len(w) - 1)
+        return float(edges[i] + (q - cdf[i]) / w[i] * step) if w[i] > 0 else float(edges[i])
+
+    return float(w @ xs), quantile(0.025), quantile(0.975)
 
 
 def estimate(logp: np.ndarray, grid: tuple[int, ...] = GRID) -> dict[str, float]:

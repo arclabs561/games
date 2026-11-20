@@ -171,7 +171,7 @@ def summarize_estimates(records: list[dict], grid) -> dict:
         prefix = {}
         for k in (5, 10, 20, 30, 40):
             if r["logp"].shape[0] >= k:
-                prefix[str(k)] = estimate.estimate(r["logp"][:k], grid)["estimate"]
+                prefix[str(k)] = estimate.estimate(r["logp"][:k], grid)["posterior_mean"]
         rows.append(
             {k: r[k] for k in ("rating", "opponent", "band", "game", "white")}
             | e
@@ -188,11 +188,20 @@ def summarize_estimates(records: list[dict], grid) -> dict:
         "posterior_mean_mae": float(
             np.abs(np.array([r["posterior_mean"] for r in rows]) - truth).mean()
         ),
+        "posterior_mean_mae_interval": estimate.bootstrap_mean(
+            np.abs(np.array([r["posterior_mean"] for r in rows]) - truth), seed=10
+        ),
+        "posterior_mean_error": float(
+            (np.array([r["posterior_mean"] for r in rows]) - truth).mean()
+        ),
         "coverage_likelihood_interval": float(
             np.mean([r["lo"] <= r["rating"] <= r["hi"] for r in rows])
         ),
         "coverage_posterior_interval": float(
-            np.mean([r["posterior_lo"] - 50 <= r["rating"] <= r["posterior_hi"] + 50 for r in rows])
+            np.mean([r["posterior_lo"] <= r["rating"] <= r["posterior_hi"] for r in rows])
+        ),
+        "median_posterior_width": float(
+            np.median([r["posterior_hi"] - r["posterior_lo"] for r in rows])
         ),
         "median_interval_width": float(np.median([r["hi"] - r["lo"] for r in rows])),
         "median_moves": float(np.median([r["moves"] for r in rows])),
@@ -201,19 +210,31 @@ def summarize_estimates(records: list[dict], grid) -> dict:
     for b in sorted({r["band"] for r in rows}):
         sel = [r for r in rows if r["band"] == b]
         err = np.array([r["estimate"] - r["rating"] for r in sel])
+        perr = np.array([r["posterior_mean"] - r["rating"] for r in sel])
         by_band[b] = {
             "n": len(sel),
             "mae": float(np.abs(err).mean()),
             "mae_interval": estimate.bootstrap_mean(np.abs(err), seed=8),
             "mean_error": float(err.mean()),
             "coverage": float(np.mean([r["lo"] <= r["rating"] <= r["hi"] for r in sel])),
+            "posterior_mae": float(np.abs(perr).mean()),
+            "posterior_mae_interval": estimate.bootstrap_mean(np.abs(perr), seed=9),
+            "posterior_mean_error": float(perr.mean()),
+            "posterior_coverage": float(
+                np.mean([r["posterior_lo"] <= r["rating"] <= r["posterior_hi"] for r in sel])
+            ),
         }
     out["by_band"] = by_band
     by_moves = {}
     for k in ("5", "10", "20", "30", "40"):
         sel = [r for r in rows if k in r["prefix"]]
         err = np.array([r["prefix"][k] - r["rating"] for r in sel])
-        by_moves[k] = {"n": len(sel), "mae": float(np.abs(err).mean())}
+        full = np.array([r["posterior_mean"] - r["rating"] for r in sel])
+        by_moves[k] = {
+            "n": len(sel),
+            "posterior_mae": float(np.abs(err).mean()),
+            "posterior_mae_all_moves_same_players": float(np.abs(full).mean()),
+        }
     out["by_moves"] = by_moves
     out["rows"] = [{k: v for k, v in r.items() if k != "prefix"} for r in rows]
     return out
