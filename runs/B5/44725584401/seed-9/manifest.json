@@ -1,0 +1,26 @@
+{
+ "experiment": "B5",
+ "run": "seed-9",
+ "commit": "afeb2d7adb44a3bdaa82525e3d6aaaccd2be1d25",
+ "platform": "actions",
+ "command": [
+  "python",
+  "-m",
+  "boggle.anneal",
+  "run",
+  "--seed",
+  "SEED",
+  "--runs",
+  "40",
+  "--procs",
+  "4",
+  "--out",
+  "OUT"
+ ],
+ "returncode": 0,
+ "seconds": 3099.0,
+ "job_id": "44725584401",
+ "hardware": "GitHub Actions 1000100810",
+ "gpu": null,
+ "python": "3.14.4"
+}
