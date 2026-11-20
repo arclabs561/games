@@ -239,5 +239,5 @@ def test_calibrate_stops_rather_than_drop_models(monkeypatch, scheme):
 
     monkeypatch.setattr(study, "models", lambda: list(study.LOCAL))
     monkeypatch.setattr(study, "all_words", lambda: pytest.fail("calibrate did work"))
-    with pytest.raises(SystemExit, match="compute/codenames-embed"):
+    with pytest.raises(SystemExit, match="outputs/codenames-embed"):
         study.calibrate(scheme)
