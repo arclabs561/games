@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from cannonballs import figures, lucas, piles, report
+from cannonballs import curves, figures, lucas, piles, report
 
 FOLDER = Path(piles.__file__).parent
 COMMITTED = json.loads(report.RESULTS.read_text())
@@ -157,6 +157,81 @@ def test_cube_search_against_brute_force():
         assert lucas.icbrt(m) ** 3 <= m < (lucas.icbrt(m) + 1) ** 3
 
 
+def test_cube_proof_steps():
+    # the two cases the proof rules out on division by 7, and no other case is ruled out there
+    assert lucas.cube_case_blocked_mod_7() == [(2, 3, 1), (3, 2, 1)]
+    cubes = lucas.powers(7, 3)
+    assert cubes == {0, 1, 6}
+    for s1, s2, _ in [(2, 3, 1), (3, 2, 1)]:
+        left = {s1 * c % 7 for c in cubes}  # n = s1 x^3
+        right = {(s2 * c - 1) % 7 for c in cubes}  # n = s2 y^3 - 1
+        assert all((2 * n + 1) % 7 not in cubes for n in left & right)
+    # the case of Euler's theorem the proof uses, against brute force over small v as well
+    assert lucas.euler_cube_solutions(2000) == [(-1, 0), (1, 1)]
+    assert [(u, v) for u in range(-60, 61) for v in range(-60, 61) if u**3 + 1 == 2 * v**3] == [
+        (-1, 0),
+        (1, 1),
+    ]
+    # the four cases that reduce to it give n in {-2, -1, 0, 1}; only n = 1 is a pile
+    assert lucas.square_piles_that_are_cubes(200) == [1]
+
+
+def test_oblong_shapes_against_brute_force_and_puzzling_se():
+    for c in range(1, 8):
+        assert lucas.oblong_shape_squares(c, 600) == [
+            a for a in range(2, 601) if lucas.is_square(piles.oblong(a, a + c))
+        ]
+    # Puzzling Stack Exchange question 99084: an a by 2a - 1 base gives squares at 1, 6, 49
+    assert lucas.oblong_ridge_squares(3000) == [1, 6, 49]
+    assert piles.oblong(6, 11) == 14**2 and piles.oblong(49, 97) == 315**2
+    assert all(6 * piles.oblong(a, 2 * a - 1) == a * (a + 1) * (5 * a - 2) for a in range(1, 50))
+
+
+def test_curves_file_agrees_with_search():
+    """curves.json comes from Sage, which CI does not install: check what can be checked
+    without it. Every point lies on its curve, the widths follow from the points, and they
+    agree with the plain search below its bound."""
+    data = json.loads(curves.CURVES.read_text())
+    assert curves.LONGEST == report.SHAPES
+    shapes = {str(c): curves.shape_curve(c) for c in range(curves.LONGEST + 1)}
+    for key, row in [*data["by_longer_side"].items(), ("ridge", data["ridge"])]:
+        coefficients, s, t = curves.ridge_curve() if key == "ridge" else shapes[key]
+        assert row["coefficients"] == coefficients and row["scale"] == [s, t]
+        _, a2, _, a4, a6 = coefficients
+        for x, y in row["integral_points"]:
+            assert y * y == x**3 + a2 * x * x + a4 * x + a6
+        assert row["layers"] == sorted(
+            x // s for x, y in row["integral_points"] if x >= s and x % s == 0 and y % t == 0
+        )
+        assert len(row["generators"]) == row["rank"]
+        widths = [a for a in row["layers"] if a >= 2]
+        if key == "ridge":
+            assert row["layers"] == COMMITTED["oblong_ridge"] == lucas.oblong_ridge_squares(1000)
+        elif key == "0":
+            assert row["layers"] == COMMITTED["lucas_brute"] == [1, 24]
+        else:
+            assert widths == COMMITTED["oblong_shapes"][key]
+            assert widths == lucas.oblong_shape_squares(int(key), 1000)
+    assert sorted(data["by_longer_side"], key=int) == [str(c) for c in range(curves.LONGEST + 1)]
+
+
+def test_counts_match_oeis():
+    # first terms copied from the OEIS: A035006 (rook moves on an n by n board), A007531
+    # (n (n - 1) (n - 2)), A053611 and A224421 (complete lists)
+    a035006 = [0, 8, 36, 96, 200, 360, 588, 896, 1296, 1800, 2420, 3168, 4056, 5096, 6300]
+    assert [piles.square_pile_contacts(n) for n in range(1, 16)] == a035006
+    a007531 = [0, 0, 0, 6, 24, 60, 120, 210, 336, 504, 720, 990, 1320, 1716, 2184]
+    assert [piles.tetrahedral_contacts(n - 1) for n in range(1, 15)] == a007531[1:15]
+    assert COMMITTED["coincidences"]["square pile / triangle"] == [1, 5, 6, 85]  # A053611
+    assert COMMITTED["coincidences"]["tetrahedral / triangle"] == [1, 3, 8, 20, 34]  # A224421
+
+
+def test_lucas_cli_help():
+    with pytest.raises(SystemExit) as stop:
+        lucas.main(["--help"])
+    assert stop.value.code == 0
+
+
 def test_truncated_piles_match_oeis_a001032():
     rows = lucas.truncated_table(30, 10**4)
     found = [layers for layers, how, _ in rows if how == "found"]
@@ -219,19 +294,29 @@ def test_readme_quotes_the_results():
         f"up to {report.FULL['brute']:,}" in r and f"up to {report.FULL['coincide']:,} layers" in r
     )
     assert f"({c['pile24']['balls_by_neighbors']['12']:,} of the 4,900)" in r
-    assert "7 in 12" in r and "10<sup>18</sup>" in r and report.FULL["cubes"] ** 3 == 10**18
+    assert "7/12 of all short sides" in r and "10<sup>18</sup>" in r
+    assert report.FULL["cubes"] ** 3 == 10**18
+    # the near misses the README names are the rows of gaps.csv one ball from a square
+    rows = [line.split(",") for line in report.gaps_csv().split()[1:]]
+    near = [(int(n), int(m), int(root)) for n, m, root, d in rows if d == "1"]
+    assert [n for n, _, _ in near] == [2, 47, 48]
+    for n, m, root in near:
+        assert f"{n} layers ({m:,}" in r and f"{root}²)" in r
     assert "1, 2, 11, 23, 24 and 26 layers" in r
 
 
 def test_note_quotes_the_results():
     n, c = note(), COMMITTED
     # numbers the note writes out; the rest it reads from results.json
-    assert "holds 4,900 balls" in n and "$19,600 = 4 times 4,900 = 140^2$" in n
-    assert (
-        c["coincidences"]["square pile / triangle"] == [1, 5, 6, 85] and "1, 55, 91, 208,335" in n
-    )
+    # each phrase is counted, so that a change to one copy of a repeated phrase fails
+    assert n.count("holds 4,900 balls") == 2
+    assert n.count('$"19,600" = 4 times "4,900" = 140^2$') == 1
+    assert c["coincidences"]["square pile / triangle"] == [1, 5, 6, 85]
+    assert n.count("[1; 5; 6; 85][1; 55; 91; 208,335]") == 1
     assert c["coincidences"]["tetrahedral / triangle"] == [1, 3, 8, 20, 34]
-    assert "1, 10, 120, 1,540, 7,140" in n
+    assert n.count("[1; 3; 8; 20; 34][1; 10; 120; 1,540; 7,140]") == 1
+    assert c["tetrahedral48"] == 19600 and c["oblong_ridge"] == [1, 6, 49]
+    assert n.count("$196 = 14^2$") == 1 and n.count('$"99,225" = 315^2$') == 1
     assert f'$10^"{report.FULL["digits"]:,}"$' in n and "7 in 12" in n and "$10^18$" in n
     assert c["oblong_100"] == [[1, 100], [4, 11], [5, 8]] and "five rows of 8" in n
     assert c["contacts"]["3"][0] == 36 and "= 36$ touching pairs" in n

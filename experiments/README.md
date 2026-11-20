@@ -25,7 +25,7 @@ Costs are recorded per run. A number from a run that did not happen is never rep
 | Id | Question | Compute | Plan | Status |
 |---|---|---|---|---|
 | C1 | Do the Codenames results on human guesses hold when the games, not the turns, are split? | CPU | [C1](plans/C1.md) | done (PR #41): the published split leaks; the linear adapter's gain holds |
-| C2 | Does fine-tuning an embedding model (LoRA) on human games beat the linear adapter, on C1's split? | A10G, about $2.50 | [C2](plans/C2.md) | done (PR #42): null; LoRA ties the linear adapter |
+| C2 | Does fine-tuning an embedding model (LoRA) on human games beat the linear adapter, on C1's split? | A10G, about $2.50 | [C2](plans/C2.md) | done (PR #42): null; no detectable difference from the linear adapter (−4.1 to 2.8 points) |
 | C3 | Does a clue giver trained against several guessers do better with held-out guessers, across five seeds and fourteen held-out choices? | CPU (GitHub Actions) | [C3](plans/C3.md) | done (PR #48): yes; held-out value 0.31 (0.26 to 0.36) higher than self-play, in all 70 runs, at a cost of 0.50 with the giver's own model |
 | C4 | Do hosted language models match human guesses better than embeddings, and how do they fare as givers with guessers they have never met? | Inference Providers, about $1 to $3 | [C4](plans/C4.md) | done (PR #43): language models guess better, give worse clues |
 | C5 | Does reinforcement learning of a small language model, rewarded by a population of guessers, give clues that held-out guessers understand? | L4, about $9 | [C5](plans/C5.md) | not run: C4's giver test failed |
@@ -40,8 +40,26 @@ Costs are recorded per run. A number from a run that did not happen is never rep
 | H3 | In a two-color game, does Qwen3.5-2B trained by self-play score more with partners from other seeds and with a rule-based player? | L40S, about $10.40; cap $13.50 | [H3](plans/H3.md) | proposed, needs approval |
 | H4 | In a two-color game, does an entropy bonus of 0.05 instead of 0.01 make independent PPO policies from different seeds compatible? | L4, about $4.60; cap $6.40 | [H4](plans/H4.md) | done (PR #59): yes, cross-play rises by 1.12 of 10 (0.83 to 1.41), but self-play still leads cross-play by 0.34; $2.21 on an A10G |
 | P1 | Does the type-chart equilibrium predict which types people play? | CPU (GitHub Actions) | [P1](plans/P1.md) | done (PR #47): null; the number of Pokémon per typing predicts use better (Δρ = −0.32, interval −0.56 to −0.08) |
+| C12 | With the whole clue rule, the costs, one retry and medium reasoning, does gpt-oss-120b still give clues worth less than the embedding giver's, to embedding strangers and to language models of other families? | Inference Providers, about $0.70; cap $1.20 (part B, DeepSeek-V3.2: about $0.40, cap $0.70) | [C12](plans/C12.md) | proposed, needs approval |
+| C13 | Scored by language-model guessers, does C3's population giver beat its self-play giver and the count-1 rule? | Inference Providers, about $0.40; cap $0.70 | [C13](plans/C13.md) | proposed, needs approval; needs `cautious.py` from `fix/codenames` |
+| C14 | C6 again, with reply caps that cut off under 5% of replies and strictly legal candidates | Inference Providers, about $0.30; cap $0.55 | [C14](plans/C14.md) | proposed, needs approval |
+| C15 | Does gpt-oss-120b's agreement with people fall more than the embeddings' when Cultural Codes boards are shuffled and their other words swapped? | Inference Providers, about $0.40; cap $0.70 | [C15](plans/C15.md) | proposed, needs approval |
+| H5 | H2's unrun three-player part: gpt-oss-120b against the information strategy, with the reply cap at 16,384 | Inference Providers, about $2.20; cap $3.60 | [H5](plans/H5.md) | proposed, needs approval |
+| H6 | H4's gap between self-play and cross-play, compared at matched self-play, with checkpoints kept and 2.5 times the steps | A10G, about $5.25; cap $7.50 | [H6](plans/H6.md) | proposed, needs approval |
+| M1 | Do Fallout screens of common words (wordfreq Zipf ≥ 3.0) change the share of passwords cracked within four attempts? | CPU (GitHub Actions) | [M1](plans/M1.md) | proposed |
+| P2 | Does the 63-team full-battle equilibrium survive when both sides switch by poke-env's heuristic rule? | CPU (GitHub Actions) | [P2](plans/P2.md) | proposed |
+| R1 | Does Maia-3's chance of finding each solution move lower the error of a predicted Lichess puzzle rating? | Actions, or T4 about $0.70; cap $1.00 | [R1](plans/R1.md) | proposed, needs approval for the T4 fallback |
+| R2 | Do Maia3-23M and Maia3-79M estimate a rating from one game better than Maia3-5M? | T4, about $2.80; cap $5.00 | [R2](plans/R2.md) | proposed, needs approval |
 
 Costs are estimates from the plans. Each plan has a hard cap, and the paid ones are approved one at a time.
+
+**2026-11-20, proposed plans and amendments.** C12 to C15, H5, H6, M1, P2, R1 and R2 are new plans; R is the prefix for `chess_ratings/` and M for `mastermind/`. Three merged plans gain dated amendments:
+
+- C4: its giving part rescored under the rulebook's clue rule, exploratory, with no paid calls.
+- C11: part B's fixes to consent, storage, delivery and blinding, and a target of 12 volunteers.
+- H3: its detectable effect, and the cost of five seeds (about $16.80, cap $19.80) against three ($10.40, cap $13.50).
+
+The paid ones are approved one at a time, each under its own cap.
 
 **2026-11-20, a methods amendment.** `METHOD.md` now asks each new plan for its minimum detectable effect at 80% power, five training seeds where they fit the cap, pinned providers with a repeat check per split, a limit on replies cut off at the token cap, and a check with people or with partners from another model family before a result with model partners is a headline. Three dated notes go with it, and none changes a published number:
 
