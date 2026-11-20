@@ -130,3 +130,17 @@ def test_calibration_numbers_quoted_in_the_readme():
     pilot = load("calibration-pilot.json")
     assert pilot["chosen"] == "F2" and pilot["fitted_constants"]["F2"]["tau"] == 0.56
     assert round(pilot["diagnosis"]["h7_sandwich"]["tau_centered"], 2) == 0.58
+
+
+def test_population_baseline_and_clustered_blunder_gap_quoted_in_the_readme():
+    readme = (HERE / "README.md").read_text()
+    pop = load("calibration-test.json")["secondary"]
+    assert round(pop["population_baseline_mean_rating_mae"]) == 282
+    assert round(pop["population"]["F0"]["all"]["mae"]) == 189
+    assert round(pop["population"]["F2+P"]["all"]["mae"]) == 163
+    assert "| 189; 163; 282 |" in readme
+    low = figures.position_interval(("600-1000", "1000-1400"))
+    assert [f"{x:.2f}" for x in low] == ["-0.71", "-1.44", "0.01"]
+    below_1800 = figures.position_interval(("600-1000", "1000-1400", "1400-1800"))
+    assert [f"{x:.2f}" for x in below_1800] == ["-0.38", "-0.76", "-0.01"]
+    assert "−0.71 points (−1.44 to 0.01)" in readme and "−0.38 (−0.76 to −0.01)" in readme

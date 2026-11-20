@@ -1,6 +1,6 @@
 # Chess: what a rating says, and what a player at a rating plays
 
-A new Lichess blitz rating loses its question mark after 10 or 11 games, both in Lichess's own formulas and in the rating changes of real new players (September 2025). But it needs about 35 to 48 games to be within 100 points of a player's strength nine times in ten, and real players take longer than that model. Once settled, a rating still wanders, with a standard deviation of about 31 points. Maia-3, an open model of human moves published at ICLR 2026, says what players at each rating play in a position. From one game it guesses a player's rating with a mean error of 199 points, against 451 for guessing the average (500 player-games), and it rates players below 1400 about 200 points too high. The bias is in Maia-3's likelihood, not in the prior: weaker players' moves look stronger to it, more so at five-minute time controls. On 1,000 player-games from August 2025, scored once, a map of the rating scale fitted on pilot games halves that bias (+166 to +88). Raising the likelihood to the power 0.56 brings the 95% intervals' coverage from 89% to 97%. Both cost a little accuracy. It expects more blunders from players below 1800 than they make. The rating results are exact or simulated with seeds; everything that uses Maia-3 is exploratory.
+A new Lichess blitz rating loses its question mark after 10 or 11 games, both in Lichess's own formulas and in the rating changes of real new players (September 2025). But it needs about 35 to 48 games to be within 100 points of a player's strength nine times in ten, and real players take longer than that model. Once settled, a rating still wanders, with a standard deviation of about 31 points. Maia-3, an open model of human moves published at ICLR 2026, says what players at each rating play in a position. From one game it guesses a player's rating with a mean error of 199 points on a sample spread evenly over five rating bands, where guessing the sample's mean is off by 451; on games drawn without regard to rating the error is 189, against 282 for guessing the mean. It rates players below 1400 too high, by about 200 points on the September 2025 sample and by 166 on August 2025 games. The bias is in Maia-3's likelihood, not in the prior: weaker players' moves look stronger to it, more so at five-minute time controls. On 1,000 player-games from August 2025, scored once, a map of the rating scale fitted on pilot games halves that bias, from +166 to +88 points. Raising the likelihood to the power 0.56 brings the 95% intervals' coverage from 89% to 97%. Both cost a little accuracy. In common opening positions it expects more blunders from players below 1800 than they make, but the gap rests on a few positions, and below 1400 an interval that resamples positions includes no gap. The rating results are exact or simulated with seeds; everything that uses Maia-3 is exploratory.
 
 ![Two chess boards drawn with letters for pieces, the position after 1. e4 e5 2. Qh5 Nc6 3. Bc4 with Black to move. Arrows show Maia-3's likeliest replies: for players rated 1100, g6 71%, Nh6 9% and Nf6 6%; for players rated 1900, g6 58%, Qf6 21% and Qe7 15%. Nf6, which allows mate on f7, falls from 6.1% to 3.2%.](figures/board.svg)
 
@@ -8,9 +8,9 @@ A new Lichess blitz rating loses its question mark after 10 or 11 games, both in
 
 ## Rules as modeled
 
-- **Ratings** are Lichess's Glicko-2 for standard blitz, ported from lila and scalachess (read 2026-11-20). A new player starts at 1500 with deviation 500 and volatility 0.09. Each game is its own rating period. White gets 11.78 points of advantage in the expected score. Blitz gains are multiplied by 1.005. The deviation stays within 45 to 500, and a rating is provisional while its deviation is at least 110. `glicko.py` lists every constant and where it comes from.
+- **Ratings** are Lichess's Glicko-2 for standard blitz, ported from lila and scalachess (read 2026-11-20). A new player starts at 1500 with deviation 500 and volatility 0.09. Each game is its own rating period. White gets 11.78 points of advantage in the expected score. Blitz gains are multiplied by 1.005. The deviation stays within 45 to 500, and a rating is provisional while its deviation is at least 110 (the Lichess FAQ says "greater than 110"; the code follows lila). `glicko.py` lists every constant and where it comes from.
 - **The settling model.** Each opponent is rated what the player is rated now, with deviation 60. Opponents' true strengths equal their ratings, and colors alternate. Games are played back to back, so the deviation never grows between them. A game is won with the Elo chance 1 / (1 + 10^(−gap/400)), where the gap is the player's strength minus the opponent's. Draws are left out except in one variation.
-- **Maia-3** (Monroe et al., ICLR 2026) predicts a human move. It reads the position, up to seven earlier positions, and both players' ratings. Maia3-5M, the smallest of its three main models, is used here, on a CPU; a 3M checkpoint exists only as an ablation. Maia-3 trained on Lichess blitz games from January 2023 to July 2025, and every game here is from September 2025. "Both players at rating R" means the model is given R for both.
+- **Maia-3** (Monroe et al., ICLR 2026) predicts a human move. It reads the position, up to seven earlier positions, and both players' ratings. Maia3-5M, the smallest of its three main models, is used here, on a CPU; a 3M checkpoint exists only as an ablation. Maia-3 trained on Lichess blitz games from January 2023 to July 2025. The settling, the estimate and the blunder counts use September 2025 games; the calibration test uses August 2025 games, the first month after Maia-3's training data. "Both players at rating R" means the model is given R for both.
 - **A blunder** is Lichess's: a move that lowers the mover's winning chances by 0.3 or more on the scale from −1 to 1, with Lichess's separate rules for moves into or out of a forced mate. Each legal move is scored by a Stockfish 17.1 search of the position after it.
 
 ## Results
@@ -27,12 +27,13 @@ A new Lichess blitz rating loses its question mark after 10 or 11 games, both in
 | Real players with more than 60 games: rating within 100 of the rating at game 61, at game 20 | 0.70 (0.65 to 0.75), against 0.84 in the model | 323 real players, Wilson interval; model simulated, seed 300 |
 | Decisive games for a 95% verdict, more likely than not: gaps of 50, 100, 200 points | 127, 29, 10 | exact binomial sums, Peggle's one-look rule |
 | Maia-3, top move matches the move played, pilot games | 55.5% (1,266 of 2,281 positions) | exploratory; the paper reports 55.4% on other games |
-| Rating from one game: mean absolute error; guessing the mean | 199 (183 to 215); 451 points | exploratory; 500 player-games, bootstrap interval |
+| Rating from one game: mean absolute error; guessing the mean | 199 (183 to 215); 451 points, on a sample spread evenly over five bands | exploratory; 500 player-games, bootstrap interval over player-games |
+| The same on games drawn without regard to rating, August 2025: old method; with Lichess's rating distribution as prior; guessing the mean | 189; 163; 282 | exploratory; 600 player-games |
 | Rating from one game: 95% intervals that hold the rating | 86% | exploratory; same games |
 | Rating from one game, mean error below 1400, August 2025: old method; rating map | +166 (142 to 190); +88 (62 to 114) | 400 player-games, scored once, bootstrap over games; plan committed, not merged |
 | Rating from one game, 95% intervals that hold the rating, August 2025: old method; tempered likelihood | 88.9% (86.8 to 90.7); 96.7% (95.4 to 97.6) | 1,000 player-games, Wilson intervals; same plan |
 | Rating from one game, mean absolute error, August 2025: old method; rating map; tempered | 189; 195; 205 | same games; bootstrap intervals in the text |
-| Blunders in the 24 most common opening positions, below 1400 | played 1.03%, Maia-3 expected 1.74% | exploratory; 9,805 moves |
+| Blunders in the 24 most common opening positions, below 1400 | played 1.03%, Maia-3 expected 1.74%: a gap of −0.71 points (−1.44 to 0.01) | exploratory; 9,805 moves; interval from resampling the 24 positions, 10,000 draws, seed 0 |
 
 ## How the results are checked
 
@@ -63,7 +64,7 @@ Head-to-head games tell two players apart slowly too. Peggle's one-look rule dec
 
 ## What would a 1500 play here?
 
-`whatwould.py` prints Maia-3's move probabilities for each rating. The run below is from the Hugging Face job, since this repository's shell cannot download the model.
+`whatwould.py` prints Maia-3's move probabilities for each rating. The run below is from the Hugging Face job, which downloaded the model.
 
 ```
 $ uv run python -m chess_ratings.whatwould --checkpoint maia3-5m.pt --moves e2e4 e7e5 d1h5 b8c6 f1c4
@@ -82,11 +83,11 @@ A 1500 defends f7 with g6 61% of the time and plays Nf6, which loses to Qxf7 mat
 
 ## Rating from one game
 
-An estimate from one game is off by 199 points on average (183 to 215), against 451 for guessing the sample's mean rating. Its 95% intervals hold the true rating 86% of the time, and below 1400 Maia-3 rates players about 200 points above their ratings. This is exploratory: the plan was not merged before the run.
+An estimate from one game is off by 199 points on average (183 to 215), against 451 for guessing the sample's mean rating. The sample has equal numbers of players in five bands from 600 to 2700, which spreads ratings more widely than Lichess does, so the 451 flatters the estimate; on 600 player-games drawn without regard to rating (next section), guessing the mean is off by 282. Its 95% intervals hold the true rating 86% of the time, and below 1400 Maia-3 rates players about 200 points above their ratings. This is exploratory: the plan was not merged before the run.
 
 ![Left: the mean absolute error of the estimate falls from 331 points with a player's first 5 moves to 263 with 10, 215 with 20, 193 with 30 and 174 with 40, against 451 for guessing the mean rating. Right: the mean error by rating band, +206, +199, +82, -5 and -31 from the lowest band to the highest.](figures/estimate.svg)
 
-*Left: more moves help, with diminishing returns. Right: weaker players are rated too high.*
+*Left: more moves help, with diminishing returns; the points at 30 and 40 moves are for the players whose games were that long (319 and 151), so part of the fall is a change of players. Right: weaker players are rated too high.*
 
 The **estimate** is the mean of the posterior over ratings 600 to 2600, under a flat prior. For a rating R, the likelihood is the product of Maia-3's probabilities for the player's moves, with both players given R. Moves made after the player first had under 30 seconds are left out, as Maia-3's training left them out. The test sample is 250 rated blitz games from file 40 of September 2025, 50 in each of five bands of the mean rating. Both ratings moved by at most 15 points, so the players were established, and each game had at least 40 half-moves. That gives 500 player-games with a median of 32 moves each. The pilot games (files 30 and 31) chose the model's history of earlier positions and the posterior mean over the likelihood's maximum; the test games were scored once.
 
@@ -99,7 +100,7 @@ The **estimate** is the mean of the posterior over ratings 600 to 2600, under a 
 | 2200 to 2700 | 100 | 145 (124 to 168) | −31 | 90% |
 | all | 500 | 199 (183 to 215) | +90 | 86% |
 
-Bootstrap intervals, 10,000 resamples of player-games, seeds 7 to 10. The maximum of the likelihood does a little worse than the posterior mean (210, interval 193 to 227), and its intervals hold the rating 84% of the time.
+Bootstrap intervals, 10,000 resamples of player-games, seeds 7 to 10. The two players of a game share its time control, which drives the bias (next section), so player-games are not independent, and resampling whole games would give wider intervals. The maximum of the likelihood does a little worse than the posterior mean (210, interval 193 to 227), and its intervals hold the rating 84% of the time.
 
 How many moves it needs: with a player's first 5 moves the error is 331, with 10 it is 263, with 20 215, with 30 193 (319 players with 30 or more) and with 40 174 (151 players). Longer games are easier: the same 151 players' estimates from all their moves are off by 172. The intervals are too narrow because a player's moves are not independent given the positions, which the likelihood assumes. Their median width is 720 points.
 
@@ -123,7 +124,7 @@ On August 2025 games, which neither Maia-3 nor any choice here had seen, a ratin
 
 **The repairs.** Eight were fitted on the pilot games and compared by twofold cross-validation. The plan's rule picked the tempered likelihood (F2): the likelihood raised to the power 0.56. A dated amendment, written before the test, scored the bias question with the rating map (F7), the arm with the best cross-validated log score. It queries Maia-3 at h(R) instead of R, where h is fitted on the pilot by isotonic regression, and then tempers by 0.68. A correction applied after the fact removed the mean bias on the pilot but had the worst log score, so it was not used.
 
-**The test.** August 2025 is the first month after Maia-3's training data. 100 games in each band came from file 40, 500 games and 1,000 player-games in all, and 300 games of the whole population came from file 41. The old method is recomputed on the same games.
+**The test.** August 2025 is the first month after Maia-3's training data. The test drew 100 games per band from August file 40 (500 games, 1,000 player-games) and 300 games regardless of rating from August file 41. The old method is recomputed on the same games.
 
 | Band | Old: mean error | Rating map: mean error | Old: coverage | Tempered: coverage | Rating map: coverage |
 |---|---:|---:|---:|---:|---:|
@@ -135,9 +136,9 @@ On August 2025 games, which neither Maia-3 nor any choice here had seen, a ratin
 | all | +69 | +29 | 88.9% | 96.7% | 97.0% |
 
 - **Primary 1, bias below 1400:** +166 (142 to 190) with the old method, +88 (62 to 114) with the rating map. The bias falls by 78 points (74 to 82), with Holm-adjusted p = 0.0001. That is half of it; the other half remains.
-- **Primary 2, coverage:** 88.9% (86.8 to 90.7) for the old method, 96.7% (95.4 to 97.6) tempered. 78 player-games are held only by the new intervals and none only by the old ones, so McNemar's test gives p below 10⁻²⁰. The new intervals are a little too wide on these games: their median width is 1,030 points, against 730.
+- **Primary 2, coverage:** 88.9% (86.8 to 90.7) for the old method, 96.7% (95.4 to 97.6) tempered. In 78 player-games only the new interval holds the rating, and in none does only the old one, so McNemar's test gives p below 10⁻²⁰. The Wilson intervals treat player-games as independent, though the two players of a game share its time control. The new intervals are a little too wide on these games: their median width is 1,030 points, against 730.
 - **Accuracy:** the mean absolute error is 189 (179 to 200) for the old method, 195 (185 to 205) with the rating map and 205 (194 to 216) tempered. The repairs cost 5.5 (1 to 10) and 16 (12 to 19) points. The old grid stops at 600 and 2600, which keeps estimates for players near its ends close to them. Guessing the mean rating is off by 451.
-- **Population prior.** On 600 player-games drawn without regard to rating, the tempered likelihood with Lichess's rating distribution for the time control has a mean error of 163, against 189 for the old method, with 97.2% coverage. It pulls the ends toward the middle: players in games above 2200 by −259 and below 1000 by +274, 28 and 26 player-games. It helps for a random player and hurts at the ends, the fault being fixed here.
+- **Population prior.** On 600 player-games drawn without regard to rating, the tempered likelihood with Lichess's rating distribution for the time control has a mean error of 163, against 189 for the old method, with 97.2% coverage. It pulls the ends toward the middle: players in games above 2200 by −259 and below 1000 by +274, 28 and 26 player-games. It helps a randomly chosen player and hurts players at the ends of the scale, which is where the bias this section repairs is largest. On the same games, guessing the mean rating is off by 282.
 
 Maia-3's top move matched the move played 55.0% of the time at the players' own ratings, as on the September games.
 
@@ -145,11 +146,11 @@ Maia-3's top move matched the move played 55.0% of the time at the players' own 
 
 ![Pairs of bars by rating band: blunders played in the 24 most common opening positions, 1.53%, 0.96%, 0.45%, 0.25% and 0.24% of moves from the lowest band to the highest, against Maia-3's 3.41%, 1.49%, 0.64%, 0.23% and 0.17%.](figures/blunders.svg)
 
-*Real players blunder less than Maia-3 expects below 1800, in the opening positions they meet most often.*
+*Blunders in the opening positions players meet most often, with each band's count under it. Orange lines are 95% intervals for the share played, from resampling the 24 positions. Below 1800 players blunder less than Maia-3 expects; above 1800 the counts are too small to compare (4 blunders in the top band).*
 
-In the 24 positions that occur most often after 6 to 14 half-moves, in the first 200,000 rated blitz games of file 50, 209 of 39,975 moves were blunders. Maia-3, given each position alone (as a FEN), expected 307. The excess is all below 1800: players rated 600 to 1000 blundered on 1.53% of moves where Maia-3 expected 3.41%, and those rated 1400 to 1800 on 0.45% against 0.64%. Above 1800 the two agree (0.25% and 0.23%). One position goes the other way. In the Four Knights with White to move, players blundered 45 times where Maia-3 expected 16, and Maia-3's chance of a blunder there rises above 2000. The Stockfish searches are 1,000,000 nodes per move.
+In the 24 positions that occur most often after 6 to 14 half-moves, in the first 200,000 rated blitz games of file 50, 209 of 39,975 moves were blunders. Maia-3, given each position alone (as a FEN), expected 307. The excess is all below 1800: players rated 600 to 1000 blundered on 1.53% of moves where Maia-3 expected 3.41%, and those rated 1400 to 1800 on 0.45% against 0.64%. Above 1800 the two cannot be told apart (0.25% and 0.23%, from 34 blunders). Moves in one position share it, so the positions, not the moves, are the units: resampling the 24 positions (10,000 draws, seed 0), the gap is −0.71 points (−1.44 to 0.01) below 1400 and −0.38 (−0.76 to −0.01) below 1800. Three positions carry most of it. One position goes the other way. In the Four Knights with White to move, players blundered 45 times where Maia-3 expected 16, and Maia-3's chance of a blunder there rises above 2000. The Stockfish searches are 1,000,000 nodes per move.
 
-In the middle of real games the comparison is small and noisy. One position per player-game was taken, between half-moves 20 and 59, from the 500 test player-games. 85% of them had at least one blunder among their legal moves, which averaged 33. Players blundered in 40 of the 500, and Maia-3 at the player's rating, with history, expected 52. By band, from the lowest: 10, 7, 11, 9 and 3 blunders in 100 positions each, against 11.6, 12.1, 10.7, 8.4 and 9.0 expected. Only the top band differs by more than chance would give (3 of 100, Wilson interval 1.0% to 8.5%, against 9.0%). The searches here are 100,000 nodes per move, light enough that some labels may change at a deeper search.
+In the middle of real games the comparison is small and noisy. One position per player-game was taken, between half-moves 20 and 59, from the 500 test player-games. 85% of them had at least one blunder among their legal moves, which averaged 33. Players blundered in 40 of the 500, and Maia-3 at the player's rating, with history, expected 52. By band, from the lowest: 10, 7, 11, 9 and 3 blunders in 100 positions each, against 11.6, 12.1, 10.7, 8.4 and 9.0 expected. Only the top band looks different (3 of 100, against 9.0 expected), but that is the smallest of five bands looked at after the fact; with five such looks a count that low would turn up in some band about one time in ten. The searches here are 100,000 nodes per move, light enough that some labels may change at a deeper search.
 
 ## Data and licenses
 
@@ -171,8 +172,9 @@ The boards are drawn here with letters. No piece artwork is used: the Cburnett s
 - Y. Zhang, the Allie 2.1 README (github.com/y0mingzhang/allie, read 2026-11-20). It reports that Allie 2.1, with 9.2B parameters, matches 60.29% of moves on Maia-3's protocol, against 59.06% for Maia3-79M on the same July 2026 positions. Not reproduced here: the model needs about 10 GB in int8.
 - Lichess's lila (modules/rating, modules/round, modules/tree) and scalachess (rating, core eval), read at commits 63ce123 and 176d2f7.
 - Peggle in this repository, for the one-look rule and the 95% thresholds.
+- Rating from one game has a history. Kaggle's "Finding Elo" competition (2014–15) asked for a player's FIDE rating from one game, scored by mean absolute error; FIDE classical games spread less in rating than Lichess blitz from 600 to 2700, so its errors are not comparable with these. K. W. Regan and G. M. Haworth, "Intrinsic Chess Ratings", AAAI 2011, and M. Guid and I. Bratko, "Computer Analysis of World Chess Champions", *ICGA Journal* 29(2), 2006, rate play by the quality of its moves against an engine. Neither was rerun here, and no learned baseline (for example a regression on engine loss and clock use) was fitted.
 
-Maia-3's paper reports it ahead of every model it compares with, Allie among them. The Allie 2.1 README, from October 2026, reports a larger model ahead of Maia-3. That model does not fit this work's CPU budget, so Maia3-5M stands in for the state of the art here.
+Maia-3's paper reports it ahead of every model it compares with, Allie among them. The Allie 2.1 README, from October 2026, reports a larger model ahead of Maia-3. That model does not fit this work's CPU budget. Maia3-5M, the smallest Maia-3 model, is used throughout; larger models were not run.
 
 ## Open questions
 
@@ -199,7 +201,7 @@ uv pip install "maia3 @ git+https://github.com/CSSLab/maia3@1e13597c42d4858b7cfd
 
 The jobs ran on Hugging Face Jobs (cpu-upgrade, 8 vCPU) with the September 2025 Parquet files and the model mounted read-only: `python -m chess_ratings.job pilot`, then `trajectories`, `whatwould,middlegame,estimate` and `common --nodes 1000000`, and `compact` to shorten the outputs for `results/`. The jobs used about 70 minutes of cpu-upgrade ($0.03 an hour) and a few minutes of cpu-basic, about $0.04 in all.
 
-The calibration study ran `calib-records` for each split and sample, then `calib-diagnose` on cpu-basic and `calib-test` once. Maia-3's speed on cpu-upgrade fell from about 230 to 20 to 50 queries a second during the day, so the stratified pilot and the test ran on one T4 (`MAIA_DEVICE=cuda`, about 1,750 queries a second), by a dated amendment. The study used about 5.9 hours of cpu-upgrade, much of it in jobs that timed out or were stopped, and about 40 minutes of T4, about $0.45 in all.
+The calibration study ran `calib-records` for each split and sample, then `calib-diagnose` on cpu-basic and `calib-test` once. Maia-3's speed on cpu-upgrade fell from about 230 queries a second to between 20 and 50 during the day, so the stratified pilot and the test ran on one T4 (`MAIA_DEVICE=cuda`, about 1,750 queries a second), by a dated amendment. The study used about 5.9 hours of cpu-upgrade, much of it in jobs that timed out or were stopped, and about 40 minutes of T4, about $0.45 in all.
 
 ## Files
 

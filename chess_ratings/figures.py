@@ -6,6 +6,7 @@ A test compares every figure with the committed file.
 """
 
 import json
+import random
 from pathlib import Path
 
 import chess
@@ -16,7 +17,9 @@ from peggle.figures import BLUE, GRID, INK, MUTED, ORANGE, Svg, num
 HERE = Path(__file__).parent
 OUT = HERE / "figures"
 RESULTS = HERE / "results"
-COLORS = {"800": "#7a4bc2", "1100": BLUE, "1900": "#1a9a6c", "2300": ORANGE}
+# strength 800 in dark gray, far in lightness from the blue of 1100, so the two stay apart
+# for readers who do not see red and green
+COLORS = {"800": "#3d3d3d", "1100": BLUE, "1900": "#1a9a6c", "2300": ORANGE}
 
 
 def load(name: str) -> dict:
@@ -154,6 +157,26 @@ def common_totals() -> dict[str, tuple[int, int, float]]:
     return {b: (int(v[0]), int(v[1]), float(v[2])) for b, v in out.items()}
 
 
+def position_interval(
+    bands: tuple[str, ...], played_only: bool = False, draws: int = 10_000, seed: int = 0
+) -> tuple[float, float, float]:
+    """For the players in `bands`, blunders played minus blunders Maia-3 expects, in percent of
+    moves (or with `played_only`, blunders played alone), with a 95% percentile interval from
+    resampling the 24 positions. Moves in one position share it, so the positions, not the
+    moves, are the units resampled."""
+    positions = load("common.json")["positions"]
+
+    def stat(sample: list[dict]) -> float:
+        n = sum(p["observed"][b][0] for p in sample for b in bands)
+        o = sum(p["observed"][b][1] for p in sample for b in bands)
+        e = 0 if played_only else sum(p["observed"][b][2] for p in sample for b in bands)
+        return 100 * (o - e) / n
+
+    rng = random.Random(seed)
+    values = sorted(stat([rng.choice(positions) for _ in positions]) for _ in range(draws))
+    return stat(positions), values[int(0.025 * draws)], values[int(0.975 * draws) - 1]
+
+
 def blunders() -> str:
     """Blunder rate by rating band: what players did and what Maia-3 expected."""
     totals = common_totals()
@@ -163,10 +186,11 @@ def blunders() -> str:
         left + pw + 40,
         top + ph + 80,
         "How often players blunder in the 24 most common opening positions, by rating",
-        "Pairs of bars for five rating bands. Dark bars: the share of moves that were blunders "
-        "in Lichess blitz games, falling from about 1.5% for players rated 600 to 1000 to about "
-        "0.25% above 1800. Light bars: the share Maia-3 expected, higher than observed below "
-        "1800 and close to it above.",
+        "Pairs of bars for five rating bands, with the count of blunders under each. Black "
+        "bars: the share of moves that were blunders in Lichess blitz games, falling from about "
+        "1.5% for players rated 600 to 1000 to about 0.25% above 1800, with 95% intervals from "
+        "resampling the positions. Blue bars: the share Maia-3 expected, higher than observed "
+        "below 1800 and close to it above. Above 1800 the counts are small.",
     )
     svg.text(
         left,
@@ -186,6 +210,7 @@ def blunders() -> str:
     for i, b in enumerate(BANDS):
         n, observed, expected = totals[b]
         x = left + i * slot + slot * 0.18
+        _, lo, hi = position_interval((b,), played_only=True, draws=2000)
         for j, (value, color) in enumerate(((observed, INK), (expected, BLUE))):
             share = 100 * value / n
             svg.add(
@@ -204,16 +229,21 @@ def blunders() -> str:
                 fill=color,
                 text_anchor="middle",
             )
+        cx = x + slot * 0.04
+        svg.add("line", x1=cx, y1=y(lo), x2=cx, y2=y(hi), stroke=ORANGE, stroke_width=2)
         svg.text(left + (i + 0.5) * slot, top + ph + 18, b, 12, fill=MUTED, text_anchor="middle")
         svg.text(
             left + (i + 0.5) * slot,
             top + ph + 34,
-            f"{n:,} moves",
+            f"{observed} of {n:,} moves",
             11,
             fill=MUTED,
             text_anchor="middle",
         )
     svg.text(left + pw - 210, top + 20, "played (Lichess, Sept. 2025)", 12, fill=INK)
+    svg.text(
+        left + pw - 210, top + 56, "orange: 95% interval, positions resampled", 12, fill=ORANGE
+    )
     svg.text(left + pw - 210, top + 38, "expected by Maia-3 (5M)", 12, fill=BLUE)
     svg.text(left, top + ph + 60, "Rating band of the player to move", 12, fill=MUTED)
     return svg.render()
