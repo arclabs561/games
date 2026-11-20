@@ -138,7 +138,187 @@ def settle() -> str:
     return svg.render()
 
 
-FIGURES = {"board": board, "settle": settle}
+BANDS = ("600-1000", "1000-1400", "1400-1800", "1800-2200", "2200-2700")
+
+
+def common_totals() -> dict[str, tuple[int, int, float]]:
+    """Per band of the mover's rating: moves, blunders played, and blunders Maia-3 expects,
+    summed over the most common opening positions in common.json."""
+    out = {b: [0, 0, 0.0] for b in BANDS}
+    for p in load("common.json")["positions"]:
+        for b in BANDS:
+            n, o, e = p["observed"][b]
+            out[b][0] += n
+            out[b][1] += o
+            out[b][2] += e
+    return {b: (int(v[0]), int(v[1]), float(v[2])) for b, v in out.items()}
+
+
+def blunders() -> str:
+    """Blunder rate by rating band: what players did and what Maia-3 expected."""
+    totals = common_totals()
+    left, top, pw, ph = 70, 50, 560, 220
+    ymax = 4.0
+    svg = Svg(
+        left + pw + 40,
+        top + ph + 80,
+        "How often players blunder in the 24 most common opening positions, by rating",
+        "Pairs of bars for five rating bands. Dark bars: the share of moves that were blunders "
+        "in Lichess blitz games, falling from about 1.5% for players rated 600 to 1000 to about "
+        "0.25% above 1800. Light bars: the share Maia-3 expected, higher than observed below "
+        "1800 and close to it above.",
+    )
+    svg.text(
+        left,
+        26,
+        "Blunders in the 24 most common opening positions (% of moves)",
+        14,
+        font_weight="bold",
+    )
+
+    def y(v: float) -> float:
+        return top + ph - v / ymax * ph
+
+    for v in (0, 1, 2, 3, 4):
+        svg.add("line", x1=left, y1=y(v), x2=left + pw, y2=y(v), stroke=GRID)
+        svg.text(left - 8, y(v) + 4, f"{v}%", 11, fill=MUTED, text_anchor="end")
+    slot = pw / len(BANDS)
+    for i, b in enumerate(BANDS):
+        n, observed, expected = totals[b]
+        x = left + i * slot + slot * 0.18
+        for j, (value, color) in enumerate(((observed, INK), (expected, BLUE))):
+            share = 100 * value / n
+            svg.add(
+                "rect",
+                x=x + j * slot * 0.32,
+                y=y(share),
+                width=slot * 0.3,
+                height=y(0) - y(share),
+                fill=color,
+            )
+            svg.text(
+                x + j * slot * 0.32 + slot * 0.15,
+                y(share) - 5,
+                f"{share:.2f}",
+                11,
+                fill=color,
+                text_anchor="middle",
+            )
+        svg.text(left + (i + 0.5) * slot, top + ph + 18, b, 12, fill=MUTED, text_anchor="middle")
+        svg.text(
+            left + (i + 0.5) * slot,
+            top + ph + 34,
+            f"{n:,} moves",
+            11,
+            fill=MUTED,
+            text_anchor="middle",
+        )
+    svg.text(left + pw - 210, top + 20, "played (Lichess, Sept. 2025)", 12, fill=INK)
+    svg.text(left + pw - 210, top + 38, "expected by Maia-3 (5M)", 12, fill=BLUE)
+    svg.text(left, top + ph + 60, "Rating band of the player to move", 12, fill=MUTED)
+    return svg.render()
+
+
+def estimate() -> str:
+    """Error of the one-game rating estimate by the moves used, and its bias by band."""
+    e = load("estimate.json")
+    pw, ph, top = 300, 200, 50
+    svg = Svg(
+        2 * pw + 170,
+        ph + top + 80,
+        "How well Maia-3 guesses a rating from one game",
+        "Left: the mean absolute error of the estimate, in rating points, using a player's first "
+        "5, 10, 20, 30 or 40 moves of a game: 331, 263, 215, 193 and 174. Right: by rating band, "
+        "the mean error (estimate minus rating), from about +200 below 1400 to about -30 above "
+        "2200; Maia-3 rates weaker players' moves as stronger than their ratings.",
+    )
+    left = 70
+    ks = ["5", "10", "20", "30", "40"]
+
+    def lx(i: int) -> float:
+        return left + i / (len(ks) - 1) * pw
+
+    def ly(v: float) -> float:
+        return top + ph - v / 500 * ph
+
+    svg.text(left, 28, "Mean absolute error by moves used", 14, font_weight="bold")
+    for v in (0, 100, 200, 300, 400, 500):
+        svg.add("line", x1=left, y1=ly(v), x2=left + pw, y2=ly(v), stroke=GRID)
+        svg.text(left - 8, ly(v) + 4, str(v), 11, fill=MUTED, text_anchor="end")
+    pts = []
+    for i, k in enumerate(ks):
+        row = e["by_moves"][k]
+        x, y = lx(i), ly(row["posterior_mae"])
+        pts.append(f"{num(x)},{num(y)}")
+        svg.add("circle", cx=x, cy=y, r=3.5, fill=BLUE)
+        svg.text(x, y - 9, f"{row['posterior_mae']:.0f}", 11, fill=BLUE, text_anchor="middle")
+        svg.text(x, top + ph + 16, k, 11, fill=MUTED, text_anchor="middle")
+        svg.text(x, top + ph + 30, f"n={row['n']}", 10, fill=MUTED, text_anchor="middle")
+    svg.add("polyline", points=" ".join(pts), fill="none", stroke=BLUE, stroke_width=2)
+    base = e["baseline_mean_rating_mae"]
+    svg.add(
+        "line",
+        x1=left,
+        y1=ly(base),
+        x2=left + pw,
+        y2=ly(base),
+        stroke=ORANGE,
+        stroke_dasharray="5 4",
+    )
+    svg.text(
+        left + pw,
+        ly(base) + 14,
+        f"guessing the mean: {base:.0f}",
+        11,
+        fill=ORANGE,
+        text_anchor="end",
+    )
+    svg.text(
+        left + pw / 2,
+        top + ph + 48,
+        "moves used (the player's own)",
+        12,
+        fill=MUTED,
+        text_anchor="middle",
+    )
+
+    left2 = left + pw + 90
+    bands = list(BANDS)
+    slot = pw / len(bands)
+
+    def by(v: float) -> float:
+        return top + ph / 2 - v / 300 * (ph / 2)
+
+    svg.text(left2, 28, "Mean error by rating band", 14, font_weight="bold")
+    for v in (-300, -150, 0, 150, 300):
+        svg.add("line", x1=left2, y1=by(v), x2=left2 + pw, y2=by(v), stroke=GRID)
+        svg.text(left2 - 8, by(v) + 4, f"{v:+d}" if v else "0", 11, fill=MUTED, text_anchor="end")
+    for i, b in enumerate(bands):
+        v = e["by_band"][b]["posterior_mean_error"]
+        x = left2 + i * slot + slot * 0.2
+        y0, y1 = sorted((by(0), by(v)))
+        svg.add("rect", x=x, y=y0, width=slot * 0.6, height=y1 - y0, fill=BLUE)
+        svg.text(
+            x + slot * 0.3,
+            by(v) + (-6 if v > 0 else 15),
+            f"{v:+.0f}",
+            11,
+            fill=BLUE,
+            text_anchor="middle",
+        )
+        svg.text(left2 + (i + 0.5) * slot, top + ph + 16, b, 10, fill=MUTED, text_anchor="middle")
+    svg.text(
+        left2 + pw / 2,
+        top + ph + 48,
+        "estimate minus rating, 100 players a band",
+        12,
+        fill=MUTED,
+        text_anchor="middle",
+    )
+    return svg.render()
+
+
+FIGURES = {"board": board, "settle": settle, "blunders": blunders, "estimate": estimate}
 
 
 def main() -> None:
