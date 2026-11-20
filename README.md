@@ -23,7 +23,7 @@ Questions about games and puzzles, answered with code. Each answer says how it i
 | **Yahtzee** | Optimal solitaire play scores 254.5896 on average, as Verhoeff (1999) and Glenn (2006) found, with standard deviation 59.61 and median 248. A greedy player who plays each turn for its own points scores 37.28 less. To an optimal player the 35-point upper bonus is worth 16.75 points, the Yahtzee bonus 8.50 and the Joker 0.62. An 8-rule cheat sheet a person can memorize scores 243.18, and no short rule list found comes within 9 points of optimal. Exact, by dynamic programming over 536,448 states. | [`yahtzee/`](yahtzee) |
 | **Yu-Gi-Oh!** | In a 40-card deck, 14 starters give at least one in the opening hand going first 90.00% of the time, and 13 give 87.73%; going second, 12 reach 90.18%. Each card past 40 costs about 0.9 points (12 starters: 85.06% in 40 cards, 68.65% in 60), and a starter with an extender is much rarer than a starter (61.01% with 12 and 9). Exact, checked by brute force and a seeded simulation of 1,000,000 hands. | [`yugioh/`](yugioh) |
 
-Each folder's README gives the rest of its results, its files and how to run them. Cannonballs, Erase, Peggle and Tenzi have write-ups as PDFs.
+Each folder's README gives the rest of its results, its files and how to run them. [`OPEN.md`](OPEN.md) collects the open questions of every folder's README in one list, with a rough status for each; `python3 tools/open_questions.py` rewrites it. Cannonballs, Erase, Peggle and Tenzi have write-ups as PDFs.
 
 ## Usage
 
