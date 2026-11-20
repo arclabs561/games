@@ -24,7 +24,7 @@ import random
 from dataclasses import dataclass, field
 from typing import NamedTuple
 
-COLOR_NAMES = "RYGBW"  # red, yellow, green, blue, white
+COLOR_NAMES = "RYGBWP"  # red, yellow, green, blue, white, and purple for a sixth color
 STANDARD_COUNTS = (3, 2, 2, 2, 1)  # copies of ranks 1 to 5 in each color
 
 

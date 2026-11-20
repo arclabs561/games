@@ -54,7 +54,7 @@ def add_last_card(recs: dict) -> None:
     """Run the last-card test of `hanabi.dfs_solver` on every deal not found won."""
     for (p, seed), r in recs.items():
         if r["verdict"] != "won" and "last_card" not in r:
-            rules = Rules(players=p)
+            rules = Rules(players=p, colors=r.get("colors", 5))
             r["last_card"] = dfs_solver.last_card_test(rules, seeded_deck(rules, seed))
 
 
@@ -107,7 +107,9 @@ def mean_bound(scores: list[int]) -> dict:
     return {"mean": round(m, 4), "half_width": round(1.96 * sd / math.sqrt(n), 4)}
 
 
-def summarize(recs: dict, seeds: range) -> dict:
+def summarize(recs: dict, seeds: range, top: int = 25) -> dict:
+    """The summary of each player count over the seeds, for a game whose top score is
+    `top` (25 with five colors, 30 with six)."""
     out = {}
     for p in sorted({p for p, _ in recs}):
         rows = [recs[p, s] for s in seeds if (p, s) in recs]
@@ -127,9 +129,9 @@ def summarize(recs: dict, seeds: range) -> dict:
         # and with the attempts outside the plan
         ext = Counter(extended(r) for r in rows)
         lost = [r for r in rows if settled_one(r) == "lost"]
-        # a deal lost by Solver B alone has no best score from Solver A; 24 bounds it
-        best = Counter(r.get("best", 24) for r in lost)
-        scores = [r.get("best", 24) if settled_one(r) == "lost" else 25 for r in rows]
+        # a deal lost by Solver B alone has no best score from Solver A; top - 1 bounds it
+        best = Counter(r.get("best", top - 1) for r in lost)
+        scores = [r.get("best", top - 1) if settled_one(r) == "lost" else top for r in rows]
         out[p] = {
             "deals": n,
             "solver_a": dict(va),
@@ -166,7 +168,7 @@ def summarize(recs: dict, seeds: range) -> dict:
                 "undecided_seeds": [r["seed"] for r in rows if extended(r) == "undecided"],
                 "share": share(ext["won"], ext["undecided"], n),
                 "mean_best_score_at_most": mean_bound(
-                    [r.get("best", 24) if extended(r) == "lost" else 25 for r in rows]
+                    [r.get("best", top - 1) if extended(r) == "lost" else top for r in rows]
                 ),
             },
             "largest_a_budget": dict(Counter(str(r["budget"]) for r in rows)),

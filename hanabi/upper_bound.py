@@ -3,6 +3,7 @@
     uv run python -m hanabi.upper_bound --exact             # small decks, every deal (3 min)
     uv run python -m hanabi.upper_bound --sample 2 500      # 500 seeded two-player deals
     uv run python -m hanabi.upper_bound --sample 5 20000 --budget 200000   # a bigger run
+    uv run python -m hanabi.upper_bound --sample 2 500 --colors 6          # six colors
 
 Exact counts enumerate every deal of a small deck. A **deal** is the hands, as unordered
 sets of cards, and the deck order; it stands for the orderings of the shuffled deck that
@@ -203,10 +204,11 @@ def rerun(rules: Rules, seed: int, budget: int = 5_000_000, extra: bool = True) 
     return out
 
 
-def run_block(players: int, seeds, path: str, **kw):
+def run_block(players: int, seeds, path: str, colors: int = 5, **kw):
     """Classify the seeds and write the records as a JSON list, rewritten after each deal
-    so that a run stopped early keeps what it finished."""
-    rules = Rules(players=players)
+    so that a run stopped early keeps what it finished. With six colors each record also
+    says so ("colors": 6)."""
+    rules = Rules(players=players, colors=colors)
     again, extra = kw.pop("rerun", False), kw.pop("extra", True)
     recs = []
     for seed in seeds:
@@ -214,6 +216,8 @@ def run_block(players: int, seeds, path: str, **kw):
             recs.append(rerun(rules, seed, kw["budgets"][-1], extra))
         else:
             recs.append(classify(rules, seed, **kw))
+        if colors != 5:
+            recs[-1]["colors"] = colors
         with open(path, "w") as f:
             json.dump(recs, f, sort_keys=True, separators=(",", ":"))
             f.write("\n")
@@ -310,11 +314,12 @@ def wilson(k: int, n: int, z: float = 1.96) -> tuple[float, float]:
     return centre - half, centre + half
 
 
-def sample(players: int, n: int, budget: int, start: int = 0, seeds=None):
-    """Seeded deals start, ..., start + n - 1 of the standard game, or the given seeds."""
+def sample(players: int, n: int, budget: int, start: int = 0, seeds=None, colors: int = 5):
+    """Seeded deals start, ..., start + n - 1 of the game with this many colors, or the
+    given seeds."""
     seeds = list(seeds) if seeds else list(range(start, start + n))
     n = len(seeds)
-    rules = Rules(players=players)
+    rules = Rules(players=players, colors=colors)
     t0 = time.time()
     tally: Counter[str] = Counter()
     by_cert: Counter[str] = Counter()
@@ -341,8 +346,8 @@ def sample(players: int, n: int, budget: int, start: int = 0, seeds=None):
     print("  lost, by first proof:", dict(sorted(by_cert.items())))
     print("  without certificate:", hard)
     print("  best scores of lost deals:", dict(sorted(Counter(best.values()).items())))
-    # the mean of the best score over all deals, counting undecided deals as 25
-    scores = [25] * (won + und) + list(best.values())
+    # the mean of the best score over all deals, counting undecided deals as the maximum
+    scores = [rules.max_score] * (won + und) + list(best.values())
     m = sum(scores) / n
     sd = math.sqrt(sum((x - m) ** 2 for x in scores) / (n - 1))
     print(f"  mean best score at most {m:.4f} (± {1.96 * sd / math.sqrt(n):.4f}, 95%)")
@@ -356,6 +361,7 @@ def main():
     parser.add_argument("--second", action="store_true", help="with --exact: run Solver B too")
     parser.add_argument("--sample", type=int, nargs=2, metavar=("PLAYERS", "DEALS"))
     parser.add_argument("--start", type=int, default=0)
+    parser.add_argument("--colors", type=int, default=5, help="with --sample: 5 or 6 colors")
     parser.add_argument("--seeds", type=int, nargs="*", help="these seeds instead of a range")
     parser.add_argument("--budget", type=int, default=20000, help="search nodes per deal")
     parser.add_argument("--json", metavar="OUT", help="with --sample: write the H1 records")
@@ -374,6 +380,7 @@ def main():
             args.sample[0],
             seeds,
             args.json,
+            colors=args.colors,
             budgets=tuple(args.budgets),
             solver=args.solver,
             rerun=args.rerun,
@@ -383,7 +390,7 @@ def main():
     if args.exact:
         exact(args.check, args.more, args.second)
     if args.sample:
-        sample(args.sample[0], args.sample[1], args.budget, args.start, args.seeds)
+        sample(args.sample[0], args.sample[1], args.budget, args.start, args.seeds, args.colors)
 
 
 if __name__ == "__main__":
