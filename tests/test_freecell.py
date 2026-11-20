@@ -21,6 +21,7 @@ from freecell.deals import (
 )
 from freecell.draw import figures
 from freecell.fence import check, fence_a, fence_b
+from freecell.open_levels import hunt_c, solve_b_layers, solve_c
 from freecell.report import FAQ_ZERO_CELLS, published_least
 from freecell.rules import Rules, apply, autoplay, can_stack, replay, safe, start
 from freecell.small import orders
@@ -155,6 +156,56 @@ def test_solvers_agree_with_brute_force_on_small_decks(game):
                 assert static_stuck(lay) <= a.frozen
         if static_stuck(lay) and cells == 0 or blocked_at_start(lay, cells):
             assert not brute
+
+
+@needs_cc
+@pytest.mark.parametrize("game", SMALL)
+def test_solver_c_agrees_with_solver_b_on_small_decks(game, tmp_path):
+    # Both play safe cards home; on a lost deal both list every reachable position, so the
+    # counts must be equal, and so must the cards that never move.
+    ranks, suits, columns, cells = game
+    rules = Rules(cells=cells, columns=columns, ranks=ranks, suits=suits)
+    layouts = [deal_columns(list(o), columns) for o in orders(rules, None, step=7)][:600]
+    problems = [native.deck_problem(rules, lay) for lay in layouts]
+    b_answers = native.run(problems, autoplay=True)
+    for lay, b, c in zip(layouts, b_answers, solve_c(problems, tmp_path), strict=True):
+        assert b.verdict == c["verdict"], lay
+        if b.verdict == "lost":
+            assert (b.states, b.most_home, b.frozen) == (
+                c["states"],
+                c["most_home"],
+                frozenset(c["frozen"]),
+            )
+
+
+@needs_cc
+def test_solver_c_on_microsoft_deals(tmp_path):
+    cases = [(11982, 4), (11982, 3), (1, 0), (617, 1), (6, 1)]
+    problems = [native.ms_problem(d, k) for d, k in cases]
+    c_answers = solve_c(problems, tmp_path, layers=True)
+    b_layers = solve_b_layers(problems)
+    for b, c, bl in zip(native.run(problems, autoplay=True), c_answers, b_layers, strict=True):
+        # Solver B in depth, Solver B by layers and Solver C: the same positions, layer by
+        # layer for the two layered searches.
+        assert (b.verdict, b.states) == (c["verdict"], c["states"]) == (bl["verdict"], bl["states"])
+        assert c["layers"] == bl["layers"] and sum(r[4] for r in c["layers"]) == c["states"]
+        assert c["frozen"] == bl["frozen"] == sorted(b.frozen)
+    assert c_answers[0]["states"] == 61643 and set(map(name, c_answers[0]["frozen"])) == (
+        FROZEN_11982
+    )
+    # Positions waiting for a higher layer go to files when memory is short; with a limit
+    # of one byte every one does, and the count stays the same.
+    (small,) = solve_c(problems[:1], tmp_path, memory=1)
+    assert small["states"] == 61643
+
+
+@needs_cc
+def test_solver_c_hunt_gives_lines_that_replay(tmp_path):
+    for deal, cells in ((164, 0), (2, 1)):
+        ans = hunt_c(native.ms_problem(deal, cells), tmp_path, 50_000_000)
+        assert ans.verdict == "won" and replay(Rules(cells=cells), ms_deal(deal), ans.line)
+    # On a lost level the hunt runs out of positions.
+    assert hunt_c(native.ms_problem(11982, 4), tmp_path, 0).verdict == "exhausted"
 
 
 def test_blocked_at_the_start_matches_the_faq():
