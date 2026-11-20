@@ -53,7 +53,7 @@ class Game:
 
     def __init__(self, colors: int, holes: int, canonical_from: int = 6):
         self.colors, self.holes = colors, holes
-        self.codes: list[Code] = list(itertools.product(range(colors), repeat=holes))
+        self.codes: list[Code] = self.codes_of(colors, holes)
         index = {c: i for i, c in enumerate(self.codes)}
         self.n = len(self.codes)
         # Replies (right place, right color in the wrong place), numbered 0..K-1.
@@ -87,6 +87,11 @@ class Game:
         )
         self.memo: dict[tuple[bytes, int], tuple[int, int | None]] = {}
         self.nodes = 0
+
+    @staticmethod
+    def codes_of(colors: int, holes: int) -> list[Code]:
+        """Every code, in the order the search numbers them."""
+        return list(itertools.product(range(colors), repeat=holes))
 
     def _capacity_bound(self, m: int, limit: int) -> int:
         """Least cost of m codes in a tree with at most `branches` non-winning replies per
@@ -252,11 +257,11 @@ def tree_from_json(node: dict, codes: list[Code]) -> Tree:
     """The inverse of `tree_to_json`."""
     index = {c: i for i, c in enumerate(codes)}
     guess = index[tuple(int(ch) - 1 for ch in node["guess"])]
-    children = {
-        tuple(int(x) for x in reply.split(",")): tree_from_json(t, codes)
-        for reply, t in node.get("replies", {}).items()
-    }
-    return guess, children  # type: ignore[return-value]
+    children: dict[tuple[int, int], Tree] = {}
+    for reply, t in node.get("replies", {}).items():
+        b, w = reply.split(",")
+        children[int(b), int(w)] = tree_from_json(t, codes)
+    return guess, children
 
 
 def summary(tree: Tree, codes: list[Code], limit: int) -> dict:
