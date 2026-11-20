@@ -4,7 +4,7 @@ How likely is a challenge to be answered, how long does a game last, does it alw
 
 - With no slaps, a challenge is answered 29% of the time after a jack and 76% after an ace. Following the whole exchange, the player who laid a jack keeps the pile 81% of the time, and the player who laid an ace half the time. Exact, by recursion on the unseen cards.
 - Two players who slap equally fast take a median of 289 cards per game, and four take 1,051. After 300 cards, 27% to 28% of the remaining two-player games end within each further 100 cards, so the tail is geometric rather than a power law. Simulated, 10,000 games each.
-- Random slaps do not make every game end. With the six cards 2 2 3 3 J J, 16 of the 720 orders of the deck loop forever without a single slappable pile. A game ends with probability 1 exactly when it cannot reach such a trapped position, and then the chance that it lasts more than t cards is at most a constant times ρ^t for an explicit ρ < 1, so the tail must be geometric. Proved by hand, and exact for eight small decks by searching every position. For the full deck it is not known whether a trapped position exists. Every known loop of Beggar-my-neighbour lays a royal pair or sandwich, which can always be slapped; see [Does every game end?](#does-every-game-end).
+- Random slaps do not make every game end. With the six cards 2 2 3 3 J J, 16 of the 720 orders of the deck loop forever without a single slappable pile. A game ends with probability 1 exactly when it cannot reach such a trapped position, and then the chance that it lasts more than t cards is at most a constant times ρ^t for an explicit ρ < 1, so the tail must be geometric. Proved by hand, and exact for eight small decks by searching every position. For the full deck it is not known whether a trapped position exists. Every known loop of Beggar-my-neighbour lays a royal pair or sandwich, which can always be slapped. A slap is not always a way out, though: the deal J 2 4 6 7 against 2 3 5 J never ends, although a sandwich is slapped about once every 45 cards, whoever wins it. Exact, by listing all 745 positions it can reach. See [Does every game end?](#does-every-game-end).
 - Winning 55% of the slaps wins 64% of the games, and winning 70% wins 90%. On the logit scale the win chance is close to a straight line, 5.50 times the difference in shares. Simulated, 20,000 games at each of nine shares.
 - Laying the first card is a small disadvantage. With equal shares the first of two players wins 49.77% of games (95% interval 49.67% to 49.86%, 1,000,000 games). With four players no seat effect is detected (200,000 games). With slaps off, the game is Beggar-my-neighbour, and on random deals the first player wins 49.87% (49.77% to 49.97%, 1,000,000 deals). That is the direction [Andorno et al. (2026)](https://arxiv.org/abs/2602.23406) report for smaller decks. The same deals match [Truman Collins's](http://tkcs-collins.com/truman/byn/byn.shtml) figures from 369.4 billion deals: 2.695% end after 11 tricks against his 2.70150%, and 51.95% after 6 to 28 tricks against his "just over 50%".
 - Misslaps, with a one-card penalty as in the [Bicycle rules](https://bicyclecards.com/how-to-play/egyptian-rat-screw), shift the win curve to the right; its slope on the logit scale falls only from 5.5 to 5.0. A fast player who misslaps after 1% of the cards that cannot be slapped needs 51.2% of the slaps to win half the games against a careful one; at 5% they need 56.1%, and at 10%, 61.7%. Simulated, 20,000 games per point; the break-even shares are read off fitted lines.
@@ -22,6 +22,8 @@ How likely is a challenge to be answered, how long does a game last, does it alw
 | Counting only the first answer, as simple arithmetic does, gives 0.706 to 0.236: 13% below the exact answer for a jack and under half of it for an ace. | Exact |
 | Two players with equal shares take a median of 289 cards, four take 1,051. Long two-player games end at a steady 0.0031 per card (0.0030 to 0.0032 after 300 cards). | Simulated, 10,000 games each, seeds 2 and 4 |
 | Six cards, 2 2 3 3 J J, can loop forever with no slappable pile: 16 of the 720 orders deal into such a trap. | Exact, every position |
+| Among all decks of up to eight cards, for two and three players, traps occur only in three six-card and three eight-card deck types, and none offers a slap. Of the 1,349 nine-card deck types, 31 have a trap for two players. | Exact, every position of every deck type |
+| The nine-card deal J 2 4 6 7 against 2 3 5 J never ends, whoever wins its slaps: a trap with slaps in it. | Exact: all 745 reachable positions listed by the rules alone, and the chain's closed classes; 1,000 games of the rules engine (seed 3) run 20,000 cards without ending |
 | Without a reachable trap the tail is geometric. On 2 2 3 3 J Q the exact rate is 0.891 per card and the mean 7.78 cards; 20,000 simulated games give 7.69 to 7.80. | Proved by hand; exact for small decks; simulated check, seed 5 |
 | Whether some deal of the full deck reaches a trap. | Not known |
 | Winning 55% of the slaps wins 64% of the games, 70% wins 90%; the scaled logistic strength predicts three- and four-player win chances with root mean square errors of 0.017 and 0.022. | Simulated, with seeds and intervals in `runs.json` |
@@ -38,6 +40,8 @@ uv run --group egyptian_ratscrew --with jupyter jupyter lab egyptian_ratscrew/eg
 uv run python -m egyptian_ratscrew.study  # plays any run missing from runs.json; under an hour on two cores
 uv run python -m egyptian_ratscrew.termination  # small decks, loops and tail rates; about five minutes
 uv run python -m egyptian_ratscrew.termination --template  # adds the template search; ten more minutes
+uv run python -m egyptian_ratscrew.traps 2 3 4 5 6 7  # every deck type of 2 to 7 cards, two and three players; about two minutes
+uv run python -m egyptian_ratscrew.traps 9 --players 2 --slice 0 --slices 16 --out DIR  # one slice of the nine-card census
 ```
 
 ## Does every game end?
@@ -63,7 +67,7 @@ The second part is the standard fact that a finite absorbing Markov chain is abs
 
 *Proof.* Without a slappable pile there is no chance, so play is fixed, and a fixed play that returns to a position repeats forever. ∎
 
-A trap needs at least six cards: no deck of five or fewer cards has a trapped position, for two or three players. Among decks of six cards, exactly those made of two jacks and four number cards, with no rank three or four times, have one. Both are computed by `decks_with_traps`. One example is the deck 2 2 3 3 J J, dealt as J 2 3 to player 0 and 2 J 3 to player 1, with player 0 laying first. Player 0 lays the J, player 1 pays the 2, and player 0 takes the trick J 2. The hands are now 2 3 J 2 and J 3. Player 0 leads the 2, player 1 answers with the J, player 0 pays the 3, and player 1 takes 2 J 3. Player 1 leads the 3, player 0 answers with the J, player 1 pays the 2, and player 0 takes 3 J 2. The hands are 2 3 J 2 and J 3 again, with player 0 to lead. No trick ever holds a pair or a sandwich. In the usual notation this is the deal J - - against - J -, the looping game of Beggar-my-neighbour with which [Casella et al. (2024)](https://arxiv.org/abs/2403.13855) begin their construction. With a 2 in place of the second 3, the trick 2 J 2 would be a sandwich and offer a slap.
+A trap needs at least six cards: no deck of five or fewer cards has a trapped position, for two or three players. Among decks of six cards, exactly those made of two jacks and four number cards, with no rank three or four times, have one. Both are computed for every deck type by `traps.py`, and agree with the older search `decks_with_traps`, which covers decks with at most four different number ranks. One example is the deck 2 2 3 3 J J, dealt as J 2 3 to player 0 and 2 J 3 to player 1, with player 0 laying first. Player 0 lays the J, player 1 pays the 2, and player 0 takes the trick J 2. The hands are now 2 3 J 2 and J 3. Player 0 leads the 2, player 1 answers with the J, player 0 pays the 3, and player 1 takes 2 J 3. Player 1 leads the 3, player 0 answers with the J, player 1 pays the 2, and player 0 takes 3 J 2. The hands are 2 3 J 2 and J 3 again, with player 0 to lead. No trick ever holds a pair or a sandwich. In the usual notation this is the deal J - - against - J -, the looping game of Beggar-my-neighbour with which [Casella et al. (2024)](https://arxiv.org/abs/2403.13855) begin their construction. With a 2 in place of the second 3, the trick 2 J 2 would be a sandwich and offer a slap.
 
 ![The deal J 2 3 against 2 J 3: the hands after each trick, and the trick picked up. After the third trick the hands are those after the first, so play loops with no pair or sandwich.](figures/trap.svg)
 
@@ -88,7 +92,7 @@ With three players, 2 2 3 3 J J again has 16 trapped orders of 720 (84 trapped p
 
 Three things hold in every deck and number of players checked. They are computed, not proved for decks in general.
 
-- The trapped positions are exactly those of Theorem 2: positions whose play never offers a slap and loops.
+- The trapped positions are exactly those of Theorem 2: positions whose play never offers a slap and loops. This holds for every deck of up to eight cards, and fails for one deck of nine (see [Every small deck](#every-small-deck)).
 - From every position that can finish, some single player winning every slap finishes the game. A run of slaps won by one player is enough, and no mixing of winners is needed.
 - The crude bound ρ\* lies well above the exact ρ, because δ is the chance of the single worst position.
 
@@ -96,13 +100,37 @@ The exact rates were checked in several ways. On the deck 2 2 3 3 J Q, power ite
 
 ### The full deck
 
-Theorem 1 applies to the full deck, but its condition cannot be checked by building the chain: the deals alone number 52!/(4!)^13, about 9.2 × 10^49 orders of the ranks. A trap would need one of two things: a loop of Beggar-my-neighbour in which no trick ever holds a pair or a sandwich, or a set of positions that every slap outcome stays inside without reaching the end. The small decks above have only the first kind. What is known about the first kind is this.
+Theorem 1 applies to the full deck, but its condition cannot be checked by building the chain: the deals alone number 52!/(4!)^13, about 9.2 × 10^49 orders of the ranks. A trap would need one of two things: a loop of Beggar-my-neighbour in which no trick ever holds a pair or a sandwich, or a set of positions that every slap outcome stays inside without reaching the end. Decks of up to eight cards have only the first kind; a nine-card deck has the second (see [Every small deck](#every-small-deck)). What is known about the first kind is this.
 
 - [Casella et al. (2024)](https://arxiv.org/abs/2403.13855) give a deal that reaches a loop of 62 tricks. They also give two other full-deck positions that loop; for the second, three cards are removed from a 55-card version, as they describe. The loops lay 440, 624 and 628 cards, and 7 of the 62, 24 of the 72 and 15 of the 82 tricks hold a royal pair or a royal sandwich (Q - Q, for instance). Such a pile can be slapped whatever ranks the other cards have, so every pass round these loops offers slaps. Computed by `beggar_loop_tricks`.
 - Their construction places "pieces" between jacks: player 0 holds piece J piece J piece J -, and player 1 holds J -. Taking every choice of three pieces from their list of 26 (Appendix C), in every order, and every way of making each royal of a piece a Q, K or A, gives 2,598,750 full decks. Of these, 103,992 loop, and every one of those loops lays a royal pair or sandwich. Computed by `template_search`, about ten minutes.
 - With slaps, the looping deal leaves its loop. Giving its 36 other cards the ranks 2 to 10 at random and playing with equal shares, 10,000 of 10,000 games end, the longest after 3,551 cards. Simulated, seed 2.
 
 So for the full deck, ending with probability 1 from every deal is supported by simulation and by the absence of slap-free loops among the loops checked. It is not proved. If it holds, Theorem 1 makes the tail geometric. The simulated rate is steady: among two-player games still going after 300 cards, the ending chance per card is 0.00318 (95% interval 0.00315 to 0.00321; 100,000 games, seed 2026), and after 600 cards it is 0.00316 (0.00311 to 0.00320). That is ρ ≈ 0.9968 per card, and 27.2% of the remaining games end within each further 100 cards (27.0% to 27.5%), in line with the 27% to 28% above. The small decks end far faster, with ρ near 0.9 per card, so their rates say nothing about the size of the full deck's rate. What they test is the method: on a deck where both can be computed, the simulated tail rate matches the exact one.
+
+### Every small deck
+
+`traps.py` builds the chain for one deck of every type and finds its trapped positions. Slaps look only at which cards are equal, so the number cards of a deck matter only through how many copies each rank has. The royals differ, since each asks for a different number of cards. A **deck type** is a multiset of royals, at least one, and a partition of the other cards into ranks of at most four copies. A **closed class** is a set of trapped positions that play can enter and never leave, and in which each position can reach every other.
+
+| Cards | Deck types | With a trap, two players | With a trap, three players | Closed classes with a slap |
+|---:|---:|---:|---:|---:|
+| 2 to 5 | 316 | 0 | 0 | 0 |
+| 6 | 324 | 3: 2 2 3 3 J J, 2 2 3 4 J J, 2 3 4 5 J J | the same 3 | 0 |
+| 7 | 553 | 0 | 0 | 0 |
+| 8 | 886 | 3: 2 3 4 5 6 J J with a Q, K or A | the same 3 | 0 |
+| 9 | 1,349 | 31 | not run | 30, all in 2 2 3 4 5 6 7 J J |
+
+Every trap of up to eight cards is of the kind in Theorem 2: play from a trapped position never offers a slap and loops. That is not true at nine cards. In the deck 2 2 3 4 5 6 7 J J with two players, 480 of the 61,920 trapped positions offer a slap, and 30 of its 150 closed classes hold one. In those classes a sandwich 2 - 2 comes round, someone slaps it, and whoever wins, play stays in the class.
+
+One deal falls into such a class whatever the slaps: J 2 4 6 7 for player 0, who lays first, against 2 3 5 J. Three checks agree that it never ends.
+
+- **The rules alone.** The 745 positions it can reach under every run of slap winners are listed by `moves`, none of them ended, and 16 of them offer a slap. This shares no code with the chain or the backward search, and a test runs it.
+- **The rules engine.** 1,000 games of `game.play_game` from this deal (seed 3, equal shares) all run 20,000 cards without ending. Following `moves` with random slap winners for 20,000 cards (seed 4) meets 445 slaps.
+- **The chain.** Its trapped start position reaches one closed class of 736 positions, 16 of them with a slap.
+
+So random slaps can fail in two ways: a loop that never offers a slap (Theorem 2), and a loop whose slaps lead back into it whoever wins them. Theorem 1 covers both, since it asks only whether a trapped position can be reached.
+
+The census for eight cards and for nine was run on GitHub runners, in slices, and the slices merged. The other rows run here in about two minutes. Each count is exact. The nine-card census with three players was not run.
 
 ### What the slap randomness buys
 
@@ -115,7 +143,7 @@ Precisely, random slaps buy three things and cannot buy a fourth.
 1. The question becomes one of reachability: the game ends with probability 1 from every deal exactly when no trapped position can be reached from a deal (Theorem 1).
 2. When that holds, the tail is geometric, with an explicit if crude bound, and the exact rate is the largest eigenvalue of the chain (Theorem 1 and the remark after it).
 3. On small decks, a run of slaps won by one player finishes every game that can finish (computed).
-4. Random slaps cannot rescue a position whose play never offers a slap (Theorem 2). For the full deck, a trap of that kind would be a loop of Beggar-my-neighbour, with the 36 other cards given ranks, in which no trick ever holds a pair or a sandwich of any rank. Every loop checked lays a royal pair or sandwich. Whether a loop without one exists is open as far as these sources show.
+4. Random slaps cannot rescue a position whose play never offers a slap (Theorem 2), nor, as nine cards show, every position whose slaps all lead back into the same loop. For the full deck, a trap of that kind would be a loop of Beggar-my-neighbour, with the 36 other cards given ranks, in which no trick ever holds a pair or a sandwich of any rank. Every loop checked lays a royal pair or sandwich. Whether a loop without one exists is open as far as these sources show. And a royal pair in a loop is not enough by itself: the nine-card trap below offers slaps and still never ends.
 
 ### How each claim is known
 
@@ -123,10 +151,18 @@ Precisely, random slaps buy three things and cannot buy a fourth.
 |---|---|
 | Theorems 1 and 2 | proved by hand above |
 | the six-card trap and its loop of six cards | hand trace above, and by `slap_free_cycle` |
-| no trap with five or fewer cards; which six-card decks have one | exact: every deck of that size, by `decks_with_traps` |
+| no trap with five or fewer cards; which decks of six to nine cards have one | exact: every deck type, by `traps.py`; six cards also by `decks_with_traps` |
+| the nine-card deal that never ends though slaps happen | exact: every reachable position by `moves` alone (`never_ends`, tested in CI); the chain's closed classes; 1,000 seeded games of `play_game` |
 | the table of small decks, the three-player figures, the three findings under the table | exact: every position built by `chain`, trapped ones found by backward search (`can_end`), constants by `uniform_bound`, rates by power iteration (`decay_rate`) |
 | exact rates and lengths | checked against a dense eigenvalue solver, a linear solve and full enumeration on the deck 2 2 3 3 J Q (tests) |
 | `moves` follows the rules of `play_game` | the same seeded games played both ways, for two to four players (tests) |
 | royal slaps in the known loops, the template search | computed from the decks in Casella et al.; a fast loop finder checked against `beggar_loop_tricks` on a sample |
 | tail rates for 2 2 3 3 4 4 J J and the full deck, games from the looping deal | simulated, with seeds and intervals as given |
 | termination for the full deck | not known |
+
+## Open questions
+
+- Can a deal of the full deck reach a trapped position? A trap with slaps in it, as in the nine-card deck, would not show up as a slap-free loop of Beggar-my-neighbour, so searching those loops is not enough.
+- Which nine-card deck types have a trap with three players? The census was run for two players only.
+- What is the smallest deck with a trap with slaps in it for three players? For two players it has nine cards, and the census finds one such deck type among the 1,349.
+- Is the seat effect with four players zero, or too small to see in 200,000 games?

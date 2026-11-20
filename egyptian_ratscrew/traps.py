@@ -28,7 +28,7 @@ from itertools import combinations_with_replacement
 from pathlib import Path
 
 from egyptian_ratscrew.game import CHANCES, Card
-from egyptian_ratscrew.termination import can_end, chain, slap_free_cycle
+from egyptian_ratscrew.termination import can_end, chain, ended, moves, slap_free_cycle, start
 
 HERE = Path(__file__).parent
 RESULTS = HERE / "traps.json"
@@ -128,6 +128,71 @@ def examine(deck: tuple[Card, ...], players: int) -> dict:
         "closed_classes_with_slap": sum(any(len(c.edges[k]) > 1 for k in comp) for comp in closed),
         "all_traps_slap_free": all(slap_free_cycle(c.states[k]) is not None for k in trapped),
     }
+
+
+def is_closed(states: set) -> bool:
+    """Whether no game from these positions can end: none has ended, and every move from each,
+    whoever wins a slap, stays among them. Uses only the rules (`moves`, `ended`), not the
+    chain or the backward search."""
+    return all(not ended(s) and all(t in states for _, t in moves(s)) for s in states)
+
+
+# A deal of 2 2 3 4 5 6 7 J J, player 0 first, that never ends although slaps happen in it
+# (found by `second_kind`; see the README).
+NEVER_ENDS = (("J", 2, 4, 6, 7), (2, 3, 5, "J"))
+
+
+def never_ends(hands) -> tuple[int, int] | None:
+    """If no run of slap winners ends the game from this deal: the number of positions it can
+    reach and how many of them offer a slap. None if some reachable position has ended.
+    Uses only the rules (`moves`, `ended`)."""
+    first = start(hands)
+    seen, todo, slaps = {first}, [first], 0
+    while todo:
+        s = todo.pop()
+        if ended(s):
+            return None
+        options = moves(s)
+        slaps += len(options) > 1
+        for _, t in options:
+            if t not in seen:
+                seen.add(t)
+                todo.append(t)
+    return len(seen), slaps
+
+
+def second_kind(deck: tuple[Card, ...], players: int = 2) -> dict | None:
+    """A deal of `deck` from which every run of slap winners ends in a closed class of trapped
+    positions with a slap in it, with the smallest such class; None if there is none."""
+    c = chain(deck, players)
+    good = can_end(c)
+    trapped = [k for k, ok in enumerate(good) if not ok]
+    comps = components(trapped, c.edges)
+    where = {k: i for i, comp in enumerate(comps) for k in comp}
+    closed = {
+        i for i, comp in enumerate(comps) if all(where[t] == i for k in comp for _, t in c.edges[k])
+    }
+    with_slap = {i for i in closed if any(len(c.edges[k]) > 1 for k in comps[i])}
+    for first in sorted(k for k in c.deals if not good[k]):
+        seen, todo = {first}, [first]
+        while todo:
+            k = todo.pop()
+            for _, t in c.edges[k]:
+                if t not in seen:
+                    seen.add(t)
+                    todo.append(t)
+        reached = {where[k] for k in seen if where[k] in closed}
+        if reached and reached <= with_slap:
+            smallest = min(reached, key=lambda i: len(comps[i]))
+            states = [c.states[k] for k in comps[smallest]]
+            return {
+                "hands": [list(h) for h in c.states[first].hands],
+                "classes_reached": len(reached),
+                "class_size": len(states),
+                "slap_positions": sum(len(c.edges[k]) > 1 for k in comps[smallest]),
+                "states": states,
+            }
+    return None
 
 
 def census(cards: int, players: int, part: int = 0, parts: int = 1) -> dict:
