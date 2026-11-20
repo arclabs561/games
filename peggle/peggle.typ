@@ -1,8 +1,32 @@
 #import "@preview/cetz:0.4.2"
 #import "@preview/lilaq:0.6.0" as lq
 
-// Every number in this note is printed by peggle.py, stopping.py or variations.py. The plots
-// read better.csv, priors.csv, walk.csv and formats.csv, which those scripts write.
+// Every number in this note that a script computes is read from results.json, which report.py
+// writes from peggle.py, stopping.py and variations.py. The plots read better.csv, priors.csv,
+// walk.csv and formats.csv, which those scripts write. The rules, the table of results, the
+// checks and the open questions are the README's shared sections (from docs/, filled by
+// tools/sync_docs.py). Numbers typed by hand are inputs (p, N, e, seeds), steps of hand
+// arithmetic in proofs and answers, and figures quoted from cited sources.
+#import "/tools/shared_docs.typ": shared, fmt
+#let R = json("results.json")
+#let readme = read("README.md")
+#let O = R.outcomes
+#let PR = R.priors
+#let F = R.formats
+
+// x rounded to d decimals, with trailing zeros: fix(0.12, 3) is "0.120". report.py stores
+// floats unrounded, and tests/test_peggle.py checks that none sits on a rounding tie at the
+// places printed, where Typst (which rounds the shortest decimal form) and Python (the binary
+// value) could differ.
+#let fix(x, d) = {
+  let s = str(calc.round(x, digits: d))
+  if d == 0 { return s }
+  let parts = s.split(".")
+  let frac = if parts.len() > 1 { parts.at(1) } else { "" }
+  parts.at(0) + "." + frac + "0" * (d - frac.len())
+}
+#let pct(x, d) = fix(x * 100, d) + "%"
+#let words = ("zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten")
 
 // ---------- editions (as in the Erase paper) ----------
 // print (default): US letter. phone: a narrow page that a phone shows at reading size,
@@ -60,7 +84,8 @@
 #show math.equation.where(block: true): it => if phone { fitw(it) } else { it }
 // tables with a 1fr column fill the width they get, so lay those out at 4.8in; tables
 // of auto columns keep their natural width (up to 7in) and are scaled down whole
-#show table: it => if phone {
+// the shared table of results (tools/shared_docs.typ) fills the width it gets
+#show table: it => if phone and it.at("label", default: none) != <shared-table> {
   let fr = type(it.columns) == array and it.columns.any(c => type(c) == fraction)
   wide(it, w: if fr { 4.8in } else { 7in })
 } else { it }
@@ -115,7 +140,8 @@
   },
 ) }
 #let idea(title, body) = sidebox("Idea", orange, title, body)
-#let tryit(body) = sidebox("Try it", slate, none, body)
+// a Try-it puzzle with its rating on Knuth's scale, such as "10" or "20"; best: the one most worth doing
+#let tryit(rating, best: false, body) = sidebox("Try it", slate, [[#rating]#if best [ $triangle.filled.r$]], body)
 #let tag(label, col) = text(size: 8.5pt, weight: "bold", fill: col.darken(35%), tracking: 0.04em, label)
 
 // a column heading in two words, set on two lines on a phone page so that the table stays wide enough to read
@@ -141,11 +167,11 @@
   #v(6pt)
 ]
 
-Two friends play Peggle duels, a game that one of them must win. One of them wins six of ten duels and claims to be the better player. If nothing is known in advance about who is better, the claim is right with chance $743 slash 1024 approx 0.726$, the chance of at most six heads in eleven flips of a fair coin. Being 95% sure takes 8 wins in 10 games, 59 in 100, or 527 in 1,000.
+Two friends play Peggle duels, a game that one of them must win. One of them wins six of ten duels and claims to be the better player. If nothing is known in advance about who is better, the claim is right with chance $#R.coins.six_of_ten.at(0) slash #R.coins.six_of_ten.at(1) approx #fix(R.coins.six_of_ten_value, 3)$, the chance of at most six heads in eleven flips of a fair coin. Being 95% sure takes #R.coins.wins_needed.at("10").at(0) wins in 10 games, #R.coins.wins_needed.at("100").at(0) in 100, or #R.coins.wins_needed.at("1000").at(0) in 1,000.
 
-Most friends do not fix the number of games in advance. They play until someone is sure. Each verdict then still means what it says, on average over all pairs of friends, but a pair of exactly equal players is declared unequal 53% of the time within 100 games. Two other rules fix this. One keeps the chance for equal players below 5% however long they play. The other, "play until someone leads by 15", tells a 55% player from a 45% player with error 4.7% in 136 games on average, and no rule with the same errors needs fewer. A best-of-seven series, by comparison, crowns the 55% player only 60.8% of the time. The note also asks what changes when the player who shoots first has an edge, when a player improves, and when the friends start out believing that they are close.
+Most friends do not fix the number of games in advance. They play until someone is sure. Each verdict then still means what it says, on average over all pairs of friends, but a pair of exactly equal players is declared unequal #pct(R.equal_verdict.posterior.at("100"), 0) of the time within 100 games. Two other rules fix this. One keeps the chance for equal players below 5% however long they play. The other, "play until someone leads by 15", tells a 55% player from a 45% player with error #pct(R.wald.worse, 1) in #fix(R.wald.games, 0) games on average, and no rule with the same errors needs fewer. A best-of-seven series, by comparison, crowns the 55% player only #pct(F.at("best of 7").at(0), 1) of the time. The note also asks what changes when the player who shoots first has an edge, when a player improves, and when the friends start out believing that they are close.
 
-*How to read this.* Sections #ref(<sec-game>, supplement: none) to #ref(<sec-bayes>, supplement: none) set up the game and give the coin-flip answer, and need only arithmetic, as do the match formats and ratings of Sections #ref(<sec-formats>, supplement: none) and #ref(<sec-elo>, supplement: none). Sections #ref(<sec-billiard>, supplement: none) to #ref(<sec-wald>, supplement: none) prove why the answers hold and what happens when the friends stop whenever they like. @sec-model asks what the model leaves out, and Sections #ref(<sec-relatives>, supplement: none) to #ref(<sec-open>, supplement: none) give relatives, checks and open questions. Boxes marked #tag("IDEA", orange) explain a tool the first time it is used. Boxes marked #tag("TRY IT", slate) are puzzles to try before reading on, with answers in @app-answers. It is fine to skip any proof, or to stop anywhere. Words and symbols, with how to read them aloud, are listed in @app-words. In every figure, blue marks the uniform prior and its 95% rule, green the Bayes factor rule, red a rule of the form "play until someone leads by $c$", purple a skeptical prior and black dashes the Jeffreys prior; grey is neutral.
+*How to read this.* Sections #ref(<sec-game>, supplement: none) to #ref(<sec-bayes>, supplement: none) set up the game and give the coin-flip answer, and need only arithmetic, as do the match formats and ratings of Sections #ref(<sec-formats>, supplement: none) and #ref(<sec-elo>, supplement: none). Sections #ref(<sec-billiard>, supplement: none) to #ref(<sec-wald>, supplement: none) prove why the answers hold and what happens when the friends stop whenever they like. @sec-model asks what the model leaves out, and Sections #ref(<sec-relatives>, supplement: none) to #ref(<sec-open>, supplement: none) give relatives, checks and open questions. Boxes marked #tag("IDEA", orange) explain a tool the first time it is used. Boxes marked #tag("TRY IT", slate) are puzzles to try before reading on, with answers and the source of each puzzle in @app-answers. Each puzzle is rated on the scale of Knuth's _Art of Computer Programming_ @knuth: 00 is immediate, 10 takes a minute, 20 about a quarter of an hour and 30 a few hours, and $triangle.filled.r$ marks the one most worth doing. It is fine to skip any proof, or to stop anywhere. Words and symbols, with how to read them aloud, are listed in @app-words. In every figure, blue marks the uniform prior and its 95% rule, green the Bayes factor rule, red a rule of the form "play until someone leads by $c$", purple a skeptical prior and black dashes the Jeffreys prior; grey is neutral.
 
 Every number is exact, computed with fractions or whole numbers, unless it is marked as floating point or simulated.
 
@@ -155,7 +181,11 @@ In Peggle a ball is shot from the top of a board of pegs, and the aim is to clea
 
 So a duel always has a winner, as do chess without draws and most racket sports. The model for the rest of the note is the simplest one.
 
-*The model.* Each game is won by the first player with the same chance $p$, independently of the other games. The other player then wins with chance $1 - p$, and the first player is *better* when $p > 1 - p$, that is, when $p > 1 slash 2$. The games are flips of a coin with bias $p$, and the share of games won, $hat(p) = k slash n$ (read "p hat"), estimates $p$.
+*The model.* The other player wins a game with chance $1 - p$, so the first player is better when $p > 1 - p$. These are the rules as modeled:
+
+#shared(readme, "rules")
+
+The games are flips of a coin with bias $p$, and the share of games won, $hat(p) = k slash n$ (read "p hat"), estimates $p$.
 
 The model may not fit Peggle well. The player who shoots first may have more orange pegs to aim at, and the one who clears the last peg gets Extreme Fever, so the order of turns may matter; players also improve. @sec-model measures what these effects do to the answers.
 
@@ -171,8 +201,8 @@ so $n >= (delta + 2) / delta^2 log(2 / gamma)$ games make $hat(p)$ fall within $
     table.hline(),
     [within], [Chernoff-type bound], [Hoeffding],
     table.hline(stroke: 0.5pt),
-    [$delta = 0.1$], [775 games], [185 games],
-    [$delta = 0.05$], [3,025 games], [738 games],
+    [$delta = 0.1$], [#fmt(R.coins.bounds.d10.at(0)) games], [#fmt(R.coins.bounds.d10.at(1)) games],
+    [$delta = 0.05$], [#fmt(R.coins.bounds.d05.at(0)) games], [#fmt(R.coins.bounds.d05.at(1)) games],
     table.hline(),
   ),
   caption: [Games needed for $hat(p)$ to be within $delta$ of $p$ with probability at least 95%.],
@@ -199,7 +229,8 @@ That integral has a plain-language value, proved in @sec-billiard.
 $ P(p > 1/2 | k, n) = 1 / 2^(n + 1) sum_(j = 0)^k binom(n + 1, j). $
 ]
 
-For six wins in ten games the formula gives $1486 slash 2048 = 743 slash 1024 approx 0.726$. The claim of being better is more likely right than wrong, but about one time in four a player with that record is in fact the weaker one. `peggle.py` checks the identity against the Beta integral, computed exactly with fractions, for every $k$ and every $n$ up to 12.
+#let (six-num, six-den) = R.coins.six_of_ten
+For six wins in ten games the formula gives $#(2 * six-num) slash #(2 * six-den) = #six-num slash #six-den approx #fix(R.coins.six_of_ten_value, 3)$. The claim of being better is more likely right than wrong, but about one time in four a player with that record is in fact the weaker one. `peggle.py` checks the identity against the Beta integral, computed exactly with fractions, for every $k$ and every $n$ up to 12.
 
 @tab-wins shows how many wins it takes to be 95% sure.
 
@@ -209,9 +240,15 @@ For six wins in ten games the formula gives $1486 slash 2048 = 743 slash 1024 ap
     table.hline(),
     [games $n$], [10], [20], [50], [100], [200], [1,000],
     table.hline(stroke: 0.5pt),
-    [wins needed], [8], [14], [31], [59], [112], [527],
-    [share], [80.0%], [70.0%], [62.0%], [59.0%], [56.0%], [52.7%],
-    [chance of being better], [0.967], [0.961], [0.954], [0.964], [0.955], [0.956],
+    ..{
+      let ns = (10, 20, 50, 100, 200, 1000)
+      let w = ns.map(n => R.coins.wins_needed.at(str(n)))
+      (
+        [wins needed], ..w.map(((k, _)) => [#k]),
+        [share], ..ns.zip(w).map(((n, (k, _))) => [#pct(k / n, 1)]),
+        [chance of being better], ..w.map(((_, b)) => [#fix(b, 3)]),
+      )
+    },
     table.hline(),
   ),
   caption: [The fewest wins in $n$ games that make $P(p > 1 slash 2) >= 0.95$, uniform prior. Exact.],
@@ -221,7 +258,7 @@ The share of wins needed falls toward one half, roughly like $1 slash 2 + 0.82 s
 
 *A one-line approximation.* The curves in @fig-better look like normal distribution functions. Near $k = n slash 2$ the posterior has mean $(k + 1) slash (n + 2)$ and standard deviation $1 slash (2 sqrt(n + 3))$, so $P(p > 1 slash 2)$ is close to the normal distribution function $Phi(z)$ (read "phi of z") at $z = 2 (k - n slash 2) sqrt(n + 3) slash (n + 2)$. The logistic curve $1 slash (1 + e^(-1.702 z))$ stays within 0.01 of $Phi(z)$, which gives
 $ P(p > 1 slash 2 | k, n) approx 1 / (1 + e^(-a(n) (k - n slash 2))), #if phone { linebreak() } else { $quad$ } a(n) = (3.404 sqrt(n + 3)) / (n + 2) approx 3.4 / sqrt(n). $
-An earlier version of this note used the fitted slope $3 n^(-0.48)$. Over every $k$ and every $n <= 300$, the largest difference from the exact chance is 0.016 with $a(n)$ and 0.068 with the fitted slope; for $30 <= n <= 300$ it is 0.010 and 0.015. `peggle.py` computes all four exactly.
+An earlier version of this note used the fitted slope $3 n^(-0.48)$. Over every $k$ and every $n <= 300$, the largest difference from the exact chance is #fix(R.coins.logistic_error.posterior.at(0), 3) with $a(n)$ and #fix(R.coins.logistic_error.fitted.at(0), 3) with the fitted slope; for $30 <= n <= 300$ it is #fix(R.coins.logistic_error.posterior.at(1), 3) and #fix(R.coins.logistic_error.fitted.at(1), 3). `peggle.py` computes all four exactly.
 
 #figure(
   {
@@ -283,7 +320,7 @@ The coin-flip identity looks like an accident of algebra. It is not. Bayes @baye
 
 The proof is a bijection in disguise: the same eleven points are read once as a prior and a record, and once as eleven coin flips. Nothing was computed. The integral of @sec-bayes is the probability of one event, and the coin flips are the same event seen from the dashed line.
 
-#tryit[Use the identity to find the chance of being the better player after two wins in two games, and after one win in two games.]
+#tryit("10")[Use the identity to find the chance of being the better player after two wins in two games, and after one win in two games.]
 
 *Laplace's rule and Pólya's urn.* The same points answer a second question. After $k$ wins in $n$ games, what is the chance of winning the next one? A new point lands left of $p$ when it falls in one of the $k + 1$ gaps left of $p$ among the $n + 2$ gaps made by the $n + 1$ points, so the chance is $(k + 1) slash (n + 2)$, Laplace's rule of succession. Those chances are the draws from an urn that starts with one ball of each color and gets an extra ball of the drawn color after every draw, the urn of Eggenberger and Pólya @polya. Friends whose $p$ comes from the uniform prior look, game by game, like that urn.
 
@@ -305,7 +342,7 @@ The uniform prior treats a 90% player as being as likely as a 50% one. Friends w
 
 - The *uniform prior*, Beta(1, 1).
 - The *Jeffreys prior*, Beta(1/2, 1/2), which piles a little more belief near 0 and 1 @jeffreys. Its answers do not depend on whether the chance is measured as $p$ or on another scale, such as the log-odds of @sec-elo.
-- A *skeptical prior*, Beta(12, 12), with mean 1/2 and standard deviation exactly 1/10. By @cor-coins it is a record that starts at 11 wins to 11. Under it, a player better than 60% is a long shot: Beta(12, 12) puts chance 0.16 above 0.6.
+- A *skeptical prior*, Beta(12, 12), with mean 1/2 and standard deviation exactly 1/10. By @cor-coins it is a record that starts at 11 wins to 11. Under it, a player better than 60% is a long shot: Beta(12, 12) puts chance #fix(PR.skeptic_above, 2) above 0.6.
 
 #figure(
   {
@@ -327,10 +364,10 @@ The uniform prior treats a 90% player as being as likely as a 50% one. Friends w
     )))
   },
   placement: auto,
-  caption: [Posterior densities after six wins in ten games. The shaded area, 0.726, is the uniform prior's chance that the first player is better. The skeptical prior keeps $p$ near one half and gives 0.636.],
+  caption: [Posterior densities after six wins in ten games. The shaded area, #fix(PR.six_of_ten.uniform, 3), is the uniform prior's chance that the first player is better. The skeptical prior keeps $p$ near one half and gives #fix(PR.six_of_ten.skeptical, 3).],
 ) <fig-priors>
 
-After six wins in ten games the three chances of being better are 0.726, 0.735 and 0.636 (@fig-priors). The Jeffreys value is not a fraction: its density involves square roots, and the chance comes out as $1 slash 2 + 512 slash (693 pi)$, exactly. `variations.py` computes the fraction next to $pi$ by stepping through the beta function's recurrence from Beta(1/2, 1/2), whose mass above one half is exactly 1/2, and checks it against numerical integration to 12 decimal places for all records of up to 14 games.
+After six wins in ten games the three chances of being better are #fix(PR.six_of_ten.uniform, 3), #fix(PR.six_of_ten.jeffreys, 3) and #fix(PR.six_of_ten.skeptical, 3) (@fig-priors). The Jeffreys value is not a fraction: its density involves square roots, and the chance comes out as $1 slash 2 + #PR.jeffreys_part.at(0) slash (#PR.jeffreys_part.at(1) pi)$, exactly. `variations.py` computes the fraction next to $pi$ by stepping through the beta function's recurrence from Beta(1/2, 1/2), whose mass above one half is exactly 1/2, and checks it against numerical integration to 12 decimal places for all records of up to 14 games.
 
 #figure(
   table(
@@ -338,15 +375,15 @@ After six wins in ten games the three chances of being better are 0.726, 0.735 a
     table.hline(),
     [prior], [6 of 10], [$n = 10$], [20], [50], [100], [200], [1,000],
     table.hline(stroke: 0.5pt),
-    text(fill: blue)[uniform], [0.726], [8], [14], [31], [59], [112], [527],
-    [Jeffreys], [0.735], [8], [14], [31], [59], [112], [527],
-    text(fill: purple)[skeptical], [0.636], [10], [16], [33], [60], [113], [527],
+    ..(("uniform", text(fill: blue)[uniform]), ("jeffreys", [Jeffreys]), ("skeptical", text(fill: purple)[skeptical])).map(((key, name)) => (
+      name, [#fix(PR.six_of_ten.at(key), 3)], ..PR.fewest.at(key).map(k => [#k]),
+    )).flatten(),
     table.hline(),
   ),
-  caption: [The chance of being better after six wins in ten games, and the fewest wins in $n$ games that make each prior 95% sure. Exact; the Jeffreys chance is $1 slash 2 + 512 slash (693 pi)$.],
+  caption: [The chance of being better after six wins in ten games, and the fewest wins in $n$ games that make each prior 95% sure. Exact; the Jeffreys chance is $1 slash 2 + #PR.jeffreys_part.at(0) slash (#PR.jeffreys_part.at(1) pi)$.],
 ) <tab-priors>
 
-@tab-priors shows how far the verdict moves. With a hundred games or more the three priors nearly agree: they ask for 59 or 60 wins in 100 and 527 in 1,000. With a handful of games they disagree, and the prior decides. The skeptic needs ten wins in ten games before being 95% sure; the Jeffreys prior is satisfied by three in three, and the uniform prior by four in four. The difference matters most when the friends stop as soon as they are sure, as the next section shows.
+@tab-priors shows how far the verdict moves. With a hundred games or more the three priors nearly agree: they ask for #PR.fewest.uniform.at(3) or #PR.fewest.skeptical.at(3) wins in 100 and #PR.fewest.uniform.at(5) in 1,000. With a handful of games they disagree, and the prior decides. The skeptic needs #words.at(PR.fewest.skeptical.at(0)) wins in ten games before being 95% sure; the Jeffreys prior is satisfied by #words.at(PR.shortest.jeffreys) in #words.at(PR.shortest.jeffreys), and the uniform prior by #words.at(PR.shortest.uniform) in #words.at(PR.shortest.uniform). The difference matters most when the friends stop as soon as they are sure, as the next section shows.
 
 = Playing until someone is sure <sec-stop>
 
@@ -354,7 +391,7 @@ After six wins in ten games the three chances of being better are 0.726, 0.735 a
 
 Suppose the friends play until one of them is 95% sure of being better, or until $N$ games. The rule looks only at $k$ and $n$, so the number of win-loss sequences that first stop at each $(k, n)$ does not depend on $p$; a dynamic program counts them, and each has chance $p^k (1 - p)^(n - k)$. `stopping.py` sums these exactly (@tab-stop), agrees with seeded simulation, and with a binomial test in place of the posterior reproduces Table 1 of Armitage, McPherson and Rowe @armitage.
 
-#tryit[Playing until someone is 95% sure under the uniform prior, what is the shortest possible duel? Use @prop-coins.]
+#tryit("12")[Playing until someone is 95% sure under the uniform prior, what is the shortest possible duel? Use @prop-coins.]
 
 #idea[error rates][Fix a pair of players, so that $p$ is one number, and imagine them replaying the whole match many times. The _error rate_ is the share of those matches that end with the wrong player declared better. For two equal players every verdict is an error. An error rate is a promise about one pair; a posterior is a statement about one record.]
 
@@ -364,20 +401,21 @@ Suppose the friends play until one of them is 95% sure of being better, or until
     table.hline(),
     [$p$], [$N$], hd[better][declared], hd[worse][declared], hd[no][verdict], hd[mean][games],
     table.hline(stroke: 0.5pt),
-    [0.5], [100], [0.528], [], [0.472], [59.6],
-    [0.5], [1,000], [0.728], [], [0.272], [355.6],
-    [0.55], [100], [0.521], [0.120], [0.359], [53.2],
-    [0.55], [1,000], [0.866], [0.123], [0.011], [138.0],
-    [0.6], [1,000], [0.945], [0.055], [0.000], [48.4],
-    [0.7], [1,000], [0.988], [0.012], [0.000], [16.4],
+    ..(("0.5", "p50", 100), ("0.5", "p50", 1000), ("0.55", "p55", 100), ("0.55", "p55", 1000),
+       ("0.6", "p60", 1000), ("0.7", "p70", 1000)).map(((p, key, cap)) => {
+      let (first, second, neither, games) = O.posterior.at(key).at(str(cap))
+      let equal = key == "p50"
+      ([#p], [#fmt(cap)], [#fix(if equal { first + second } else { first }, 3)],
+       if equal [] else [#fix(second, 3)], [#fix(neither, 3)], [#fix(games, 1)])
+    }).flatten(),
     table.hline(),
   ),
   caption: [Play until one player is 95% sure, or $N$ games. For $p = 0.5$ the first column is the chance that either player is declared better. Exact.],
 ) <tab-stop>
 
-Between equal players someone is declared better 53% of the time with $N = 100$ and 73% with $N = 1000$, against 8.9% and 9.4% for one look after $N$ games. The threshold on $k - n slash 2$ grows like $0.82 sqrt(n)$, and by the law of the iterated logarithm a fair random walk passes any multiple of $sqrt(n)$, so the chance tends to one as $N$ grows. The error rate of the 95% rule is not 5%, and stopping early is why.
+Between equal players someone is declared better #pct(R.equal_verdict.posterior.at("100"), 0) of the time with $N = 100$ and #pct(R.equal_verdict.posterior.at("1000"), 0) with $N = 1000$, against #pct(R.one_look.at("100"), 1) and #pct(R.one_look.at("1000"), 1) for one look after $N$ games. The threshold on $k - n slash 2$ grows like $0.82 sqrt(n)$, and by the law of the iterated logarithm a fair random walk passes any multiple of $sqrt(n)$, so the chance tends to one as $N$ grows. The error rate of the 95% rule is not 5%, and stopping early is why.
 
-*Yet each verdict means what it says.* Draw $p$ from the uniform prior and play by the same rule: 3.6% of verdicts are wrong with $N = 100$ and 3.7% with $N = 1000$, exactly. The reason is that the stopping rule cannot change the posterior.
+*Yet each verdict means what it says.* Draw $p$ from the uniform prior and play by the same rule: #pct(R.uniform_prior.at("100").at(2), 1) of verdicts are wrong with $N = 100$ and #pct(R.uniform_prior.at("1000").at(2), 1) with $N = 1000$, exactly. The reason is that the stopping rule cannot change the posterior.
 
 #proposition(title: [stopping does not change the posterior])[
   Give $p$ any prior, and let the friends stop by any rule that looks only at the games played so far. If play stops after a particular sequence with $k$ wins in $n$ games, the posterior for $p$ is the same as if exactly $n$ games had been planned from the start.
@@ -395,15 +433,15 @@ Edwards, Lindman and Savage put it as "the rules governing when data collection 
     table.hline(),
     [verdict reached at game], [chance], [share wrong],
     table.hline(stroke: 0.5pt),
-    [1 to 10], [0.616], [3.2%],
-    [11 to 100], [0.307], [4.4%],
-    [101 to 1,000], [0.063], [4.7%],
+    ..([1 to 10], [11 to 100], [101 to 1,000]).zip(R.calibration).map(((range, (chance, wrong))) => (
+      range, [#fix(chance, 3)], [#pct(wrong, 1)],
+    )).flatten(),
     table.hline(),
   ),
   caption: [The 95% rule with $N = 1000$, with $p$ drawn from the uniform prior: the chance of a verdict within each range of games, and the share of those verdicts that name the worse player. Exact.],
 ) <tab-calib>
 
-The two numbers, 53% and 3.6%, answer different questions. The error rate asks about one pair of players replaying the same match; for an equal pair, every verdict is wrong. The posterior asks about all the pairs a uniform prior could produce, and almost none of them is exactly equal. The 5% is an average over the prior, not a promise for each $p$; at $p = 0.55$ the worse player is declared better 12% of the time.
+The two numbers, #pct(R.equal_verdict.posterior.at("100"), 0) and #pct(R.uniform_prior.at("100").at(2), 1), answer different questions. The error rate asks about one pair of players replaying the same match; for an equal pair, every verdict is wrong. The posterior asks about all the pairs a uniform prior could produce, and almost none of them is exactly equal. The 5% is an average over the prior, not a promise for each $p$; at $p = 0.55$ the worse player is declared better #pct(O.posterior.p55.at("1000").at(1), 0) of the time.
 
 Laplace's rule of succession is the same calculation read one game at a time: after $k$ wins in $n$ games the next is won with chance $(k + 1) slash (n + 2)$, the posterior mean. Multiplying these along a sequence gives $k! (n - k)! slash (n + 1)!$, the prior average of $p^k (1 - p)^(n - k)$ and the weight the Bayesian check gives each sequence. Under these chances the posterior is a martingale: when play stops, by any rule, its average is still 1/2.
 
@@ -421,18 +459,21 @@ Laplace's rule of succession is the same calculation read one game at a time: af
       [verdict], [games], [better], [worse], [games],
     ),
     table.hline(stroke: 0.5pt),
-    text(fill: blue)[uniform], [100], [0.528], [59.6], [0.521], [0.120], [53.2],
-    [Jeffreys], [100], [0.626], [48.1], [0.543], [0.174], [42.9],
-    text(fill: purple)[skeptical], [100], [0.220], [88.7], [0.357], [0.022], [81.4],
-    text(fill: blue)[uniform], [1,000], [0.728], [355.6], [0.866], [0.123], [138.0],
-    [Jeffreys], [1,000], [0.785], [281.9], [0.815], [0.176], [109.7],
-    text(fill: purple)[skeptical], [1,000], [0.531], [594.7], [0.953], [0.026], [231.7],
+    ..(for cap in ("100", "1000") {
+      for (name, rows) in ((text(fill: blue)[uniform], O.posterior), ([Jeffreys], PR.outcomes.jeffreys),
+                           (text(fill: purple)[skeptical], PR.outcomes.skeptical)) {
+        let e = rows.p50.at(cap)
+        let g = rows.p55.at(cap)
+        ((name, [#fmt(int(cap))], [#fix(e.at(0) + e.at(1), 3)], [#fix(e.at(3), 1)],
+          [#fix(g.at(0), 3)], [#fix(g.at(1), 3)], [#fix(g.at(3), 1)]),)
+      }
+    }).flatten(),
     table.hline(),
   ),
   caption: [Play until the posterior under each prior is 95% sure for either player, or $N$ games. Exact.],
 ) <tab-stop-priors>
 
-Which prior is right is a question about the friends, not about the games. If the friends' $p$ really comes from the skeptical prior, the uniform 95% rule is overconfident: 14.0% of its verdicts are wrong with $N = 100$ and 12.2% with $N = 1000$, exactly, while the skeptic's own rule is wrong 4.5% and 4.6% of the time. @prop-honest protects the prior you use, not one you do not believe.
+Which prior is right is a question about the friends, not about the games. If the friends' $p$ really comes from the skeptical prior, the uniform 95% rule is overconfident: #pct(PR.wrong_if_skeptical.uniform.at("100"), 1) of its verdicts are wrong with $N = 100$ and #pct(PR.wrong_if_skeptical.uniform.at("1000"), 1) with $N = 1000$, exactly, while the skeptic's own rule is wrong #pct(PR.wrong_if_skeptical.skeptical.at("100"), 1) and #pct(PR.wrong_if_skeptical.skeptical.at("1000"), 1) of the time. @prop-honest protects the prior you use, not one you do not believe.
 
 = A verdict that is safe for equal players <sec-bayes-factor>
 
@@ -442,7 +483,7 @@ The 95% rule keeps its promise on average over the prior, and the uniform prior 
   Their ratio is
   $ B_n = 2^n / ((n + 1) binom(n, k)). $
 ]
-Six wins in ten games give $B_10 = 1024 slash 2310 approx 0.44$: that record is more likely between equal players. The *Bayes factor rule* plays until $B_n >= 20$, or until $N$ games, and then declares better whoever has won more games. It takes 66 wins in 100 games, or 556 in 1,000, against 59 and 527 for the 95% rule.
+Six wins in ten games give $B_10 = #R.bayes_factor.six_of_ten_fraction.at(0) slash #R.bayes_factor.six_of_ten_fraction.at(1) approx #fix(R.bayes_factor.six_of_ten, 2)$: that record is more likely between equal players. The *Bayes factor rule* plays until $B_n >= 20$, or until $N$ games, and then declares better whoever has won more games. It takes #R.bayes_factor.wins_needed.at("100") wins in 100 games, or #R.bayes_factor.wins_needed.at("1000") in 1,000, against #R.coins.wins_needed.at("100").at(0) and #R.coins.wins_needed.at("1000").at(0) for the 95% rule.
 
 #idea[fair games][A _fair game_, or _martingale_, is a running total whose average after the next step equals its value now, whatever has happened so far. A gambler's fortune at even odds on fair coin flips is one. The key fact about fair games is that no rule for when to quit can make one favorable on average.]
 
@@ -458,13 +499,16 @@ $ 1/2 B_(n + 1)(k + 1) + 1/2 B_(n + 1)(k) = B_n (k). $
   Fix a cap $N$. When play stops, $B >= 20$ if there is a verdict and $B >= 0$ otherwise, and $B$ averages 1. So $1 >= 20 P("verdict")$. The bound does not depend on $N$, so it holds for unlimited play too.
 ]
 
-Ville proved this for every test martingale @ville @savi, and Shafer and Vovk @shafervovk build probability itself on such betting games. The exact chances are 0.0276 for $N = 100$ and 0.0357 for $N = 1000$, against 0.528 and 0.728 for the 95% rule (@tab-rules). The chance grows with $N$, to 0.0387 at $N = 10000$ (computed in floating point), but it never reaches 0.05. Between equal players $B_n$ drifts to 0 on almost every path that never reaches 20 (by the law of the iterated logarithm it is at most about $(log n)^(1 + epsilon) slash sqrt(n)$), so in unlimited play the chance of a verdict is exactly 1 divided by the average factor at the verdict. That factor jumps past 20 rather than landing on it: the first possible verdict, eight wins in eight games, has $B_8 = 256 slash 9 approx 28.4$.
+Ville proved this for every test martingale @ville @savi, and Shafer and Vovk @shafervovk build probability itself on such betting games. The exact chances are #fix(R.equal_verdict.at("bayes factor").at("100"), 4) for $N = 100$ and #fix(R.equal_verdict.at("bayes factor").at("1000"), 4) for $N = 1000$, against #fix(R.equal_verdict.posterior.at("100"), 3) and #fix(R.equal_verdict.posterior.at("1000"), 3) for the 95% rule (@tab-rules). The chance grows with $N$, to #fix(R.bayes_factor.far.at("10000"), 4) at $N = 10000$ (computed in floating point), but it never reaches 0.05. Between equal players $B_n$ drifts to 0 on almost every path that never reaches 20 (by the law of the iterated logarithm it is at most about $(log n)^(1 + epsilon) slash sqrt(n)$), so in unlimited play the chance of a verdict is exactly 1 divided by the average factor at the verdict. That factor jumps past 20 rather than landing on it: the first possible verdict, eight wins in eight games, has $B_8 = #R.bayes_factor.first_verdict.at(0) slash #R.bayes_factor.first_verdict.at(1) approx #fix(R.bayes_factor.first_verdict_value, 1)$.
 
-The two rules answer different questions. The 95% rule says that, of all the pairs of players a uniform prior could produce, about 95% of those declared better are better; it says nothing about a pair who are exactly equal. The Bayes factor rule promises that a pair of equal players is declared unequal at most one time in twenty, whenever the friends stop. It is also a Bayesian rule, with a prior that takes equality seriously: give "equal" chance one half, and spread the other half uniformly over $p$. The posterior chance of "equal" is then $1 slash (1 + B_n)$, and $B_n >= 20$ means that it has fallen to $1 slash 21$ or less. The two priors disagree about records such as 527 wins in 1,000 games, where the uniform prior is 95.6% sure while $B_1000 approx 0.17$ favors equality. This disagreement is Lindley's paradox @lindley.
+The two rules answer different questions. The 95% rule says that, of all the pairs of players a uniform prior could produce, about 95% of those declared better are better; it says nothing about a pair who are exactly equal. The Bayes factor rule promises that a pair of equal players is declared unequal at most one time in twenty, whenever the friends stop. It is also a Bayesian rule, with a prior that takes equality seriously: give "equal" chance one half, and spread the other half uniformly over $p$. The posterior chance of "equal" is then $1 slash (1 + B_n)$, and $B_n >= 20$ means that it has fallen to $1 slash 21$ or less. The two priors disagree about records such as #R.coins.wins_needed.at("1000").at(0) wins in 1,000 games, where the uniform prior is #pct(R.coins.wins_needed.at("1000").at(1), 1) sure while $B_1000 approx #fix(R.bayes_factor.at_527, 2)$ favors equality. This disagreement is Lindley's paradox @lindley.
 
-The safety has a price. At $p = 0.55$ the Bayes factor rule wrongly favors the worse player only 0.4% of the time, but within 1,000 games it reaches a verdict only 51% of the time, after 745 games on average.
+The safety has a price. #let bf55 = O.at("bayes factor").p55.at("1000")
+At $p = 0.55$ the Bayes factor rule wrongly favors the worse player only #pct(bf55.at(1), 1) of the time, but within 1,000 games it reaches a verdict only #pct(bf55.at(0), 0) of the time, after #fix(bf55.at(3), 0) games on average.
 
-The Bayes factor rule is safe for every cap at once. When the cap is fixed in advance, the 95% rule can be made safe for equal players by asking for more certainty. The chance of a verdict between equal players falls as the threshold rises, and it changes only at thresholds equal to a posterior that occurs. So bisection, with the dynamic program at each step, finds the least strict threshold that keeps the chance at or below 5%. The posterior must reach 0.99704 with $N = 100$ and 0.9987003 with $N = 1000$; a threshold of 0.997037 or 0.9987002, a little lower, lets the chance pass 5%. Equal players are then declared unequal with chance 0.0497 for both caps, exactly. These rules need 64 wins in 100 games, or 548 in 1,000. They spend the whole 5% within the cap, so at $p = 0.55$ they declare the better player better with chance 0.113 and 0.698, against 0.061 and 0.512 for the Bayes factor rule, after 93.8 and 637.9 games on average (@tab-rules).
+The Bayes factor rule is safe for every cap at once. When the cap is fixed in advance, the 95% rule can be made safe for equal players by asking for more certainty. The chance of a verdict between equal players falls as the threshold rises, and it changes only at thresholds equal to a posterior that occurs. So bisection, with the dynamic program at each step, finds the least strict threshold that keeps the chance at or below 5%. #let S1 = R.strict.at("100")
+#let S2 = R.strict.at("1000")
+The posterior must reach #S1.threshold with $N = 100$ and #S2.threshold with $N = 1000$; a threshold of 0.997037 or 0.9987002, a little lower, lets the chance pass 5%. Equal players are then declared unequal with chance #fix(S1.equal.at(0), 4) for both caps, exactly. These rules need #S1.wins_needed wins in 100 games, or #S2.wins_needed in 1,000. They spend the whole 5% within the cap, so at $p = 0.55$ they declare the better player better with chance #fix(S1.p55.at(0), 3) and #fix(S2.p55.at(0), 3), against #fix(O.at("bayes factor").p55.at("100").at(0), 3) and #fix(O.at("bayes factor").p55.at("1000").at(0), 3) for the Bayes factor rule, after #fix(S1.p55.at(2), 1) and #fix(S2.p55.at(2), 1) games on average (@tab-rules).
 
 #figure(
   placement: top,
@@ -479,14 +523,25 @@ The Bayes factor rule is safe for every cap at once. When the cap is fixed in ad
       [verdict], [games], [better], [worse], [games],
     ),
     table.hline(stroke: 0.5pt),
-    [posterior 95%], [100], [0.528], [59.6], [0.521], [0.120], [53.2],
-    [posterior 95%], [1,000], [0.728], [355.6], [0.866], [0.123], [138.0],
-    [Bayes factor 20], [100], [0.028], [98.0], [0.061], [0.004], [96.2],
-    [Bayes factor 20], [1,000], [0.036], [967.7], [0.512], [0.004], [745.0],
-    [posterior 0.99704], [100], [0.050], [96.8], [0.113], [0.005], [93.8],
-    [posterior 0.9987003], [1,000], [0.050], [960.8], [0.698], [0.003], [637.9],
-    [lead of 15], [1,000], [0.995], [224.0], [0.953], [0.047], [135.9],
-    [lead of 15], [none], [1], [225], [0.953], [0.047], [135.9],
+    ..{
+      let row(name, cap, rows) = {
+        let (e1, e2, _, eg) = rows.p50.at(cap)
+        let (g1, g2, _, gg) = rows.p55.at(cap)
+        (name, [#fmt(int(cap))], [#fix(e1 + e2, 3)], [#fix(eg, 1)], [#fix(g1, 3)], [#fix(g2, 3)], [#fix(gg, 1)])
+      }
+      let strict(cap) = {
+        let t = R.strict.at(cap)
+        ([posterior #t.threshold], [#fmt(int(cap))], [#fix(t.equal.at(0), 3)], [#fix(t.equal.at(1), 1)],
+         [#fix(t.p55.at(0), 3)], [#fix(t.p55.at(1), 3)], [#fix(t.p55.at(2), 1)])
+      }
+      (
+        ..row([posterior 95%], "100", O.posterior), ..row([posterior 95%], "1000", O.posterior),
+        ..row([Bayes factor 20], "100", O.at("bayes factor")), ..row([Bayes factor 20], "1000", O.at("bayes factor")),
+        ..strict("100"), ..strict("1000"),
+        ..row([lead of #R.wald.lead], "1000", O.lead),
+        [lead of #R.wald.lead], [none], [1], [#R.wald.equal_games], [#fix(1 - R.wald.worse, 3)], [#fix(R.wald.worse, 3)], [#fix(R.wald.games, 1)],
+      )
+    },
     table.hline(),
   )),
   caption: [Four stopping rules: the posterior rule at 95% and at the thresholds that keep equal players' chance of a verdict at 5%, the Bayes factor rule and Wald's test. For equal players, the chance that someone is declared better and the mean number of games; for $p = 0.55$, the chances that the better or the worse player is declared better, and the mean number of games. Exact, by the dynamic program; the last row, with no cap, by the gambler's ruin.],
@@ -534,15 +589,15 @@ The lead moves one step up or down after each game until it hits a wall at $+c$ 
   For the length, the lead minus $(2p - 1)$ times the number of games played is a fair game, because each game adds $2p - 1$ to the lead on average. Play stops after a number of games $T$ with a finite average, so at the end the lead averages $(2p - 1)$ times the average of $T$. The lead at the end is $+c$ with chance $h(0)$ and $-c$ otherwise, so the average of $T$ is $c (2 h(0) - 1) slash (2p - 1)$, which is the formula. When $p = 1 slash 2$, $h(0) = 1 slash 2$ by symmetry, and the lead squared minus the number of games is a fair game, since each fair step adds 1 to the square on average; at the end the square is $c^2$.
 ]
 
-At $p = 0.55$, $r = 9 slash 11$, the worse player is declared better with chance $9^15 slash (9^15 + 11^15) = 0.0470$, after 135.9 games on average. A lead of 14 would err 5.7% of the time, so 15 is the smallest lead that errs at most 5%. Because the lead moves one game at a time, it lands exactly on $plus.minus 15$, and Wald's approximations, which ignore overshoot, are exact here. `variations.py` checks @prop-ruin a second way that shares nothing with the formulas: it writes the equations for $h(x)$ and the mean length at every lead from $-14$ to 14 and solves them by elimination in fractions, for several $p$ and $c$. The dynamic program with a cap of 1,000 games agrees too (@tab-rules): play beyond the cap can only add to each column.
+At $p = 0.55$, $r = 9 slash 11$, the worse player is declared better with chance $9^15 slash (9^15 + 11^15) = #fix(R.wald.worse, 4)$, after #fix(R.wald.games, 1) games on average. A lead of 14 would err #pct(R.wald.lead_14_worse, 1) of the time, so #R.wald.lead is the smallest lead that errs at most 5%. Because the lead moves one game at a time, it lands exactly on $plus.minus 15$, and Wald's approximations, which ignore overshoot, are exact here. `variations.py` checks @prop-ruin a second way that shares nothing with the formulas: it writes the equations for $h(x)$ and the mean length at every lead from $-14$ to 14 and solves them by elimination in fractions, for several $p$ and $c$. The dynamic program with a cap of 1,000 games agrees too (@tab-rules): play beyond the cap can only add to each column.
 
 The test is the best of its kind, in a precise sense.
 
 #theorem(title: [Wald and Wolfowitz @waldwolfowitz])[
-  Suppose that the games are independent with a common chance $p$, and that $p$ is either 0.45 or 0.55. Consider any rule for stopping and declaring a winner whose mean number of games is finite at both values, which declares the worse player better with chance at most 0.0470 when $p = 0.45$ and at most 0.0470 when $p = 0.55$. Then its mean number of games is at least 135.9 at $p = 0.45$, and at least 135.9 at $p = 0.55$.
+  Suppose that the games are independent with a common chance $p$, and that $p$ is either 0.45 or 0.55. Consider any rule for stopping and declaring a winner whose mean number of games is finite at both values, which declares the worse player better with chance at most #fix(R.wald.worse, 4) when $p = 0.45$ and at most #fix(R.wald.worse, 4) when $p = 0.55$. Then its mean number of games is at least #fix(R.wald.games, 1) at $p = 0.45$, and at least #fix(R.wald.games, 1) at $p = 0.55$.
 ] <thm-ww>
 
-The 95% rule with $N = 1000$ also needs about 138 games at $p = 0.55$, but errs 12.3% of the time. @thm-ww says nothing about other values of $p$, and Wald's test is not a test of equality: at $p = 1 slash 2$ it declares someone better after 225 games on average, as it must, since it only chooses between 0.45 and 0.55. Rules that keep the mean length small at every $p$, and so near $p = 1 slash 2$ too, solve the problem of Kiefer and Weiss @kieferweiss, and Weiss @weiss gives a way to compute them for exactly this binomial case. This note does not compute them.
+The 95% rule with $N = 1000$ also needs about #fix(O.posterior.p55.at("1000").at(3), 0) games at $p = 0.55$, but errs #pct(O.posterior.p55.at("1000").at(1), 1) of the time. @thm-ww says nothing about other values of $p$, and Wald's test is not a test of equality: at $p = 1 slash 2$ it declares someone better after #R.wald.equal_games games on average, as it must, since it only chooses between 0.45 and 0.55. Rules that keep the mean length small at every $p$, and so near $p = 1 slash 2$ too, solve the problem of Kiefer and Weiss @kieferweiss, and Weiss @weiss gives a way to compute them for exactly this binomial case. This note does not compute them.
 
 = Match formats <sec-formats>
 
@@ -550,7 +605,7 @@ Real matches use simpler rules: best of three, best of seven, win by two. Each i
 
 A *best-of-$n$* match, with $n$ odd, is won by whoever first wins $(n + 1) slash 2$ games. It crowns the same player as playing all $n$ games and counting, so the better player wins it with chance $sum_(j >= (n + 1) slash 2) binom(n, j) p^j (1 - p)^(n - j)$. *Win by two* means playing until someone leads by two: the lead rule with $c = 2$.
 
-#tryit[Two players start win-by-two at 0–0, and the first wins each game with chance $p$. Explain why the first player wins the match with chance $p^2 slash (p^2 + (1 - p)^2)$, and work it out for $p = 0.55$.]
+#tryit("20", best: true)[Two players start win-by-two at 0–0, and the first wins each game with chance $p$. Explain why the first player wins the match with chance $p^2 slash (p^2 + (1 - p)^2)$, and work it out for $p = 0.55$.]
 
 #figure(
   {
@@ -570,7 +625,7 @@ A *best-of-$n$* match, with $n$ odd, is won by whoever first wins $(n + 1) slash
       lq.vlines(0.55, stroke: (paint: luma(50%), thickness: 0.5pt, dash: "dotted")),
     )))
   },
-  caption: [How match formats amplify an edge in single games. Read up from the dotted line at $p = 0.55$: best of seven gives 0.608, win by two 0.599, win by 15 0.953. Exact formulas, plotted in floating point.],
+  caption: [How match formats amplify an edge in single games. Read up from the dotted line at $p = 0.55$: best of seven gives #fix(F.at("best of 7").at(0), 3), win by two #fix(F.at("win by 2").at(0), 3), win by 15 #fix(F.at("win by 15").at(0), 3). Exact formulas, plotted in floating point.],
 ) <fig-formats>
 
 #figure(
@@ -579,33 +634,41 @@ A *best-of-$n$* match, with $n$ odd, is won by whoever first wins $(n + 1) slash
     table.hline(),
     [format], [better player wins], [mean games], [slope at $p = 1 slash 2$],
     table.hline(stroke: 0.5pt),
-    [one game], [0.550], [1.00], [1],
-    [best of 3], [0.575], [2.50], [3/2],
-    [best of 5], [0.593], [4.11], [15/8],
-    [best of 7], [0.608], [5.78], [35/16],
-    text(fill: red)[win by 2], [0.599], [3.96], [2],
-    text(fill: red)[win by 15], [0.953], [135.91], [15],
-    [best of 269], [0.950], [244.77], [13.1],
+    ..{
+      let slope((a, b)) = if b == 1 { str(a) } else { str(a) + "/" + str(b) }
+      let row(name, key) = {
+        let (win, games, s) = F.at(key)
+        (name, [#fix(win, 3)], [#fix(games, 2)], [#slope(s)])
+      }
+      let (win, games, s) = F.at("best of fewest")
+      (
+        ..row([one game], "best of 1"), ..row([best of 3], "best of 3"), ..row([best of 5], "best of 5"),
+        ..row([best of 7], "best of 7"), ..row(text(fill: red)[win by 2], "win by 2"),
+        ..row(text(fill: red)[win by 15], "win by 15"),
+        [best of #F.fewest_best_of], [#fix(win, 3)], [#fix(games, 2)], [#fix(s, 1)],
+      )
+    },
     table.hline(),
   ),
   caption: [Match formats at $p = 0.55$: the chance that the better player wins, the mean number of games when play stops as soon as the match is decided, and how steeply the first column rises near even players. Exact; the last slope is rounded.],
 ) <tab-formats>
 
-@tab-formats gives the numbers. Best of seven turns a 55% edge into 60.8%, and win by two into 59.9%, in fewer games. The last column measures amplification near even players: a best-of-$n$ match has slope $n binom(n - 1, (n - 1) slash 2) slash 2^(n - 1)$, which grows like $sqrt(2n slash pi)$, while win by $c$ has slope exactly $c$ and lasts $c^2$ games on average between equal players. The dynamic program of @sec-stop, run with the rule "stop at $(n + 1) slash 2$ wins", reproduces the first two columns exactly for every best-of-$n$ up to 13.
+@tab-formats gives the numbers. Best of seven turns a 55% edge into #pct(F.at("best of 7").at(0), 1), and win by two into #pct(F.at("win by 2").at(0), 1), in fewer games. The last column measures amplification near even players: a best-of-$n$ match has slope $n binom(n - 1, (n - 1) slash 2) slash 2^(n - 1)$, which grows like $sqrt(2n slash pi)$, while win by $c$ has slope exactly $c$ and lasts $c^2$ games on average between equal players. The dynamic program of @sec-stop, run with the rule "stop at $(n + 1) slash 2$ wins", reproduces the first two columns exactly for every best-of-$n$ up to 13.
 
-What this says about tournaments is sobering. A best-of-seven final between a 55% player and a 45% player goes to the weaker one 39.2% of the time. For the better player to win 95% of the time, a fixed format needs best of 269, and even stopping as soon as it is decided that takes 244.8 games on average. Win by 15 does as well in 135.9: a lead rule is a best-of-$n$ match that does not waste games on a lopsided score, and @thm-ww says no rule does better. Short matches are good at entertaining and poor at measuring.
+What this says about tournaments is sobering. A best-of-seven final between a 55% player and a 45% player goes to the weaker one #pct(1 - F.at("best of 7").at(0), 1) of the time. For the better player to win 95% of the time, a fixed format needs best of #F.fewest_best_of, and even stopping as soon as it is decided that takes #fix(F.at("best of fewest").at(1), 1) games on average. Win by 15 does as well in #fix(R.wald.games, 1): a lead rule is a best-of-$n$ match that does not waste games on a lopsided score, and @thm-ww says no rule does better. Short matches are good at entertaining and poor at measuring.
 
 = Ratings: Elo and Bradley–Terry <sec-elo>
 
 Chess and many online games turn records into ratings. In the Elo system @elo, a player rated $D$ points above another is expected to win with chance
 $ p = 1 / (1 + 10^(-D slash 400)). $
-The formula is the Bradley–Terry model @bradleyterry: give each player a strength, and let each win with chance proportional to their strength, with strength $10^("rating" slash 400)$. On this scale a 55% edge is $400 log_10(11 slash 9) approx 34.9$ points, and 400 points is $p = 10 slash 11$: ten wins for every loss.
+The formula is the Bradley–Terry model @bradleyterry: give each player a strength, and let each win with chance proportional to their strength, with strength $10^("rating" slash 400)$. On this scale a 55% edge is $400 log_10(11 slash 9) approx #fix(R.elo.gap_55, 1)$ points, and 400 points is $p = 10 slash 11$: ten wins for every loss.
 
-#tryit[What chance of winning does a 200-point gap give? Write $10^(-1 slash 2) approx 0.316$.]
+#tryit("05")[What chance of winning does a 200-point gap give? Write $10^(-1 slash 2) approx 0.316$.]
 
 The odds $p slash (1 - p)$ are $10^(D slash 400)$, so the $r$ of @prop-ruin is $10^(-D slash 400)$, and a lead of $c$ errs with chance at most 5% exactly when $r^c <= 1 slash 19$, that is, when
-$ c >= (400 log_10 19) / D approx 511.5 / D. $
-The lead needed is inversely proportional to the rating gap (@tab-elo). Two players 400 points apart are separated by win by two: the weaker one takes the match with chance $1 slash 101$, after $242 slash 101 approx 2.40$ games on average.
+$ c >= (400 log_10 19) / D approx #fix(R.elo.lead_constant, 1) / D. $
+The lead needed is inversely proportional to the rating gap (@tab-elo). Two players 400 points apart are separated by win by two: #let G4 = R.elo.gap_400
+the weaker one takes the match with chance $#G4.worse.at(0) slash #G4.worse.at(1)$, after $#G4.games.at(0) slash #G4.games.at(1) approx #fix(G4.games_value, 2)$ games on average.
 
 #figure(
   table(
@@ -613,16 +676,17 @@ The lead needed is inversely proportional to the rating gap (@tab-elo). Two play
     table.hline(),
     hd[rating][gap], [$p$], hd[lead][needed], hd[its][error], hd[mean][games], hd[best][of],
     table.hline(stroke: 0.5pt),
-    [34.9], [0.550], [15], [0.047], [135.9], [269],
-    [100], [0.640], [6], [0.031], [20.1], [33],
-    [200], [0.760], [3], [0.031], [5.4], [9],
-    [400], [0.909], [2], [0.010], [2.4], [3],
+    ..R.elo.rows.map(((gap, p, lead, worse, games, best)) => (
+      [#if gap == calc.round(gap) { str(int(gap)) } else { fix(gap, 1) }], [#fix(p, 3)], [#lead],
+      [#fix(worse, 3)], [#fix(games, 1)], [#best],
+    )).flatten(),
     table.hline(),
   ),
   caption: [Rating gaps on the Elo scale: the chance $p$ of the stronger player, the smallest lead that errs at most 5%, its error, the mean number of games, and the shortest best-of-$n$ match that the stronger player wins with chance at least 95%. Floating point, except the rows for 0.55 and 10/11, which are exact.],
 ) <tab-elo>
 
-The 400 in the formula is a convention, and real games do not follow it exactly. Glickman and Jones @glickmanjones fitted 225,621 rated chess games and found that the higher-rated player won less often than the formula says, and suggested "replacing 400 in the winning expectancy formula with 561". On that scale a 400-point gap means $p approx 0.838$; win by two still suffices, erring 3.6% of the time in 2.75 games on average. Chess also has draws, which Peggle does not.
+The 400 in the formula is a convention, and real games do not follow it exactly. Glickman and Jones @glickmanjones fitted 225,621 rated chess games and found that the higher-rated player won less often than the formula says, and suggested "replacing 400 in the winning expectancy formula with 561". #let (p561, w561, g561) = R.elo.scale_561
+On that scale a 400-point gap means $p approx #fix(p561, 3)$; win by two still suffices, erring #pct(w561, 1) of the time in #fix(g561, 2) games on average. Chess also has draws, which Peggle does not.
 
 = When the chances are not constant <sec-model>
 
@@ -630,7 +694,7 @@ The model of @sec-game says that every game has the same chance $p$, independent
 
 *Who shoots first.* Turn order may matter in a duel: the first shooter may have more orange pegs to aim at, and the last orange peg brings Extreme Fever. The rules sheet does not say how the first shooter is chosen. Suppose, for a pair of equal players, that whoever shoots first wins with chance $e$, so that the first player wins a game with chance $e$ or $1 - e$ depending on who starts. No one is better; the question is how often a rule says otherwise. Three house rules for who starts each game after the first are compared, with the first player starting game 1.
 
-#tryit[If the winner of each duel shoots first in the next one, will a long record look more streaky than coin flips, or less?]
+#tryit("15")[If the winner of each duel shoots first in the next one, will a long record look more streaky than coin flips, or less?]
 
 - *Alternate.* The players take turns to start. The games are independent but not alike: the first player's chance alternates between $e$ and $1 - e$.
 - *Winner shoots first.* Each game repeats the last winner with chance $e$, so wins come in streaks.
@@ -645,13 +709,11 @@ A dynamic program over wins, games and the last winner gives exact chances (@tab
     table.hline(),
     hd[who][starts], [$e$], hd[one look,][100 games], hd[stop,][$N = 100$], hd[stop,][$N = 1000$],
     table.hline(stroke: 0.5pt),
-    [no edge], [0.5], [0.0886], [0.5282], [0.7280],
-    [alternate], [0.6], [0.0822], [0.5035], [0.7032],
-    [winner], [0.6], [0.1645], [0.7351], [0.9031],
-    [loser], [0.6], [0.0372], [0.3102], [0.4700],
-    [alternate], [0.7], [0.0630], [0.4244], [0.6168],
-    [winner], [0.7], [0.2654], [0.8912], [0.9813],
-    [loser], [0.7], [0.0096], [0.1298], [0.2052],
+    ..(("no edge", "0.5", "none"), ("alternate", "0.6", "alternate e60"), ("winner", "0.6", "winner e60"),
+       ("loser", "0.6", "loser e60"), ("alternate", "0.7", "alternate e70"), ("winner", "0.7", "winner e70"),
+       ("loser", "0.7", "loser e70")).map(((who, e, key)) => (
+      [#who], [#e], ..R.changing.shooter.at(key).map(x => [#fix(x, 4)]),
+    )).flatten(),
     table.hline(),
   ),
   caption: [Equal players when whoever shoots first wins with chance $e$: the chance that someone is declared better by one look at the uniform posterior after 100 games, and by the 95% rule with a cap of $N$ games. Exact.],
@@ -667,9 +729,10 @@ Alternating is harmless, and even helps a little. For one look, that is a theore
   The look declares no one exactly when the number of wins $S$ lies in an interval of whole numbers $b <= S <= c$ around $n slash 2$, so $b <= n slash 2 <= c$. Hoeffding's Theorem 5 says that, among independent trials whose chances average $1 slash 2$, the chance of $b <= S <= c$ is smallest when every chance is $1 slash 2$. So the chance of a verdict, one minus that, is largest then.
 ]
 
-Hoeffding's paper shows more: with the chances fixed in advance, the number of wins is never more spread out than for coin flips with the same average. So for players who alternate, a one-look verdict treats them as a single pair with $p$ equal to the average of $p_"first"$ and $p_"second"$, and the error rates computed for that $p$ are, if anything, too pessimistic. For stopping rules there is no such theorem, but the exact chances in @tab-shooter move the same way. Letting the winner shoot first is different: the games are no longer independent, streaks are longer than coin flips allow, and equal players are declared unequal far more often, 74% of the time within 100 games when $e = 0.6$. A pair who play by that house rule should alternate instead, or use a much stricter rule.
+Hoeffding's paper shows more: with the chances fixed in advance, the number of wins is never more spread out than for coin flips with the same average. So for players who alternate, a one-look verdict treats them as a single pair with $p$ equal to the average of $p_"first"$ and $p_"second"$, and the error rates computed for that $p$ are, if anything, too pessimistic. For stopping rules there is no such theorem, but the exact chances in @tab-shooter move the same way. Letting the winner shoot first is different: the games are no longer independent, streaks are longer than coin flips allow, and equal players are declared unequal far more often, #pct(R.changing.shooter.at("winner e60").at(1), 0) of the time within 100 games when $e = 0.6$. A pair who play by that house rule should alternate instead, or use a much stricter rule.
 
-*Players who improve.* Over a season, $p$ drifts. Take the simplest drift: the first player wins with chance 0.45 in the first 500 games and 0.55 in the next 500, so the average is one half. One look after 1,000 games declares someone better with chance 0.092, below the 0.094 of a constant $p = 1 slash 2$, as @prop-hoeffding promises. The 95% rule with $N = 1000$ declares the improving player better with chance 0.141 and the other player with chance 0.810, after 152.7 games on average; with 0.4 and then 0.6 the chances are 0.055 and 0.945, after 48.5 games. Both are exact.
+*Players who improve.* Over a season, $p$ drifts. Take the simplest drift: the first player wins with chance 0.45 in the first 500 games and 0.55 in the next 500, so the average is one half. #let (D1, D2) = (R.changing.drift.at("45to55"), R.changing.drift.at("40to60"))
+One look after 1,000 games declares someone better with chance #fix(D1.one_look, 3), below the #fix(R.one_look.at("1000"), 3) of a constant $p = 1 slash 2$, as @prop-hoeffding promises. The 95% rule with $N = 1000$ declares the improving player better with chance #fix(D1.stop.at(0), 3) and the other player with chance #fix(D1.stop.at(1), 3), after #fix(D1.stop.at(2), 1) games on average; with 0.4 and then 0.6 the chances are #fix(D2.stop.at(0), 3) and #fix(D2.stop.at(1), 3), after #fix(D2.stop.at(2), 1) games. Both are exact.
 
 These numbers do not say that the rule is wrong; they say what the verdict is about. The rule usually stops early, while the other player really is better. A constant-$p$ verdict summarizes the games actually played, weighted as they were played. It is not a statement about who is better now, nor a forecast. When skill drifts, the natural fix is a rating that forgets old games, such as the dynamic paired-comparison models of Glickman @glickman, and this note does not analyze those.
 
@@ -698,30 +761,39 @@ Every claim in this note is known in one of four ways (@tab-status).
     table.hline(stroke: 0.5pt),
     [proved here], [the coin-flip identity and its version for Beta$(a, b)$ priors (@prop-coins, @cor-coins); stopping does not change the posterior (@prop-honest); Ville's inequality for the Bayes factor rule (@prop-ville); the gambler's ruin (@prop-ruin); the lead needed for a rating gap; win by two],
     [proved elsewhere], [Wald and Wolfowitz (@thm-ww); Hoeffding's theorem behind @prop-hoeffding; the law of the iterated logarithm],
-    [exact computation], [every chance and mean in Tables #ref(<tab-wins>, supplement: none), #ref(<tab-priors>, supplement: none) to #ref(<tab-formats>, supplement: none) and #ref(<tab-shooter>, supplement: none), with fractions and whole numbers; the strict thresholds 0.99704 and 0.9987003; the drift chances; the Jeffreys chance as a fraction over $pi$],
-    [floating point], [the Bayes factor rule at $N = 10000$ (0.0387); the rows of @tab-elo other than 0.55 and 10/11; the logistic approximation and its errors; the curves in the figures],
+    [exact computation], [every chance and mean in Tables #ref(<tab-wins>, supplement: none), #ref(<tab-priors>, supplement: none) to #ref(<tab-formats>, supplement: none) and #ref(<tab-shooter>, supplement: none), with fractions and whole numbers; the strict thresholds #R.strict.at("100").threshold and #R.strict.at("1000").threshold; the drift chances; the Jeffreys chance as a fraction over $pi$],
+    [floating point], [the Bayes factor rule at $N = 10000$ (#fix(R.bayes_factor.far.at("10000"), 4)); the rows of @tab-elo other than 0.55 and 10/11; the logistic approximation and its errors; the curves in the figures],
     [simulation], [only as checks, and the five paths of @fig-walk],
     table.hline(),
   ),
   caption: [How each claim is known.],
 ) <tab-status>
 
-*Independent checks.* The dynamic program is compared with brute force over all $2^N$ sequences: for every cap up to 12 with the 95% rule, and for caps up to 10 with the other rules, priors and ways of choosing who shoots first. The coin-flip identities are compared with the Beta integral, expanded exactly, and the Jeffreys chances with Simpson's rule to 12 decimal places. The gambler's-ruin formulas are compared with an exact solution of the chain's equations and with the capped dynamic program. The best-of-$n$ formulas are compared with the dynamic program. @prop-hoeffding is checked on alternating and drifting chances for several caps. The committed CSV files must equal what the scripts write.
+@tab-results lists the main results and how each is known. The checks behind them are these.
 
-*Simulation.* `python -m peggle.stopping` simulates 200,000 duels in each of four cases, with seed 1, for $N = 100$: $p = 0.5$, 0.55, 0.7, and $p$ drawn from the uniform prior. All eight exact values it reports fall inside the 95% intervals of the simulation.
+#shared(readme, "checks")
 
-*Outside results.* With a two-sided binomial test after each game in place of the posterior, the dynamic program reproduces Table 1 of Armitage, McPherson and Rowe @armitage. Of its 34 entries for $2 alpha = 0.01$ and 0.05, 32 agree to the five printed decimals, and the other two agree within $2 dot 10^(-5)$.
+#[
+// on a phone the table may break across pages, and stays where it is introduced
+#show figure: set block(breakable: phone)
+#figure(
+  placement: if phone { none } else { auto },
+  kind: table,
+  caption: [The main results and how each is known. Exact unless marked.],
+  [
+    #set table.cell(breakable: false)
+    #text(size: if phone { 9pt } else { 10pt }, shared(readme, "results", columns: (1.1fr, 1fr, 1fr)))
+  ],
+) <tab-results>
+]
 
-*Code.* `peggle.py` computes the coin-flip chances and the logistic approximation; `stopping.py` the stopping rules, the Bayes factor, the strict thresholds and Wald's test; `variations.py` the priors, the chain check, the match formats, the ratings and the changing chances. All three use only the Python standard library, and run in about 25 seconds together.
+*Code.* `peggle.py` computes the coin-flip chances and the logistic approximation; `stopping.py` the stopping rules, the Bayes factor, the strict thresholds and Wald's test; `variations.py` the priors, the chain check, the match formats, the ratings and the changing chances. All three use only the Python standard library, and run in about half a minute together. `report.py` writes every number this note quotes to a results file, which the note reads.
 
 *Typesetting.* Typst, with the packages cetz and lilaq.
 
 = Questions left open <sec-open>
 
-- *Other boundaries.* A threshold that changes with $n$ could keep the 5% for equal players and declare the better player better more often at $p = 0.55$ than one fixed threshold does. Which boundary does this best for a given cap is not worked out here.
-- *The Kiefer–Weiss test for 0.45 against 0.55.* Weiss @weiss gives a scheme for the test that minimizes the largest mean length over all $p$; computing it with the dynamic program here, and comparing its length at $p = 1 slash 2$ with the 225 games of Wald's test, is left undone.
-- *The real first-shooter edge in Peggle.* @tab-shooter assumes values of $e$. Its size in actual duels, and whether it depends on the board, would need recorded duels.
-- *Drift and stopping.* For skill that changes smoothly, is there a stopping rule whose verdict keeps a clear meaning, such as "better over the last 100 games", with a guarantee like @prop-ville?
+#shared(readme, "open")
 
 // ---------- appendices ----------
 #pagebreak(weak: true)
@@ -732,15 +804,17 @@ Every claim in this note is known in one of four ways (@tab-status).
 
 = Answers to the puzzles <app-answers>
 
-*Two games (@sec-billiard).* Two wins in two games: at most two heads in three flips, $7 slash 8$. One win in two games: at most one head in three flips, $4 slash 8 = 1 slash 2$, as symmetry demands.
+Each answer gives the puzzle's rating and its source; "new" marks a puzzle made for this note.
 
-*The shortest duel (@sec-stop).* Four games. Three straight wins give at most three heads in four flips, $15 slash 16 = 0.9375$, short of 0.95; four straight wins give $31 slash 32 approx 0.969$. Under the Jeffreys prior three straight wins are enough (0.967), and under the skeptical prior it takes ten.
+*Two games (@sec-billiard), rated 10.* Two wins in two games: at most two heads in three flips, $7 slash 8$. One win in two games: at most one head in three flips, $4 slash 8 = 1 slash 2$, as symmetry demands. _Source:_ new, on Bayes's identity @bayes.
 
-*Win by two (@sec-formats).* Look at the games in pairs. A pair won twice by the first player ends the match for them, with chance $p^2$; a pair won twice by the other player ends it for them, with chance $(1 - p)^2$; a split pair returns the score to level, and play starts over. So the first player wins with chance $p^2 slash (p^2 + (1 - p)^2)$. For $p = 0.55$ it is $0.3025 slash 0.505 = 121 slash 202 approx 0.599$.
+*The shortest duel (@sec-stop), rated 12.* #upper(words.at(PR.shortest.uniform).first())#words.at(PR.shortest.uniform).slice(1) games. Three straight wins give at most three heads in four flips, $15 slash 16 = 0.9375$, short of 0.95; four straight wins give $31 slash 32 approx 0.969$. Under the Jeffreys prior #words.at(PR.shortest.jeffreys) straight wins are enough (#fix(PR.jeffreys_straight, 3)), and under the skeptical prior it takes #words.at(PR.shortest.skeptical). _Source:_ new.
 
-*A 200-point gap (@sec-elo).* $1 slash (1 + 0.316) approx 0.760$.
+*Win by two (@sec-formats), rated 20.* Look at the games in pairs. A pair won twice by the first player ends the match for them, with chance $p^2$; a pair won twice by the other player ends it for them, with chance $(1 - p)^2$; a split pair returns the score to level, and play starts over. So the first player wins with chance $p^2 slash (p^2 + (1 - p)^2)$. For $p = 0.55$ it is $0.3025 slash 0.505 = #F.at("win by 2 fraction").at(0) slash #F.at("win by 2 fraction").at(1) approx #fix(F.at("win by 2").at(0), 3)$. _Source:_ folklore; it is the chance of winning from deuce in tennis.
 
-*Who shoots first (@sec-model).* More streaky. With an edge $e$ above one half for the first shooter, each duel repeats the last winner with chance $e$, while fair coin flips repeat with chance one half. Longer streaks make one player look better than they are, which is why the "winner" rows of @tab-shooter are so high.
+*A 200-point gap (@sec-elo), rated 05.* $1 slash (1 + 0.316) approx #fix(R.elo.rows.at(2).at(1), 3)$. _Source:_ new, on Elo's formula @elo.
+
+*Who shoots first (@sec-model), rated 15.* More streaky. With an edge $e$ above one half for the first shooter, each duel repeats the last winner with chance $e$, while fair coin flips repeat with chance one half. Longer streaks make one player look better than they are, which is why the "winner" rows of @tab-shooter are so high. _Source:_ new.
 
 = Words and symbols <app-words>
 
