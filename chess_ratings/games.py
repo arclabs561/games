@@ -27,6 +27,7 @@ class Ply:
     ply: int
     white: bool
     pressed: bool
+    clock: float = float("nan")  # the mover's seconds left before the move
 
 
 def plies(movetext: str, start_seconds: float) -> list[Ply]:
@@ -43,7 +44,14 @@ def plies(movetext: str, start_seconds: float) -> list[Ply]:
         mover = board.turn
         pressed[mover] = pressed[mover] or clock[mover] < TIME_PRESSURE
         out.append(
-            Ply(tuple(past[-HISTORY:]), node.move.uci(), i, mover == chess.WHITE, pressed[mover])
+            Ply(
+                tuple(past[-HISTORY:]),
+                node.move.uci(),
+                i,
+                mover == chess.WHITE,
+                pressed[mover],
+                clock[mover],
+            )
         )
         board.push(node.move)
         past.append(board.copy(stack=False))
@@ -79,17 +87,12 @@ def blitz_sample_sql(files: list[str], per_band: int, salt: str, bands: tuple) -
     `movetext_sql`, for the chosen games only.
     """
     listed = ", ".join(f"'{f}'" for f in files)
-    cases = " ".join(
-        f"WHEN (WhiteElo + BlackElo) / 2.0 >= {lo} AND (WhiteElo + BlackElo) / 2.0 < {hi} "
-        f"THEN '{lo}-{hi}'"
-        for lo, hi in bands
-    )
     return f"""
         WITH g AS (
             SELECT Site, WhiteElo, BlackElo, Result, TimeControl,
-                   CASE {cases} ELSE NULL END AS band,
-                   md5('{salt}' || Site) AS h
-            FROM read_parquet([{listed}])
+                   {band_case(bands)} AS band,
+                   md5('{salt}' || Site) AS h, White, Black, filename
+            FROM read_parquet([{listed}], filename = true)
             WHERE Event LIKE 'Rated Blitz%'
               AND Termination IN ('Normal', 'Time forfeit')
               AND abs(WhiteRatingDiff) <= 15 AND abs(BlackRatingDiff) <= 15
@@ -106,3 +109,71 @@ def movetext_sql(files: list[str], sites: list[str]) -> str:
     listed = ", ".join(f"'{f}'" for f in files)
     wanted = ", ".join(f"'{s}'" for s in sites)
     return f"SELECT Site, movetext FROM read_parquet([{listed}]) WHERE Site IN ({wanted})"
+
+
+def band_case(bands: tuple, otherwise: str = "NULL") -> str:
+    """A SQL CASE that names the band of the mean of the two ratings."""
+    cases = " ".join(
+        f"WHEN (WhiteElo + BlackElo) / 2.0 >= {lo} AND (WhiteElo + BlackElo) / 2.0 < {hi} "
+        f"THEN '{lo}-{hi}'"
+        for lo, hi in bands
+    )
+    return f"CASE {cases} ELSE {otherwise} END"
+
+
+def population_sample_sql(files: list[str], n: int, salt: str, bands: tuple) -> str:
+    """SQL for qualifying games (as in `blitz_sample_sql`) in md5(salt || Site) order, whatever
+    their ratings, so the sample follows Lichess's distribution of ratings. Games whose mean
+    rating is outside the bands get the band 'other'."""
+    listed = ", ".join(f"'{f}'" for f in files)
+    return f"""
+        WITH g AS (
+            SELECT Site, WhiteElo, BlackElo, Result, TimeControl,
+                   {band_case(bands, "'other'")} AS band,
+                   md5('{salt}' || Site) AS h, White, Black, filename
+            FROM read_parquet([{listed}], filename = true)
+            WHERE Event LIKE 'Rated Blitz%'
+              AND Termination IN ('Normal', 'Time forfeit')
+              AND abs(WhiteRatingDiff) <= 15 AND abs(BlackRatingDiff) <= 15
+        )
+        SELECT * FROM (SELECT *, row_number() OVER (ORDER BY h) AS rank FROM g)
+        WHERE rank <= {n} ORDER BY rank
+    """
+
+
+def rating_counts_sql(files: list[str], width: int = 25) -> str:
+    """SQL for the number of qualifying players' ratings in bins of `width`, by time control:
+    the population prior's data, as aggregates."""
+    listed = ", ".join(f"'{f}'" for f in files)
+    return f"""
+        WITH g AS (
+            SELECT TimeControl, WhiteElo, BlackElo FROM read_parquet([{listed}])
+            WHERE Event LIKE 'Rated Blitz%'
+              AND Termination IN ('Normal', 'Time forfeit')
+              AND abs(WhiteRatingDiff) <= 15 AND abs(BlackRatingDiff) <= 15
+        ), p AS (
+            SELECT TimeControl, WhiteElo AS elo FROM g
+            UNION ALL SELECT TimeControl, BlackElo FROM g
+        )
+        SELECT TimeControl, {width} * floor(elo / {width}) AS bin, count(*) AS n
+        FROM p GROUP BY TimeControl, bin ORDER BY TimeControl, bin
+    """
+
+
+def month_sql(files: list[str], names: list[str]) -> str:
+    """SQL for each named player's rated blitz games in the files: how many, and the rating
+    before the last of them."""
+    listed = ", ".join(f"'{f}'" for f in files)
+    wanted = ", ".join("'" + n.replace("'", "''") + "'" for n in sorted(set(names)))
+    return f"""
+        WITH g AS (
+            SELECT White, Black, WhiteElo, BlackElo, UTCDate + UTCTime AS played, Site
+            FROM read_parquet([{listed}])
+            WHERE Event LIKE 'Rated Blitz%' AND (White IN ({wanted}) OR Black IN ({wanted}))
+        ), p AS (
+            SELECT White AS name, WhiteElo AS elo, played, Site FROM g WHERE White IN ({wanted})
+            UNION ALL
+            SELECT Black, BlackElo, played, Site FROM g WHERE Black IN ({wanted})
+        )
+        SELECT name, count(*) AS games, arg_max(elo, (played, Site)) AS last FROM p GROUP BY name
+    """
