@@ -1,6 +1,6 @@
 """The experiments behind the README, each writing a JSON file to codenames/results/.
 
-    uv run python -m codenames.study calibrate   # temperatures and templates (~1 min)
+    uv run python -m codenames.study calibrate   # temperatures and templates (7 min from an empty cache)
     uv run python -m codenames.study crossplay   # giver x guesser expected scores (~10 min)
     uv run python -m codenames.study games       # whole games, Kim et al. style (~10 min)
     uv run python -m codenames.study all
@@ -96,7 +96,13 @@ def calibrate(scheme: str = "published", score: str = "test") -> dict:
     validation split, its temperature (fitted on train), and its test scores.
 
     scheme "game" uses the split of codenames.split and writes calibrate-game.json.
-    score names the split that is scored ("val" for a dry run that leaves test unseen)."""
+    score names the split that is scored ("val" for a dry run that leaves test unseen).
+
+    It stops before any work if the file it would write holds a model whose vectors are
+    missing here, so that a run without the remote vectors cannot drop their rows."""
+    name = "calibrate" if scheme == "published" else f"calibrate-{scheme}"
+    name = name if score == "test" else f"{name}-{score}"
+    check_vectors(name)
     words = all_words()
     out: dict = {}
     for model in models():
@@ -129,9 +135,24 @@ def calibrate(scheme: str = "published", score: str = "test") -> dict:
         eat["hits"] = "".join(map(str, each))
         out["scheme"], out["scored"] = scheme, score
     out["eat"] = eat
-    name = "calibrate" if scheme == "published" else f"calibrate-{scheme}"
-    save(name if score == "test" else f"{name}-{score}", out)
+    save(name, out)
     return out
+
+
+def check_vectors(name: str) -> None:
+    """Stop if results/<name>.json lists a model that models() does not find here."""
+    path = RESULTS / f"{name}.json"
+    if not path.exists():
+        return
+    known = set(LOCAL) | set(REMOTE)
+    missing = sorted(m for m in json.loads(path.read_text()) if m in known and m not in models())
+    if missing:
+        raise SystemExit(
+            f"results/{name}.json has rows for {', '.join(missing)}, whose vectors are not in "
+            f"{COMPUTED}. Copy them from the branch compute/codenames-embed first:\n"
+            "    git fetch origin compute/codenames-embed\n"
+            "    git restore --source=FETCH_HEAD --worktree -- codenames/vectors/"
+        )
 
 
 def chosen_spaces(cal: dict) -> dict[str, tuple[Space, float]]:

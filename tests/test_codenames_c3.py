@@ -122,3 +122,26 @@ def test_analysis_with_a_missing_run(tmp_path):
     assert r["missing_runs"] == ["potion__bge__3"]
     assert r["tasks"][2]["seeds"] == [1, 2, 4, 5]
     assert r["primary"]["runs"] == 69
+
+
+def test_cautious_rule_picks_the_safest_count_one_action():
+    from codenames import cautious, rl
+
+    phi = np.zeros((8, len(rl.FEATURES)))
+    phi[:, rl.FEATURES.index("count")] = [1, 2, 3, 4, 1, 2, 3, 4]
+    phi[:, rl.FEATURES.index("found")] = [0.5, 1.5, 2.0, 2.5, 0.7, 1.4, 1.9, 2.2]
+    assert cautious.rule(phi) == 4
+
+
+def test_committed_cautious_summary_is_what_analyze_writes():
+    from codenames import cautious
+
+    committed = json.loads(cautious.OUT.read_text())
+    c3json = json.loads((cautious.RESULTS / "c3.json").read_text())
+    again = json.loads(json.dumps(cautious.analyze(committed["values"], c3json)))
+    assert again == committed
+    # The rule needs no training seed, so the population's lead over it plus the rule's
+    # lead over self-play is C3's primary statistic.
+    pop = committed["held_out"]["population_minus_rule"]["mean_over_tasks"]["mean"]
+    rule = committed["held_out"]["rule_minus_self"]["mean_over_tasks"]["mean"]
+    assert pop + rule == pytest.approx(c3json["primary"]["mean_over_tasks"]["mean"], abs=2e-4)

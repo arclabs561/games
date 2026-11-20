@@ -229,3 +229,15 @@ def test_rlvr_reward_and_ensemble_giver():
     give = EnsembleGiver([(sp, 0.05), (other, 0.05)], beta=0.0, candidates=clues)
     clue = give(board)
     assert legal(clue.word, words) and 1 <= clue.count <= 4
+
+
+@pytest.mark.parametrize("scheme", ["published", "game"])
+def test_calibrate_stops_rather_than_drop_models(monkeypatch, scheme):
+    # Without the remote vectors, models() lists only the local four. The committed
+    # files hold all eight, so calibrate must stop before it computes anything.
+    from codenames import study
+
+    monkeypatch.setattr(study, "models", lambda: list(study.LOCAL))
+    monkeypatch.setattr(study, "all_words", lambda: pytest.fail("calibrate did work"))
+    with pytest.raises(SystemExit, match="compute/codenames-embed"):
+        study.calibrate(scheme)

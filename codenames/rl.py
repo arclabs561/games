@@ -24,7 +24,8 @@ and guessers are still sampled.
 - **Self-play**: the population is the giver's own model.
 - **Population play**: the population is every other model except the held-out ones.
 - **Cross-play** is the score against held-out guessers: one embedding model kept out
-  of training, and the EAT association counts, which stand in for people.
+  of training, and the EAT association counts, a guesser of another kind built on
+  people's associations.
 
     uv run python -m codenames.rl --giver potion --held-out bge     # a few minutes here
     uv run python -m codenames.rl --giver potion --held-out bge --seed 1 --test-seed 3003 --per-board
