@@ -325,10 +325,13 @@ class InfoTeam:
             self.used[event.card] += 1
 
 
-def play_info_game(rules: Rules, deck: list[int], cheat=False, hansim=True) -> State:
+def play_info_game(
+    rules: Rules, deck: list[int], cheat=False, hansim=True, team_class=InfoTeam
+) -> State:
     """One game of the information strategy. Sets state.lives to 0 (score 0) if a player
-    picks an empty slot, as HanSim scores an illegal action."""
-    team = InfoTeam(rules, cheat, hansim)
+    picks an empty slot, as HanSim scores an illegal action. `team_class` may be a subclass
+    of InfoTeam (`hanabi.hat_gap` uses one)."""
+    team = team_class(rules, cheat, hansim)
     state = new_game(rules, deck)
     team.start(state)
     while not state.over:
