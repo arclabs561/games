@@ -357,10 +357,11 @@ textarea { width: 100%; min-height: 6rem; font: inherit; box-sizing: border-box;
 <script>
 const DATA = /*DATA*/;
 const STORE = "c11-pilot";
-let S = JSON.parse(localStorage.getItem(STORE) || "null");
+let S = null;
+try { S = JSON.parse(localStorage.getItem(STORE) || "null"); } catch (e) { S = null; }
 let shown = 0, picks = [], times = [], undos = 0;
 const app = document.getElementById("app");
-const save = () => localStorage.setItem(STORE, JSON.stringify(S));
+const save = () => { try { localStorage.setItem(STORE, JSON.stringify(S)); } catch (e) {} };
 const el = (tag, attrs, ...kids) => {
   const e = document.createElement(tag);
   Object.assign(e, attrs || {});
