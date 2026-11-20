@@ -74,7 +74,8 @@ def test_a_deal_that_never_ends_though_slaps_happen():
     # Every position this deal can reach, whoever wins each slap, is still being played.
     assert traps.never_ends(traps.NEVER_ENDS) == (745, 16)
     # The six-card trap never offers a slap; a deal that can end is not reported.
-    assert traps.never_ends(((("J", 2, 3)), (2, "J", 3)))[1] == 0
+    six = traps.never_ends((("J", 2, 3), (2, "J", 3)))
+    assert six is not None and six[1] == 0
     assert traps.never_ends(((2, "J"), (3, "Q"))) is None
 
 
