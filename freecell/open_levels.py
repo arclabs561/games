@@ -234,7 +234,7 @@ def summary(folder: Path = HERE / "results" / "runs") -> dict:
     Solver C and Solver B by layers to count the same positions."""
     recs = [json.loads(x) for p in sorted(folder.glob("open-*.jsonl")) for x in p.open()]
     survey = json.loads((HERE / "results" / "f1.json").read_text())["either solver"]
-    table = {int(k): dict(v) for k, v in survey.items()}
+    table = {k: dict(v) for k, v in survey.items()}
     levels = []
     for deal, cells, published in OPEN:
         mine = [r for r in recs if (r["deal"], r["cells"]) == (deal, cells)]
@@ -259,8 +259,8 @@ def summary(folder: Path = HERE / "results" / "runs") -> dict:
             row |= {"most_home": c["most_home"], "frozen": c["frozen"]}
             row["largest_layer"] = c["largest_layer"]
         if verdict in ("won", "lost"):
-            table[cells][verdict] += 1
-            table[cells]["undecided"] -= 1
+            table[str(cells)][verdict] += 1
+            table[str(cells)]["undecided"] -= 1
         levels.append(row)
     agree = [r for r in levels if r["verdict"] in ("won", "lost")]
     return {

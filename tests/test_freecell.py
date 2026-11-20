@@ -325,3 +325,24 @@ def test_summary_files_agree_with_each_other_and_the_readme():
     for cells, row in summary["either solver"].items():
         line = f"| {cells} | {row['lost']:,} | {row['won']:,} | {row['undecided']:,} |"
         assert line in readme
+
+
+def test_open_levels_summary_and_readme_agree():
+    from freecell.open_levels import summary
+
+    committed = json.loads((HERE / "results" / "open_levels.json").read_text())
+    assert summary() == committed
+    assert committed["differ from the published list"] == []
+    readme = (HERE / "README.md").read_text()
+    for cells, row in committed["by level"].items():
+        assert f"| {cells} | {row['lost']:,} | {row['won']:,} | {row['undecided']:,} |" in readme
+    layouts = {deal: ms_deal(deal) for deal in (9499, 17760)}
+    for level in committed["levels"]:
+        if level["verdict"] == "won":
+            line = [(c, d) for c, d in level["line"]]
+            rules = Rules(cells=level["cells"])
+            assert replay(rules, layouts[level["deal"]], line)
+            assert f"a line of {level['moves']} moves that replays" in readme
+        if level["verdict"] == "lost":
+            states = level["positions"]["c"]
+            assert level["positions"]["bl"] == states and f"{states:,} positions" in readme
