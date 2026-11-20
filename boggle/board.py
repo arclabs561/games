@@ -10,7 +10,7 @@ from itertools import product
 from math import ceil, factorial, log, sqrt
 from pathlib import Path
 
-type Board = list[list[str]]  # 4 rows of 4 faces; a face is a letter, or "qu"
+type Board = list[list[str]]  # n rows of n faces (4 in Boggle); a face is a letter, or "qu"
 type Trie = dict  # letter -> Trie, with the key None marking the end of a word
 
 # The 16 cubes of the "New Boggle" set, sold from 1987 (or 1992; sources differ) until the
@@ -79,8 +79,10 @@ def make_trie(words: Iterable[str]) -> Trie:
 def get_words(board: Board, trie: Trie, min_len: int = 3) -> Iterator[str]:
     """Each word of at least `min_len` letters that the board spells, once."""
 
+    n = len(board)  # 4 for Boggle, 5 for Big Boggle
+
     def recur(i: int, j: int, path: str, seen: frozenset, node: Trie) -> Iterator[str]:
-        if (i, j) in seen or not (0 <= i < 4 and 0 <= j < 4):  # no reuse, no wrapping
+        if (i, j) in seen or not (0 <= i < n and 0 <= j < n):  # no reuse, no wrapping
             return
         face = board[i][j]
         for letter in face:  # a face can hold two letters, "qu"
@@ -95,7 +97,7 @@ def get_words(board: Board, trie: Trie, min_len: int = 3) -> Iterator[str]:
             yield from recur(i + di, j + dj, path, seen | {(i, j)}, node)
 
     found = set()
-    for i, j in product(range(4), range(4)):
+    for i, j in product(range(n), range(n)):
         for word in recur(i, j, "", frozenset(), trie):
             if len(word) >= min_len and word not in found:
                 found.add(word)
@@ -164,10 +166,69 @@ def score(board: Board, trie: Trie) -> int:
 
 
 def parse_board(letters: str) -> Board:
-    """A board from 16 letters read row by row; "q" stands for the "qu" face."""
-    faces = ["qu" if c == "q" else c for c in letters.lower()]
-    assert len(faces) == 16, letters
-    return [faces[i : i + 4] for i in range(0, 16, 4)]
+    """A square board from its letters read row by row (16 for Boggle, 25 for Big Boggle);
+    "q" stands for the "qu" face, and spaces are ignored."""
+    faces = ["qu" if c == "q" else c for c in letters.lower() if c != " "]
+    n = round(len(faces) ** 0.5)
+    assert n * n == len(faces), letters
+    return [faces[i : i + n] for i in range(0, n * n, n)]
+
+
+def show(board: Board) -> str:
+    """The board as rows of letters, with Qu written as one face."""
+    return "\n".join(" ".join(f"{face.capitalize():2}" for face in row).rstrip() for row in board)
+
+
+def find_path(board: Board, word: str) -> list[tuple[int, int]] | None:
+    """One path of neighboring squares, none used twice, that spells `word` on the board,
+    as (row, column) pairs; None if there is none."""
+    n = len(board)
+
+    def extend(path: list[tuple[int, int]], rest: str) -> list[tuple[int, int]] | None:
+        if not rest:
+            return path
+        i, j = path[-1]
+        for di, dj in NEIGHBORS:
+            nxt = (i + di, j + dj)
+            if 0 <= nxt[0] < n and 0 <= nxt[1] < n and nxt not in path:
+                face = board[nxt[0]][nxt[1]]
+                if rest.startswith(face) and (found := extend([*path, nxt], rest[len(face) :])):
+                    return found
+        return None
+
+    for i, j in product(range(n), range(n)):
+        if word.startswith(board[i][j]) and (found := extend([(i, j)], word[len(board[i][j]) :])):
+            return found
+    return None
+
+
+# The letter distribution that Norvig's Inverse Boggle draws from ("the distribution of
+# letters in the 16-cube version of the game"), as in his pytudes notebook Boggle.ipynb.
+NORVIG_LETTERS = 3 * "AABCDEEEGHIILMNOOPRSTUY" + "AADEFFIJKKLLNNQRSSTTUVVWWXZ"
+
+
+def hill_climb(
+    board: Board, trie: Trie, steps: int, rng: random.Random, letters: str = NORVIG_LETTERS
+) -> tuple[Board, list[int]]:
+    """Norvig's hill climbing for Inverse Boggle: change one random square to a random
+    letter, and keep the change if the score does not fall. Returns the final board and
+    the score after each step (the first entry is the starting score)."""
+    board = [list(row) for row in board]
+    n = len(board)
+    best = score(board, trie)
+    history = [best]
+    for _ in range(steps):
+        i, j = rng.randrange(n), rng.randrange(n)
+        old = board[i][j]
+        letter = rng.choice(letters).lower()
+        board[i][j] = "qu" if letter == "q" else letter
+        new = score(board, trie)
+        if new >= best:
+            best = new
+        else:
+            board[i][j] = old
+        history.append(best)
+    return board, history
 
 
 def orientations(board: Board) -> list[Board]:
@@ -276,6 +337,56 @@ def all_cube_losses(
     """cube_losses for each layout, computed in a pool of processes like count_words."""
     with mp.Pool(processes, initializer=_set_trie, initargs=(trie, 3)) as pool:
         return list(pool.imap(_layout_losses, layouts, chunksize=500))
+
+
+def one_square_changes(
+    board: Board, trie: Trie, processes: int | None = None
+) -> dict[tuple[int, int, str], int]:
+    """The score of every board that differs from `board` in one square, keyed by (row,
+    column, new face), with the 26 faces a to z and "qu" for q. Scored in a pool of
+    processes like count_words."""
+    n = len(board)
+    changes = [
+        (i, j, "qu" if c == "q" else c)
+        for i in range(n)
+        for j in range(n)
+        for c in "abcdefghijklmnopqrstuvwxyz"
+        if board[i][j] != ("qu" if c == "q" else c)
+    ]
+    variants = []
+    for i, j, face in changes:
+        b = [list(row) for row in board]
+        b[i][j] = face
+        variants.append(b)
+    with mp.Pool(processes, initializer=_set_trie, initargs=(trie, 3)) as pool:
+        scores = pool.map(_board_score, variants, chunksize=8)
+    return dict(zip(changes, scores, strict=True))
+
+
+def _board_score(board: Board) -> int:
+    return sum(map(points, get_words(board, _WORKER["trie"], _WORKER["min_len"])))
+
+
+def words_by_paths(board: Board, words: set[str], max_len: int) -> set[str]:
+    """Brute force, as a check on get_words: spell every path of up to `max_len` letters,
+    with no trie, and keep those in `words`."""
+    n = len(board)
+    found: set[str] = set()
+
+    def walk(path: list[tuple[int, int]], spelled: str) -> None:
+        if spelled in words:
+            found.add(spelled)
+        i, j = path[-1]
+        for di, dj in NEIGHBORS:
+            nxt = (i + di, j + dj)
+            if 0 <= nxt[0] < n and 0 <= nxt[1] < n and nxt not in path:
+                more = spelled + board[nxt[0]][nxt[1]]
+                if len(more) <= max_len:
+                    walk([*path, nxt], more)
+
+    for i, j in product(range(n), range(n)):
+        walk([(i, j)], board[i][j])
+    return found
 
 
 def wilson(successes: int, trials: int, z: float = 1.96) -> tuple[float, float]:
