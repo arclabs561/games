@@ -184,7 +184,11 @@ class FrameworkCodemaster:
             dist = cosine(self.clue_matrix, self.vectors.rows(board.words))
             illegal = np.array(
                 [
-                    [not framework_legal(c, self.forms[c], (w,)) for w in board.words]
+                    [
+                        not framework_legal(c, self.forms[c], (w,))
+                        or (self.strict and shares_form(c, w))
+                        for w in board.words
+                    ]
                     for c in self.clues
                 ]
             )

@@ -458,6 +458,7 @@ def crossplay_many(
         out.append(
             {
                 "giver": giver,
+                "strict": strict,
                 "info": info,
                 "games": games,
                 "seconds": round(time.perf_counter() - t1),
@@ -637,11 +638,13 @@ def collect(runs: list[Path], lora: list[Path]) -> dict:
     for r in runs:
         for p in sorted(r.glob("crossplay-*.json")):
             sl = json.loads(p.read_text())
-            slices[(sl.get("strict", False), sl["giver"], "games")] = sl  # later runs replace
+            strict = sl.get("strict", p.name.startswith("crossplay-strict-"))
+            slices[(strict, sl["giver"], "games")] = sl  # later runs replace
     for folder in lora:
         for p in sorted(folder.glob("crossplay-lora-*.json")):
             sl = json.loads(p.read_text())
-            slices[(sl.get("strict", False), sl["giver"], "lora")] = sl
+            strict = sl.get("strict", p.name.startswith("crossplay-lora-strict-"))
+            slices[(strict, sl["giver"], "lora")] = sl
         out["data"].setdefault("lora_jobs", []).append(
             json.loads((folder / "data.json").read_text())
         )
@@ -676,8 +679,16 @@ def collect(runs: list[Path], lora: list[Path]) -> dict:
     return out
 
 
-def model_of(player: str) -> str:
-    return {"gemma2-first": "gemma2"}.get(player, player.split("-")[0])
+def vectors_of(player: str) -> set[str]:
+    """The vector tables a giver or guesser uses; w2vglove uses both of the framework's."""
+    if player == "w2vglove":
+        return {"w2v", "glove"}
+    return {{"gemma2-first": "gemma2"}.get(player, player.split("-")[0])}
+
+
+def stranger(giver: str, guesser: str) -> bool:
+    """True when the two share no vectors."""
+    return not vectors_of(giver) & vectors_of(guesser)
 
 
 def analyze(runs: dict) -> dict:
@@ -739,6 +750,14 @@ def crossplay_summary(cells: dict) -> dict:
             "opponent": v["loss"].count("O"),
             "other_losses": len(v["loss"]) - sum(v["loss"].count(x) for x in "-AO"),
             "mean_count": round(float(np.mean(v["count"])), 2),
+            "turns_in_wins": round(
+                float(
+                    np.mean(
+                        [t for t, c in zip(v["turns"], v["loss"], strict=True) if c == "-"] or [0]
+                    )
+                ),
+                2,
+            ),
             "flagged_turns": sum(x or 0 for x in v["flagged"]),
             "turns": sum(v["turns"]),
         }
@@ -749,7 +768,7 @@ def crossplay_summary(cells: dict) -> dict:
     means = {}
     for gv in givers:
         for label, group in GROUPS.items():
-            members = [gu for gu in group if f"{gv}/{gu}" in cells and model_of(gv) != gu]
+            members = [gu for gu in group if f"{gv}/{gu}" in cells and stranger(gv, gu)]
             if members:
                 m = np.mean([scores[f"{gv}/{gu}"] for gu in members], axis=0)
                 means[f"{gv} with {label}"] = summarize(m.tolist()) | {"guessers": members}
@@ -757,12 +776,12 @@ def crossplay_summary(cells: dict) -> dict:
     for a, b in PAIRED:
         for gu in guessers:
             ka, kb = f"{a}/{gu}", f"{b}/{gu}"
-            if ka in cells and kb in cells and gu not in (model_of(a), model_of(b)):
+            if ka in cells and kb in cells and stranger(a, gu) and stranger(b, gu):
                 paired[f"{a} minus {b} / {gu}"] = summarize((scores[ka] - scores[kb]).tolist())
         for label, group in GROUPS.items():
             members = [
                 gu for gu in group
-                if f"{a}/{gu}" in cells and f"{b}/{gu}" in cells and gu not in (model_of(a), model_of(b))
+                if f"{a}/{gu}" in cells and f"{b}/{gu}" in cells and stranger(a, gu) and stranger(b, gu)
             ]  # fmt: skip
             if members:
                 d = np.mean([scores[f"{a}/{gu}"] - scores[f"{b}/{gu}"] for gu in members], axis=0)
@@ -787,7 +806,7 @@ def strict_effect(all_cells: dict, strict_cells: dict) -> dict:
             continue
         flagged = sum(x or 0 for k in keys for x in all_cells[k]["flagged"])
         turns = sum(t for k in keys for t in all_cells[k]["turns"])
-        others = [k for k in keys if model_of(gv) != k.split("/")[1]]
+        others = [k for k in keys if stranger(gv, k.split("/")[1])]
         d = np.mean(
             [
                 np.array(strict_cells[k]["score"], float) - np.array(all_cells[k]["score"], float)
@@ -829,20 +848,114 @@ NAMES = {
 }
 
 
+def num(x: float, digits: int = 2) -> str:
+    return f"{x:.{digits}f}".replace("-", "\u2212")
+
+
 def fmt(s: dict, digits: int = 2) -> str:
     lo, hi = s["ci"]
-    return f"{s['mean']:.{digits}f} ({lo:.{digits}f} to {hi:.{digits}f})"
+    return f"{num(s['mean'], digits)} ({num(lo, digits)} to {num(hi, digits)})"
+
+
+def table_i_differences(rep: dict) -> list[str]:
+    """Where Table I differs from the published logs it was computed from."""
+    out = []
+    for k, r in rep.items():
+        t = r["table_i"]
+        if t["mean"] is None:
+            out.append(
+                f"{k} is in the logs ({r['games']} games, mean {r['mean_table_rule']:.2f}) but not in Table I"
+            )
+            continue
+        if abs(t["mean"] - r["mean_table_rule"]) > 0.005:
+            out.append(
+                f"{k}: Table I gives mean {t['mean']:.2f}, the logs {r['mean_table_rule']:.2f}"
+            )
+        if abs(t["sd"] - r["sd_table_rule"]) > 0.015:
+            out.append(
+                f"{k}: Table I gives standard deviation {t['sd']:.2f}, the logs {r['sd_table_rule']:.2f}"
+            )
+        if t["loss_percent"] != r["assassin_losses"]:
+            out.append(
+                f"{k}: Table I gives {t['loss_percent']}% losses, the logs {r['assassin_losses']} assassin losses"
+            )
+    return out
+
+
+def range_of(means: dict, givers, label: str) -> str:
+    vals = [means[f"{g} with {label}"]["mean"] for g in givers if f"{g} with {label}" in means]
+    return f"{min(vals):.1f} to {max(vals):.1f}"
+
+
+def findings(summary: dict) -> list[str]:
+    rep, cp = summary["reproduction"], summary["crossplay"]
+    games = sum(r["games"] for r in rep.values())
+    same = sum(r["same_transcript"] for r in rep.values())
+    lines = [
+        f"- **The port reproduces the published games.** `bench.py` replays {same} of the {games}"
+        " published single-team games of the framework's word-vector bots move for move: every"
+        " clue, count and pick (computed exactly, on the framework's boards for seeds 0 to 99).",
+    ]
+    oc = summary.get("original_code")
+    if oc:
+        lines[-1] += (
+            f" The framework's own code, rerun here on {oc['games']} of them, gives the published"
+            f" moves in {oc['same_as_published']} and the port's in {oc['same_as_port']}."
+        )
+    diffs = table_i_differences(rep)
+    blue = [k for k, r in rep.items() if r["losses"] != r["assassin_losses"]]
+    lines.append(
+        "- **Table I against its own logs.** Table I scores a loss on the last blue word by its"
+        " turns, not 25, though the paper's rule says 25"
+        + (
+            f" ({', '.join(blue)}: {sum(rep[k]['losses'] - rep[k]['assassin_losses'] for k in blue)} such games)"
+            if blue
+            else ""
+        )
+        + ". Other differences: "
+        + "; ".join(diffs)
+        + "."
+    )
+    a = cp["all"]
+    m = a["giver_means"]
+    lines.append(
+        "- **Strangers cost every giver.** With the framework's guessers that share no vectors"
+        f" with them, the framework's codemasters take {range_of(m, FRAMEWORK, 'framework guessers')}"
+        f" turns on average, and this package's givers {range_of(m, OURS_GIVERS, 'framework guessers')}."
+        f" With this package's guessers, the framework's codemasters take {range_of(m, FRAMEWORK, 'our guessers')}"
+        f" and this package's givers {range_of(m, OURS_GIVERS, 'our guessers')} (other models only). Most of"
+        " the gap is assassin losses, which score 25. Simulated: 200 boards of words.txt, seeds 0 to"
+        " 199, 95% bootstrap intervals in the tables."
+    )
+    key = "potion-c3-population minus potion-c3-self / framework guessers"
+    if key in a["paired"]:
+        lines.append(
+            "- **Population training, with guessers it never met.** The C3 population giver minus"
+            f" the C3 self-play giver, averaged over the framework's guessers: {fmt(a['paired'][key])}"
+            " turns (negative is better for the population giver)."
+        )
+    if "strict_minus_all" in cp:
+        e = cp["strict_minus_all"]
+        shares = ", ".join(f"{NAMES[g]} {100 * v['share']:.1f}%" for g, v in e.items())
+        lines.append(
+            "- **Clues that share a form with a board word.** Share of turns flagged"
+            f" (`bench.shares_form`): {shares}. Replacing them with each giver's next choice"
+            " changes the scores in the second set of tables below."
+        )
+    return lines
 
 
 def report(summary: dict) -> str:
     """bench.md, from bench.json alone."""
-    rep, cp = summary["reproduction"], summary["crossplay"]
+    rep = summary["reproduction"]
     lines = [
         "# Codenames: the AI competition framework's word-vector bots",
         "",
         "Exploratory. No plan was written before these runs (experiments/METHOD.md); the numbers",
         "motivate a planned comparison and are not its result. Written by",
         "`python -m codenames.bench_play analyze` from `bench-runs.json`.",
+        "",
+        *findings(summary),
         "",
         "## 1. The published games, replayed",
         "",
@@ -901,7 +1014,7 @@ def report(summary: dict) -> str:
             "A clue is flagged when it and an unrevealed board word share their first five letters,"
             " or one contains the other (`bench.shares_form`). Turns flagged with every clue"
             " allowed, pooled over guessers, and the change in mean score over the guessers that"
-            " are not the giver's own model when flagged clues are replaced (paired by board):",
+            " share no vectors with the giver when flagged clues are replaced (paired by board):",
             "",
             "| Giver | Flagged turns | Share | Flagged after replacing | Change in mean score (95% interval) |",
             "|---|---|---|---|---|",
@@ -911,7 +1024,115 @@ def report(summary: dict) -> str:
                 f"| {NAMES[gv]} | {e['flagged_turns']} of {e['turns']} | {100 * e['share']:.1f}%"
                 f" | {e['strict_flagged_turns']} | {fmt(e['score_change'])} |"
             )
+    flags = summary.get("reproduction_flags")
+    if flags:
+        lines += [
+            "",
+            f"In the 900 published games, {flags['flagged_turns']} of {flags['turns']} clues are flagged"
+            " the same way, against the board words still unrevealed.",
+        ]
+    lines += static_sections(summary)
     return "\n".join(lines) + "\n"
+
+
+def static_sections(summary: dict) -> list[str]:
+    d = summary["data"]
+    info = next(iter(summary["crossplay"]["info"].values()))
+    lora = (d.get("lora_jobs") or [{}])[0]
+    c3 = next((v["c3"] for v in summary["crossplay"]["info"].values() if "c3" in v), None)
+    lines = [
+        "",
+        "## The rule each giver enforces",
+        "",
+        "- **The framework's codemasters** (players/codemaster_*.py): a clue is not a board word,"
+        " not a part of one and does not contain one, and no board word equals the clue's"
+        " WordNet lemma or Lancaster stem (NLTK"
+        f" {d['forms']['nltk']}). Clues come from the framework's list of {d['forms']['words']} words."
+        " The rule is checked against the words still on the board.",
+        "- **This package's givers** (`codenames.words.legal`): a clue is not an unrevealed"
+        " board word, not a part of one, and does not contain one. Clues come from the"
+        f" {info['our_clue_pool']} of the 12,000 clue words that both GloVe and word2vec have, so"
+        f" that the framework's guessers can read them ({info['clue_words_dropped']} dropped).",
+        "- **The flag** (`bench.shares_form`, for the second set of tables): a shared prefix of"
+        " five or more letters, or containment. It is stricter than both rules and catches"
+        " residency/residence and teaching/teacher; it also catches some unrelated pairs.",
+        "",
+        "## How each number is known",
+        "",
+        "- Table I values: taken from Stephenson et al. (2025), arXiv 2412.11373v2, Table I.",
+        "- Values from the published logs: computed exactly from bot_results_new_style.txt and"
+        " move_log.txt in stepmat/Codenames_GPT at commit fc28bc9.",
+        "- The port's games: computed exactly; compared move by move with the logs. The"
+        " framework's own code was rerun on 90 games as a second method.",
+        "- Cross-play: simulated games, 200 boards, board seeds 0 to 199; every bot is"
+        " deterministic, so each cell is one game per board. Intervals are 95% percentile"
+        " bootstrap intervals over boards, 10,000 draws, seed 0; paired differences resample"
+        " boards once for both givers.",
+    ]
+    if c3:
+        lines.append(
+            "- The C3 givers were refit with codenames.rl (task: potion giver, EmbeddingGemma 2"
+            " held out, training seed 1); the largest difference from the θ in results/c3.json is"
+            f" {c3['theta_max_difference']['self']:.4f} (self-play) and"
+            f" {c3['theta_max_difference']['population']:.4f} (population)."
+        )
+    if lora:
+        lines.append(
+            f"- The C8 encoder (arm B, seed 1, clue template {lora.get('template', '?')}) encoded"
+            f" {lora.get('extra_words', '?')} words that its stored vectors lack, on a CPU in float32;"
+            " on 200 stored words the largest difference from the stored float16 vectors is"
+            f" {lora.get('max_abs_difference_bare', float('nan')):.4f} (bare) and"
+            f" {lora.get('max_abs_difference_' + str(lora.get('template')), float('nan')):.4f} ({lora.get('template')})."
+        )
+    lines += [
+        "",
+        "## Sources and licenses",
+        "",
+        "| Source | What | License | Committed |",
+        "|---|---|---|---|",
+        "| stepmat/Codenames_GPT, commit fc28bc9 (Stephenson et al. 2025) | the framework's code,"
+        " clue list and published logs | MIT | no; downloaded and pinned by SHA-256 |",
+        "| CodenamesAICompetition/Game (Summerville et al. 2019) | the original framework; the same"
+        " bots and word pool | MIT | no |",
+        "| The framework's board words | the 394 words of the published game | the rights to the"
+        " game's words belong to Czech Games Edition; whether the MIT license of the file covers"
+        " them is unclear | no; used only to rebuild the published boards |",
+        "| GloVe 6B 300d (Pennington et al. 2014) | word vectors | Public Domain Dedication and"
+        " License v1.0, per the GloVe page | no |",
+        "| GoogleNews word2vec 300d (Mikolov et al. 2013), via gensim-data | word vectors | the"
+        " word2vec project page lists Apache 2.0 for the project; no separate license for the"
+        " vectors is stated | no |",
+        "",
+        "## Compute",
+        "",
+        "The vectors, the replays and the cross-play ran on GitHub-hosted runners (CPU)"
+        " through a workflow on the branch `compute/codenames-bench`, which commits the raw"
+        " outputs to that branch under `runs/bench/<run id>/`. The C8 column ran in Hugging Face"
+        " Jobs (`cpu-upgrade`), since its weights are in the private dataset; its outputs are"
+        " in that dataset under `runs/bench/`. Both built the same vector subsets (SHA-256"
+        f" {d['vectors']['glove300_sha256'][:12]} for GloVe and {d['vectors']['w2v_npz_sha256'][:12]}"
+        " for word2vec).",
+        "",
+        "## Limits",
+        "",
+        "- Exploratory, one deterministic game per board and pair, one training seed for the"
+        " C3 givers, one seed for the C8 encoder. The comparison worth planning is named in the"
+        " findings; a plan should fix its metric, guessers and board seeds before running.",
+        "- The framework's guessers pick exactly the count; they never stop early or take the"
+        " extra pick the printed rules allow. This package's guessers do the same here.",
+        "- Our givers were built for expected turn value, not for the single-team score, which"
+        " charges 25 for a loss; they take more risk than that score rewards.",
+        "",
+        "## Usage",
+        "",
+        "```sh",
+        "uv run python -m codenames.bench_data fetch        # the framework's files",
+        "uv run python -m codenames.bench_play analyze      # bench.json and bench.md from bench-runs.json",
+        "```",
+        "",
+        "The other commands need the vector subsets and run in the workflow; see the module docstrings.",
+    ]
+    return lines
 
 
 def crossplay_tables(cp: dict, title: str) -> list[str]:
@@ -927,7 +1148,7 @@ def crossplay_tables(cp: dict, title: str) -> list[str]:
         for gu in cp["guessers"]:
             c = cp["cells"].get(f"{gv}/{gu}")
             cell = "" if c is None else fmt(c, 1)
-            row.append(f"**{cell}**" if c is not None and model_of(gv) == gu else cell)
+            row.append(f"**{cell}**" if c is not None and not stranger(gv, gu) else cell)
         lines.append(f"| {NAMES[gv]} | " + " | ".join(row) + " |")
     lines += [
         "",
@@ -944,7 +1165,7 @@ def crossplay_tables(cp: dict, title: str) -> list[str]:
         lines.append(f"| {NAMES[gv]} | " + " | ".join(row) + " |")
     lines += [
         "",
-        "Each giver averaged, board by board, over the guessers of a group that are not its own model:",
+        "Each giver averaged, board by board, over the guessers of a group that share no vectors with it:",
         "",
         "| Giver | Group | Guessers | Mean score (95% interval) |",
         "|---|---|---|---|",
