@@ -19,7 +19,6 @@ distance 2. Square piles and tetrahedral piles are both pieces of that one latti
 """
 
 from collections import Counter
-from math import comb
 
 type Ball = tuple[int, int, int]
 
@@ -167,11 +166,6 @@ def three_triangles(n: int) -> list[list[int]]:
 def layer_sizes_oblong(a: int, b: int) -> list[tuple[int, int]]:
     """Layer sizes of an oblong pile, bottom first."""
     return [(a - h, b - h) for h in range(a)]
-
-
-def binomial_tetrahedral(n: int) -> int:
-    """The tetrahedral number as a choice of 3 things from n + 2."""
-    return comb(n + 2, 3)
 
 
 def main() -> None:

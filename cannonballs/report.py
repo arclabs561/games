@@ -25,6 +25,8 @@ FULL = {
     "tops": 10**5,  # largest top tried for truncated piles
     "oblong_rule": 10**4,  # short sides a checked against the rule by count
     "oblong_residues": 300,  # short sides a for which the rule is checked by residues
+    "shapes": 10**5,  # widths a tried for oblong piles of a fixed shape
+    "euler": 10**4,  # |u| for the search of u^3 + 1 = 2 v^3
 }
 QUICK = {
     "brute": 10**5,
@@ -34,8 +36,13 @@ QUICK = {
     "tops": 10**5,
     "oblong_residues": 120,
     "oblong_rule": 10**4,
+    "shapes": 10**4,
+    "euler": 10**3,
 }
 GAP_LAYERS = 60
+SHAPES = (
+    20  # oblong piles on an a by a + c base are searched for c = 1, ..., SHAPES (curves.LONGEST)
+)
 # Results that change with the bounds rather than with the answers.
 DEPENDS_ON_BOUNDS = {"bounds", "pell_walked"}
 
@@ -52,6 +59,7 @@ def results(quick: bool = False) -> dict:
         for a in range(1, b["oblong_residues"] + 1)
     )
     have = sum(lucas.oblong_has_square(a) for a in range(1, b["oblong_rule"] + 1))
+    shapes = {str(c): lucas.oblong_shape_squares(c, b["shapes"]) for c in range(1, SHAPES + 1)}
     return {
         "bounds": b,
         "table": [
@@ -78,6 +86,8 @@ def results(quick: bool = False) -> dict:
         },
         "tetrahedral_is_square_pile": lucas.tetrahedral_equals_square_pile(b["coincide"]),
         "square_pile_cubes": lucas.square_piles_that_are_cubes(b["cubes"]),
+        "cube_cases_blocked_mod_7": ["".join(map(str, c)) for c in lucas.cube_case_blocked_mod_7()],
+        "euler_cube_solutions": [list(p) for p in lucas.euler_cube_solutions(b["euler"])],
         "cube_cases": {"".join(map(str, c)): lucas.first_block(c, k=3) for c in lucas.CASES},
         "truncated": [list(row) for row in tops],
         "truncated_found": [n for n, status, _ in tops if status == "found"],
@@ -88,6 +98,9 @@ def results(quick: bool = False) -> dict:
         "oblong_100": [
             [a, b2] for a in range(1, 11) for b2 in range(a, 200) if piles.oblong(a, b2) == 100
         ],
+        "oblong_shapes": shapes,
+        "oblong_shapes_with_square": [c for c in range(1, SHAPES + 1) if shapes[str(c)]],
+        "oblong_ridge": lucas.oblong_ridge_squares(b["shapes"]),
         "contacts": {
             str(n): [piles.square_pile_contacts(n), piles.tetrahedral_contacts(n)]
             for n in (2, 3, 4, 5, 10, 24)
@@ -99,14 +112,15 @@ def results(quick: bool = False) -> dict:
 
 
 def gaps_csv() -> str:
-    """For each square pile of 1 to GAP_LAYERS layers: where its count sits between the two
-    nearest squares, as a share of the way from the smaller square to the larger one."""
-    lines = ["layers,balls,below,share"]
+    """For each square pile of 1 to GAP_LAYERS layers: its balls, the side of the nearest
+    square, and how many balls it is from that square (0 for a square)."""
+    lines = ["layers,balls,root,distance"]
     for n in range(1, GAP_LAYERS + 1):
         m = piles.pyramid(n)
         r = lucas.isqrt(m)
-        share = (m - r * r) / (2 * r + 1)
-        lines.append(f"{n},{m},{r * r},{share:.4f}")
+        root = r if m - r * r <= (r + 1) ** 2 - m else r + 1
+        assert abs(m - root * root) == lucas.gap_to_square(m)
+        lines.append(f"{n},{m},{root},{lucas.gap_to_square(m)}")
     return "\n".join(lines) + "\n"
 
 

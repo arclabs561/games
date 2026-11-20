@@ -98,3 +98,23 @@ def clustered_kendall(hits: np.ndarray, reference, index, counts) -> dict:
     lo, hi = np.nanpercentile(taus, [2.5, 97.5])  # a replicate with all scores tied has none
     point = kendall_tau_b(np.asarray(hits, float).mean(axis=0), reference)
     return {"tau": point, "ci": [float(lo), float(hi)], "undefined": int(np.isnan(taus).sum())}
+
+
+def clustered_seeds(a_runs, b_runs, index: np.ndarray, counts: np.ndarray, seed: int = 0) -> dict:
+    """Mean of B minus A, where each arm is the mean of its training seeds' per-unit
+    values, with an interval that resamples the clusters (as clustered does, the same
+    draw for both arms) and, within each arm, its seeds with replacement."""
+    a = [np.asarray(x, dtype=float) for x in a_runs]
+    b = [np.asarray(x, dtype=float) for x in b_runs]
+    rng = np.random.default_rng(seed)
+    draws = counts.shape[0]
+
+    def resampled(runs: list[np.ndarray]) -> np.ndarray:
+        reps = np.stack([replicates(x, index, counts) for x in runs], axis=1)  # (draws, seeds)
+        pick = rng.integers(0, len(runs), size=(draws, len(runs)))
+        return np.take_along_axis(reps, pick, axis=1).mean(axis=1)
+
+    d = resampled(b) - resampled(a)
+    lo, hi = np.percentile(d, [2.5, 97.5])
+    point = float(np.mean(b, axis=0).mean() - np.mean(a, axis=0).mean())
+    return {"mean": point, "ci": [float(lo), float(hi)], "seeds": [len(a), len(b)]}
