@@ -12,7 +12,7 @@ Which deals of this make-ten card game cannot be cleared? The answer depends on 
 
 Erase is a make-ten card game for classrooms. It is Game 9 in *Math Fact Fluency* by Jennifer Bay-Williams and Gina Kling.
 
-The analysis is written up in [`paper/erase.pdf`](paper/erase.pdf), with a narrow edition for phones in [`paper/erase-phone.pdf`](paper/erase-phone.pdf). Its first sections tell the story with arithmetic only and the rest proves each claim. The full classification of stuck deals is the theorem in its section "Big hands always make 10," and the counts for other readings of the rules are in "The other readings." The section "Is 10 special?" has the table for the targets 1 to 30, and "Relatives" has the Countdown and 24-game counts.
+The analysis is written up in [`paper/erase.pdf`](paper/erase.pdf), with a narrow edition for phones in [`paper/erase-phone.pdf`](paper/erase-phone.pdf). Its first sections tell the story with arithmetic only and the rest proves each claim. The full classification of stuck deals is the theorem in its section "Big hands always make 10," and the counts for other readings of the rules are in "The other readings." The section "Is 10 special?" has the table for the targets 1 to 30, and "Relatives" has the Countdown and 24-game counts. A [shared page](https://docs.google.com/document/d/1VdsI4VDYDi-eOqQqQE0bXnzDgYPOyanYno4YNuDiPMU) links the latest print and phone PDFs and keeps a changelog of the versions.
 
 ## Rules as modeled
 
