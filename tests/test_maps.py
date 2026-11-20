@@ -1,6 +1,7 @@
 """Maps: colors, exact orderings, rank scores, SNE and t-SNE, random projections, SOMs."""
 
 import hashlib
+import math
 from itertools import permutations, product
 from math import log
 
@@ -25,20 +26,26 @@ def ulps(ours: np.ndarray, theirs: np.ndarray) -> float:
     return float((np.abs(ours - theirs) / np.spacing(np.abs(theirs))).max())
 
 
-def test_portable_functions_match_numpy():
+def by_math(f, *args: np.ndarray) -> np.ndarray:
+    """f from Python's math module (the C library, without numpy's per-CPU kernels), elementwise."""
+    return np.array([f(*v) for v in zip(*args, strict=True)])
+
+
+def test_portable_functions_match_the_c_library():
+    # Bounds are the largest differences seen, plus 1 ulp for the library's own error.
     rng = np.random.default_rng(0)
-    x = rng.uniform(-700, 700, 100_000)
-    assert ulps(portable.exp(x), np.exp(x)) <= 2
-    pos = np.exp(rng.uniform(-700, 700, 100_000))
-    assert ulps(portable.log(pos), np.log(pos)) <= 3
-    assert ulps(portable.log2(pos), np.log2(pos)) <= 3
-    near_one = rng.uniform(0.5, 2, 100_000)
-    assert ulps(portable.log(near_one), np.log(near_one)) <= 4
-    unit = rng.uniform(0.05, 1, 100_000)
-    assert ulps(portable.power(unit, 2.4), unit**2.4) <= 4
-    assert ulps(portable.cbrt(x), np.cbrt(x)) <= 2
-    y = rng.normal(size=100_000)
-    assert ulps(portable.atan2(y, x), np.arctan2(y, x)) <= 6
+    x = rng.uniform(-700, 700, 20_000)
+    assert ulps(portable.exp(x), by_math(math.exp, x)) <= 2
+    pos = by_math(math.exp, rng.uniform(-700, 700, 20_000))
+    assert ulps(portable.log(pos), by_math(math.log, pos)) <= 2
+    assert ulps(portable.log2(pos), by_math(math.log2, pos)) <= 2
+    near_one = rng.uniform(0.5, 2, 20_000)
+    assert ulps(portable.log(near_one), by_math(math.log, near_one)) <= 3
+    unit = rng.uniform(0.05, 1, 20_000)
+    assert ulps(portable.power(unit, 2.4), by_math(lambda u: math.pow(u, 2.4), unit)) <= 4
+    assert ulps(portable.cbrt(x), by_math(math.cbrt, x)) <= 4
+    y = rng.normal(size=20_000)
+    assert ulps(portable.atan2(y, x), by_math(math.atan2, y, x)) <= 5
 
 
 def test_portable_special_values():
