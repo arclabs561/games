@@ -35,6 +35,7 @@ import sys
 import time
 from dataclasses import dataclass
 from itertools import combinations
+from typing import Protocol
 
 import numpy as np
 
@@ -155,8 +156,12 @@ class Turn:
     keep_values: list[np.ndarray]  # per reroll, (B, K): the value of each keep
 
 
-def final_rolls(t: Tables, values: np.ndarray, states: np.ndarray):
-    """For each state and final roll: the best box, its points and the value of choosing it."""
+def final_rolls(t: Tables, values: np.ndarray, states: np.ndarray, allow=None, every=False):
+    """For each state and final roll: the best box, its points and the value of choosing it.
+
+    With `allow`, a (B, R, boxes) array of booleans, only the boxes it marks are considered.
+    With `every`, the value of each box is returned too, as (B, R, boxes), -inf where closed.
+    """
     rules = t.rules
     cats = rules.categories
     flag = states % 2
@@ -167,6 +172,7 @@ def final_rolls(t: Tables, values: np.ndarray, states: np.ndarray):
     out = {
         k: np.zeros((nb, nr), dtype=np.int64) for k in ("box", "points", "bonus", "next", "joker")
     }
+    each = []
     y = t.bit.get("yahtzee", 0)
     y_filled = (mask & y) > 0 if y else np.zeros(nb, dtype=bool)
     yahtzee = t.yahtzee[None, :] & y_filled[:, None]  # a Yahtzee roll after the box is filled
@@ -186,6 +192,8 @@ def final_rolls(t: Tables, values: np.ndarray, states: np.ndarray):
         if c in JOKER_SCORES:
             points = np.where(is_joker, JOKER_SCORES[c], points)
         allowed = np.broadcast_to(open_[:, None], (nb, nr))
+        if allow is not None:
+            allowed = allowed & allow[:, :, i]
         if rules.joker == "forced":
             if c in UPPER:
                 rule = np.where(upper_open, face_bit[None, :] == bit, ~lower_open[:, None])
@@ -195,10 +203,18 @@ def final_rolls(t: Tables, values: np.ndarray, states: np.ndarray):
         up = points if c in UPPER else 0
         new_total = np.minimum(total[:, None] + up, t.cap)
         new_flag = flag[:, None] | ((c == "yahtzee") & (points == 50) & (rules.yahtzee_bonus > 0))
-        nxt = t.index((mask | bit)[:, None], new_total, new_flag)
-        nxt = np.where(allowed, nxt, 0)
+        raw = t.index((mask | bit)[:, None], new_total, new_flag)
+        nxt = np.where(allowed, raw, 0)
         value = np.where(allowed, points + bonus + values[nxt], -np.inf)
         assert not np.isnan(value).any(), f"unsolved state reached by filling {c}"
+        if every:
+            each.append(
+                np.where(
+                    open_[:, None],
+                    points + bonus + values[np.where(open_[:, None], raw, 0)],
+                    -np.inf,
+                )
+            )
         better = value > best
         best = np.where(better, value, best)
         for k, v in (
@@ -212,6 +228,8 @@ def final_rolls(t: Tables, values: np.ndarray, states: np.ndarray):
     out["joker"] = out["joker"] & np.isin(
         out["box"], [cats.index(c) for c in JOKER_SCORES if c in cats]
     )
+    if every:
+        return best, out, np.stack(each, axis=2)
     return best, out
 
 
@@ -223,16 +241,60 @@ def best_keep(t: Tables, keep_value: np.ndarray) -> np.ndarray:
     return best[:, t.roll_keep]
 
 
-def turn(t: Tables, values: np.ndarray, states: np.ndarray, choices: bool = False):
-    """Solve the widget of each state; with `choices`, also return the optimal choices."""
-    roll_value, out = final_rolls(t, values, states)
+class Rule(Protocol):
+    """Fixed choices for some or all decisions of a turn; the solver makes the rest optimally."""
+
+    def boxes(self, t: Tables, states: np.ndarray) -> np.ndarray | None:
+        """(B, R, boxes): the boxes allowed for each final roll, or None for all of them."""
+        ...
+
+    def keeps(self, t: Tables, states: np.ndarray, left: int) -> np.ndarray | None:
+        """The keeps allowed after each roll with `left` rolls to come, or None for all.
+
+        Either (B, R), one keep per roll with -1 for any keep, or (B, R, m), a menu of keeps
+        per roll from which the best is taken.
+        """
+        ...
+
+
+def turn(
+    t: Tables,
+    values: np.ndarray,
+    states: np.ndarray,
+    choices: bool = False,
+    rule: Rule | None = None,
+):
+    """Solve the widget of each state; with `choices`, also return the chosen moves.
+
+    With `rule`, the choices it fixes are made as it says and the others optimally. When it
+    fixes every choice, the values are the exact expected scores of the strategy it describes.
+    """
+    allow = rule.boxes(t, states) if rule else None
+    roll_value, out = final_rolls(t, values, states, allow)
     levels, keeps, keep_values = [roll_value], [], []
-    for _ in range(t.rules.rolls - 1):
+    rows = np.arange(len(states))[:, None]
+    for left in range(1, t.rules.rolls):
         keep_value = roll_value @ t.P.T
-        roll_value = best_keep(t, keep_value)
+        forced = rule.keeps(t, states, left) if rule else None
+        if forced is None:
+            roll_value = best_keep(t, keep_value)
+        elif forced.ndim == 3:  # a menu of keeps for each roll: the best of them
+            menu = keep_value[rows[:, :, None], forced]
+            pick = menu.argmax(axis=2)
+            forced = np.take_along_axis(forced, pick[:, :, None], axis=2)[:, :, 0]
+            roll_value = np.take_along_axis(menu, pick[:, :, None], axis=2)[:, :, 0]
+            fixed = np.ones(forced.shape, bool)
+        else:
+            fixed = forced >= 0
+            roll_value = keep_value[rows, np.maximum(forced, 0)]
+            if not fixed.all():
+                roll_value = np.where(fixed, roll_value, best_keep(t, keep_value))
         if choices:
             pick = keep_value[:, t.subkeeps].argmax(axis=2)  # first maximum: the largest keep
-            keeps.insert(0, t.subkeeps[np.arange(len(t.rolls))[None, :], pick])
+            chosen = t.subkeeps[np.arange(len(t.rolls))[None, :], pick]
+            if forced is not None:
+                chosen = np.where(fixed, forced, chosen)
+            keeps.insert(0, chosen)
             keep_values.insert(0, keep_value)
         levels.insert(0, roll_value)
     value = roll_value @ t.first
@@ -264,7 +326,12 @@ def terminal(t: Tables) -> np.ndarray:
 
 
 def solve(
-    rules: Rules = OFFICIAL, batch: int = 2048, anchor=None, stop: int = 0, verbose: bool = False
+    rules: Rules = OFFICIAL,
+    batch: int = 2048,
+    anchor=None,
+    stop: int = 0,
+    verbose: bool = False,
+    rule: Rule | None = None,
 ):
     """The value of every reachable state under optimal play.
 
@@ -273,7 +340,9 @@ def solve(
     With `anchor`, a function from state indices to estimated values, each turn is played to
     maximize its own points plus `anchor` of the state it leads to, instead of the true value.
     Glenn's greedy strategy is `anchor = lambda s: 0`. The values returned are then the
-    estimates the strategy acts on, not its true expected scores (see `evaluate`).
+    estimates the strategy acts on, not its true expected scores (see `policy.graph`).
+
+    With `rule`, the choices it fixes are followed (see `turn`).
     """
     t = Tables(rules)
     values = terminal(t)
@@ -287,7 +356,7 @@ def solve(
         start = time.time()
         for i in range(0, len(states), batch):
             s = states[i : i + batch]
-            values[s] = turn(t, values, s)
+            values[s] = turn(t, values, s, rule=rule)
         if verbose:
             print(
                 f"{filled:2d} boxes filled: {len(states):7,d} states, {time.time() - start:5.1f} s",

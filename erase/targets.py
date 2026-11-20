@@ -99,6 +99,27 @@ def threshold(exceptions: dict[int, list]) -> int:
     return 1 + max((n for n, ex in exceptions.items() if ex), default=0)
 
 
+def summary(t: int, max_size: int) -> dict:
+    """What results.json records for one target: the threshold, the least blocking moduli
+    from the threshold on, the number of exceptions by size, and the first exception of the
+    size just below the threshold."""
+    r = study(t, max_size)
+    s = threshold(r["exceptions"])
+    beyond: Counter[int] = Counter()
+    for n in range(s, max_size + 1):
+        beyond += r["least_moduli"][n]
+    last = r["exceptions"].get(s - 1, [])
+    make.cache_clear()
+    return {
+        "threshold": s,
+        "moduli": sorted(beyond),
+        "exceptions_by_size": [len(r["exceptions"][n]) for n in range(1, max_size + 1)],
+        "below": len(last),
+        "example": list(last[0]) if last else None,
+        "made_from_threshold": sum(r["made"][n] for n in range(s, max_size + 1)),
+    }
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("targets", type=int, nargs="*", default=list(range(1, 31)))

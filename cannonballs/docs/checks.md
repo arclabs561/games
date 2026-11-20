@@ -1,0 +1,6 @@
+- Each count formula is compared with a pile built ball by ball, for up to 12 layers. The same code checks that no two balls overlap and that each ball above the bottom rests on at least three below.
+- Touching pairs are counted two ways: by looking up each ball's twelve possible neighbors, and by measuring every pair.
+- For Lucas's problem, the Pell walk and a plain search agree up to {{bounds.brute}} layers. A test checks that the walk lists every candidate up to a million.
+- The rule for oblong piles is compared with two methods that use no theory: whether some square leaves the right remainder, for a up to {{bounds.oblong_residues}}, and trying every length, for a up to 40.
+- Every row of the table of coincidences is reproduced by search up to {{bounds.coincide}} layers, and the runs of squares match OEIS A001032. No result here disagrees with a published one.
+- `report.py` writes every quoted number to `results.json`. Tests rerun it with smaller bounds and compare. Other tests check the committed figures, and that the shared sections of the README are what `tools/sync_docs.py` writes from `docs/` and `results.json`.

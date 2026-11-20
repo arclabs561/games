@@ -4,9 +4,39 @@
 // Every number in this note is printed by peggle.py, stopping.py or variations.py. The plots
 // read better.csv, priors.csv, walk.csv and formats.csv, which those scripts write.
 
+// ---------- editions (as in the Erase paper) ----------
+// print (default): US letter. phone: a narrow page that a phone shows at reading size,
+// compiled with sys input edition=phone. html: compiled with format "html"; drawings
+// become inline SVG through html.frame, everything else becomes plain HTML.
+#let edition = sys.inputs.at("edition", default: "print")
+#let phone = edition == "phone"
+#let vis(x) = context if target() == "html" { box(html.frame(x)) } else { x }    // inline drawing
+#let visb(x) = context if target() == "html" { html.frame(x) } else { x }         // block drawing
+// shrink something too wide for the text column (phone pages only)
+#let fitw(x) = layout(size => {
+  let w = measure(x).width
+  if w > size.width { scale(size.width / w * 100%, reflow: true, x) } else { x }
+})
+// phone pages: lay something out as if the column were w wide, then scale it to fit
+#let wide(x, w: 4.8in) = if not phone { x } else { layout(size => {
+  let m = measure(x, width: w)
+  if m.width > size.width { scale(size.width / m.width * 100%, reflow: true, block(width: m.width, x)) } else { x }
+}) }
+
+// HTML edition: one style sheet, inlined, so the page is a single self-contained file
+#let html-css = " :root { color-scheme: light; } body { max-width: 42rem; margin: 0 auto; padding: 1.2rem 1.1rem 4rem; font-family: \"Iowan Old Style\", \"Palatino Linotype\", Palatino, Georgia, serif; font-size: 1.12rem; line-height: 1.55; color: #161616; background: #fff; } h1 { font-size: 2rem; line-height: 1.2; text-align: center; margin: 1.2rem 0 0.4rem; } p.subtitle { text-align: center; font-style: italic; margin: 0; } p.date { text-align: center; color: #666; font-size: 0.9rem; margin: 0.3rem 0 1.6rem; } h2 { font-size: 1.45rem; margin: 2.2rem 0 0.6rem; line-height: 1.25; } h3 { font-size: 1.15rem; margin: 1.6rem 0 0.5rem; } p { margin: 0.7rem 0; } a { color: #0072B2; text-decoration: none; } a:hover { text-decoration: underline; } svg { max-width: 100%; height: auto !important; vertical-align: middle; } svg[style*=\"display: block\"] { margin: 0.8rem auto; } figure { margin: 1.6rem 0; text-align: center; overflow-x: auto; } figure.thm, figure:has(div.thm) { text-align: left; } figcaption { font-size: 0.9rem; color: #444; margin-top: 0.5rem; text-align: center; } table { border-collapse: collapse; margin: 0.4rem auto; font-size: 0.9rem; line-height: 1.35; border-top: 1.5px solid #222; border-bottom: 1.5px solid #222; } td, th { padding: 0.25rem 0.55rem; text-align: left; vertical-align: top; } tr:first-child td, tr:first-child th { font-weight: 600; border-bottom: 1px solid #222; } aside.box { border-left: 4px solid; padding: 0.6rem 0.95rem; margin: 1.3rem 0; border-radius: 0 5px 5px 0; font-size: 1rem; line-height: 1.45; } aside.idea { background: #fdf6e7; border-color: #E69F00; } aside.tryit { background: #f0f1f3; border-color: #5b6770; } aside.box p { margin: 0.35rem 0; } .boxlabel { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06em; margin-right: 0.45em; } aside.idea .boxlabel { color: #8a5a00; } aside.tryit .boxlabel { color: #3d464d; } pre { text-align: left; overflow-x: auto; font-size: 0.78rem; line-height: 1.45; background: #fafafa; border: 1px solid #ddd; border-radius: 4px; padding: 0.7rem 0.8rem; } code { font-size: 0.9em; overflow-wrap: anywhere; } pre code { overflow-wrap: normal; } math { font-size: 1.06em; font-family: \"STIX Two Math\", \"Latin Modern Math\", \"Cambria Math\", math; } math[display=\"block\"] { margin: 0.9rem 0; overflow-x: auto; overflow-y: hidden; } ul, ol { padding-left: 1.4rem; } li { margin: 0.25rem 0; } .thm { margin: 1.2rem 0; } blockquote.epigraph { margin: 0.2rem 0 1.4rem auto; max-width: 30rem; text-align: right; font-style: italic; font-size: 0.95rem; } p.mnote { font-size: 0.88rem; font-style: italic; color: #555; margin-left: 1.2rem; } blockquote.epigraph footer { font-style: normal; font-size: 0.85rem; color: #555; } "
+// Erase's tables have no table.header, so its style sheet treats the first row as the header.
+// Here a table.header becomes <thead>; keep the first body row plain and rule off the header.
+// Long URLs in the sources may break, so that no line is wider than a phone's screen.
+#let html-css = html-css + " thead th { font-weight: 600; } thead tr:last-child th { border-bottom: 1px solid #222; } thead + tbody tr:first-child td { font-weight: normal; border-bottom: none; } body { overflow-wrap: break-word; } "
+#context if target() == "html" { html.elem("style", html-css) }
+// HTML has no align: keep the content, drop the alignment (CSS centers figures and drawings)
+#show align: it => context if target() == "html" { it.body } else { it }
+
 // ---------- look ----------
 #set document(title: "Who Is the Better Player?", date: none)  // no date: every build is identical
-#set page(paper: "us-letter", margin: (x: 1.55in, y: 1.1in), numbering: "1")
+#set page(..if phone { (width: 4.4in, height: 7.6in, margin: (x: 0.32in, top: 0.42in, bottom: 0.55in)) }
+  else { (paper: "us-letter", margin: (x: 1.55in, y: 1.1in)) }, numbering: "1")
 #set text(font: "New Computer Modern", size: 12pt)
 #show math.equation: set text(font: "New Computer Modern Math", weight: 400)
 #show math.equation.where(block: false): box
@@ -23,18 +53,22 @@
 }
 #show link: set text(fill: rgb("#0072B2"))
 #show figure.caption: set text(size: 10pt)
-#show figure.caption: it => layout(size => {
-  if measure(it).width <= size.width { align(center, it) } else { set par(justify: true); align(left, it) }
-})
+// one-line captions centred, longer ones set as a justified paragraph
+#show figure.caption: it => context if target() == "html" { it } else { layout(size => {
+  if measure(it).width <= size.width { align(center, it) } else { set par(justify: not phone); align(left, it) }
+}) }
+#show math.equation.where(block: true): it => if phone { fitw(it) } else { it }
+// tables with a 1fr column fill the width they get, so lay those out at 4.8in; tables
+// of auto columns keep their natural width (up to 7in) and are scaled down whole
+#show table: it => if phone {
+  let fr = type(it.columns) == array and it.columns.any(c => type(c) == fraction)
+  wide(it, w: if fr { 4.8in } else { 7in })
+} else { it }
 #show figure.where(kind: table): set figure.caption(position: top)
 #show figure.where(kind: table): set block(breakable: false)
 #set table(stroke: none, inset: (x: 6pt, y: 3.5pt))
 #show table: set par(justify: false)
 #show table.cell.where(y: 0): set text(weight: "semibold")
-#let fitw(x) = layout(size => {
-  let w = measure(x).width
-  if w > size.width { scale(size.width / w * 100%, reflow: true, x) } else { x }
-})
 
 // One meaning per color, in every figure and table:
 #let blue = rgb("#0072B2")    // the uniform prior, and the 95% rule built on it
@@ -60,7 +94,14 @@
 #let proof(title: [Proof], body) = block(above: 0.7em, below: 1.2em)[_#title._ #body#h(0.6em)#h(1fr)$qed$]
 
 // boxes: "Idea" explains a tool where it is first used; "Try it" invites the reader in
-#let sidebox(label, col, title, body) = block(
+#let sidebox(label, col, title, body) = context if target() == "html" {
+  html.elem("aside", attrs: (class: "box " + lower(label).replace(" ", "")), {
+    html.elem("span", attrs: (class: "boxlabel"), upper(label))
+    if title != none { [ ]; strong(title) }
+    parbreak()
+    body
+  })
+} else { block(
   breakable: false, width: 100%, above: 1.1em, below: 1.1em,
   inset: (left: 10pt, right: 9pt, y: 7pt), radius: (right: 3pt),
   fill: col.lighten(90%), stroke: (left: 2.2pt + col),
@@ -72,24 +113,33 @@
     parbreak()
     body
   },
-)
+) }
 #let idea(title, body) = sidebox("Idea", orange, title, body)
 #let tryit(body) = sidebox("Try it", slate, none, body)
 #let tag(label, col) = text(size: 8.5pt, weight: "bold", fill: col.darken(35%), tracking: 0.04em, label)
+
+// a column heading in two words, set on two lines on a phone page so that the table stays wide enough to read
+#let hd(a, b) = if phone [#a\ #b] else [#a #b]
 
 // a blank CSV cell is a gap in a plotted line
 #let num(s) = if s == "" { float.nan } else { float(s) }
 
 // ---------- title ----------
-#align(center)[
-  #set par(justify: false)
-  #text(size: 21pt, weight: "bold")[Who Is the Better Player?]
-  #v(2pt)
-  #text(size: 11.5pt, style: "italic")[Peggle duels, coin flips, and when to stop playing]
-  #v(4pt)
-  #text(size: 9.5pt, fill: luma(90))[November 2026]
+#context if target() == "html" {
+  html.elem("h1")[Who Is the Better Player?]
+  html.elem("p", attrs: (class: "subtitle"))[Peggle duels, coin flips, and when to stop playing]
+  html.elem("p", attrs: (class: "date"))[November 2026]
+} else [
+  #align(center)[
+    #set par(justify: false)
+    #text(size: 21pt, weight: "bold")[Who Is the Better Player?]
+    #v(2pt)
+    #text(size: 11.5pt, style: "italic")[Peggle duels, coin flips, and when to stop playing]
+    #v(4pt)
+    #text(size: 9.5pt, fill: luma(90))[November 2026]
+  ]
+  #v(6pt)
 ]
-#v(6pt)
 
 Two friends play Peggle duels, a game that one of them must win. One of them wins six of ten duels and claims to be the better player. If nothing is known in advance about who is better, the claim is right with chance $743 slash 1024 approx 0.726$, the chance of at most six heads in eleven flips of a fair coin. Being 95% sure takes 8 wins in 10 games, 59 in 100, or 527 in 1,000.
 
@@ -170,7 +220,7 @@ For six wins in ten games the formula gives $1486 slash 2048 = 743 slash 1024 ap
 The share of wins needed falls toward one half, roughly like $1 slash 2 + 0.82 slash sqrt(n)$, the normal approximation to the coin flips.
 
 *A one-line approximation.* The curves in @fig-better look like normal distribution functions. Near $k = n slash 2$ the posterior has mean $(k + 1) slash (n + 2)$ and standard deviation $1 slash (2 sqrt(n + 3))$, so $P(p > 1 slash 2)$ is close to the normal distribution function $Phi(z)$ (read "phi of z") at $z = 2 (k - n slash 2) sqrt(n + 3) slash (n + 2)$. The logistic curve $1 slash (1 + e^(-1.702 z))$ stays within 0.01 of $Phi(z)$, which gives
-$ P(p > 1 slash 2 | k, n) approx 1 / (1 + e^(-a(n) (k - n slash 2))), quad a(n) = (3.404 sqrt(n + 3)) / (n + 2) approx 3.4 / sqrt(n). $
+$ P(p > 1 slash 2 | k, n) approx 1 / (1 + e^(-a(n) (k - n slash 2))), #if phone { linebreak() } else { $quad$ } a(n) = (3.404 sqrt(n + 3)) / (n + 2) approx 3.4 / sqrt(n). $
 An earlier version of this note used the fitted slope $3 n^(-0.48)$. Over every $k$ and every $n <= 300$, the largest difference from the exact chance is 0.016 with $a(n)$ and 0.068 with the fitted slope; for $30 <= n <= 300$ it is 0.010 and 0.015. `peggle.py` computes all four exactly.
 
 #figure(
@@ -182,7 +232,7 @@ An earlier version of this note used the fitted slope $3 n^(-0.48)$. Over every 
     }
     let shades = (luma(70%), luma(45%), luma(15%))
     let marks = ("o", "s", "d")
-    fitw(lq.diagram(
+    visb(fitw(lq.diagram(
       width: 10cm, height: 3.6cm,
       xlabel: [share of games won, $k slash n$], ylabel: [$P(p > 1 slash 2)$],
       xlim: (0.2, 0.8), ylim: (0, 1),
@@ -195,7 +245,7 @@ An earlier version of this note used the fitted slope $3 n^(-0.48)$. Over every 
           lq.plot(xs, ls, mark: none, stroke: 0.7pt + c),
         )
       }).flatten()),
-    ))
+    )))
   },
   caption: [Exact chance of being better (marks) and the approximation with slope $a(n)$ (lines), for 10, 50 and 250 games. The more games, the steeper the step at one half.],
 ) <fig-better>
@@ -213,7 +263,7 @@ The coin-flip identity looks like an accident of algebra. It is not. Bayes @baye
 ]
 
 #figure(
-  cetz.canvas(length: 1cm, {
+  visb(fitw(cetz.canvas(length: 1cm, {
     import cetz.draw: *
     line((0, 0), (10, 0), stroke: 0.6pt)
     for (x, t) in ((0, $0$), (5, $1 slash 2$), (10, $1$)) {
@@ -227,7 +277,7 @@ The coin-flip identity looks like an accident of algebra. It is not. Bayes @baye
     content((6.3, 0.5), text(10pt, fill: blue)[$p$])
     content((2.5, 0.75), text(9pt)[6 games won: left of $p$])
     content((8.2, 0.75), text(9pt)[4 lost])
-  }),
+  }))),
   caption: [Eleven random points on $[0, 1]$. The blue one is $p$; the other ten are games, won when they fall left of $p$. Six wins put $p$ seventh from the left, so $p > 1 slash 2$ exactly when at most six of all eleven points fall left of the dashed line.],
 ) <fig-billiard>
 
@@ -264,7 +314,7 @@ The uniform prior treats a 90% player as being as likely as a 50% one. Friends w
     let col(c) = rows.map(r => float(r.at(c)))
     let ys = col("uniform")
     let above = rows.filter(r => float(r.x) >= 0.5)
-    fitw(lq.diagram(
+    visb(fitw(lq.diagram(
       width: 10cm, height: 3.8cm,
       xlabel: [chance $p$ that the first player wins a game], ylabel: [posterior density],
       xlim: (0, 1), ylim: (0, 5),
@@ -274,7 +324,7 @@ The uniform prior treats a 90% player as being as likely as a 50% one. Friends w
       lq.plot(xs, col("jeffreys"), mark: none, stroke: (paint: black, thickness: 0.8pt, dash: "dashed"), label: [Jeffreys]),
       lq.plot(xs, col("skeptical"), mark: none, stroke: 1pt + purple, label: [skeptical]),
       lq.vlines(0.5, stroke: (paint: luma(50%), thickness: 0.5pt, dash: "dotted")),
-    ))
+    )))
   },
   placement: auto,
   caption: [Posterior densities after six wins in ten games. The shaded area, 0.726, is the uniform prior's chance that the first player is better. The skeptical prior keeps $p$ near one half and gives 0.636.],
@@ -312,7 +362,7 @@ Suppose the friends play until one of them is 95% sure of being better, or until
   table(
     columns: 6, align: (left, right, right, right, right, right),
     table.hline(),
-    [$p$], [$N$], [better declared], [worse declared], [no verdict], [mean games],
+    [$p$], [$N$], hd[better][declared], hd[worse][declared], hd[no][verdict], hd[mean][games],
     table.hline(stroke: 0.5pt),
     [0.5], [100], [0.528], [], [0.472], [59.6],
     [0.5], [1,000], [0.728], [], [0.272], [355.6],
@@ -457,7 +507,7 @@ Suppose the friends only want to tell $p = 0.45$ from $p = 0.55$, a 55–45 edge
     let ex = even.map(r => float(r.n))
     let ep = even.map(r => float(r.posterior))
     let bf = rows.filter(r => calc.even(int(r.n)) and r.bayes != "")
-    fitw(lq.diagram(
+    visb(fitw(lq.diagram(
       width: 11cm, height: 5.2cm,
       xlabel: [games played], ylabel: [first player's lead],
       xlim: (0, 260), ylim: (-34, 34),
@@ -467,7 +517,7 @@ Suppose the friends only want to tell $p = 0.45$ from $p = 0.55$, a 55–45 edge
       lq.plot(ex, ep.map(y => -y), mark: none, stroke: 0.9pt + blue),
       lq.plot(bf.map(r => float(r.n)), bf.map(r => float(r.bayes)), mark: none, stroke: 0.9pt + green),
       lq.plot(bf.map(r => float(r.n)), bf.map(r => -float(r.bayes)), mark: none, stroke: 0.9pt + green),
-    ))
+    )))
   },
   caption: [Five simulated duels at $p = 0.55$ (grey; seeds 1 to 5 of `variations.py`, not chosen). Wald's test stops at the red walls, a lead of 15 either way. The 95% rule stops at the blue curves, which start at a lead of 4 and widen like $sqrt(n)$; two of the five duels touch them at game 4, one in each direction. The Bayes factor rule stops at the green curves.],
 ) <fig-walk>
@@ -507,7 +557,7 @@ A *best-of-$n$* match, with $n$ odd, is won by whoever first wins $(n + 1) slash
     let rows = csv("formats.csv", row-type: dictionary)
     let xs = rows.map(r => float(r.p))
     let col(c) = rows.map(r => float(r.at(c)))
-    fitw(lq.diagram(
+    visb(fitw(lq.diagram(
       width: 10cm, height: 4.4cm,
       xlabel: [chance $p$ of winning one game], ylabel: [chance of winning the match],
       xlim: (0.5, 0.75), ylim: (0.5, 1),
@@ -518,7 +568,7 @@ A *best-of-$n$* match, with $n$ odd, is won by whoever first wins $(n + 1) slash
       lq.plot(xs, col("lead2"), mark: none, stroke: (paint: red, thickness: 0.9pt, dash: "dashed"), label: [win by 2]),
       lq.plot(xs, col("lead15"), mark: none, stroke: 1.1pt + red, label: [win by 15]),
       lq.vlines(0.55, stroke: (paint: luma(50%), thickness: 0.5pt, dash: "dotted")),
-    ))
+    )))
   },
   caption: [How match formats amplify an edge in single games. Read up from the dotted line at $p = 0.55$: best of seven gives 0.608, win by two 0.599, win by 15 0.953. Exact formulas, plotted in floating point.],
 ) <fig-formats>
@@ -561,7 +611,7 @@ The lead needed is inversely proportional to the rating gap (@tab-elo). Two play
   table(
     columns: 6, align: (right, right, right, right, right, right),
     table.hline(),
-    [rating gap], [$p$], [lead needed], [its error], [mean games], [best of],
+    hd[rating][gap], [$p$], hd[lead][needed], hd[its][error], hd[mean][games], hd[best][of],
     table.hline(stroke: 0.5pt),
     [34.9], [0.550], [15], [0.047], [135.9], [269],
     [100], [0.640], [6], [0.031], [20.1], [33],
@@ -593,7 +643,7 @@ A dynamic program over wins, games and the last winner gives exact chances (@tab
   table(
     columns: 5, align: (left, right, right, right, right),
     table.hline(),
-    [who starts], [$e$], [one look, 100 games], [stop, $N = 100$], [stop, $N = 1000$],
+    hd[who][starts], [$e$], hd[one look,][100 games], hd[stop,][$N = 100$], hd[stop,][$N = 1000$],
     table.hline(stroke: 0.5pt),
     [no edge], [0.5], [0.0886], [0.5282], [0.7280],
     [alternate], [0.6], [0.0822], [0.5035], [0.7032],
@@ -695,7 +745,7 @@ Every claim in this note is known in one of four ways (@tab-status).
 = Words and symbols <app-words>
 
 #figure(
-  table(inset: (x: 6pt, y: 3pt),
+  table(inset: (x: 6pt, y: if phone { 2pt } else { 3pt }),
     columns: (auto, 1fr), align: (left, left),
     table.hline(),
     [word or symbol], [meaning, and how to read it aloud],

@@ -22,7 +22,7 @@ from dataclasses import dataclass, field
 import numpy as np
 from numpy.lib.stride_tricks import sliding_window_view
 
-from yahtzee.solver import Tables, final_distribution, turn
+from yahtzee.solver import Rule, Tables, final_distribution, turn
 
 
 @dataclass
@@ -53,8 +53,11 @@ class Graph:
     stats: dict[str, np.ndarray]  # expected values, accumulated over the turns
 
 
-def graph(t: Tables, values: np.ndarray, batch: int = 2048) -> Graph:
-    """Follow the strategy that E defines from the empty score card to the end."""
+def graph(t: Tables, values: np.ndarray, batch: int = 2048, rule: Rule | None = None) -> Graph:
+    """Follow the strategy that E defines from the empty score card to the end.
+
+    With `rule`, the choices it fixes are followed instead (see `solver.turn`).
+    """
     cats = t.rules.categories
     n_boxes = len(cats)
     stats = {k: np.zeros(n_boxes) for k in ("points", "squares", "zeros")} | {
@@ -67,7 +70,7 @@ def graph(t: Tables, values: np.ndarray, batch: int = 2048) -> Graph:
         offset = 0
         for i in range(0, len(layer.states), batch):
             s, occ = layer.states[i : i + batch], layer.occupancy[i : i + batch]
-            tr = turn(t, values, s, choices=True)
+            tr = turn(t, values, s, choices=True, rule=rule)
             pi = final_distribution(t, tr)
             w = occ[:, None] * pi
             box = tr.box.ravel()

@@ -19,6 +19,7 @@ uv run ruff check . && uv run ruff format --check . && TY_UV=scripts uv run ty c
 - Tests are `tests/test_<game>*.py`. Code a notebook uses lives in a module that the notebook and the tests both import.
 - Figure scripts draw inside `matplotlib.style.context("default")`, and no module changes matplotlib's global settings when imported. pytest imports every test module before running any, so a global change leaks into other games' byte-for-byte figure tests.
 - Results that a README quotes are written by a script to the game's folder or its `results/`. A test checks that the committed file is what the script writes.
+- Text that a README and a paper both show (results table, rules, checks, open questions) lives once in `<game>/docs/*.md`, with numbers as placeholders into `results.json`; `uv run tools/sync_docs.py` fills the README, the paper includes the same sections, and a test fails on drift.
 - Experiments with a cost or a learned model follow `experiments/METHOD.md`, with a plan merged before the run.
 
 ## Every number says how it is known

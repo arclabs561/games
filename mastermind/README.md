@@ -45,7 +45,7 @@ On this screen it is sure to crack the password within four attempts, whichever 
 ## How the results are checked
 
 - **The search.** The tests compare `optimal.py` with the plain recursion (every guess, every set, no bounds or symmetry) on six smaller games, from 2 colors and 2 pegs to 3 colors and 3 pegs, with and without depth limits.
-- **The trees.** The tree read back from the search is played against every code with `score` alone, and its total equals the cost the search reports. That checks that 5,625 and 5,626 can be reached; that nothing lower can rests on the search, and on its agreement with Koyama and Lai.
+- **The trees.** The trees read back from the search are committed in `results/optimal.json`. A test plays each against every code with `score` alone and gets 5,625 and 5,626, the totals the search reports. That checks that 5,625 and 5,626 can be reached; that nothing lower can rests on the search, and on its agreement with Koyama and Lai.
 - **The heuristics.** The tests check every total against Kooi's Table 7.
 - **Fallout screens.** The tests compare the exhaustive search with a brute force without memoization or shortcuts. They do this on all 126 five-word screens drawn from nine words, at one to four attempts, and on 40 sampled screens. On the same 126 screens, the exact chance of random guessing matches an enumeration of every sequence of choices.
 - **Published Fallout 4 screens.** On the three screens of [Math Goes Pop (2016)](https://www.mathgoespop.com/2016/04/fallout-4-math-part-2.html), expected size and common reproduce their table exactly:
@@ -57,7 +57,7 @@ On this screen it is sure to crack the password within four attempts, whichever 
   - random guessing cracks 86.4%, 90.7% and 93.7%, where they report 85.92%, 90.64% and 93.67%.
 - **This README.** A test replays the transcript above, and another checks that the committed figures are what `figures.py` draws.
 
-CI runs the tests. The ten-minute search and the four-minute study do not run in CI; the smaller cases do.
+CI runs the tests. The ten-minute search and the four-minute study do not run in CI; the smaller cases do, and so does the replay of the committed optimal trees.
 
 ## How good are the published heuristics?
 
@@ -73,9 +73,9 @@ Each strategy below is played against every code, so the numbers are exact:
 
 The totals match Table 7 of B. Kooi, "Yet another Mastermind strategy", *ICGA Journal* 28(1), 2005. Among these five, most parts has the lowest average and minimax is the only one that never needs a sixth guess, so those two are the Pareto frontier of average and worst case within the table.
 
-![Grouped bars of how many codes each strategy solves in 1 to 6 guesses. Most parts solves 635 codes in four guesses and 569 in five, and needs six for 7 codes; minimax solves 533 in four and 694 in five, and none needs six.](figures/guesses.svg)
+![Grouped bars of how many codes four strategies solve in 1 to 6 guesses. Most parts solves 635 codes in four guesses and needs six for 7; minimax solves 533 in four and none needs six. The best tree solves 663 in four and needs six for 2; the best tree within five guesses solves 660 in four and none needs six.](figures/guesses.svg)
 
-*Most parts against minimax, over all 1,296 codes. Minimax gives up 102 codes solved in four guesses to avoid the 7 codes that need six.*
+*Two heuristics and the two optimal trees, over all 1,296 codes. Minimax gives up 102 codes solved in four guesses to avoid the 7 codes that need six. The tree that never needs a sixth guess gives up only 3 codes in four, for one guess more in all.*
 
 ## What is the best strategy?
 
@@ -86,7 +86,7 @@ The best totals are 5,625 guesses with any worst case and 5,626 with at most fiv
 | any worst case | 5,625 | 4.340 | 6 | 1, 8, 83, 663, 539, 2 |
 | at most five guesses | 5,626 | 4.341 | 5 | 1, 8, 83, 660, 544 |
 
-These are exact. The search also shows that no strategy solves every code within four guesses. The totals are the optimal values; the distributions belong to the particular optimal trees the program reads back, and other optimal trees can spread the guesses differently. Both trees open with 1123 (a color twice, then two others), as Koyama and Lai's does.
+These are exact. Both trees are committed in [`results/optimal.json`](results/optimal.json), written by `optimal.py --out` on a GitHub runner in 7 minutes (CPU time 185 s for the bound and 200 s for the two trees). CI reads them back and plays each against every code with `score` alone, so the totals and distributions above are checked on every run without the search. The search also shows that no strategy solves every code within four guesses. The totals are the optimal values; the distributions belong to the particular optimal trees the program reads back, and other optimal trees can spread the guesses differently. Both trees open with 1123 (a color twice, then two others), as Koyama and Lai's does.
 
 The search tries every code as a guess, including codes ruled out by the replies so far. Permuting colors and permuting positions keep every reply, so it stores each set of candidates once under its least image, and tries one guess from each class that those maps fix. It skips a guess when a lower bound on its cost already reaches the best found, and it remembers each set's cost. It takes about ten minutes here.
 
@@ -143,7 +143,7 @@ Intervals under 0.1 points are left out. "100" means every password on every sam
 
 ```bash
 uv run python -m mastermind.strategies          # the five heuristics, about half a minute
-uv run python -m mastermind.optimal             # the best strategies, about ten minutes
+uv run python -m mastermind.optimal --out mastermind/results   # the best strategies, about ten minutes; writes optimal.json
 uv run python -m mastermind.optimal 4 3         # 4 colors, 3 pegs, under a second
 uv run python -m mastermind.fallout3 doctrines batteries scorpions generated occasions   # asks for each likeness
 uv run python -m mastermind.fallout3 --best doctrines=3 batteries scorpions generated occasions # next guess after DOCTRINES got 3
@@ -159,5 +159,6 @@ uv run python -m mastermind.figures                # the figures in figures/
 | `mastermind.py` | The codemaker's reply, `score`, which everything else uses |
 | `strategies.py` | Compiles each strategy into a guess tree and plays it against every code |
 | `optimal.py` | The best strategies, by exhaustive search |
+| `results/optimal.json` | The two optimal trees and their totals, as `optimal.py` writes them |
 | `fallout3.py` | The same strategies on Fallout 3 terminals, the helper, and the study |
 | `figures.py`, `figures/` | This README's figures, as SVG; a test checks they are current |

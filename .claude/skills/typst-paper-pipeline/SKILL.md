@@ -27,6 +27,35 @@ description: "Build Typst papers with fletcher, lilaq, codly and cetz when the p
 - Peggle and Tenzi have only print so far. Copy Erase's edition switch, `fitw` and side-box
   definitions rather than inventing new ones, so the papers look alike.
 
+## Text shared with the README
+
+The README and the paper share the results table, the rules as modeled, the checks and the
+open questions instead of keeping two copies (Erase and Cannonballs do this; Peggle and Tenzi
+can follow).
+- Write each shared part once, as Markdown in `<game>/docs/<name>.md`. Numbers are
+  placeholders into the results file the game's scripts write, `<game>/results.json`:
+  `{{deals.stuck}}` (commas added), `{{x.share:.4f}}`, `{{lists.found:and}}`; the formats are
+  listed in `tools/sync_docs.py`.
+- The README holds each part between `<!-- shared:<name> -->` and `<!-- /shared -->`;
+  `uv run tools/sync_docs.py` fills them, and a test fails when a README is out of date.
+- The paper reads the filled section out of the README, so formatting happens once:
+  `#import "/tools/shared_docs.typ": shared, fmt`, `#let readme = read("README.md")`,
+  `#shared(readme, "open")`. It renders with cmarker 0.1.10 (MIT); Markdown tables come out in
+  the house style, and `shared(..., columns: (1fr, 1.2fr, 1.2fr))` sets the widths.
+- Paper-only words go in `<!--raw-typst ...-->` comments, which GitHub hides: cross-references
+  such as `Proved<!--raw-typst  (@thm-big)-->`. Keep links absolute and images out of fragments.
+- `typst_vendor.py` compiles with the repository as root, so `/tools/...` and `../README.md`
+  resolve; plain `typst compile` needs `--root .`.
+- Numbers the paper writes in its own prose come from `json("results.json")` with `fmt`, not
+  typed by hand. A whole-number placeholder and `fmt` print the same digits.
+- What cmarker does not do well: inline math needs a converter (mitex 0.2.7 works, but splits
+  `10^{18}` into `1 0^18` in the HTML edition), so fragments use Unicode (`n²`, `−`, `×`,
+  `10<sup>18</sup>`); Markdown column alignment is lost; a long table must be allowed to break
+  on the phone edition (`show figure: set block(breakable: phone)`, `placement: none`), and the
+  phone rule that scales wide tables skips tables whose columns are all `1fr`.
+- When moving text out of a README, check that no number was lost:
+  `uv run tools/numbers_kept.py <game> origin/main --paper <doc>.html` after building `--all`.
+
 ## House style that worked
 
 - New Computer Modern 12 pt, US letter, margins 1.55 in by 1.1 in, justified paragraphs. That

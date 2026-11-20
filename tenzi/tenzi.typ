@@ -2,24 +2,79 @@
 #import "@preview/lilaq:0.6.0" as lq
 
 // Every number in this note is printed by tenzi.py, optimal.py or maximum.py; the plot reads turns.csv, which tenzi.py writes.
+// ---------- editions (as in the Erase paper) ----------
+// print (default): US letter. phone: a narrow page that a phone shows at reading size,
+// compiled with sys input edition=phone. html: compiled with format "html"; drawings
+// become inline SVG through html.frame, everything else becomes plain HTML.
+#let edition = sys.inputs.at("edition", default: "print")
+#let phone = edition == "phone"
+#let vis(x) = context if target() == "html" { box(html.frame(x)) } else { x }    // inline drawing
+#let visb(x) = context if target() == "html" { html.frame(x) } else { x }         // block drawing
+// shrink something too wide for the text column (phone pages only)
+#let fitw(x) = layout(size => {
+  let w = measure(x).width
+  if w > size.width { scale(size.width / w * 100%, reflow: true, x) } else { x }
+})
+// phone pages: lay something out as if the column were w wide, then scale it to fit
+#let wide(x, w: 4.8in) = if not phone { x } else { layout(size => {
+  let m = measure(x, width: w)
+  if m.width > size.width { scale(size.width / m.width * 100%, reflow: true, block(width: m.width, x)) } else { x }
+}) }
+
+// HTML edition: one style sheet, inlined, so the page is a single self-contained file
+#let html-css = " :root { color-scheme: light; } body { max-width: 42rem; margin: 0 auto; padding: 1.2rem 1.1rem 4rem; font-family: \"Iowan Old Style\", \"Palatino Linotype\", Palatino, Georgia, serif; font-size: 1.12rem; line-height: 1.55; color: #161616; background: #fff; } h1 { font-size: 2rem; line-height: 1.2; text-align: center; margin: 1.2rem 0 0.4rem; } p.subtitle { text-align: center; font-style: italic; margin: 0; } p.date { text-align: center; color: #666; font-size: 0.9rem; margin: 0.3rem 0 1.6rem; } h2 { font-size: 1.45rem; margin: 2.2rem 0 0.6rem; line-height: 1.25; } h3 { font-size: 1.15rem; margin: 1.6rem 0 0.5rem; } p { margin: 0.7rem 0; } a { color: #0072B2; text-decoration: none; } a:hover { text-decoration: underline; } svg { max-width: 100%; height: auto !important; vertical-align: middle; } svg[style*=\"display: block\"] { margin: 0.8rem auto; } figure { margin: 1.6rem 0; text-align: center; overflow-x: auto; } figure.thm, figure:has(div.thm) { text-align: left; } figcaption { font-size: 0.9rem; color: #444; margin-top: 0.5rem; text-align: center; } table { border-collapse: collapse; margin: 0.4rem auto; font-size: 0.9rem; line-height: 1.35; border-top: 1.5px solid #222; border-bottom: 1.5px solid #222; } td, th { padding: 0.25rem 0.55rem; text-align: left; vertical-align: top; } tr:first-child td, tr:first-child th { font-weight: 600; border-bottom: 1px solid #222; } aside.box { border-left: 4px solid; padding: 0.6rem 0.95rem; margin: 1.3rem 0; border-radius: 0 5px 5px 0; font-size: 1rem; line-height: 1.45; } aside.idea { background: #fdf6e7; border-color: #E69F00; } aside.tryit { background: #f0f1f3; border-color: #5b6770; } aside.box p { margin: 0.35rem 0; } .boxlabel { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06em; margin-right: 0.45em; } aside.idea .boxlabel { color: #8a5a00; } aside.tryit .boxlabel { color: #3d464d; } pre { text-align: left; overflow-x: auto; font-size: 0.78rem; line-height: 1.45; background: #fafafa; border: 1px solid #ddd; border-radius: 4px; padding: 0.7rem 0.8rem; } code { font-size: 0.9em; overflow-wrap: anywhere; } pre code { overflow-wrap: normal; } math { font-size: 1.06em; font-family: \"STIX Two Math\", \"Latin Modern Math\", \"Cambria Math\", math; } math[display=\"block\"] { margin: 0.9rem 0; overflow-x: auto; overflow-y: hidden; } ul, ol { padding-left: 1.4rem; } li { margin: 0.25rem 0; } .thm { margin: 1.2rem 0; } blockquote.epigraph { margin: 0.2rem 0 1.4rem auto; max-width: 30rem; text-align: right; font-style: italic; font-size: 0.95rem; } p.mnote { font-size: 0.88rem; font-style: italic; color: #555; margin-left: 1.2rem; } blockquote.epigraph footer { font-style: normal; font-size: 0.85rem; color: #555; } "
+// Erase's tables have no table.header, so its style sheet treats the first row as the header.
+// Here a table.header becomes <thead>; keep the first body row plain and rule off the header.
+// Long URLs in the sources may break, so that no line is wider than a phone's screen.
+#let html-css = html-css + " thead th { font-weight: 600; } thead tr:last-child th { border-bottom: 1px solid #222; } thead + tbody tr:first-child td { font-weight: normal; border-bottom: none; } body { overflow-wrap: break-word; } "
+#context if target() == "html" { html.elem("style", html-css) }
+// HTML has no align: keep the content, drop the alignment (CSS centers figures and drawings)
+#show align: it => context if target() == "html" { it.body } else { it }
+
+// ---------- look ----------
 #set document(title: "How Many Turns Does Tenzi Take?", date: none)
-#set page(paper: "us-letter", margin: (x: 1.55in, y: 1.1in), numbering: "1")
+#set page(..if phone { (width: 4.4in, height: 7.6in, margin: (x: 0.32in, top: 0.42in, bottom: 0.55in)) }
+  else { (paper: "us-letter", margin: (x: 1.55in, y: 1.1in)) }, numbering: "1")
 #set text(font: "New Computer Modern", size: 12pt)
 #show math.equation: set text(font: "New Computer Modern Math", weight: 400)
 #show math.equation.where(block: false): box
 #set par(justify: true, leading: 0.6em, spacing: 1em)
 #set heading(numbering: "1.")
 #show heading: set block(above: 1.4em, below: 0.7em)
+#show heading: set text(hyphenate: false)
 #show figure.caption: set text(size: 10pt)
-#show figure.caption: set par(justify: true)
+#show figure.caption: set par(justify: not phone)
 #show link: set text(fill: rgb("#0072B2"))
-#let fitw(x) = layout(size => {
-  let w = measure(x).width
-  if w > size.width { scale(size.width / w * 100%, reflow: true, x) } else { x }
-})
+#show math.equation.where(block: true): it => if phone { fitw(it) } else { it }
+// tables with a 1fr column fill the width they get, so lay those out at 4.8in; tables
+// of auto columns keep their natural width (up to 7in) and are scaled down whole
+#show table: it => if phone {
+  let fr = type(it.columns) == array and it.columns.any(c => type(c) == fraction)
+  wide(it, w: if fr { 4.8in } else { 7in })
+} else { it }
 
-#align(center, text(17pt, weight: "bold")[How Many Turns Does Tenzi Take?])
-#v(0.8em)
+// a table of two long rows; on a phone it is turned into two columns, which fit the page.
+// In HTML it scrolls sideways on a narrow screen instead of widening the page.
+#let tworow(inset: (x: 4pt, y: 4pt), a, b) = if not phone {
+  let t = table(columns: a.len(), align: right, stroke: none, inset: inset,
+    table.hline(), ..a, table.hline(stroke: 0.5pt), ..b, table.hline())
+  context if target() == "html" { html.elem("div", attrs: (style: "overflow-x: auto"), t) } else { t }
+} else {
+  block(breakable: false, table(columns: 2, align: right, stroke: none, inset: (x: 10pt, y: 3pt),
+    table.hline(), a.first(), b.first(), table.hline(stroke: 0.5pt),
+    ..a.slice(1).zip(b.slice(1)).flatten(), table.hline()))
+}
+
+// a lead-in sentence and its display, kept on one page (phone pages only)
+#let together(body) = if phone { block(breakable: false, body) } else { body }
+
+// ---------- title ----------
+#context if target() == "html" {
+  html.elem("h1")[How Many Turns Does Tenzi Take?]
+} else [
+  #align(center, text(17pt, weight: "bold")[How Many Turns Does Tenzi Take?])
+  #v(0.8em)
+]
 
 In *Tenzi* each player has ten dice. Everyone rolls at once; then each player keeps the dice that show one face and rerolls the rest, again and again, until all ten dice show that face. The first player done wins. How many rolls does that take, and is there a better way to choose the face?
 
@@ -37,13 +92,10 @@ A *turn* is one roll, so the first roll is turn 1. The number of turns is random
 The first roll fixes the starting count: the largest number of dice that show the same face. Ten dice on six faces always show some face at least twice. Counting the $6^10$ equally likely rolls exactly gives:
 
 #figure(
-  text(10.5pt, table(
-    columns: 9, align: right, stroke: none, inset: (x: 4pt, y: 4pt),
-    table.hline(),
-    [count], [2], [3], [4], [5], [6], [7], [8], [9, 10],
-    table.hline(stroke: 0.5pt),
-    [chance], [6.75%], [52.93%], [31.05%], [7.81%], [1.30%], [0.15%], [0.01%], [\<0.001%],
-    table.hline(),
+  kind: table,  // the table is built inside a context, so its kind must be given
+  text(10.5pt, tworow(inset: (x: 4pt, y: 4pt),
+    ([count], [2], [3], [4], [5], [6], [7], [8], [9, 10]),
+    ([chance], [6.75%], [52.93%], [31.05%], [7.81%], [1.30%], [0.15%], [0.01%], [\<0.001%]),
   )),
   caption: [The largest count after the first roll. Three of a kind is the usual start. Exact.],
 )
@@ -55,8 +107,8 @@ Finishing on the first roll needs all ten dice to agree. For one face that happe
 With $m$ dice matched, a turn rerolls the other $10 - m$, and each of them shows the chosen face with chance $1 slash 6$. So the count goes up by a binomial number, $"Bin"(10 - m, 1 slash 6)$, and nothing else about the past matters. The chance that a turn adds nothing is $(5 slash 6)^(10 - m)$, which grows as the game goes on: with nine dice matched, five turns in six are wasted.
 
 #figure(
-  fitw(fletcher.diagram(
-    spacing: (5.5mm, 5mm),
+  visb(fitw(fletcher.diagram(
+    spacing: if phone { (2.2mm, 5mm) } else { (5.5mm, 5mm) },
     node-stroke: 0.6pt,
     for m in range(2, 11) {
       node((m - 2, 0), [#m], shape: circle, width: 6.5mm, name: label("m" + str(m)))
@@ -71,7 +123,7 @@ With $m$ dice matched, a turn rerolls the other $10 - m$, and each of them shows
     },
     node((-1.25, 0), text(9pt)[matched], stroke: none),
     node((-1.25, 0.6), text(9pt)[turns left], stroke: none),
-  )),
+  ))),
   caption: [The fixed-face strategy as a chain on the matched count. Each loop is the chance that a turn adds no match, $(5 slash 6)^(10 - m)$. The arrows to the right stand for any gain, since one turn can add several matches. Below each count, the expected number of turns still to come. Exact.],
 ) <fig-chain>
 
@@ -84,16 +136,17 @@ which can be solved from $m = 9$ downward. At $m = 9$ only one die is rerolled, 
 Following the chain turn by turn gives the exact distribution of the number of turns (@fig-turns). The mean is 15.35 turns, the median 14, and the most likely number 12. The tail is long: one game in 30 takes more than 30 turns.
 
 #figure(
+  placement: if phone { auto } else { none },
   {
     let rows = csv("turns.csv", row-type: dictionary)
     let xs = rows.map(r => int(r.turns))
     let ys = rows.map(r => float(r.fixed) * 100)
-    fitw(lq.diagram(
+    visb(fitw(lq.diagram(
       width: 11cm, height: 4.5cm,
       xlabel: [turns], ylabel: [chance (%)],
       xlim: (0, 46), ylim: (0, 8),
       lq.bar(xs.slice(0, 45), ys.slice(0, 45), fill: luma(80%), stroke: luma(40%)),
-    ))
+    )))
   },
   caption: [Chance that the fixed-face strategy finishes on each turn, up to 45 turns. The peak is at 12, the mean at 15.35. Exact.],
 ) <fig-turns>
@@ -187,16 +240,14 @@ The slides' figures differ from the exact ones by up to 0.1 turns and 0.05 playe
 
 Is there anything better than switching? After a roll, all that matters is how many dice show each face, such as $(4, 3, 2, 1)$. The player keeps some dice and rerolls the rest, and each roll costs a turn. This is a Markov decision process with 34 kinds of roll, small enough to solve with exact fractions. Policy iteration starts from switching and stops at once: no keep improves on it. That holds when the kept dice must share one face, as the rules require, and also when any dice may be kept. So 15.2944 turns is the best possible mean.
 
+#together[
 After keeping $k$ dice of one face, the expected turns still to come are
 
-#align(center, text(10.5pt, table(
-  columns: 10, align: right, stroke: none, inset: (x: 4pt, y: 3.5pt),
-  table.hline(),
-  [$k$], [0, 1], [2], [3], [4], [5], [6], [7], [8], [9],
-  table.hline(stroke: 0.5pt),
-  [turns], [15.29], [15.11], [14.66], [13.93], [13.02], [11.93], [10.56], [8.73], [6.00],
-  table.hline(),
+#align(center, text(10.5pt, tworow(inset: (x: 4pt, y: 3.5pt),
+  ([$k$], [0, 1], [2], [3], [4], [5], [6], [7], [8], [9]),
+  ([turns], [15.29], [15.11], [14.66], [13.93], [13.02], [11.93], [10.56], [8.73], [6.00]),
 )))
+]
 
 These fall as $k$ grows, so keeping more is always better, and every other keep loses at least 0.05 turns. One kept die is worth nothing: since faces are interchangeable, it is as good as rolling it. On small games, up to four dice on three faces, the method agrees with value iteration over every ordered roll and every subset of dice to keep.
 
