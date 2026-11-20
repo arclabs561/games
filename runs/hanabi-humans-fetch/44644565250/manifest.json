@@ -1,0 +1,20 @@
+{
+ "experiment": "hanabi-humans-fetch",
+ "run": "seed-1",
+ "commit": "26056b645c4b6402b135b4d1b90a45894f340114",
+ "platform": "actions",
+ "command": [
+  "python",
+  "-m",
+  "hanabi.humans_data",
+  "dump",
+  "--cache",
+  "OUT/../ah2ac2"
+ ],
+ "returncode": 0,
+ "seconds": 5.0,
+ "job_id": "44644565250",
+ "hardware": "GitHub Actions 1000099229",
+ "gpu": null,
+ "python": "3.14.4"
+}
