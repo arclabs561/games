@@ -1,0 +1,1 @@
+{"job": "bl-20410-1", "deal": 20410, "cells": 1, "solver": "bl", "verdict": "lost", "states": 652740362, "most_home": 13, "frozen": ["TS"], "layer_count": 82, "largest_layer": 115894684, "seconds": 1905.2}

@@ -1,0 +1,22 @@
+{
+ "experiment": "F2",
+ "run": "seed-w-9499-1",
+ "commit": "1e5dc5162f65645a04e0dfcec6f1950b41f53b6d",
+ "platform": "actions",
+ "command": [
+  "python",
+  "-m",
+  "freecell.open_levels",
+  "SEED",
+  "--budget",
+  "3000000000",
+  "--out",
+  "OUT"
+ ],
+ "returncode": 0,
+ "seconds": 2185.0,
+ "job_id": "44716155623",
+ "hardware": "GitHub Actions 1000100718",
+ "gpu": null,
+ "python": "3.14.4"
+}
