@@ -1,0 +1,21 @@
+{
+ "experiment": "yahtzee-advice",
+ "run": "seed-1",
+ "commit": "8b6db1491ee9d240852d1882cafcef982650ae25",
+ "platform": "actions",
+ "command": [
+  "python",
+  "-m",
+  "yahtzee.advice",
+  "cost",
+  "SEED",
+  "--out",
+  "OUT"
+ ],
+ "returncode": 0,
+ "seconds": 120.0,
+ "job_id": "44661506647",
+ "hardware": "GitHub Actions 1000099578",
+ "gpu": null,
+ "python": "3.14.4"
+}
