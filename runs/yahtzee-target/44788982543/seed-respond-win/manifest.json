@@ -1,0 +1,22 @@
+{
+ "experiment": "yahtzee-target",
+ "run": "seed-respond-win",
+ "commit": "7244a338122f5a2ff09cbbb388fcffd57738f03e",
+ "platform": "actions",
+ "command": [
+  "python",
+  "-m",
+  "yahtzee.target",
+  "SEED",
+  "--workers",
+  "4",
+  "--out",
+  "OUT"
+ ],
+ "returncode": 0,
+ "seconds": 1184.0,
+ "job_id": "44788982543",
+ "hardware": "GitHub Actions 1000101407",
+ "gpu": null,
+ "python": "3.14.4"
+}
