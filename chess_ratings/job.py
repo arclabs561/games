@@ -50,7 +50,8 @@ def log(message: str) -> None:
 
 
 def files(data: str, numbers) -> list[str]:
-    return [f"{data}/train-{i:05d}-of-00062.parquet" for i in numbers]
+    """Paths of the numbered Parquet files of one month (a glob, so any month's total works)."""
+    return [f"{data}/train-{i:05d}-of-*.parquet" for i in numbers]
 
 
 def sha256(path: Path) -> str:
@@ -70,14 +71,22 @@ def write(out: Path, name: str, obj) -> None:
 
 
 def load_maia(model: str) -> tuple[Maia, dict]:
+    """The checkpoint on the CPU, or on the device named by MAIA_DEVICE (e.g. cuda)."""
     path = Path(model) / "maia3-5m.pt"
-    return Maia(str(path), threads=8), {"checkpoint_sha256": sha256(path)}
+    device = os.environ.get("MAIA_DEVICE", "cpu")
+    meta = {"checkpoint_sha256": sha256(path), "device": device}
+    return Maia(str(path), threads=8, device=device), meta
 
 
-def sample(data: str, numbers, per_band: int, salt: str = SALT) -> list[dict]:
-    """The stratified sample of games, parsed, keeping games of at least 40 plies."""
+def sample(data: str, numbers, per_band: int, salt: str = SALT, population: int = 0) -> list[dict]:
+    """The stratified sample of games, parsed, keeping games of at least 40 plies. With
+    `population` > 0, instead that many qualifying games in hash order, whatever their band."""
     con = connect()
-    sql = games.blitz_sample_sql(files(data, numbers), 3 * per_band, salt, BANDS)
+    if population:
+        sql = games.population_sample_sql(files(data, numbers), 3 * population, salt, BANDS)
+        per_band = population
+    else:
+        sql = games.blitz_sample_sql(files(data, numbers), 3 * per_band, salt, BANDS)
     cur = con.execute(sql)
     cols = [c[0] for c in cur.description]
     chosen = [dict(zip(cols, row, strict=True)) for row in cur.fetchall()]
@@ -90,7 +99,8 @@ def sample(data: str, numbers, per_band: int, salt: str = SALT) -> list[dict]:
     log("sample: moves fetched")
     kept: dict[str, list[dict]] = {}
     for game in chosen:
-        if len(kept.setdefault(game["band"], [])) >= per_band:
+        key = "all" if population else game["band"]
+        if len(kept.setdefault(key, [])) >= per_band:
             continue
         text = texts.get(game["Site"], "")
         if "clk" not in text:
@@ -98,7 +108,7 @@ def sample(data: str, numbers, per_band: int, salt: str = SALT) -> list[dict]:
         ply_list = games.plies(text, games.base_seconds(game["TimeControl"]))
         if len(ply_list) >= 40:
             game["plies"] = ply_list
-            kept[game["band"]].append(game)
+            kept[key].append(game)
     return [g for band in sorted(kept) for g in kept[band]]
 
 
@@ -555,6 +565,211 @@ def part_compact(args, out: Path) -> None:
         compact(Path(local) / "runs" / "chess" / name, target)
 
 
+# ---------------------------------------------------------------- calibration (the 2026-11-20 plan)
+
+CALIB_SALT = {
+    "pilot": "chess-calibration-pilot-2026-11-20",
+    "test": "chess-calibration-test-2026-11-20",
+}
+CALIB_FILES = {
+    ("pilot", "stratified"): list(range(32, 40)),
+    ("pilot", "population"): list(range(32, 40)),
+    ("test", "stratified"): [40],
+    ("test", "population"): [41],
+}
+
+
+def file_number(path: str) -> int:
+    return int(Path(path).name.split("-")[1])
+
+
+def calib_records(maia: Any, sample_games: list[dict], grid) -> tuple[list[dict], list[np.ndarray]]:
+    """Per player-game: labels and per-move arrays (log-probabilities on the grid, ply, share of
+    the starting clock left, whether the move was Maia-3's top move at the nearest grid rating)."""
+    meta, arrays = [], []
+    grid = list(grid)
+    done, asked, start = 0, 0, time.time()
+    for game in sample_games:
+        base = games.base_seconds(game["TimeControl"])
+        for white in (True, False):
+            rows, queries = player_queries(game, white, grid, use_history=True)
+            if not rows:
+                continue
+            rating = game["WhiteElo"] if white else game["BlackElo"]
+            near = int(np.argmin([abs(r - rating) for r in grid]))
+            probs = maia.probabilities(queries)
+            done += 1
+            asked += len(queries)
+            if done % 25 == 0:
+                log(f"calib: {done} player-games, {asked / (time.time() - start):.0f} queries/s")
+            logp = np.empty((len(rows), len(grid)), dtype=np.float32)
+            top = np.empty(len(rows), dtype=bool)
+            for i, p in enumerate(rows):
+                for j in range(len(grid)):
+                    logp[i, j] = np.log(max(probs[i * len(grid) + j][p.move], 1e-12))
+                at_true = probs[i * len(grid) + near]
+                top[i] = max(at_true, key=lambda m: at_true[m]) == p.move
+            sans = []
+            for p in rows:
+                b = p.boards[-1]
+                sans.append(b.san(chess.Move.from_uci(p.move)))
+            meta.append(
+                {
+                    "rating": rating,
+                    "opponent": game["BlackElo"] if white else game["WhiteElo"],
+                    "band": game["band"],
+                    "rank": game["rank"],
+                    "file": file_number(game["filename"]),
+                    "white": white,
+                    "time_control": game["TimeControl"],
+                    "name": game["White"] if white else game["Black"],
+                    "sans": sans,
+                }
+            )
+            arrays.append(
+                np.column_stack(
+                    [
+                        np.array([p.ply for p in rows], dtype=np.float32),
+                        np.array([p.clock / base for p in rows], dtype=np.float32),
+                        top.astype(np.float32),
+                        logp,
+                    ]
+                )
+            )
+    return meta, arrays
+
+
+def part_calib_records(args, out: Path) -> None:
+    """Sample one split and kind, compute the per-move log-probabilities on the wide grid, and
+    store them with their labels. Pilot runs also count the month's games of each player."""
+    from chess_ratings import calibrate
+
+    split, kind = args.split, args.kind
+    numbers = CALIB_FILES[(split, kind)]
+    population = args.population if kind == "population" else 0
+    chosen = sample(args.data, numbers, args.per_band, CALIB_SALT[split], population)
+    if args.bands:  # one job's share of the same sample, so that shares can run side by side
+        chosen = [g for g in chosen if g["band"] in args.bands.split(",")]
+    log(f"calib: {len(chosen)} games sampled")
+    maia, meta = load_maia(args.model)
+    t = time.time()
+    recs, arrays = calib_records(maia, chosen, calibrate.GRID.astype(int))
+    log(f"calib: {len(recs)} player-games in {time.time() - t:.0f} s")
+    info: dict = meta | {
+        "split": split,
+        "kind": kind,
+        "files": numbers,
+        "salt": CALIB_SALT[split],
+        "games": len(chosen),
+        "player_games": len(recs),
+        "seconds_likelihood": time.time() - t,
+        "grid": [int(g) for g in calibrate.GRID],
+    }
+    if split == "pilot":
+        con = connect()
+        names = [r["name"] for r in recs]
+        month = {
+            n: (g, last)
+            for n, g, last in con.execute(
+                games.month_sql([f"{args.data}/*.parquet"], names)
+            ).fetchall()
+        }
+        for r in recs:
+            g, last = month.get(r["name"], (0, None))
+            r["month_games"] = int(g)
+            r["month_change"] = float(last - r["rating"]) if last is not None else None
+        log("calib: month records counted")
+        if kind == "stratified" and (not args.bands or "600-1000" in args.bands):
+            rows = con.execute(games.rating_counts_sql(files(args.data, numbers))).fetchall()
+            counts: dict[str, dict[str, int]] = {}
+            for tc, b, n in rows:
+                group = counts.setdefault(calibrate.time_control_group(tc), {})
+                group[str(int(b))] = group.get(str(int(b)), 0) + int(n)
+            write(out, "rating_counts.json", counts)
+    for r in recs:
+        r.pop("name")
+    (out / "records.json").write_text(json.dumps(recs) + "\n")
+    np.savez_compressed(out / "records.npz", *arrays)
+    write(out, f"calib-{split}-{kind}.json", info)
+
+
+def load_calib(folder: Path, kind: str) -> list:
+    """Records of one stored run, as calibrate.Record objects."""
+    from chess_ratings import calibrate
+
+    meta = json.loads((folder / "records.json").read_text())
+    arrays = np.load(folder / "records.npz")
+    out = []
+    for i, m in enumerate(meta):
+        a = arrays[f"arr_{i}"].astype(float)
+        out.append(
+            calibrate.Record(
+                rating=float(m["rating"]),
+                band=m["band"],
+                game=f"{kind}:{m['file']}:{m['rank']}:{m['band']}",
+                fold=m["file"] % 2,
+                time_control=m["time_control"],
+                ply=a[:, 0],
+                clock=a[:, 1],
+                logp=a[:, 3:],
+                month_change=float("nan") if m.get("month_change") is None else m["month_change"],
+                month_games=int(m.get("month_games", 0)),
+                extra={"top": a[:, 2], "sans": m["sans"], "opponent": m["opponent"]},
+            )
+        )
+    return out
+
+
+def download_runs(names: list[str]) -> dict[str, Path]:
+    hub = __import__("huggingface_hub")
+    local = hub.snapshot_download(
+        "arclabs561/games-runs",
+        repo_type="dataset",
+        allow_patterns=[f"runs/chess/{n}/*" for n in names],
+        token=os.environ["HF_TOKEN"],
+    )
+    return {n: Path(local) / "runs" / "chess" / n for n in names}
+
+
+def part_calib_diagnose(args, out: Path) -> None:
+    """Diagnosis, cross-validation and the frozen fit, from the stored pilot records."""
+    from chess_ratings import calibration
+
+    names = (args.runs or "calib-pilot-stratified").split(",")
+    runs = download_runs([*names, "calib-pilot-population"])
+    strat = [r for n in names for r in load_calib(runs[n], "stratified")]
+    pop = load_calib(runs["calib-pilot-population"], "population")
+    counted = [
+        runs[n] / "rating_counts.json" for n in names if (runs[n] / "rating_counts.json").exists()
+    ]
+    counts = json.loads(counted[0].read_text())
+    log(f"diagnose: {len(strat)} stratified and {len(pop)} population player-games")
+    result, fit, cases = calibration.pilot(strat, pop, counts, log)
+    (out / "cases.txt").write_text(cases)
+    print(cases, flush=True)
+    write_compact(out, "calibration-pilot.json", rounded(result, 3))
+    write_compact(out, "calibration-fit.json", rounded(fit, 6))
+
+
+def part_calib_test(args, out: Path) -> None:
+    """The test, scored once with the frozen fit committed at this commit."""
+    from chess_ratings import calibration
+
+    names = (args.runs or "calib-test-stratified").split(",")
+    runs = download_runs([*names, "calib-test-population"])
+    strat = [r for n in names for r in load_calib(runs[n], "stratified")]
+    pop = load_calib(runs["calib-test-population"], "population")
+    fit = json.loads((Path(__file__).parent / "results" / "calibration-fit.json").read_text())
+    write_compact(out, "calibration-test.json", rounded(calibration.test(strat, pop, fit), 4))
+
+
+def write_compact(out: Path, name: str, obj) -> None:
+    """One line of JSON, printed with its SHA-256 so that a copy in results/ can be checked."""
+    text = json.dumps(obj, sort_keys=True, separators=(",", ":")) + "\n"
+    (out / name).write_text(text)
+    print(f"=== {name} sha256 {hashlib.sha256(text.encode()).hexdigest()}\n{text}", flush=True)
+
+
 def main(argv=None) -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("part")
@@ -566,6 +781,10 @@ def main(argv=None) -> None:
     parser.add_argument("--nodes", type=int, default=100_000)
     parser.add_argument("--history", action=argparse.BooleanOptionalAction, default=True)
     parser.add_argument("--runs", default="", help="runs to summarize with the compact part")
+    parser.add_argument("--split", default="pilot", choices=("pilot", "test"))
+    parser.add_argument("--kind", default="stratified", choices=("stratified", "population"))
+    parser.add_argument("--population", type=int, default=300)
+    parser.add_argument("--bands", default="", help="calib-records: only these bands")
     parser.add_argument("--run", default=None, help="upload OUT to runs/chess/RUN in the dataset")
     args = parser.parse_args(argv)
     out = Path(args.out)
@@ -578,6 +797,9 @@ def main(argv=None) -> None:
         "common": part_common,
         "middlegame": part_middlegame,
         "compact": part_compact,
+        "calib-records": part_calib_records,
+        "calib-diagnose": part_calib_diagnose,
+        "calib-test": part_calib_test,
     }
     for name in args.part.split(","):
         log(f"part {name} starts")

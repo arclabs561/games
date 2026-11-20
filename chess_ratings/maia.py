@@ -51,7 +51,9 @@ def history(board: chess.Board, use_history: bool = True) -> tuple[chess.Board, 
 class Maia:
     """A loaded Maia-3 checkpoint that returns move probabilities for batches of queries."""
 
-    def __init__(self, checkpoint: str, model: str = "5m", threads: int | None = None):
+    def __init__(
+        self, checkpoint: str, model: str = "5m", threads: int | None = None, device: str = "cpu"
+    ):
         self.torch: Any = importlib.import_module("torch")
         if threads:
             self.torch.set_num_threads(threads)
@@ -60,8 +62,9 @@ class Maia:
         utils: Any = importlib.import_module("maia3.utils")
         self.mirror = utils.mirror_move
         self.cfg = self.uci.parse_args(
-            ["--model", model, "--checkpoint", checkpoint, "--device", "cpu", "--no-use-amp"]
+            ["--model", model, "--checkpoint", checkpoint, "--device", device, "--no-use-amp"]
         )
+        self.device = device
         self.net = self.uci.load_model(self.cfg)
         self.moves = utils.get_all_possible_moves()
         self.index = {m: i for i, m in enumerate(self.moves)}
@@ -96,11 +99,11 @@ class Maia:
                 rows.append(cache[key])
             with torch.no_grad():
                 logits, _, _ = self.net(
-                    torch.stack(rows),
-                    torch.tensor([q.rating for q in chunk], dtype=torch.long),
-                    torch.tensor([q.opponent for q in chunk], dtype=torch.long),
+                    torch.stack(rows).to(self.device),
+                    torch.tensor([q.rating for q in chunk], dtype=torch.long).to(self.device),
+                    torch.tensor([q.opponent for q in chunk], dtype=torch.long).to(self.device),
                 )
-            for q, row in zip(chunk, logits.float(), strict=True):
+            for q, row in zip(chunk, logits.float().cpu(), strict=True):
                 legal = moves.get(id(q.boards)) or self.legal(q.board)
                 picked = torch.log_softmax(row[[i for _, i in legal]], dim=0)
                 out.append(

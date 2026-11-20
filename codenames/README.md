@@ -126,6 +126,17 @@ No (plan C10). gpt-oss-120b guesses on each of the giver's 10 best clues, and th
 | Listener minus first choice, strangers | −0.151 (−0.204 to −0.099) | rejects 0 |
 | Listener and population minus population, strangers | −0.017 (−0.034 to 0.001) | does not reject |
 
+## Does the population pick's lead hold with language-model guessers?
+
+No (plan C11, part A, with its amendment of 2026-11-20). On 1,000 fresh boards (seed 11004), every arm chose among clues that are not forms of a board word (`legality.strict_legal`). The population pick P beats the first choice F by 0.22 words per turn under potion, the embedding stranger held out of P's population. Under gpt-oss-120b and Llama 3.3 70B, each answering once per clue, P − F is −0.023 (−0.101 to 0.054). With P, the models find about 0.21 fewer words per turn and hit the assassin less often, and the two effects cancel. The test could detect a lead of 0.12 with 80% power, so a lead of half the embedding lead is ruled out by the interval. The 0.24 of C10 is a result about embedding guessers. Part B, the pilot with people, has not been played. Detail: [c11.md](results/c11.md).
+
+| Hypothesis (Holm over both) | Difference (95% interval) | Holm | Holds |
+|---|---|---|---|
+| H-A1: P − F, mean of the two language models | −0.023 (−0.101 to 0.054) | does not reject | no |
+| H-A2: H-A1's difference minus P − F under potion | −0.245 (−0.329 to −0.161) | rejects 0 | yes, the lead shrinks |
+
+Played-out turn values on 998 boards (two boards lacked a usable reply), bootstrap over boards. The language models are a proxy for people too. C10's original arms, which allow forms of board words, give −0.007 (−0.088 to 0.075) on the same boards.
+
 ## The best count
 
 If the assassin's cost rises, the largest best count does not rise; the proof is the simplest case of Topkis's monotonicity theorem. In every case checked, the value of asking for n words rises and then falls in n, but that is not proved. Detail: [mathematics.md](results/mathematics.md).
