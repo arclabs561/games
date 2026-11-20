@@ -4,7 +4,11 @@
 
 // Every number in this note comes from results.json and gaps.csv, which report.py writes, or
 // is checked against them by tests/test_cannonballs.py. The tables read results.json directly.
+// The rules, the table of results, the checks and the open questions are the README's shared
+// sections (from docs/, filled by tools/sync_docs.py), so the note and the README say the same.
+#import "/tools/shared_docs.typ": shared, fmt
 #let R = json("results.json")
+#let readme = read("README.md")
 
 // ---------- editions (as in the Erase paper) ----------
 // print (default): US letter. phone: a narrow page, compiled with sys input edition=phone.
@@ -53,7 +57,8 @@
   if measure(it).width <= size.width { align(center, it) } else { set par(justify: not phone); align(left, it) }
 }) }
 #show math.equation.where(block: true): it => if phone { fitw(it) } else { it }
-#show table: it => if phone {
+// the shared table of results (tools/shared_docs.typ) fills the width it gets and breaks across pages
+#show table: it => if phone and it.at("label", default: none) != <shared-table> {
   let fr = type(it.columns) == array and it.columns.any(c => type(c) == fraction)
   wide(it, w: if fr { 4.8in } else { 7in })
 } else { it }
@@ -93,13 +98,6 @@
 #let lemma = theorem-like([Lemma])
 #let corollary = theorem-like([Corollary])
 #let proof(title: [Proof], body) = block(above: 0.7em, below: 1.2em)[_#title._ #body#h(0.6em)#h(1fr)$qed$]
-
-// numbers with thousands separators, as the text writes them
-#let fmt(n) = {
-  let s = str(n)
-  let k = s.len()
-  s.clusters().enumerate().map(((i, c)) => if i > 0 and calc.rem(k - i, 3) == 0 { "," + c } else { c }).join()
-}
 
 // a margin note in a child's voice (print); an indented line on a phone or in HTML
 #let mnote(inline: false, body) = context if target() == "html" {
@@ -483,7 +481,11 @@ Answers are in @app-answers.
 
 = The formulas, proved <sec-proofs>
 
-From here on the note proves its claims. Write $T(n)$, $"Te"(n)$ and $P(n)$ for the balls in a triangle of side $n$, a tetrahedral pile of $n$ layers and a square pile of $n$ layers, and $B(a, b)$ for an oblong pile on an $a$ by $b$ base, with $a <= b$. Each statement says how it is known. Every formula was also checked by a program that builds the pile ball by ball, for up to 12 layers.
+From here on the note proves its claims, about the piles described below.
+
+#shared(readme, "rules")
+
+Write $T(n)$, $"Te"(n)$ and $P(n)$ for the balls in a triangle of side $n$, a tetrahedral pile of $n$ layers and a square pile of $n$ layers, and $B(a, b)$ for an oblong pile on an $a$ by $b$ base, with $a <= b$. Each statement says how it is known. Every formula was also checked by a program that builds the pile ball by ball, for up to 12 layers.
 
 #proposition(title: [triangles])[
   For every whole number $n >= 1$, a triangle of side $n$ holds $T(n) = n(n + 1) slash 2$ balls, and $T(n) + T(n - 1) = n^2$.
@@ -795,40 +797,26 @@ In the pile of 24 layers, #fmt(R.pile24.balls_by_neighbors.at("12")) balls touch
 
 = Open questions <sec-open>
 
-+ *Square piles that are cubes.* Is the single ball the only square pile that holds a cube number of balls? The search above found no other up to $10^18$ layers. Four of the six cases for cubes survive every divisor up to 200, so a proof would need another idea, perhaps a bound on equations of the form $|a x^3 - b y^3| = 1$ as for tetrahedral piles.
-+ *A short proof for the tetrahedral pile of 34 layers.* Avanesov's proof that 7,140 is the last number that is both a triangle and a tetrahedral pile uses heavy machinery. Is there a proof by Pell equations and remainders, like Anglin's for Lucas's problem?
-+ *Oblong piles that are triangles or cubes.* @thm-oblong settles squares. Which widths allow an oblong pile with a triangular number of balls? Because the counts go up in steps of $T(a)$, the same remainder method applies, but we have not worked it out.
-+ *Other packings.* The piles here are pieces of the face-centered cubic packing. A pile can also be built with each new layer turned the other way, as in the hexagonal close packing, which is equally dense. Which pile shapes stay stable then, and how do their counts and touching pairs change?
+#shared(readme, "open")
 
 = How this was checked <sec-check>
 
-Every claim in this note is known in one of four ways (@tab-status).
+@tab-results lists each result and how it is known: proved here by hand, computed exactly, or cited. The facts quoted in @sec-relatives are cited, and the questions of @sec-open are open. The checks behind @tab-results are listed after it.
 
+#[
+// on a phone the table is longer than a page, so it breaks there (its header repeats)
+#show figure: set block(breakable: phone)
 #figure(
-  caption: [How each claim is known.],
-  table(
-    columns: (auto, 1fr),
-    align: (left, left),
-    table.hline(stroke: 0.6pt),
-    [], [Claims],
-    table.hline(stroke: 0.4pt),
-    [Proved here, by hand], [@prop-tri to @prop-oblong, @lem-cases, @prop-four, @thm-oblong, @cor-share, @prop-25, @prop-touch, @cor-touch-square, @prop-twelve],
-    [Computed exactly], [@tab-counts, @tab-chains, @tab-oblong, @tab-truncated, @fig-gaps; every search, up to its stated bound],
-    [Cited], [@thm-watson beyond the search; the rows of @tab-other; tetrahedral piles that are cubes; Kepler's conjecture, the kissing number, the Leech lattice],
-    [Open], [the questions of @sec-open],
-    table.hline(stroke: 0.6pt),
-  ),
-) <tab-status>
+  placement: if phone { none } else { auto },
+  kind: table,
+  caption: [The results and how each is known. Exact unless marked.],
+  text(size: if phone { 9pt } else { 10pt }, shared(readme, "results", columns: (1fr, 1.15fr, 1.15fr))),
+) <tab-results>
+]
 
-*Two methods for each count.* Each formula is compared with a program that places the balls one by one at points of the face-centered cubic lattice and counts them, for up to 12 layers. The same program finds touching pairs in two ways, by looking up each ball's twelve possible neighbors and by measuring every pair, and checks that no two balls overlap and that every ball above the bottom rests on at least three below.
+#shared(readme, "checks")
 
-*Two methods for Lucas's problem.* The walk along the Pell chains agrees up to #fmt(R.bounds.brute) layers with a plain search that adds squares one at a time, and the walk alone goes on to $10^"10,000"$. A test checks that the chains contain every candidate up to a million.
-
-*Three methods for oblong piles.* The rule of @thm-oblong, the remainder method, and trying every length agree on every width checked (@sec-oblong-sq).
-
-*Published lists.* Our searches reproduce every row of @tab-other up to #fmt(R.bounds.coincide) layers and the first terms of OEIS A001032 (@tab-truncated). We found no disagreement with a published result.
-
-*Code.* The `cannonballs` folder of the code that accompanies this note has `piles.py` (counts, piles and touching pairs), `lucas.py` (the searches), `report.py`, which writes every number quoted here to `results.json` in about half a minute, and `figures.py`. A test checks that the committed results file is what the code writes. Only the Python standard library is needed.
+*Code.* The `cannonballs` folder of the code that accompanies this note has `piles.py` (counts, piles and touching pairs), `lucas.py` (the searches), `report.py`, which writes the results file in about half a minute, and `figures.py`. Only the Python standard library is needed.
 
 *Typesetting.* Typst, with the packages cetz, lilaq and codly.
 

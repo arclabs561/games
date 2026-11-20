@@ -1,0 +1,5 @@
+- **Deck.** The sheet asks for a "0-10 deck of cards": four of each value from 0 to 10, 44 cards. Some classrooms use cards 1 to 10 instead.<!--raw-typst  @prop-oneten covers that deck.-->
+- **Players.** Two to four.
+- **Deal.** Each player gets seven cards. Four more go face up in the middle as *center cards*, shared by everyone.
+- **Erase.** Two of your own cards that make 10 are both erased. One of your cards and a center card that make 10 erase only your card. The center card stays, and anyone may use it again.
+- **Score.** The number of cards you have left. All cards are reshuffled and dealt again each round, and after five rounds the lowest total wins.

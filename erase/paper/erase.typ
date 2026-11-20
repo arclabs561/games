@@ -1,6 +1,25 @@
 #import "@preview/fletcher:0.5.8" as fletcher: node, edge
 #import "@preview/lilaq:0.6.0" as lq
 #import "@preview/codly:1.3.0": codly, codly-init
+#import "/tools/shared_docs.typ": shared, fmt, million
+
+// Numbers that the README also quotes come from results.json, which erase/report.py writes.
+// The rules, the table of results, the checks and the open questions are the README's shared
+// sections (from erase/docs/, filled by tools/sync_docs.py), so the paper and the README agree.
+#let R = json("../results.json")
+#let readme = read("../README.md")
+#let S = R.simulated
+// a simulated share as a percentage with one decimal, and its 95% half-width
+#let pct(k, n) = {
+  let s = str(calc.round(100 * k / n, digits: 1))
+  (if s.contains(".") { s } else { s + ".0" }) + "%"
+}
+// a probability with four decimals: 0.71 -> 0.7100
+#let dec4(x) = {
+  let (a, b) = (str(calc.round(x, digits: 4)) + ".").split(".").slice(0, 2)
+  a + "." + (b + "0000").slice(0, 4)
+}
+#let pm(k, n) = pct(1.96 * calc.sqrt(k / n * (1 - k / n) / n) * n, n)
 
 // ---------- editions ----------
 // print (default): US letter. phone: a narrow page that a phone shows at reading size,
@@ -63,7 +82,8 @@
 #show math.equation.where(block: true): it => if phone { fitw(it) } else { it }
 // tables with a 1fr column fill the width they get, so lay those out at 4.8in; tables
 // of auto columns keep their natural width (up to 7in) and are scaled down whole
-#show table: it => if phone {
+// the shared table of results (tools/shared_docs.typ) fills the width it gets and breaks across pages
+#show table: it => if phone and it.at("label", default: none) != <shared-table> {
   let fr = type(it.columns) == array and it.columns.any(c => type(c) == fraction)
   wide(it, w: if fr { 4.8in } else { 7in })
 } else { it }
@@ -248,14 +268,14 @@
 // ---------- title ----------
 #context if target() == "html" {
   html.elem("h1")[Can You Always Make Ten?]
-  html.elem("p", attrs: (class: "subtitle"))[A card-game mystery: silent cards, a wastebasket, and one deal in 204,722]
+  html.elem("p", attrs: (class: "subtitle"))[A card-game mystery: silent cards, a wastebasket, and one deal in #fmt(R.deals.one_in)]
   html.elem("p", attrs: (class: "date"))[November 2026]
 } else [
   #align(center)[
     #set par(justify: false)
     #text(size: 21pt, weight: "bold")[Can You Always Make Ten?]
     #v(2pt)
-    #text(size: 11.5pt, style: "italic")[A card-game mystery: silent cards, a wastebasket, and one deal in 204,722]
+    #text(size: 11.5pt, style: "italic")[A card-game mystery: silent cards, a wastebasket, and one deal in #fmt(R.deals.one_in)]
     #v(4pt)
     #text(size: 9.5pt, fill: luma(90))[November 2026]
   ]
@@ -264,7 +284,7 @@
 #v(4pt)
 #epigraph[“Can you do Addition?” the White Queen asked. “What's one and one and one and one and one and one and one and one and one and one?”][Lewis Carroll, _Through the Looking-Glass_]
 
-Can every deal of the card game Erase be cleared once players may add, subtract and multiply as many of their cards as they like? The short answer is _almost_. One deal in 204,722 is stuck, and a stuck deal is stuck completely: not one card can be erased. Every other deal can be cleared, and always with one calculation that uses the whole hand and at most one center card. These numbers are for the deck the rules ask for, cards 0 to 10. With cards 1 to 10 a stuck deal is far rarer, about 1 in 14.7 million (@prop-oneten).
+Can every deal of the card game Erase be cleared once players may add, subtract and multiply as many of their cards as they like? The short answer is _almost_. One deal in #fmt(R.deals.one_in) is stuck, and a stuck deal is stuck completely: not one card can be erased. Every other deal can be cleared, and always with one calculation that uses the whole hand and at most one center card. These numbers are for the deck the rules ask for, cards 0 to 10. With cards 1 to 10 a stuck deal is far rarer, about 1 in #million(R.no_zero.one_in) (@prop-oneten).
 
 Three ideas explain this. *Silent cards:* looking only at remainders turns most cards into zeros. *The wastebasket:* a real 0 lets you throw away any cards you don't need. *Big hands:* seven cards with no 0 among them almost always make 10 using every one of them. The first two ideas are proved by hand. The third is a finite fact that a computer checks case by case, writing down a checkable answer, called a certificate, for each case, and the proofs that rely on it say so. A few numbers come from exhaustive computer counts or from simulation alone; they are marked where they appear.
 
@@ -274,11 +294,7 @@ Three ideas explain this. *Silent cards:* looking only at remainders turns most 
 
 Erase is Game 9 in _Math Fact Fluency_ by Jennifer Bay-Williams and Gina Kling, a classroom game for practicing the pairs that make 10.
 
-- *Deck.* The sheet asks for a "0-10 deck of cards": four of each value from 0 to 10, 44 cards. Some classrooms use cards 1 to 10 instead; @prop-oneten covers that deck.
-- *Players.* Two to four.
-- *Deal.* Each player gets seven cards. Four more go face up in the middle as _center cards_, shared by everyone.
-- *Erase.* Two of your own cards that make 10 are both erased. One of your cards and a center card that make 10 erase only your card. The center card stays, and anyone may use it again.
-- *Score.* The number of cards you have left. All cards are reshuffled and dealt again each round, and after five rounds the lowest total wins.
+#shared(readme, "rules")
 
 Here is the instruction sheet's example deal, with the center cards in blue:
 
@@ -286,7 +302,9 @@ Here is the instruction sheet's example deal, with the center cards in blue:
 
 #mnote(inline: true)[The 8 wants a 2. The 4 wants a 6. Nobody has one!]Erase $4+6$ and $5+5$, then the 9 with the center 1. The 4 and the 8 are left, so the score is 2.
 
-The sheet lists a variation: "Players may use more than 2 cards to make a 10." It does not say which operations are allowed. The sheet files Erase under addition and subtraction facts, and the authors' teacher page calls it a strategy game for addition, so adding (and perhaps subtracting) is the likely intent. This note mainly studies a more generous reading that allows $+$, $-$ and $times$, and @tab-readings compares the others. A move is then: choose some of your cards, with or without one center card, that make 10 when combined with $+$, $-$ and $times$. Your cards in it are erased, and the center card stays. Such a set of cards is called a _group_. Under that reading the same hand clears completely, in four groups that reuse the center 1 and 5:
+#shared(readme, "reading")
+
+Under that reading the same hand clears completely, in four groups that reuse the center 1 and 5:
 
 #align(center, block(breakable: false)[
   #grp((6, 8, 4), $6 + 8 - 4$) #h(6pt)
@@ -307,7 +325,7 @@ The answer depends on how generously "more than 2 cards" is read. @tab-readings 
 
 #figure(
   placement: if phone { auto } else { none },
-  caption: [How often a deal cannot be cleared, even with perfect play, for the sheet's deck and for a deck without 0s. Entries with $plus.minus$ are simulated (30,000 deals, 95% interval). All others are exact: see @prop-pairs, @prop-wild, @prop-oneten and @thm-any. With $+$ and $-$, parity alone blocks exactly 3.914% and 2.650% (@prop-parity). The bold row is the subject of this note.],
+  caption: [How often a deal cannot be cleared, even with perfect play, for the sheet's deck and for a deck without 0s. Entries with $plus.minus$ are simulated (#fmt(S.zero.deals) deals per deck, 95% interval). All others are exact: see @prop-pairs, @prop-wild, @prop-oneten and @thm-any. With $+$ and $-$, parity alone blocks exactly 3.914% and 2.650% (@prop-parity). The bold row is the subject of this note.],
   table(
     columns: (1fr, auto, auto),
     align: (left, right, right),
@@ -315,10 +333,10 @@ The answer depends on how generously "more than 2 cards" is read. @tab-readings 
     [Reading of the rules], [Cards 0 to 10], [Cards 1 to 10],
     table.hline(stroke: 0.4pt),
     [Pairs only, as printed], [96.02%], [96.90%],
-    [Addition only], [70.8% $plus.minus$ 0.5%], [80.7% $plus.minus$ 0.4%],
-    [$+$ and $-$], [3.8% $plus.minus$ 0.2%], [2.6% $plus.minus$ 0.2%],
-    [*$bold(+)$, $bold(-)$, $bold(times)$*], [*1 in 204,722*], [*1 in 14.7 million*],
-    [$+$, $-$, $times$, with four wild kings], [1 in 603,146], [1 in 48.8 million],
+    [Addition only], [#pct(S.zero.addition, S.zero.deals) $plus.minus$ #pm(S.zero.addition, S.zero.deals)], [#pct(S.no_zero.addition, S.no_zero.deals) $plus.minus$ #pm(S.no_zero.addition, S.no_zero.deals)],
+    [$+$ and $-$], [#pct(S.zero.plus_minus, S.zero.deals) $plus.minus$ #pm(S.zero.plus_minus, S.zero.deals)], [#pct(S.no_zero.plus_minus, S.no_zero.deals) $plus.minus$ #pm(S.no_zero.plus_minus, S.no_zero.deals)],
+    [*$bold(+)$, $bold(-)$, $bold(times)$*], [*1 in #fmt(R.deals.one_in)*], [*1 in #million(R.no_zero.one_in)*],
+    [$+$, $-$, $times$, with four wild kings], [1 in #fmt(R.wild.one_in)], [1 in #million(R.wild.no_zero_one_in)],
     [$+$, $-$, $times$, any number of center cards per group], [1 in 1,345,498], [1 in 193 million],
     [$+$, $-$, $times$, $div$], [1 in 91 million], [none],
     [$+$, $-$, $times$, $div$, any number of center cards per group], [none], [none],
@@ -326,13 +344,13 @@ The answer depends on how generously "more than 2 cards" is read. @tab-readings 
   ),
 ) <tab-readings>
 
-#idea[exact and simulated numbers][An _exact_ number comes from a proof, or from counting every case, such as all 2,530,881,913,560 possible deals. A _simulated_ number comes from dealing 30,000 random deals and counting what happens, the way you might estimate how often a coin lands heads by tossing it many times. The $plus.minus$ after a simulated number says how far luck could plausibly have moved it.]
+#idea[exact and simulated numbers][An _exact_ number comes from a proof, or from counting every case, such as all #fmt(R.deals.total) possible deals. A _simulated_ number comes from dealing #fmt(S.zero.deals) random deals and counting what happens, the way you might estimate how often a coin lands heads by tossing it many times. The $plus.minus$ after a simulated number says how far luck could plausibly have moved it.]
 
 #mnote(inline: true)[Nobody can take your cards. It is you against the deal.]Players never compete for cards. Center cards are reused, and nobody touches anyone else's hand. So each player is effectively playing alone against a random deal of seven cards plus four center cards, and the table is about one such deal.
 
 So the worry from @sec-game, that every deal might clear, is exactly right at the bottom of the table and wrong at the top. With addition only, the most likely intent, Erase is very much a game. With full arithmetic it becomes a different game, in which the answer is almost always "zero" and the challenge is finding it. The analysis also gives a practical warning. Grabbing the easy pairs first, as the basic game trains you to, strands a card in about a quarter of hands (@sec-play).
 
-How rare is one deal in 204,722? If you dealt yourself a hand every minute, day and night, you would wait about twenty weeks, on average, to see a stuck one.
+How rare is one deal in #fmt(R.deals.one_in)? If you dealt yourself a hand every minute, day and night, you would wait about twenty weeks, on average, to see a stuck one.
 
 = A hand you cannot erase <sec-stuck>
 
@@ -382,7 +400,7 @@ The proof never asks what a calculation _does_ with the cards, only what kind of
 
 The numbers in @tab-readings are about perfect play on one hand. A few practical points change how it feels at the table.
 
-#mnote(inline: true)[Save a pair for later. The last card needs a friend.]*Grabbing pairs first is a trap.* The basic game trains players to erase every pair that makes 10, and with full arithmetic that habit backfires. Suppose a player first erases all the pairs the printed rules allow, then tries arithmetic on whatever is left. In 30,000 simulated deals that could be cleared, this strands at least one card 23.8% of the time ($plus.minus$ 0.5%).
+#mnote(inline: true)[Save a pair for later. The last card needs a friend.]*Grabbing pairs first is a trap.* The basic game trains players to erase every pair that makes 10, and with full arithmetic that habit backfires. Suppose a player first erases all the pairs the printed rules allow, then tries arithmetic on whatever is left. In #fmt(S.pairs_first.deals) simulated deals that could be cleared, this strands at least one card #pct(S.pairs_first.stranded, S.pairs_first.deals) of the time ($plus.minus$ #pm(S.pairs_first.stranded, S.pairs_first.deals)).
 
 #block(breakable: false, width: 100%)[
   Here is one such deal.
@@ -391,7 +409,7 @@ The numbers in @tab-readings are about perfect play on one hand. A few practical
 
 The pairs $3 + 7$, $8 + 2$ (three times) and $4 + 6$ leave a lone 3, which no center card can rescue. Yet the whole hand clears at once: $3 + 3 + 4 + 7 times 8 times (8 - 8) = 10$. The lesson: keep two equal cards, or a 0, in reserve until the end. Multiplying by $8 - 8$, or by a 0, throws away the cards the last group cannot use (@sec-waste).
 
-*Small groups are nearly always enough.* The theorems clear a hand with one long calculation, often by multiplying spare cards by 0. One long calculation is a way to prove things, not the way to play. In 30,000 simulated deals, 97.5% ($plus.minus$ 0.2%) could be cleared using only groups of at most three cards, counting the center card, and 99.8% with at most four. With cards 1 to 10 the figures are 99.8% and all but 6 of the 30,000. Brackets are hardly needed either: in the same deals, from each deck, every deal could be cleared with each group worked as a running total, starting from one card and adding, subtracting or multiplying by one more card at a time.
+*Small groups are nearly always enough.* The theorems clear a hand with one long calculation, often by multiplying spare cards by 0. One long calculation is a way to prove things, not the way to play. In #fmt(S.small_zero.deals) simulated deals, #pct(S.small_zero.three, S.small_zero.deals) ($plus.minus$ #pm(S.small_zero.three, S.small_zero.deals)) could be cleared using only groups of at most three cards, counting the center card, and #pct(S.small_zero.four, S.small_zero.deals) with at most four. With cards 1 to 10 the figures are #pct(S.small_no_zero.three, S.small_no_zero.deals) and all but #(S.small_no_zero.deals - S.small_no_zero.four) of the #fmt(S.small_no_zero.deals). Brackets are hardly needed either: in the same deals, from each deck, every deal could be cleared with each group worked as a running total, starting from one card and adding, subtracting or multiplying by one more card at a time.
 
 *Spotting a stuck deal.* Counting odd cards is a scan for the $+$ and $-$ game. With $times$ allowed, two scans do the same job. First: is every card on the table, yours and the center's, a 0, 3, 6 or 9? Second: are your cards all 0s, 4s and 8s, apart from at most one odd card, with no 2, 6 or 10 in the center, and no odd center card if you hold an odd one? If either answer is yes, nothing can be erased, and you can say so before trying a single sum (@def-families). With cards 1 to 10 these two scans find every stuck deal (@prop-oneten). With cards 0 to 10 they find about 95% of them (@tab-shapes); the rest are hands of several 0s with too little material.
 
@@ -399,27 +417,27 @@ The pairs $3 + 7$, $8 + 2$ (three times) and $4 + 6$ leave a lone 3, which no ce
 
 #figure(
   placement: auto,
-  caption: [House rules and what they change, with $+$, $-$ and $times$ unless the row says otherwise. Counts are exact; the simulated rows each used 30,000 deals per deck.],
+  caption: [House rules and what they change, with $+$, $-$ and $times$ unless the row says otherwise. Counts are exact; the simulated rows each used #fmt(S.zero.deals) deals per deck.],
   table(
     columns: (0.62fr, 1fr),
     align: (left, left),
     table.hline(stroke: 0.6pt),
     [If your table...], [...then],
     table.hline(stroke: 0.4pt),
-    [uses cards 1 to 10], [a stuck deal is 1 in 14.7 million, not 1 in 204,722 (@prop-oneten)],
+    [uses cards 1 to 10], [a stuck deal is 1 in #million(R.no_zero.one_in), not 1 in #fmt(R.deals.one_in) (@prop-oneten)],
     [allows $div$], [cards 0 to 10: 1 in 91 million; cards 1 to 10: every deal clears. Requiring every division to come out whole changes neither figure],
     [has not met brackets], [no simulated deal needed them: each group can be worked as one running total, a card at a time],
-    [keeps to groups of two or three cards], [97.5% of deals still clear; 99.8% with cards 1 to 10 (simulated)],
+    [keeps to groups of two or three cards], [#pct(S.small_zero.three, S.small_zero.deals) of deals still clear; #pct(S.small_no_zero.three, S.small_no_zero.deals) with cards 1 to 10 (simulated)],
     [never lets a total drop below 0], [nothing changes with cards 0 to 10 (@sec-model)],
     [lets a 10 be erased by itself], [nothing changes with $+$, $-$, $times$. Under the printed pairs-only rules with cards 1 to 10, 92.10% of deals are stuck instead of 96.90%],
     [lets a group use several center cards], [1 in 1,345,498; 1 in 193 million with cards 1 to 10 (@thm-any)],
     [deals fewer than seven cards], [stuck deals become more common, and some are only partly stuck (@tab-sizes)],
-    [adds wild cards], [1 in 603,146; 1 in 48.8 million with cards 1 to 10 (@prop-wild)],
+    [adds wild cards], [1 in #fmt(R.wild.one_in); 1 in #million(R.wild.no_zero_one_in) with cards 1 to 10 (@prop-wild)],
     table.hline(stroke: 0.6pt),
   ),
 ) <tab-house>
 
-*Keeping it a game.* With full arithmetic nearly every hand scores 0, so the scoring stops distinguishing players. For a puzzle, a score of 0 every time is fine. The authors' teacher page says that scoring is de-emphasized and that thinking strategies come first. To keep a scored game, restrict the arithmetic. With addition only, about 29% of hands clear, and with $+$ and $-$, about 96%.
+*Keeping it a game.* With full arithmetic nearly every hand scores 0, so the scoring stops distinguishing players. For a puzzle, a score of 0 every time is fine. The authors' teacher page says that scoring is de-emphasized and that thinking strategies come first. To keep a scored game, restrict the arithmetic. With addition only, about #calc.round(100 - 100 * S.zero.addition / S.zero.deals)% of hands clear, and with $+$ and $-$, about #calc.round(100 - 100 * S.zero.plus_minus / S.zero.deals)%.
 
 = More puzzles <sec-puzzles>
 
@@ -476,7 +494,7 @@ Only the second idea needs a 0 card. In a deck of cards 1 to 10 it drops out, an
 To prove things we need the game in precise terms.
 
 #definition(title: [deals])[
-  The deck has four cards of each value $0, 1, dots, 10$. A _deal_ $(H, C)$ is a hand $H$ of seven cards and a center $C$ of four further cards. Treating the 44 cards as distinct, there are $binom(44, 7) binom(37, 4) = "2,530,881,913,560"$ deals, all equally likely.
+  The deck has four cards of each value $0, 1, dots, 10$. A _deal_ $(H, C)$ is a hand $H$ of seven cards and a center $C$ of four further cards. Treating the 44 cards as distinct, there are $binom(44, 7) binom(37, 4) = #fmt(R.deals.total)$ deals, all equally likely.
 ]
 
 #idea[bags of cards, and counting them][A _multiset_ is a bag in which repeats count: ${4, 4, 8}$ holds two 4s and an 8, and order does not matter. Curly brackets list what is in the bag. The number $binom(44, 7)$, read “44 choose 7”, counts the ways to pick seven cards out of 44 when order does not matter; it is 38,320,568. There are $binom(37, 4) = "66,045"$ ways to pick the four center cards from the 37 left, and multiplying the two gives the number of deals.]
@@ -635,7 +653,7 @@ Which moduli need trying? Five suffice, and each of the five is needed.
   At its own modulus each hand has at most one loud card, and the test catches the deal.
 ]
 
-Spelled out modulus by modulus, the test catches eight concrete shapes. For each modulus, either the hand has no loud card or it has exactly one. The shares are fractions of the 12,362,536 stuck deals.
+Spelled out modulus by modulus, the test catches eight concrete shapes. For each modulus, either the hand has no loud card or it has exactly one. The shares are fractions of the #fmt(R.deals.stuck) stuck deals.
 
 #figure(
   caption: [The shapes caught by the congruence test.],
@@ -785,15 +803,15 @@ Even a hand with no repeated card manages.
 
 The two families from @sec-silent can never make 10, and the next theorem says that for big hands they are essentially the only obstacle. It stops at eleven cards because a deal has eleven cards in all.
 
-#idea[certificates][Finding an expression that makes 10 can take a long search, but checking one takes a minute with pencil and paper. A _certificate_ is such a checkable answer, written down. The computer found 265,148 of them, one for each case of the next theorem. Nobody has to trust the program that found them, because any one can be checked by hand, and a short, separate program checks them all.]
+#idea[certificates][Finding an expression that makes 10 can take a long search, but checking one takes a minute with pencil and paper. A _certificate_ is such a checkable answer, written down. The computer found #fmt(R.certificates.cases) of them, one for each case of the next theorem. Nobody has to trust the program that found them, because any one can be checked by hand, and a short, separate program checks them all.]
 
 #theorem(title: [big hands; checked by computer])[
   Let $M$ be a multiset of seven to eleven nonzero cards, with at most four of each value, that is in neither family. Then $M$ makes 10, using every one of its cards, with exactly one exception, $M = #ms(1,6,6,7,7,7,7)$. That multiset has a part that makes 10, namely $1 + 7 + 7 + 7 - 6 - 6$, but all seven cards together cannot.
 ] <thm-big>
 
-#proof(title: [Verification])[There are 265,148 such multisets. The search wrote down one expression for each, and a separate 40-line program (@sec-check) checks them all in about ten seconds. It lists the cases itself, so none can be skipped. For each one it confirms that the expression uses exactly those cards, with only $+$, $-$ and $times$, and equals 10. @app-certs shows a sample.]
+#proof(title: [Verification])[There are #fmt(R.certificates.cases) such multisets. The search wrote down one expression for each, and a separate 40-line program (@sec-check) checks them all in about ten seconds. It lists the cases itself, so none can be skipped. For each one it confirms that the expression uses exactly those cards, with only $+$, $-$ and $times$, and equals 10. @app-certs shows a sample.]
 
-#mnote(inline: true)[One naughty hand out of 265,148.]The exception is a curiosity. All seven of its cards together can make every whole number from 0 to 20 _except_ 10. A third, independent search confirms this.
+#mnote(inline: true)[One naughty hand out of #fmt(R.certificates.cases).]The exception is a curiosity. All seven of its cards together can make every whole number from 0 to 20 _except_ 10. A third, independent search confirms this.
 
 *Why seven?* Call a multiset _ten-free_ if no part of it with two or more cards makes 10. @fig-seven counts the nonzero ten-free multisets that are in neither family.
 
@@ -846,7 +864,7 @@ The second bullet is the congruence test at $m = 3$ or $m = 4$, written out: the
 #figure(
   diagram(
     spacing: (5mm, 10mm), edge-stroke: 0.8pt, mark-scale: 70%,
-    blob((1, 0), [*12,362,536* stuck deals], name: <all>),
+    blob((1, 0), [*#fmt(R.deals.stuck)* stuck deals], name: <all>),
     blob((0.5, 1), [hand has a 0: *12,153,144* (98.3%) \ #text(8.5pt)[exactly characterized by @thm-zero]], tint: green, width: 54mm, name: <z>),
     blob((1.85, 1), [no 0 in hand: *209,392* (1.7%) \ #text(8.5pt)[exactly the test at $m = 3, 4$]], tint: purple, width: 46mm, name: <nz>),
     blob((0, 2), [also caught by the \ congruence test: *12,044,776*], tint: green, width: 40mm, name: <zt>),
@@ -864,11 +882,11 @@ The second bullet is the congruence test at $m = 3$ or $m = 4$, written out: the
   With four cards of each value from 1 to 10, and $+$, $-$ and $times$, a deal is stuck exactly when
   + all eleven cards, hand and center, are 3s, 6s and 9s; or
   + the hand is seven of the eight 4s and 8s, and every center card is odd or is the last 4 or 8.
-  There are 51,840 such deals among the 762,894,475,200, about 1 in 14.7 million.
+  There are #fmt(R.no_zero.stuck) such deals among the #fmt(R.no_zero.total), about 1 in #million(R.no_zero.one_in).
 ] <prop-oneten>
 
 #proof(title: [Proof, using @thm-big])[
-  The hand has no 0, so by @thm-class the deal is stuck exactly when, for every center card $c$, the hand together with $c$ is in the 3-family or the 4-family. Taking $c$ away keeps a multiset in its family, and seven nonzero cards are never in both families, so the hand is in one family and every center card keeps it there. In the 3-family every card is a 3, 6 or 9. There are twelve of these, so the hand takes seven of them and the center four of the other five: $binom(12, 7) binom(5, 4) = "3,960"$ deals. In the 4-family the nonzero cards are 4s and 8s, plus at most one odd card. If the hand had an odd card, every center card would have to be a 4 or an 8, and only two would be left. So the hand is seven of the eight 4s and 8s, in $binom(8, 7) = 8$ ways, and each center card is one of the 20 odd cards or the last 4 or 8, in $binom(21, 4) = "5,985"$ ways. The count is $8 times "5,985" = "47,880"$ deals, and $"3,960" + "47,880" = "51,840"$ out of $binom(40, 7) binom(33, 4) = "762,894,475,200"$. The brute-force counter, which uses none of the theorems, finds the same 51,840.
+  The hand has no 0, so by @thm-class the deal is stuck exactly when, for every center card $c$, the hand together with $c$ is in the 3-family or the 4-family. Taking $c$ away keeps a multiset in its family, and seven nonzero cards are never in both families, so the hand is in one family and every center card keeps it there. In the 3-family every card is a 3, 6 or 9. There are twelve of these, so the hand takes seven of them and the center four of the other five: $binom(12, 7) binom(5, 4) = "3,960"$ deals. In the 4-family the nonzero cards are 4s and 8s, plus at most one odd card. If the hand had an odd card, every center card would have to be a 4 or an 8, and only two would be left. So the hand is seven of the eight 4s and 8s, in $binom(8, 7) = 8$ ways, and each center card is one of the 20 odd cards or the last 4 or 8, in $binom(21, 4) = "5,985"$ ways. The count is $8 times "5,985" = "47,880"$ deals, and $"3,960" + "47,880" = "51,840"$ out of $binom(40, 7) binom(33, 4) = "762,894,475,200"$. The brute-force counter, which uses none of the theorems, finds the same #fmt(R.no_zero.stuck).
 ]
 
 The deal of @prop-dead is of the second kind.
@@ -888,7 +906,7 @@ The deal of @prop-dead is of the second kind.
     [4], [1 in 427], [1.8%],
     [5], [1 in 3,462], [0.13%],
     [6], [1 in 27,103], [0.005%],
-    [7], [1 in 204,722], [none],
+    [7], [1 in #fmt(R.deals.one_in)], [none],
     [8], [1 in 1.65 million], [none],
     table.hline(stroke: 0.6pt),
   ),
@@ -924,9 +942,9 @@ $ P("stuck") = (binom(16, 11) + binom(12, 11) + 20 binom(12, 10)) / binom(44, 11
 
 The deck has 20 odd and 24 even cards. Choose $k$ odd cards and $7 - k$ even cards for the hand, then all four center cards from the $17 + k$ even cards that remain. Adding up over the odd values of $k$, the obstruction occurs in
 
-$ (sum_(k "odd") binom(20, k) binom(24, 7-k) binom(17+k, 4)) / (binom(44, 7) binom(37, 4)) = "99,053,234,280" / "2,530,881,913,560" approx 3.914% $
+$ (sum_(k "odd") binom(20, k) binom(24, 7-k) binom(17+k, 4)) / (binom(44, 7) binom(37, 4)) = "99,053,234,280" / #fmt(R.deals.total) approx 3.914% $
 
-of deals. In the 30,000 simulated deals of @tab-readings, 1,106 of the 1,126 failures are of this kind, and all but one of the failures leave exactly one card.
+of deals. In the #fmt(S.zero.deals) simulated deals of @tab-readings, #fmt(S.zero.parity) of the #fmt(S.zero.plus_minus) failures are of this kind, and all but #(S.zero.plus_minus - S.zero.one_left) of the failures leave exactly one card.
 
 #mnote(inline: true)[Find each card a partner. A card with no partner stays.]*Pairs only, as printed.* Here the answer is a matter of counting.
 
@@ -938,25 +956,53 @@ of deals. In the 30,000 simulated deals of @tab-readings, 1,106 of the 1,126 fai
   A card $a$ can be erased only together with a card worth $10 - a$, from the hand or from the center. Within the hand, $a$'s and $(10 - a)$'s pair off until one kind runs out, and 5s pair with each other. Each card left over can only be erased by a center card, which is reusable, so one center card of the right value is both necessary and enough.
 ]
 
-Counting the hands that meet this condition, value by value (add the cases, then subtract what was counted twice), shows that a deal can be cleared in 100,621,356,600 of the 2,530,881,913,560 deals, about 3.976%.
+Counting the hands that meet this condition, value by value (add the cases, then subtract what was counted twice), shows that a deal can be cleared in 100,621,356,600 of the #fmt(R.deals.total) deals, about 3.976%.
 
-*Addition only.* The hand must split into piles that each sum to 10, with at most one center card per pile. Finding such a split is a small packing problem. One obstruction is quick to see. A 10 can only be erased together with 0s, since every other card would push the sum past 10. In 30,000 simulated deals, about 29.2% pack perfectly (@tab-readings).
+*Addition only.* The hand must split into piles that each sum to 10, with at most one center card per pile. Finding such a split is a small packing problem. One obstruction is quick to see. A 10 can only be erased together with 0s, since every other card would push the sum past 10. In #fmt(S.zero.deals) simulated deals, about #pct(S.zero.deals - S.zero.addition, S.zero.deals) pack perfectly (@tab-readings).
 
 *With division.* Fractions are allowed along the way, as in the Make 10 puzzle 1 1 9 9: $(1 + 1 div 9) times 9 = 10$. Division breaks the silent-card lemma, because dividing by a silent card means dividing by 0 mod $m$: $8 + 8 div 4 = 10$ uses only multiples of 4, and $(3 times 9 + 3) div 3 = 10$ only multiples of 3. The wastebasket survives, since $0 div w = 0$ and the sign flip still works. With $div$ and one center card per group, an exhaustive count finds 27,712 deals that stay stuck, about 1 in 91.3 million. They form 106 value patterns, and all but three are four 0s plus three cards, so by the wastebasket each comes down to a published impossible Make 10 puzzle such as 6677, 1677 or 7788. With $div$ and any number of center cards, the same count finds that every deal can be cleared.
 
 *Wild cards.* The sheet's second variation puts "wildcards" in the deck, and the teacher page suggests a king, a card the 0 to 10 deck does not otherwise use. Take the 44 cards plus the four kings as wild cards. We let a wild card be worth any value from 0 to 10, chosen by the player each time it is used.
 
 #proposition(title: [wild cards])[
-  With $+$, $-$ and $times$ and four wild kings in the deck, every deal with a wild card in it can be cleared in a single group. So a deal is stuck exactly when it has no wild card and is stuck in the ordinary game. The stuck deals number 12,362,536 of the 7,456,416,121,440, about 1 in 603,146.
+  With $+$, $-$ and $times$ and four wild kings in the deck, every deal with a wild card in it can be cleared in a single group. So a deal is stuck exactly when it has no wild card and is stuck in the ordinary game. The stuck deals number #fmt(R.wild.stuck) of the #fmt(R.wild.total), about 1 in #fmt(R.wild.one_in).
 ] <prop-wild>
 
 #proof[
-  Pick a wild card $w$ in the deal, and give every other wild card in the hand the value 0. Sort the hand cards other than $w$ as $a_1 <= a_2 <= dots.c <= a_k$, and take their alternating sum from the top, $t = a_k - a_(k-1) + a_(k-2) - dots.c$. Grouping the terms in pairs from the top, $(a_k - a_(k-1)) + (a_(k-2) - a_(k-3)) + dots.c$, shows that $t >= 0$. Grouping them after the first term, $a_k - (a_(k-1) - a_(k-2)) - dots.c$, shows that $t <= a_k <= 10$. Give $w$ the value $10 - t$. Then these cards and $w$ make 10, using only $+$ and $-$. If $w$ is in the hand, they are the whole hand; if $w$ is in the center, they are the whole hand and one center card. Either way a single group erases all seven cards. Deals with no wild card are exactly the deals of the ordinary game, so they contribute the same 12,362,536 stuck deals, now out of $binom(48, 7) binom(41, 4)$.
+  Pick a wild card $w$ in the deal, and give every other wild card in the hand the value 0. Sort the hand cards other than $w$ as $a_1 <= a_2 <= dots.c <= a_k$, and take their alternating sum from the top, $t = a_k - a_(k-1) + a_(k-2) - dots.c$. Grouping the terms in pairs from the top, $(a_k - a_(k-1)) + (a_(k-2) - a_(k-3)) + dots.c$, shows that $t >= 0$. Grouping them after the first term, $a_k - (a_(k-1) - a_(k-2)) - dots.c$, shows that $t <= a_k <= 10$. Give $w$ the value $10 - t$. Then these cards and $w$ make 10, using only $+$ and $-$. If $w$ is in the hand, they are the whole hand; if $w$ is in the center, they are the whole hand and one center card. Either way a single group erases all seven cards. Deals with no wild card are exactly the deals of the ordinary game, so they contribute the same #fmt(R.deals.stuck) stuck deals, now out of $binom(48, 7) binom(41, 4)$.
 ]
 
 Each wild card takes a single value in this proof, so nothing changes if the rules make a wild card keep its value for the whole round.
 
-*Cards 1 to 10 under the other readings.* @tab-readings has a column for the deck without 0s. With division every deal clears: only the 51,840 deals of @prop-oneten could be stuck, and the computer finds a way to clear each one, for example with $9 + 4 div 4$ or $3 + 8 - 8 div 8$. With any number of center cards per group only the first kind is left, since eleven cards with at most one odd card cannot all come from the eight 4s and 8s: 3,960 deals, about 1 in 193 million (@thm-any). The argument of @prop-wild does not need a 0 card (a wild card may still be worth 0), so with four wild kings the stuck deals are the same 51,840, about 1 in 48.8 million. With only $+$ and $-$, parity blocks exactly 2.650% of deals. Under the printed rules 96.90% of deals are stuck, more than with a 0, partly because a 10 can now never be erased: its only partner was a 0.
+*Cards 1 to 10 under the other readings.* @tab-readings has a column for the deck without 0s. With division every deal clears: only the #fmt(R.no_zero.stuck) deals of @prop-oneten could be stuck, and the computer finds a way to clear each one, for example with $9 + 4 div 4$ or $3 + 8 - 8 div 8$. With any number of center cards per group only the first kind is left, since eleven cards with at most one odd card cannot all come from the eight 4s and 8s: 3,960 deals, about 1 in 193 million (@thm-any). The argument of @prop-wild does not need a 0 card (a wild card may still be worth 0), so with four wild kings the stuck deals are the same #fmt(R.no_zero.stuck), about 1 in #million(R.wild.no_zero_one_in). With only $+$ and $-$, parity blocks exactly 2.650% of deals. Under the printed rules 96.90% of deals are stuck, more than with a 0, partly because a 10 can now never be erased: its only partner was a 0.
+
+= Is 10 special? <sec-targets>
+
+@thm-big says that from seven cards on, a set of nonzero cards that cannot make 10 is caught by a remainder argument, with one exception of seven cards. Does the same happen for other targets? The program `targets.py` asks it of every target from 1 to 30.
+
+Take a multiset of nonzero cards (values 1 to 10, at most four of each) and a target $t$. The multiset *makes* $t$ if one expression with $+$, $-$ and $times$ that uses every card once equals $t$. It is *blocked by a remainder* if, for some modulus $m$ from 2 to 12, no such expression leaves the remainder of $t$ on division by $m$. The *exceptions* are the multisets that do neither, and the *threshold* of $t$ is one more than the size of the largest exception. The moduli stop at 12 because a modulus larger than every value the cards can make would block for a reason that has nothing to do with remainders. For 10, the multisets that 3 and 4 block are exactly the two families of @def-families, and the threshold is 8, as @thm-big says.
+
+Every multiset of 1 to #R.targets.max_cards cards was checked for every target, about an hour of computing in all. @tab-targets gives the result. The thresholds hold through #R.targets.max_cards cards, not beyond: the induction to larger hands in @sec-big is worked out only for 10.
+
+#let T = R.targets.by_target
+#let tcount(s) = R.targets.threshold_counts.at(str(s), default: 0)
+#figure(
+  placement: auto,
+  caption: [Thresholds for the targets 1 to 30. The moduli are those that are the least blocking modulus for some multiset from the threshold on. The last two columns count the exceptions of one card fewer than the threshold and give the first of them. Exact.],
+  text(size: 10pt, table(
+    columns: if phone { 5 } else { (auto, auto, 1fr, auto, auto) },
+    align: (right, right, left, right, left),
+    table.hline(stroke: 0.6pt),
+    [Target], [Threshold], [Least blocking moduli], [Exceptions below], [One of them],
+    table.hline(stroke: 0.4pt),
+    ..T.pairs().map(((t, x)) => (t, str(x.threshold), x.moduli.map(str).join(", "), str(x.below), x.example.map(str).join(" "))).flatten(),
+    table.hline(stroke: 0.6pt),
+  )),
+) <tab-targets>
+
+So 10 is not special. Its threshold, 8, is the most common one (#tcount(8) of the 30 targets); #tcount(7) targets have 7, and only 14 has 9, because of the single multiset #box[9 9 9 9 10 10 10 10]. What changes from target to target is which moduli block, and that follows from the target's own remainders. An odd target is blocked by 2, when all the cards are even. A target that 3 does not divide is blocked by 3, and one that leaves remainder 2 on division by 4 is blocked by 4. The target 10 is blocked by two moduli, 3 and 4, where #T.values().filter(x => x.moduli.len() >= 3).len() of the 30 targets need three or four. The targets 12 and 24 are blocked only by 5 (all cards 5s and 10s), and 30 only by 4. Some exceptions just below a threshold are not about remainders at all but about size: #box[1 1 1 1 2 2] cannot reach 20, 26 or 28, since its largest value is 18.
+
+*How this was checked.* With `--certs`, `targets.py` writes one expression for each multiset from the threshold up that makes the target, about 60 MB in all. A separate checker lists the multisets itself and checks each expression with Python's own parser. It decides every other multiset with its own search over remainders, which combines two remainders at a time, and shares no code with `targets.py`. All 30 targets passed. The tests compare the remainder search with the actual values of every multiset of up to four cards, compare the two remainder searches with each other, and check that for 10 the blocked multisets of 8 and 9 cards are the two families. That the exceptions cannot make their target rests on the target-directed search of @sec-check. For #box[9 9 9 9 10 10 10 10] and the target 14, a separate listing of all 17,982 values of those eight cards confirms it.
 
 = Relatives <sec-relatives>
 
@@ -972,22 +1018,47 @@ Erase with full arithmetic belongs to a well-studied family of puzzles, in which
     table.hline(stroke: 0.6pt),
     [Game], [What is known],
     table.hline(stroke: 0.4pt),
-    [#link("https://www.4nums.com/24_game/facts/")[24 game]], [1,362 of the 1,820 four-card hands (cards 1 to 13) can make 24],
+    [#link("https://www.4nums.com/24_game/facts/")[24 game]], [#fmt(R.twenty_four.make.fraction) of the #fmt(R.twenty_four.hands) four-card hands (cards 1 to 13) can make 24],
     [#link("https://ja.wikipedia.org/wiki/%E3%83%86%E3%83%B3%E3%83%91%E3%82%BA%E3%83%AB")[Make 10]], [552 of the 715 sets of four digits can make 10; played in Japan on ticket and license-plate numbers],
     [#link("https://mkaz.blog/math/krypto-game-analysis/")[Krypto]], [61,910 of 2,968,875 games (2.09%) have no solution],
-    [#link("https://arxiv.org/abs/1502.05450")[Countdown]], [91.2% of the 11.9 million number rounds can be hit exactly],
+    [#link("https://arxiv.org/abs/1502.05450")[Countdown]], [#calc.round(R.countdown.exact_percent, digits: 1)% of the #million(R.countdown.problems) number rounds can be hit exactly],
     table.hline(stroke: 0.6pt),
   ),
 )
 
 Erase is far kinder than these because it gives you seven cards, a free choice of how to group them, and center cards that never run out. The others demand a single expression, and all but Countdown must use every number.
 
+*Two counts reproduced.* The search behind this note also recomputes two rows of the table. In the 24 game, four cards from 1 to 13, with repeats, give $binom(16, 4) = #fmt(R.twenty_four.hands)$ hands, to be combined with $+$, $-$, $times$ and $div$ and any brackets, each card used once. @tab-24 gives the exact counts under three rules for division, each checked against a brute-force listing of every order, operator and bracketing. The #fmt(R.twenty_four.make.fraction) matches the count given by #link("https://www.4nums.com/24_game/facts/")[4nums.com] and #link("https://gottfriedville.net/games/24/index.shtml")[gottfriedville.net], and #dec4(R.twenty_four.deck_chance.fraction) matches the chance on 4nums.com. Restricted to cards 1 to 9 and 1 to 10, the same search gives #R.twenty_four.up_to_9.at(0) of #R.twenty_four.up_to_9.at(1) and #R.twenty_four.up_to_10.at(0) of #R.twenty_four.up_to_10.at(1), as #link("https://solve24game.com/24-game-solvable-combinations/")[solve24game.com] reports. The #R.twenty_four.need_fraction.len() hands that make 24 only through a fraction are #R.twenty_four.need_fraction.map(h => box(h.map(str).join(" "))).join(", ", last: " and "), also as #link("https://puzzletip.com/24-game-solver/")[puzzletip.com] reports; for example $8 div (3 - 8 div 3) = 24$. Division adds #(R.twenty_four.make.fraction - R.twenty_four.make.nodiv) hands, and only #R.twenty_four.need_fraction.len() of those need a fraction. Erase's rule is, roughly, the "no division" row with a smaller target, cards from 0 to 10 and groups of any size. Without $div$ every value stays a whole number, which is why remainder arguments can rule hands out.
+
+#figure(
+  placement: auto,
+  caption: [The 24 game: hands of four cards from 1 to 13 that make 24, under three rules for division, and the chance that four cards dealt from a 52-card deck form such a hand. Exact.],
+  table(
+    columns: (1fr, auto, auto),
+    align: (left, right, right),
+    table.hline(stroke: 0.6pt),
+    [Rule for division], [Hands], [Chance from a deck],
+    table.hline(stroke: 0.4pt),
+    [Fractions allowed along the way], [#fmt(R.twenty_four.make.fraction) of #fmt(R.twenty_four.hands)], dec4(R.twenty_four.deck_chance.fraction),
+    [Every intermediate result a whole number], [#fmt(R.twenty_four.make.integer)], dec4(R.twenty_four.deck_chance.integer),
+    [No division], [#fmt(R.twenty_four.make.nodiv)], dec4(R.twenty_four.deck_chance.nodiv),
+    table.hline(stroke: 0.6pt),
+  ),
+) <tab-24>
+
+#let C = R.countdown
+For Countdown, J.-M. Alliot (2015, Section 4.1.1, Table 2) counts a problem as one selection of six numbers (a multiset, so #fmt(C.selections) of them) and one of the #C.targets targets from 101 to 999, #fmt(C.problems) problems in all. Of these, #fmt(C.exact) (#C.exact_percent%) can be solved exactly. The search reproduces that count, with each number used at most once and every intermediate result a positive whole number. It also reproduces his other figures: #fmt(C.reach_every_target) selections reach every target, and #ms(1, 1, 2, 2, 3, 3) reaches none. His counts of problems whose nearest value is 1 to 4 away (#C.near_range.map(fmt).join(", ", last: " and ")) are reproduced too, once only values from 101 to 999 count as nearest; counting values of any size gives #fmt(C.near_any_1) at distance 1.
+
 Four results from further away bear on Erase.
 
 - *Hard in general, but not here.* Deciding whether $n$ numbers can make a target is #link("https://arxiv.org/abs/2011.11767")[NP-complete] for every set of operations from $+$, $-$, $times$, $div$ except $+$ alone and $times$ alone. Roughly, no known method avoids trying a huge number of possibilities as $n$ grows. For $+$, $-$ and $times$ the hardness is of the _weak_ kind: it needs the numbers themselves to be large. Cards stop at 10, so the result says nothing about Erase, and @thm-big points the other way. With small cards, more cards make 10 easier to reach, not harder.
 - *Integer complexity.* @prop-ones is the Mahler–Popken problem in miniature: the #link("https://en.wikipedia.org/wiki/Integer_complexity")[integer complexity] of 10, the least number of 1s that make 10 with $+$ and $times$, is 7, one more 1 than the smallest stuck hand can muster.
-- *Fractions are rarely needed.* Of the 552 Make 10 sets that work, only four need a fraction along the way (1158, 1199, 1337 and 3478), and of the 1,362 solvable 24-game hands only 16 do. Erase behaves the same way, since requiring every division to come out whole changes none of its counts (@tab-house). A short computation confirms all three figures.
+- *Fractions are rarely needed.* Of the 552 Make 10 sets that work, only four need a fraction along the way (1158, 1199, 1337 and 3478), and of the #fmt(R.twenty_four.make.fraction) solvable 24-game hands only #R.twenty_four.need_fraction.len() do. Erase behaves the same way, since requiring every division to come out whole changes none of its counts (@tab-house). A short computation confirms all three figures.
 - *Different digits help.* Any four different digits from 1 to 9 make 10 with $+$, $-$, $times$ and $div$; a computer check of all 126 sets confirms it. @thm-big is the Erase version of that fact. Seven nonzero cards outside the two families make 10, and they do it without division.
+
+= Open questions <sec-open>
+
+#shared(readme, "open")
 
 = How this was checked <sec-check>
 
@@ -1005,9 +1076,9 @@ Every claim in this note is known in one of four ways: by a proof written out he
     table.hline(stroke: 0.4pt),
     [By hand], [@prop-dead; silent cards, the congruence test and the five moduli (@thm-test, @thm-five); the wastebasket and hands with a zero (@thm-zero); three ones (@prop-ones); parity and pairs only, with exact counts; wild cards (@prop-wild)],
     [By computer, every case], [@thm-big, and through it @thm-single, @thm-class, @thm-any and @prop-oneten],
-    [By exhaustive count], [the count of 12,362,536 and the other exact rows of @tab-readings; the hand-size table; the counts with division; @fig-seven and @app-lists],
+    [By exhaustive count], [the count of #fmt(R.deals.stuck) and the other exact rows of @tab-readings; the hand-size table; the counts with division; @fig-seven and @app-lists],
     [By simulation], [the simulated entries of @tab-readings and @tab-house, and the numbers in @sec-play],
-    [Open], [A proof of @thm-big without checking cases; in particular, a short reason why no ten-free multiset of seven nonzero cards survives outside the families.],
+    [Open], [the questions of @sec-open],
     table.hline(stroke: 0.6pt),
   ),
 ) <tab-status>
@@ -1112,9 +1183,22 @@ for n in range(7, 12):
 
 *Independent checks of the impossibilities.* A second encoding, as straight-line programs (pick two unused values, combine them, repeat), confirms with z3 that the ten six-card survivors of @fig-seven have no part making 10. Bit-vectors (binary numbers of a fixed width) of 26 bits are exact here, because six cards of value at most 10 never exceed $11^6 < 2^25$ in absolute value. By @lem-size it is enough to bound the value with every $-$ replaced by $+$; that value plus 1 is at most the product of $c + 1$ over the cards $c$, because $(a + b) + 1$ and $a b + 1$ are both at most $(a + 1)(b + 1)$. A third engine, the classic 24-game search over states, confirms that $#ms(1,6,6,7,7,7,7)$ cannot make 10 with all its cards.
 
-#mnote(inline: true)[Three people do the sum on their own. If all three agree, believe it.]*Search engines.* Three separately written searches agree on the count of 12,362,536; the one published with this note checks every value pattern by brute force in about 35 seconds. The engine reproduces the published counts for the 24 game (1,362 of 1,820) and Make 10 (552 of 715). @thm-single was compared with the original solver on 20,000 random deals, and @thm-zero on all 7,302,660 value patterns with a 0 in the hand, with no disagreements.
+#mnote(inline: true)[Three people do the sum on their own. If all three agree, believe it.]*Search engines.* Three separately written searches agree on the count of #fmt(R.deals.stuck); the one published with this note checks every value pattern by brute force in about 35 seconds. The engine reproduces the published counts for the 24 game (#fmt(R.twenty_four.make.fraction) of #fmt(R.twenty_four.hands)) and Make 10 (552 of 715). @thm-single was compared with the original solver on 20,000 random deals, and @thm-zero on all 7,302,660 value patterns with a 0 in the hand, with no disagreements.
 
-*Code.* The count, the certificates and the machine checks can be rerun from the `erase` folder of the code that accompanies this note, with the Python standard library, except the z3 checks, which need the `z3-solver` package. `erase.py` solves a deal, `count.py` counts dead deals (with `--no-zero` for cards 1 to 10), `make_certs.py` writes the certificates in about two and a half minutes and `verify_certs.py` checks them, `simulate.py` reruns every simulation in this note with fixed seeds, and `smt/` holds the z3 scripts and the state-space engine.
+*Code.* Everything can be rerun from the `erase` folder of the code that accompanies this note, with the Python standard library, except the z3 checks, which need the `z3-solver` package. @tab-results lists each result with how it is known, as the README does, and these are the checks behind it:
+
+#shared(readme, "checks")
+
+#[
+// on a phone the table is longer than a page, so it breaks there (its header repeats)
+#show figure: set block(breakable: phone)
+#figure(
+  placement: if phone { none } else { auto },
+  kind: table,
+  caption: [The main results and how each is known. All are exact.],
+  text(size: if phone { 9pt } else { 10pt }, shared(readme, "results", columns: (1fr, 1.2fr, 1.2fr))),
+) <tab-results>
+]
 
 *Typesetting.* Typst, with the packages fletcher, lilaq and codly.
 
@@ -1197,7 +1281,7 @@ A few cases of @thm-big and its consequences, each a single expression using eve
 
 All counts treat the 44 cards as distinct. Take a value pattern, and let $h_v$ and $c_v$ count the cards of value $v$ in the hand and in the center. The pattern stands for
 $ product_(v = 0)^(10) binom(4, h_v) binom(4 - h_v, c_v) $
-deals: choose which of the four cards of value $v$ go to the hand, then which of the remaining ones go to the center. Summing this over the 6,861 stuck value patterns gives 12,362,536, and summing over all 17,237,220 patterns gives $binom(44, 7) binom(37, 4)$. The 18,722 possible hands, as value patterns, are what the counting program walks through.
+deals: choose which of the four cards of value $v$ go to the hand, then which of the remaining ones go to the center. Summing this over the 6,861 stuck value patterns gives #fmt(R.deals.stuck), and summing over all 17,237,220 patterns gives $binom(44, 7) binom(37, 4)$. The 18,722 possible hands, as value patterns, are what the counting program walks through.
 
 = Answers to the puzzles <app-answers>
 
@@ -1267,7 +1351,7 @@ deals: choose which of the four cards of value $v$ go to the hand, then which of
 - J.-M. Alliot, #link("https://arxiv.org/abs/1502.05450")[The (Final) Countdown], 2015.
 - M. Mahajan and A. Tawari, #link("https://www.sciencedirect.com/science/article/pii/S0304397517307478")[Sums of read-once formulas: how many summands are necessary?]
 - #link("https://en.wikipedia.org/wiki/Integer_complexity")[Integer complexity] (Wikipedia) and #link("https://oeis.org/A005245")[OEIS A005245].
-- #link("https://www.4nums.com/24_game/facts/")[Facts about the 24 game], 4nums.com.
+- #link("https://www.4nums.com/24_game/facts/")[Facts about the 24 game], 4nums.com; the 24-game counts at #link("https://gottfriedville.net/games/24/index.shtml")[gottfriedville.net], #link("https://solve24game.com/24-game-solvable-combinations/")[solve24game.com] and #link("https://puzzletip.com/24-game-solver/")[puzzletip.com].
 - #link("https://ja.wikipedia.org/wiki/%E3%83%86%E3%83%B3%E3%83%91%E3%82%BA%E3%83%AB")[テンパズル] (Japanese Wikipedia).
 - #link("https://mkaz.blog/math/krypto-game-analysis/")[Krypto game analysis], mkaz.blog.
 - On the writing: D. E. Knuth, T. Larrabee and P. M. Roberts, #link("https://cs.stanford.edu/~knuth/papers/cs1193.pdf")[_Mathematical Writing_] (1989); P. R. Halmos, _How to Write Mathematics_ (1970); S. Strogatz, Writing about math for the perplexed and the traumatized, _Notices AMS_ 61 (2014); R. E. Schwartz, Communicating mathematics to children, _Notices AMS_ 63 (2016).

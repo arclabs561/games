@@ -14,9 +14,10 @@ so the exact files the registry serves can be fetched with git instead:
     uv run tools/typst_vendor.py erase/paper/erase.typ --png    # also render one PNG per page
     uv run tools/typst_vendor.py erase/paper/erase.typ --all    # also the phone PDF and the HTML page
 
-Every paper in the repository is built with it. Fonts come only from Typst's own set and
+Every paper in the repository is built with it. The compiler's root is the repository, so a
+paper can read shared files such as /tools/shared_docs.typ and its game's README. Fonts come only from Typst's own set and
 from a fonts/ folder beside the document. With network access to the registry, plain
-`typst compile --ignore-system-fonts --font-path <dir>/fonts <doc>.typ` gives the same PDF;
+`typst compile --root . --ignore-system-fonts --font-path <dir>/fonts <doc>.typ` gives the same PDF;
 add `--input edition=phone` for the phone edition, or `--features html --format html` for HTML.
 
 It scans the document for "@preview/name:version" imports, sparse-checks-out just
@@ -36,6 +37,7 @@ import sys
 import typst
 
 REPO = "https://github.com/typst/packages"
+ROOT = pathlib.Path(__file__).resolve().parent.parent  # the repository: the compiler's root
 IMPORT = re.compile(r"@preview/([a-z0-9-]+):(\d+\.\d+\.\d+)")
 
 
@@ -59,7 +61,12 @@ def imports_in(entry):
         seen.add(f)
         text = f.read_text(errors="ignore")
         found |= set(IMPORT.findall(text))
-        stack += [(f.parent / rel).resolve() for rel in LOCAL.findall(text)]
+        # in the repository, "/x.typ" is relative to its root (packages are not followed there)
+        inside = f.is_relative_to(ROOT)
+        stack += [
+            (ROOT / rel[1:] if rel.startswith("/") and inside else f.parent / rel).resolve()
+            for rel in LOCAL.findall(text)
+        ]
     return found
 
 
@@ -115,7 +122,12 @@ def main():
     pkgs = str(a.packages)
     pdf = a.doc.with_suffix(".pdf")
     typst.compile(
-        str(a.doc), output=str(pdf), package_path=pkgs, font_paths=fonts, ignore_system_fonts=True
+        str(a.doc),
+        output=str(pdf),
+        package_path=pkgs,
+        font_paths=fonts,
+        ignore_system_fonts=True,
+        root=str(ROOT),
     )
     print(f"wrote {pdf}")
     if a.png:
@@ -126,6 +138,7 @@ def main():
             format="png",
             ppi=110,
             package_path=pkgs,
+            root=str(ROOT),
             font_paths=fonts,
             ignore_system_fonts=True,
         )
@@ -137,6 +150,7 @@ def main():
             output=str(phone),
             sys_inputs={"edition": "phone"},
             package_path=pkgs,
+            root=str(ROOT),
             font_paths=fonts,
             ignore_system_fonts=True,
         )
@@ -147,6 +161,7 @@ def main():
             output=str(html),
             format="html",
             package_path=pkgs,
+            root=str(ROOT),
             font_paths=fonts,
             ignore_system_fonts=True,
         )

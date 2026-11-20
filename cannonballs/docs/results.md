@@ -1,0 +1,12 @@
+| Question | Answer | How it is known |
+|---|---|---|
+| Balls in a square pile of n layers | n(n + 1)(2n + 1)/6; {{pile24.balls}} for 24 layers | Proved<!--raw-typst  (@prop-pyramid)-->; checked by building piles of up to 12 layers ball by ball |
+| Balls in a tetrahedral pile | n(n + 1)(n + 2)/6, the number of ways to choose 3 things from n + 2 | Proved<!--raw-typst  (@prop-tetra)-->; checked the same way |
+| Balls in an oblong pile | a(a + 1)(3b − a + 1)/6 | Proved<!--raw-typst  (@prop-oblong)-->; checked the same way |
+| Square piles that are squares | {{lucas_brute:and}} layers | Cited: Watson (1918)<!--raw-typst  (@thm-watson)-->. A walk along two Pell equations finds no other below 10<sup>{{bounds.digits}}</sup> layers, and a plain search agrees up to {{bounds.brute}} |
+| Oblong piles that are squares | Some length works for short side a exactly when a leaves remainder 1 on division by 3, or the multiple of 3 among a and a + 1, divided by 3, is 9<sup>k</sup>(3j + 2). That is 7 in 12 values of a in the long run | Proved<!--raw-typst  (@thm-oblong, @cor-share)-->; checked against two other methods for every a up to {{bounds.oblong_residues}} |
+| Square piles that are triangles; tetrahedral piles that are squares or triangles | {{coincidences.square pile / triangle:list}} layers; {{coincidences.tetrahedral / square:list}}; {{coincidences.tetrahedral / triangle:list}} | Cited (Finkelstein and London, Meyl, Avanesov)<!--raw-typst  (@tab-other)-->; reproduced by search up to {{bounds.coincide}} layers |
+| Square piles that are cubes | Only the single ball, up to 10<sup>18</sup> layers | Search; open beyond |
+| Piles with the top cut off (runs of squares) that are squares | Possible for {{truncated_found:and}} layers, and no other number up to 30 | Search, with a divisor that rules out each other case; matches OEIS A001032<!--raw-typst  (@tab-truncated)-->. For 25 layers the only run is 0² + ... + 24², proved<!--raw-typst  (@prop-25)--> |
+| Touching pairs | 2n²(n − 1) in a square pile, {{pile24.touching_pairs}} for 24 layers; (n − 1)n(n + 1) in a tetrahedral pile | Proved<!--raw-typst  (@prop-touch)-->; checked by counting pairs two ways |
+| Balls that touch twelve others | A square pile of n − 3 layers inside the square pile ({{pile24.balls_by_neighbors.12}} of the {{pile24.balls}}); a tetrahedral pile of n − 4 layers inside the tetrahedral pile | Proved<!--raw-typst  (@prop-twelve)-->; checked by counting |
