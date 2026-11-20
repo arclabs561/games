@@ -6,7 +6,7 @@ name: codenames-c3
 # It is .github/workflows/experiment.yml with its inputs fixed and started by a push:
 # module codenames.c3, slices 0 to 69 (14 tasks times 5 seeds), one job each, 20 minutes
 # at most. A first job gathers the vectors once: the Hugging Face models' from the branch
-# compute/codenames-embed, and the four local models' computed here. Outputs are
+# outputs/codenames-embed, and the four local models' computed here. Outputs are
 # committed to this branch under runs/C3/<run id>/.
 on:
   push:
@@ -35,7 +35,7 @@ jobs:
       - run: uv sync --locked --group "$GROUP"
       - name: Gather the vectors
         run: |
-          git fetch -q --depth 1 origin compute/codenames-embed
+          git fetch -q --depth 1 origin outputs/codenames-embed
           git checkout FETCH_HEAD -- codenames/vectors
           git rm -rq --cached codenames/vectors
           uv run --group "$GROUP" python -m codenames.fetch all
