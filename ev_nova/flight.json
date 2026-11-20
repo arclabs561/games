@@ -1,0 +1,232 @@
+{
+ "llama": {
+  "ship": "Llama",
+  "speed": 295.0,
+  "accel": 299.0,
+  "best": {
+   "route": [
+    "Burnan",
+    "Samell"
+   ],
+   "rate per period": 168.3645037729408,
+   "gain per pass": 785,
+   "periods per pass": 4.662503,
+   "jumps per pass": 2,
+   "certificate checked": true
+  },
+  "round trips": [
+   {
+    "stops": [
+     "Burnan",
+     "Samell"
+    ],
+    "rate": 168.3645,
+    "gain": 785,
+    "periods": 4.662503,
+    "jumps": 2
+   },
+   {
+    "stops": [
+     "Manis",
+     "Tankard Cloister"
+    ],
+    "rate": 164.5231,
+    "gain": 1123,
+    "periods": 6.825789,
+    "jumps": 4
+   },
+   {
+    "stops": [
+     "Burnan",
+     "Lora-Mor"
+    ],
+    "rate": 159.9997,
+    "gain": 788,
+    "periods": 4.92501,
+    "jumps": 2
+   },
+   {
+    "stops": [
+     "Khelim",
+     "Nonuri"
+    ],
+    "rate": 157.7653,
+    "gain": 694,
+    "periods": 4.398939,
+    "jumps": 2
+   },
+   {
+    "stops": [
+     "Eenerim",
+     "Manis"
+    ],
+    "rate": 156.6169,
+    "gain": 1111,
+    "periods": 7.093745,
+    "jumps": 4
+   }
+  ]
+ },
+ "best per jump, timed": {
+  "route": [
+   "Burnan",
+   "Lora-Mor"
+  ],
+  "rate per period": 159.99966485353184,
+  "periods per pass": 4.92501
+ },
+ "speed sweep": {
+  "grid": [
+   {
+    "scale": 0.25,
+    "route": [
+     "Khelim",
+     "Nonuri"
+    ],
+    "rate per period": 128.47682162555097,
+    "gain per pass": 694,
+    "periods per pass": 5.401753,
+    "jumps per pass": 2,
+    "certificate checked": true
+   },
+   {
+    "scale": 0.5,
+    "route": [
+     "Burnan",
+     "Samell"
+    ],
+    "rate per period": 149.22995680998554,
+    "gain per pass": 785,
+    "periods per pass": 5.260338,
+    "jumps per pass": 2,
+    "certificate checked": true
+   },
+   {
+    "scale": 1.0,
+    "route": [
+     "Burnan",
+     "Samell"
+    ],
+    "rate per period": 168.3645037729408,
+    "gain per pass": 785,
+    "periods per pass": 4.662503,
+    "jumps per pass": 2,
+    "certificate checked": true
+   },
+   {
+    "scale": 2.0,
+    "route": [
+     "Burnan",
+     "Samell"
+    ],
+    "rate per period": 179.89792998085758,
+    "gain per pass": 785,
+    "periods per pass": 4.363586,
+    "jumps per pass": 2,
+    "certificate checked": true
+   },
+   {
+    "scale": 4.0,
+    "route": [
+     "Burnan",
+     "Samell"
+    ],
+    "rate per period": 186.27821193873226,
+    "gain per pass": 785,
+    "periods per pass": 4.214127,
+    "jumps per pass": 2,
+    "certificate checked": true
+   },
+   {
+    "scale": 8.0,
+    "route": [
+     "Burnan",
+     "Samell"
+    ],
+    "rate per period": 189.64112967821853,
+    "gain per pass": 785,
+    "periods per pass": 4.139397,
+    "jumps per pass": 2,
+    "certificate checked": true
+   },
+   {
+    "scale": 16.0,
+    "route": [
+     "Burnan",
+     "Samell"
+    ],
+    "rate per period": 191.36857695350713,
+    "gain per pass": 785,
+    "periods per pass": 4.102032,
+    "jumps per pass": 2,
+    "certificate checked": true
+   },
+   {
+    "scale": 32.0,
+    "route": [
+     "Burnan",
+     "Lora-Mor"
+    ],
+    "rate per period": 192.5919867477379,
+    "gain per pass": 788,
+    "periods per pass": 4.091551,
+    "jumps per pass": 2,
+    "certificate checked": true
+   },
+   {
+    "scale": 64.0,
+    "route": [
+     "Burnan",
+     "Lora-Mor"
+    ],
+    "rate per period": 193.20195370648875,
+    "gain per pass": 788,
+    "periods per pass": 4.078634,
+    "jumps per pass": 2,
+    "certificate checked": true
+   },
+   {
+    "scale": "no flight time",
+    "route": [
+     "Burnan",
+     "Lora-Mor"
+    ],
+    "rate per period": 194.66403162055335,
+    "gain per pass": 788,
+    "periods per pass": 4.048,
+    "jumps per pass": 2,
+    "certificate checked": true
+   }
+  ],
+  "changes": [
+   {
+    "between": [
+     0.3574,
+     0.3613
+    ],
+    "from": [
+     "Khelim",
+     "Nonuri"
+    ],
+    "to": [
+     "Burnan",
+     "Samell"
+    ]
+   },
+   {
+    "between": [
+     16.7084,
+     16.8903
+    ],
+    "from": [
+     "Burnan",
+     "Samell"
+    ],
+    "to": [
+     "Burnan",
+     "Lora-Mor"
+    ]
+   }
+  ]
+ }
+}

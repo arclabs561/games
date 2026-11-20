@@ -266,8 +266,12 @@ def main(argv: Sequence[str] | None = None) -> None:
     if args.merge:
         files = sorted(Path(args.merge).glob("retry-row*.json"))
         rows = [json.loads(f.read_text()) for f in files]
-        merged = {"summary": summarize(rows), "rows": rows}
-        text = json.dumps(merged, indent=1, sort_keys=True) + "\n"
+        summary = summarize(rows)
+        # the summary indented, then one line per row of exact values
+        head = json.dumps({"summary": summary}, indent=1, sort_keys=True)
+        body = ",\n".join(json.dumps(r, separators=(",", ":"), sort_keys=True) for r in rows)
+        text = head[:-2] + ',\n "rows": [\n' + body + "\n ]\n}\n"
+        merged = {"summary": summary}
         (Path(args.merge) / "retry.json").write_text(text)
         print(json.dumps(merged["summary"], indent=1))
         return

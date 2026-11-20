@@ -264,7 +264,8 @@ def export(naev: Path) -> dict:
         "source": {
             "repository": "https://github.com/naev/naev",
             "commit": commit,
-            "license": "CC BY-SA 4.0 (Naev's XML data files); this file is derived from them",
+            "license": "CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/), from"
+            " Naev's XML data files by the Naev developers; this file is derived from them",
         },
         "commodities": {
             c.name: c.price for c in sorted(commodities.values(), key=lambda c: c.name)

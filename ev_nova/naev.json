@@ -2,7 +2,7 @@
  "source": {
   "repository": "https://github.com/naev/naev",
   "commit": "65cf3a39b892614c003ac13d24e43855e98fa36b",
-  "license": "CC BY-SA 4.0 (Naev's XML data files); this file is derived from them"
+  "license": "CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/), from Naev's XML data files by the Naev developers; this file is derived from them"
  },
  "commodities": {
   "Diamond": 220,

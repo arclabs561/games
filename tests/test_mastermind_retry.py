@@ -158,7 +158,7 @@ def test_committed_study_matches_a_recomputation():
     data = json.loads(RESULTS.read_text())
     for row in data["rows"]:
         k = rt.ROWS.index((row["level"], row["words"]))
-        screens = rt.screens_of_row(row["level"], row["words"], 3, row["seed"])
+        screens = rt.screens_of_row(row["level"], row["words"], 2, row["seed"])
         for i, screen in enumerate(screens):
             for name, value in rt.score_screen(screen).items():
                 assert row["values"][name][i] == str(value), (k, i, name)
