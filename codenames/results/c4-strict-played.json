@@ -1,0 +1,31 @@
+{
+ "boards": 200,
+ "played_clue_by_level": {
+  "deepseek-v3.2": {
+   "fallback | borderline": 6,
+   "fallback | illegal": 38,
+   "fallback | legal": 59,
+   "own | legal": 97
+  },
+  "gpt-oss-120b": {
+   "fallback | legal": 3,
+   "own | borderline": 1,
+   "own | illegal": 1,
+   "own | legal": 195
+  },
+  "llama-3.3-70b": {
+   "fallback | borderline": 5,
+   "fallback | illegal": 36,
+   "fallback | legal": 53,
+   "own | illegal": 1,
+   "own | legal": 105
+  },
+  "qwen3-32b": {
+   "fallback | borderline": 3,
+   "fallback | illegal": 9,
+   "fallback | legal": 15,
+   "own | legal": 173
+  }
+ },
+ "seed": 4004
+}

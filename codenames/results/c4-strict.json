@@ -1,0 +1,318 @@
+{
+ "bootstrap": {
+  "resamples": 10000,
+  "seed": 0
+ },
+ "h_give": {
+  "embedding_giver": {
+   "mean_count": 2.765,
+   "value": {
+    "ci": [
+     0.61968,
+     0.76367
+    ],
+    "mean": 0.69208,
+    "n": 200,
+    "p": 0.0
+   }
+  },
+  "h_give_strict": {
+   "ci": [
+    -0.49521,
+    -0.20464
+   ],
+   "mean": -0.34181,
+   "model": "deepseek-v3.2",
+   "n": 200,
+   "p": 0.0
+  },
+  "models": {
+   "deepseek-v3.2": {
+    "fallback_rate": 0.515,
+    "minus_embedding_giver": {
+     "ci": [
+      -0.49521,
+      -0.20464
+     ],
+     "mean": -0.34181,
+     "n": 200,
+     "p": 0.0
+    },
+    "value": {
+     "ci": [
+      0.21333,
+      0.46127
+     ],
+     "mean": 0.35028,
+     "n": 200,
+     "p": 0.0
+    }
+   },
+   "gpt-oss-120b": {
+    "fallback_rate": 0.025,
+    "minus_embedding_giver": {
+     "ci": [
+      -0.59996,
+      -0.38221
+     ],
+     "mean": -0.4904,
+     "n": 200,
+     "p": 0.0
+    },
+    "value": {
+     "ci": [
+      0.10649,
+      0.2907
+     ],
+     "mean": 0.20168,
+     "n": 200,
+     "p": 0.0
+    }
+   },
+   "llama-3.3-70b": {
+    "fallback_rate": 0.475,
+    "minus_embedding_giver": {
+     "ci": [
+      -0.43582,
+      -0.20356
+     ],
+     "mean": -0.3185,
+     "n": 200,
+     "p": 0.0
+    },
+    "value": {
+     "ci": [
+      0.27265,
+      0.46815
+     ],
+     "mean": 0.37359,
+     "n": 200,
+     "p": 0.0
+    }
+   },
+   "qwen3-32b": {
+    "fallback_rate": 0.135,
+    "minus_embedding_giver": {
+     "ci": [
+      -1.05875,
+      -0.73725
+     ],
+     "mean": -0.89382,
+     "n": 200,
+     "p": 0.0
+    },
+    "value": {
+     "ci": [
+      -0.34877,
+      -0.06688
+     ],
+     "mean": -0.20174,
+     "n": 200,
+     "p": 0.0032
+    }
+   }
+  },
+  "strangers": [
+   "potion",
+   "wordllama",
+   "granite",
+   "bge",
+   "Qwen/Qwen3-Embedding-0.6B",
+   "microsoft/harrier-oss-v1-270m",
+   "microsoft/harrier-oss-v1-0.6b"
+  ]
+ },
+ "levels": {
+  "deepseek-v3.2": {
+   "4004": {
+    "accepted_by_c4": 97,
+    "accepted_strictly": 97,
+    "c4_by_level": {
+     "accepted | legal": 97,
+     "board word | illegal": 103
+    },
+    "c4_by_level_beyond_substring": {
+     "accepted | legal": 97,
+     "board word | borderline": 4,
+     "board word | illegal": 94,
+     "board word | legal": 5
+    },
+    "level_share": {
+     "borderline": 0.0,
+     "illegal": 0.515,
+     "legal": 0.485,
+     "no word": 0.0
+    },
+    "replies": 200
+   },
+   "4005": {
+    "accepted_by_c4": 20,
+    "accepted_strictly": 19,
+    "c4_by_level": {
+     "accepted | illegal": 1,
+     "accepted | legal": 19,
+     "board word | illegal": 30
+    },
+    "c4_by_level_beyond_substring": {
+     "accepted | illegal": 1,
+     "accepted | legal": 19,
+     "board word | borderline": 1,
+     "board word | illegal": 28,
+     "board word | legal": 1
+    },
+    "level_share": {
+     "borderline": 0.0,
+     "illegal": 0.62,
+     "legal": 0.38,
+     "no word": 0.0
+    },
+    "replies": 50
+   }
+  },
+  "gpt-oss-120b": {
+   "4004": {
+    "accepted_by_c4": 197,
+    "accepted_strictly": 195,
+    "c4_by_level": {
+     "accepted | borderline": 1,
+     "accepted | illegal": 1,
+     "accepted | legal": 195,
+     "board word | illegal": 3
+    },
+    "c4_by_level_beyond_substring": {
+     "accepted | borderline": 1,
+     "accepted | illegal": 1,
+     "accepted | legal": 195,
+     "board word | legal": 3
+    },
+    "level_share": {
+     "borderline": 0.005,
+     "illegal": 0.02,
+     "legal": 0.975,
+     "no word": 0.0
+    },
+    "replies": 200
+   },
+   "4005": {
+    "accepted_by_c4": 48,
+    "accepted_strictly": 47,
+    "c4_by_level": {
+     "accepted | illegal": 1,
+     "accepted | legal": 47,
+     "board word | illegal": 2
+    },
+    "c4_by_level_beyond_substring": {
+     "accepted | illegal": 1,
+     "accepted | legal": 47,
+     "board word | illegal": 2
+    },
+    "level_share": {
+     "borderline": 0.0,
+     "illegal": 0.06,
+     "legal": 0.94,
+     "no word": 0.0
+    },
+    "replies": 50
+   }
+  },
+  "llama-3.3-70b": {
+   "4004": {
+    "accepted_by_c4": 106,
+    "accepted_strictly": 105,
+    "c4_by_level": {
+     "accepted | illegal": 1,
+     "accepted | legal": 105,
+     "board word | illegal": 88,
+     "count below 1 | legal": 1,
+     "empty | no word": 5
+    },
+    "c4_by_level_beyond_substring": {
+     "accepted | illegal": 1,
+     "accepted | legal": 105,
+     "board word | borderline": 2,
+     "board word | illegal": 85,
+     "board word | legal": 1,
+     "count below 1 | legal": 1,
+     "empty | no word": 5
+    },
+    "level_share": {
+     "borderline": 0.0,
+     "illegal": 0.445,
+     "legal": 0.53,
+     "no word": 0.025
+    },
+    "replies": 200
+   },
+   "4005": {
+    "accepted_by_c4": 31,
+    "accepted_strictly": 30,
+    "c4_by_level": {
+     "accepted | illegal": 1,
+     "accepted | legal": 30,
+     "board word | illegal": 19
+    },
+    "c4_by_level_beyond_substring": {
+     "accepted | illegal": 1,
+     "accepted | legal": 30,
+     "board word | borderline": 1,
+     "board word | illegal": 18
+    },
+    "level_share": {
+     "borderline": 0.0,
+     "illegal": 0.4,
+     "legal": 0.6,
+     "no word": 0.0
+    },
+    "replies": 50
+   }
+  },
+  "qwen3-32b": {
+   "4004": {
+    "accepted_by_c4": 173,
+    "accepted_strictly": 173,
+    "c4_by_level": {
+     "accepted | legal": 173,
+     "board word | illegal": 27
+    },
+    "c4_by_level_beyond_substring": {
+     "accepted | legal": 173,
+     "board word | borderline": 1,
+     "board word | illegal": 23,
+     "board word | legal": 3
+    },
+    "level_share": {
+     "borderline": 0.0,
+     "illegal": 0.135,
+     "legal": 0.865,
+     "no word": 0.0
+    },
+    "replies": 200
+   },
+   "4005": {
+    "accepted_by_c4": 39,
+    "accepted_strictly": 39,
+    "c4_by_level": {
+     "accepted | legal": 39,
+     "board word | illegal": 11
+    },
+    "c4_by_level_beyond_substring": {
+     "accepted | legal": 39,
+     "board word | illegal": 9,
+     "board word | legal": 2
+    },
+    "level_share": {
+     "borderline": 0.0,
+     "illegal": 0.22,
+     "legal": 0.78,
+     "no word": 0.0
+    },
+    "replies": 50
+   }
+  }
+ },
+ "plan": "experiments/plans/C4.md (amendment of 2026-11-20, exploratory)",
+ "seeds": {
+  "test": 4004,
+  "val": 4005
+ }
+}

@@ -1,5 +1,7 @@
 """C4's amendment of 2026-11-20: the giving part read under the rulebook's clue rule."""
 
+import pytest
+
 from codenames import c4strict
 from codenames.game import Board
 
@@ -41,3 +43,23 @@ def test_replies_with_no_word_and_legal_ones():
     ok = c4strict.classify("music 2", b)
     assert ok["c4"] == "accepted" and ok["level"] == "legal" and ok["strict_legal"]
     assert ok["count"] == 2
+
+
+def test_committed_tables_add_up():
+    import json
+
+    data = json.loads((c4strict.PLAYED.parent / "c4-strict.json").read_text())
+    for seeds in data["levels"].values():
+        for seed, t in seeds.items():
+            assert sum(t["c4_by_level"].values()) == t["replies"] == c4strict.N[int(seed)]
+            assert t["accepted_strictly"] <= t["accepted_by_c4"]
+            assert sum(t["level_share"].values()) == pytest.approx(1)
+    assert data["h_give"]["h_give_strict"]["model"] == c4strict.SELECTED
+
+
+def test_played_levels_are_what_the_module_writes():
+    import json
+
+    assert json.loads(c4strict.PLAYED.read_text()) == json.loads(
+        json.dumps(c4strict.played(), sort_keys=True)
+    )

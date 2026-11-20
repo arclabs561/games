@@ -3,6 +3,7 @@
 
     python -m codenames.c4 strict --runs hf --out OUT      # in a cpu-basic job
     python -m codenames.c4 strict --runs DIR --out OUT     # DIR holds give-<model>-<seed>.json
+    python -m codenames.c4 strict --runs played --out codenames/results   # committed files only
 
 C4 judged a clue with `words.legal` (not a board word, not containing one, not contained
 in one). This reads every raw giver reply on the test boards (seed 4004) and the
@@ -233,9 +234,37 @@ def ensure_vectors() -> None:
         shutil.copy(f, embed.COMPUTED / f.name)
 
 
+PLAYED = Path(__file__).parent / "results" / "c4-strict-played.json"
+
+
+def played() -> dict:
+    """The clue each model's test boards were played with in C4 (`results/c4.json`: the
+    model's own accepted clue, or the fallback), by strict level and by whether it was the
+    fallback. Reads only committed files."""
+    from codenames.legality import worst
+
+    give = json.loads((Path(__file__).parent / "results" / "c4.json").read_text())["give"]
+    rows = give["seeds"][str(TEST)]["boards"]
+    bs = c4.boards(TEST, N[TEST])
+    out = {}
+    for m in c4.PLAN:
+        c = Counter(
+            f"{'fallback' if r['fallback'] else 'own'} | {worst(r['clue'], b.words)}"
+            for r, b in zip(rows[m], bs, strict=True)
+        )
+        out[m] = dict(sorted(c.items()))
+    return {"seed": TEST, "boards": N[TEST], "played_clue_by_level": out}
+
+
 def run(runs_dir: str, out: Path) -> dict:
     from codenames.c4score import rounded
 
+    if runs_dir == "played":
+        text = json.dumps(played(), indent=1, sort_keys=True) + "\n"
+        out.mkdir(parents=True, exist_ok=True)
+        (out / PLAYED.name).write_text(text)
+        print(text)
+        return json.loads(text)
     folder = download() if runs_dir == "hf" else Path(runs_dir)
     ensure_vectors()
     runs = read_runs(folder)
