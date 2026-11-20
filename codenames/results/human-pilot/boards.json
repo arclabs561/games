@@ -63,6 +63,64 @@
   {
    "board": 1,
    "kinds": [
+    "T",
+    "N",
+    "T",
+    "O",
+    "T",
+    "T",
+    "O",
+    "N",
+    "N",
+    "T",
+    "O",
+    "N",
+    "T",
+    "T",
+    "O",
+    "O",
+    "N",
+    "O",
+    "O",
+    "N",
+    "N",
+    "A",
+    "O",
+    "T",
+    "T"
+   ],
+   "seed_index": 1,
+   "words": [
+    "pocket",
+    "floor",
+    "moon",
+    "character",
+    "plate",
+    "window",
+    "blood",
+    "bathroom",
+    "tongue",
+    "fighter",
+    "server",
+    "hardware",
+    "tube",
+    "territory",
+    "turkey",
+    "cat",
+    "terminal",
+    "cotton",
+    "water",
+    "doctor",
+    "sugar",
+    "corner",
+    "position",
+    "tie",
+    "silver"
+   ]
+  },
+  {
+   "board": 2,
+   "kinds": [
     "O",
     "O",
     "N",
@@ -119,7 +177,7 @@
    ]
   },
   {
-   "board": 2,
+   "board": 3,
    "kinds": [
     "T",
     "T",
@@ -177,7 +235,7 @@
    ]
   },
   {
-   "board": 3,
+   "board": 4,
    "kinds": [
     "T",
     "A",
@@ -232,64 +290,6 @@
     "doctor",
     "soldier",
     "load"
-   ]
-  },
-  {
-   "board": 4,
-   "kinds": [
-    "N",
-    "O",
-    "T",
-    "O",
-    "T",
-    "T",
-    "T",
-    "N",
-    "T",
-    "N",
-    "O",
-    "N",
-    "T",
-    "O",
-    "O",
-    "A",
-    "N",
-    "T",
-    "O",
-    "N",
-    "T",
-    "N",
-    "T",
-    "O",
-    "O"
-   ],
-   "seed_index": 5,
-   "words": [
-    "meat",
-    "port",
-    "waste",
-    "tube",
-    "residence",
-    "juice",
-    "mask",
-    "fat",
-    "pocket",
-    "agent",
-    "front",
-    "bat",
-    "guest",
-    "bar",
-    "bottle",
-    "base",
-    "chest",
-    "position",
-    "landscape",
-    "relative",
-    "scene",
-    "origin",
-    "eye",
-    "terminal",
-    "winner"
    ]
   },
   {
@@ -2151,64 +2151,6 @@
   {
    "board": 37,
    "kinds": [
-    "N",
-    "T",
-    "O",
-    "N",
-    "O",
-    "T",
-    "O",
-    "A",
-    "T",
-    "T",
-    "T",
-    "T",
-    "N",
-    "T",
-    "O",
-    "T",
-    "N",
-    "O",
-    "O",
-    "O",
-    "T",
-    "N",
-    "O",
-    "N",
-    "N"
-   ],
-   "seed_index": 48,
-   "words": [
-    "wire",
-    "wing",
-    "bike",
-    "hospital",
-    "cup",
-    "monster",
-    "empire",
-    "secretary",
-    "deck",
-    "steel",
-    "pope",
-    "telephone",
-    "art",
-    "chicken",
-    "hole",
-    "phone",
-    "dean",
-    "father",
-    "mouse",
-    "mother",
-    "port",
-    "field",
-    "makeup",
-    "author",
-    "moon"
-   ]
-  },
-  {
-   "board": 38,
-   "kinds": [
     "O",
     "T",
     "O",
@@ -2265,7 +2207,7 @@
    ]
   },
   {
-   "board": 39,
+   "board": 38,
    "kinds": [
     "N",
     "N",
@@ -2321,6 +2263,64 @@
     "muscle",
     "butter"
    ]
+  },
+  {
+   "board": 39,
+   "kinds": [
+    "N",
+    "N",
+    "O",
+    "O",
+    "O",
+    "O",
+    "O",
+    "T",
+    "T",
+    "N",
+    "T",
+    "N",
+    "O",
+    "T",
+    "T",
+    "N",
+    "O",
+    "O",
+    "T",
+    "N",
+    "N",
+    "A",
+    "T",
+    "T",
+    "T"
+   ],
+   "seed_index": 52,
+   "words": [
+    "singer",
+    "vehicle",
+    "tank",
+    "net",
+    "hospital",
+    "iron",
+    "chip",
+    "cabinet",
+    "adult",
+    "paper",
+    "tube",
+    "stuff",
+    "wall",
+    "user",
+    "brain",
+    "route",
+    "uncle",
+    "mate",
+    "knee",
+    "meal",
+    "doctor",
+    "throat",
+    "pen",
+    "tape",
+    "tongue"
+   ]
   }
  ],
  "items": [
@@ -2350,8 +2350,8 @@
   },
   {
    "board": 38,
-   "clue": "kid",
-   "count": 1,
+   "clue": "slope",
+   "count": 3,
    "item": "0ea7df"
   },
   {
@@ -2362,7 +2362,7 @@
   },
   {
    "board": 1,
-   "clue": "placement",
+   "clue": "lunar",
    "count": 1,
    "item": "138372"
   },
@@ -2374,8 +2374,8 @@
   },
   {
    "board": 28,
-   "clue": "governance",
-   "count": 2,
+   "clue": "purse",
+   "count": 1,
    "item": "1482b5"
   },
   {
@@ -2398,7 +2398,7 @@
   },
   {
    "board": 27,
-   "clue": "railroad",
+   "clue": "train",
    "count": 1,
    "item": "1ebbcb"
   },
@@ -2422,20 +2422,20 @@
   },
   {
    "board": 1,
-   "clue": "explosive",
-   "count": 3,
+   "clue": "luna",
+   "count": 1,
    "item": "280597"
   },
   {
    "board": 39,
-   "clue": "episcopal",
-   "count": 2,
+   "clue": "drawer",
+   "count": 4,
    "item": "2e9aaf"
   },
   {
    "board": 2,
-   "clue": "lake",
-   "count": 2,
+   "clue": "explosive",
+   "count": 3,
    "item": "2ef43b"
   },
   {
@@ -2452,14 +2452,14 @@
   },
   {
    "board": 18,
-   "clue": "hiding",
-   "count": 3,
+   "clue": "writer",
+   "count": 1,
    "item": "3b3c50"
   },
   {
    "board": 25,
-   "clue": "webcam",
-   "count": 2,
+   "clue": "fluid",
+   "count": 1,
    "item": "3d6841"
   },
   {
@@ -2494,8 +2494,8 @@
   },
   {
    "board": 31,
-   "clue": "actress",
-   "count": 1,
+   "clue": "alley",
+   "count": 2,
    "item": "4d1dcb"
   },
   {
@@ -2506,7 +2506,7 @@
   },
   {
    "board": 25,
-   "clue": "owned",
+   "clue": "cupboard",
    "count": 1,
    "item": "57cd04"
   },
@@ -2518,7 +2518,7 @@
   },
   {
    "board": 2,
-   "clue": "seafood",
+   "clue": "placement",
    "count": 1,
    "item": "5c6810"
   },
@@ -2536,13 +2536,13 @@
   },
   {
    "board": 39,
-   "clue": "slope",
-   "count": 3,
+   "clue": "neuroscience",
+   "count": 1,
    "item": "60ba29"
   },
   {
    "board": 20,
-   "clue": "librarian",
+   "clue": "face",
    "count": 2,
    "item": "61591e"
   },
@@ -2578,8 +2578,8 @@
   },
   {
    "board": 28,
-   "clue": "governing",
-   "count": 2,
+   "clue": "dad",
+   "count": 1,
    "item": "6ecae9"
   },
   {
@@ -2602,20 +2602,20 @@
   },
   {
    "board": 37,
-   "clue": "telecom",
+   "clue": "educator",
    "count": 2,
    "item": "80d4b6"
   },
   {
    "board": 36,
-   "clue": "waist",
-   "count": 4,
+   "clue": "man",
+   "count": 3,
    "item": "818658"
   },
   {
    "board": 5,
-   "clue": "telecom",
-   "count": 2,
+   "clue": "polymer",
+   "count": 1,
    "item": "82faa0"
   },
   {
@@ -2632,13 +2632,13 @@
   },
   {
    "board": 38,
-   "clue": "teaching",
-   "count": 1,
+   "clue": "episcopal",
+   "count": 2,
    "item": "9e27cc"
   },
   {
    "board": 3,
-   "clue": "scalp",
+   "clue": "lake",
    "count": 2,
    "item": "a0238a"
   },
@@ -2656,19 +2656,19 @@
   },
   {
    "board": 4,
-   "clue": "garbage",
-   "count": 1,
+   "clue": "scalp",
+   "count": 2,
    "item": "a57fa9"
   },
   {
    "board": 23,
-   "clue": "railway",
+   "clue": "automotive",
    "count": 1,
    "item": "af9111"
   },
   {
    "board": 3,
-   "clue": "physician",
+   "clue": "seafood",
    "count": 1,
    "item": "b38f5d"
   },
@@ -2692,7 +2692,7 @@
   },
   {
    "board": 12,
-   "clue": "regiment",
+   "clue": "freight",
    "count": 4,
    "item": "befdc1"
   },
@@ -2710,7 +2710,7 @@
   },
   {
    "board": 35,
-   "clue": "restroom",
+   "clue": "principal",
    "count": 2,
    "item": "c47657"
   },
@@ -2758,19 +2758,19 @@
   },
   {
    "board": 37,
-   "clue": "mobile",
-   "count": 3,
+   "clue": "toddler",
+   "count": 1,
    "item": "de066e"
   },
   {
    "board": 11,
-   "clue": "residency",
+   "clue": "garbage",
    "count": 1,
    "item": "dedc65"
   },
   {
    "board": 4,
-   "clue": "residency",
+   "clue": "physician",
    "count": 1,
    "item": "e7a57f"
   },
@@ -2788,24 +2788,24 @@
   },
   {
    "board": 21,
-   "clue": "winning",
+   "clue": "victory",
    "count": 2,
    "item": "f23fe1"
   },
   {
    "board": 34,
-   "clue": "tummy",
+   "clue": "abdominal",
    "count": 1,
    "item": "f5c0ed"
   },
   {
    "board": 8,
-   "clue": "countess",
-   "count": 2,
+   "clue": "poultry",
+   "count": 1,
    "item": "f79dc7"
   }
  ],
- "key_sha256": "df84c4e025f37a9de46fa98d4e4553693ef4a662b66ad6bce379965c8da5aded",
+ "key_sha256": "517f7ef9ad56fb288de25d6e657ed44291921059a840e7a655ade960c0c6c561",
  "order_seed": 11011,
  "plan": "experiments/plans/C11.md",
  "versions": {

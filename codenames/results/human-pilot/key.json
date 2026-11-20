@@ -8,32 +8,32 @@
    "seed_index": 0
   },
   {
+   "F": "luna/1",
+   "P": "lunar/1",
+   "board": 1,
+   "seed_index": 1
+  },
+  {
    "F": "explosive/3",
    "P": "placement/1",
-   "board": 1,
+   "board": 2,
    "seed_index": 2
   },
   {
    "F": "lake/2",
    "P": "seafood/1",
-   "board": 2,
+   "board": 3,
    "seed_index": 3
   },
   {
    "F": "scalp/2",
    "P": "physician/1",
-   "board": 3,
+   "board": 4,
    "seed_index": 4
   },
   {
-   "F": "garbage/1",
-   "P": "residency/1",
-   "board": 4,
-   "seed_index": 5
-  },
-  {
    "F": "nylon/3",
-   "P": "telecom/2",
+   "P": "polymer/1",
    "board": 5,
    "seed_index": 7
   },
@@ -50,7 +50,7 @@
    "seed_index": 9
   },
   {
-   "F": "countess/2",
+   "F": "poultry/1",
    "P": "automobile/1",
    "board": 8,
    "seed_index": 10
@@ -69,12 +69,12 @@
   },
   {
    "F": "wasted/2",
-   "P": "residency/1",
+   "P": "garbage/1",
    "board": 11,
    "seed_index": 13
   },
   {
-   "F": "regiment/4",
+   "F": "freight/4",
    "P": "below/2",
    "board": 12,
    "seed_index": 14
@@ -111,7 +111,7 @@
   },
   {
    "F": "bathing/1",
-   "P": "hiding/3",
+   "P": "writer/1",
    "board": 18,
    "seed_index": 20
   },
@@ -122,14 +122,14 @@
    "seed_index": 21
   },
   {
-   "F": "librarian/2",
+   "F": "face/2",
    "P": "female/1",
    "board": 20,
    "seed_index": 22
   },
   {
    "F": "beach/2",
-   "P": "winning/2",
+   "P": "victory/2",
    "board": 21,
    "seed_index": 23
   },
@@ -141,7 +141,7 @@
   },
   {
    "F": "transportation/2",
-   "P": "railway/1",
+   "P": "automotive/1",
    "board": 23,
    "seed_index": 25
   },
@@ -152,8 +152,8 @@
    "seed_index": 27
   },
   {
-   "F": "owned/1",
-   "P": "webcam/2",
+   "F": "cupboard/1",
+   "P": "fluid/1",
    "board": 25,
    "seed_index": 28
   },
@@ -165,13 +165,13 @@
   },
   {
    "F": "meadow/3",
-   "P": "railroad/1",
+   "P": "train/1",
    "board": 27,
    "seed_index": 30
   },
   {
-   "F": "governance/2",
-   "P": "governing/2",
+   "F": "purse/1",
+   "P": "dad/1",
    "board": 28,
    "seed_index": 31
   },
@@ -188,7 +188,7 @@
    "seed_index": 35
   },
   {
-   "F": "actress/1",
+   "F": "alley/2",
    "P": "glucose/1",
    "board": 31,
    "seed_index": 37
@@ -207,42 +207,43 @@
   },
   {
    "F": "cliff/3",
-   "P": "tummy/1",
+   "P": "abdominal/1",
    "board": 34,
    "seed_index": 44
   },
   {
    "F": "manufacturing/3",
-   "P": "restroom/2",
+   "P": "principal/2",
    "board": 35,
    "seed_index": 45
   },
   {
-   "F": "waist/4",
+   "F": "man/3",
    "P": "dad/1",
    "board": 36,
    "seed_index": 46
   },
   {
-   "F": "mobile/3",
-   "P": "telecom/2",
+   "F": "toddler/1",
+   "P": "educator/2",
    "board": 37,
-   "seed_index": 48
-  },
-  {
-   "F": "teaching/1",
-   "P": "kid/1",
-   "board": 38,
    "seed_index": 49
   },
   {
    "F": "episcopal/2",
    "P": "slope/3",
-   "board": 39,
+   "board": 38,
    "seed_index": 50
+  },
+  {
+   "F": "drawer/4",
+   "P": "neuroscience/1",
+   "board": 39,
+   "seed_index": 52
   }
  ],
  "giver": {
+  "clue_filter": "codenames.legality.strict_legal (amendment of 2026-11-19)",
   "code": "codenames.human_pilot.giver_picks (codenames.listen, codenames.c10score)",
   "held_out": "potion",
   "k": 10,
@@ -333,7 +334,7 @@
  "order_seed": 11011,
  "plan": "experiments/plans/C11.md",
  "skipped": [
-  1,
+  5,
   6,
   26,
   33,
@@ -343,6 +344,8 @@
   41,
   42,
   43,
-  47
+  47,
+  48,
+  51
  ]
 }

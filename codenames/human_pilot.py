@@ -3,7 +3,9 @@
 Forty boards, each with two clues: the embedding giver's first choice (F) and the
 population's pick (P), both as C10 defines them (codenames.listen, codenames.c10score):
 
-- EmbeddingGemma 2 proposes 30 legal clues, each with counts 1 to 4 (codenames.actions);
+- EmbeddingGemma 2 proposes 30 legal clues, each with counts 1 to 4 (codenames.actions),
+  from the clue words that `legality.strict_legal` allows on the board (the amendment of
+  2026-11-19 to plan C11: no form of a board word and no shared compound part);
 - F is the action of the 120 that the proposer values most;
 - P is the action, among the 40 of the K = 10 clues the prefilter keeps, with the highest
   mean exact value over six embedding guessers: the seven strangers less potion, the task
@@ -58,8 +60,17 @@ Action = tuple[str, int]
 # The two clues of a board, from the existing giver code (needs the word vectors).
 
 
-def giver_picks(board: Board) -> dict[str, Action]:
-    """F, P and the oracle at K on one board, as C10 computes them."""
+def clue_pool(board: Board) -> tuple[str, ...]:
+    """The clue words that the strict check allows on the board (codenames.legality)."""
+    from codenames.legality import strict_legal
+    from codenames.words import clue_words
+
+    return tuple(c for c in clue_words() if strict_legal(c, board.words))
+
+
+def giver_picks(board: Board, strict: bool = True) -> dict[str, Action]:
+    """F, P and the oracle at K on one board, as C10 computes them; with strict, every
+    arm chooses among clues of the strict pool, as the amendment of 2026-11-19 says."""
     import numpy as np
 
     from codenames.actions import proposer, shortlist
@@ -67,7 +78,7 @@ def giver_picks(board: Board) -> dict[str, Action]:
     from codenames.listen import argmax_first, pick_population, prefilter
 
     sp, tau = proposer()
-    clues = shortlist(board, sp, tau)
+    clues = shortlist(board, sp, tau, pool=clue_pool(board) if strict else None)
     data = BoardData(board, clues, prefilter(board, clues, K))
     assert data.potion == scorer_names().index(HELD_OUT)
     idx = np.array(data.kidx(K))
@@ -87,13 +98,14 @@ def scorer_names() -> list[str]:
 
 
 def check_against_c10(n: int = 3) -> None:
-    """giver_picks gives C10's committed F, P and oracle on the first n test boards."""
+    """giver_picks, without the strict filter, gives C10's committed F, P and oracle on the
+    first n test boards."""
     from codenames.listen import TEST
 
     committed = json.loads((HERE / "results" / "c10.json").read_text())["boards"]
     potion = scorer_names().index(HELD_OUT)
     for i, board in enumerate(c4.boards(TEST, n)):
-        got = {arm: f"{c}/{k}" for arm, (c, k) in giver_picks(board).items()}
+        got = {arm: f"{c}/{k}" for arm, (c, k) in giver_picks(board, strict=False).items()}
         want = committed[i]["picks"]
         assert got == {"F": want["F"], "P": want["P"][potion], "oracle": want["oracle"]}, i
 
@@ -193,6 +205,7 @@ def materials(chosen: list[dict], skipped: list[int], order_seed: int = ORDER_SE
             "k": K,
             "held_out": HELD_OUT,
             "code": "codenames.human_pilot.giver_picks (codenames.listen, codenames.c10score)",
+            "clue_filter": "codenames.legality.strict_legal (amendment of 2026-11-19)",
         },
     }
     key_text = dumps(key)
