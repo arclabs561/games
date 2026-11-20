@@ -12,6 +12,7 @@ from hanabi.humans import (
     Ceiling,
     analyze,
     ceiling,
+    free_order_lost,
     is_critical,
     reachable,
     states_of,
@@ -187,6 +188,23 @@ def test_search_from_a_game_in_progress_agrees_with_brute_force(rules):
                 fast, line = winnable(rules, deck, target=target, start=s)
                 assert fast == brute_winnable(rules, deck, target, start=s), (deck, s.turn)
             step(s, rng.choice(legal_actions(s)))
+
+
+@pytest.mark.parametrize("rules", SMALL)
+def test_the_free_order_game_with_a_target_never_rules_out_a_reachable_score(rules):
+    """From every prefix of a random game on every deal of a small deck, and for every
+    target, a free-order game that cannot reach the target means brute force cannot."""
+    rng = random.Random(3)
+    lost = 0
+    for deck in multiset_orders(full_deck(rules)):
+        s = new_game(rules, deck)
+        while not s.over:
+            for target in range(s.score + 1, rules.max_score + 1):
+                if free_order_lost(rules, deck, target, s, 0) is False:
+                    lost += 1
+                    assert not brute_winnable(rules, deck, target, start=s), (deck, s.turn)
+            step(s, rng.choice(legal_actions(s)))
+    assert lost > 0
 
 
 def test_the_ceiling_never_rises_in_a_game():

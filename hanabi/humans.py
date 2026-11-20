@@ -59,15 +59,29 @@ BUDGETS = (20_000, 300_000)  # nodes per search, the first two budgets of plan H
 ATTEMPTS = ((SCHEDULE, True), ((10**9,), True), (SCHEDULE, False))  # as in upper_bound
 
 
-def reachable(rules: Rules, deck, target: int, state: State | None = None, budgets=BUDGETS):
+def reachable(
+    rules: Rules, deck, target: int, state: State | None = None, budgets=BUDGETS, effort=None
+):
     """Can the open game reach `target` from `state` (by default the deal)? True, False, or
-    None when every search ran out of budget. A True answer is replayed by the rules engine."""
+    None when every search ran out of budget. A True answer is replayed by the rules engine.
+
+    Each budget of nodes is tried with the searches of plan H1; for a game in progress, the
+    free-order game then gets its turn to prove the target out of reach. The
+    searches find reachable targets quickly, and the free-order game is often quicker at
+    proving the others lost. `effort`, a dict with "hard" and "cap", counts the questions
+    that go past the first budget and answers None once there have been "cap" of them.
+
+    The free-order game gets ten times each budget, at most 1,000,000 states."""
     if state is not None:
         if state.score >= target:
             return True
         if state.over:
             return False
-    for budget in budgets:
+    for k, budget in enumerate(budgets):
+        if k == 1 and effort is not None:
+            effort["hard"] += 1
+            if effort["hard"] > effort["cap"]:
+                return None
         for schedule, pass_first in ATTEMPTS:
             ok, line = winnable(
                 rules,
@@ -83,7 +97,24 @@ def reachable(rules: Rules, deck, target: int, state: State | None = None, budge
                 return True
             if ok is False:
                 return False
+        nodes = min(10 * budget, 1_000_000)
+        if state is not None and free_order_lost(rules, deck, target, state, nodes) is False:
+            return False
     return None
+
+
+def free_order_lost(rules: Rules, deck, target: int, state: State, nodes: int) -> bool | None:
+    """False when the free-order game of `hanabi.dfs_solver` (unlimited tokens and lives)
+    cannot reach `target` from `state`, which proves the real game cannot either; otherwise
+    None, since a relaxation that reaches the target proves nothing."""
+    g = dfs_solver.Game(rules, list(deck), goal=target)
+    pile = tuple(state.board)
+    hands = tuple(g.tidy(h, pile) for h in state.hands)
+    budget = dfs_solver.Budget(nodes) if nodes else None  # 0: no limit
+    ok = dfs_solver.free_order_winnable(
+        g, pile, hands, state.pos, state.current, state.turns_left, {}, budget
+    )
+    return False if ok is False else None
 
 
 @dataclass(frozen=True)
@@ -168,21 +199,23 @@ def action_kind(before: State, after: State, a) -> str:
     return "critical discard" if is_critical(card, before) else "discard"
 
 
-def first_below(rules, deck, states, target, lo, hi, budgets):
+def first_below(rules, deck, states, target, lo, hi, budgets, effort=None):
     """The first turn t in (lo, hi] whose state cannot reach `target`, given that state lo
     can and state hi cannot. None if a search is undecided."""
     while hi - lo > 1:
         mid = (lo + hi) // 2
-        ok = reachable(rules, deck, target, states[mid], budgets)
+        ok = reachable(rules, deck, target, states[mid], budgets, effort)
         if ok is None:
             return None
         lo, hi = (mid, hi) if ok else (lo, mid)
     return hi
 
 
-def trajectory(game: HumanGame, start: int, budgets=BUDGETS) -> list[int] | None:
-    """For each target from `start` (the deal's ceiling) down to the score plus one, the turn
-    after which the ceiling fell below it: drop turns, latest first. None if undecided."""
+def trajectory(game: HumanGame, start: int, budgets=BUDGETS, hard: int = 0) -> list[int] | None:
+    """For each target from the score plus one up to `start` (the deal's ceiling), the turn
+    after which the ceiling fell below it: drop turns, latest first. None if a search is
+    undecided, or if more than `hard` questions (0: no limit) needed the larger budgets."""
+    effort = {"hard": 0, "cap": hard} if hard else None
     rules = Rules(players=game.players)
     states = states_of(game)
     last = len(states) - 1
@@ -190,7 +223,7 @@ def trajectory(game: HumanGame, start: int, budgets=BUDGETS) -> list[int] | None
     out = []
     hi = last
     for target in range(score + 1, start + 1):
-        t = first_below(rules, game.deck, states, target, 0, hi, budgets)
+        t = first_below(rules, game.deck, states, target, 0, hi, budgets, effort)
         if t is None:
             return None
         out.append(t)
@@ -198,7 +231,10 @@ def trajectory(game: HumanGame, start: int, budgets=BUDGETS) -> list[int] | None
     return out
 
 
-def analyze(game: HumanGame, budgets=BUDGETS) -> dict:
+HARD = 8  # questions per game allowed past the first budget while finding its drops
+
+
+def analyze(game: HumanGame, budgets=BUDGETS, hard: int = HARD) -> dict:
     """The record of one game: replay check, ceiling, drops, strikes, critical discards."""
     rules = Rules(players=game.players)
     t0 = time.time()
@@ -226,12 +262,16 @@ def analyze(game: HumanGame, budgets=BUDGETS) -> dict:
     row["events"] = events
     # the reference: one fixed convention on the same deck, with the official discard rule
     row["info_score"] = play_info_game(rules, list(game.deck), hansim=False).score
-    drops = None
+    # hanab.live ends a game early once no more points can be scored; check that this is
+    # why a record stops before the end of the rules, so that its last state is final
+    finished = final.over
     if not final.over:
-        drops = None  # the record stops before the end of the game
-    elif c.exact and c.low > final.score:
-        drops = trajectory(game, c.low, budgets)
-    elif c.exact:
+        row["no_points_left"] = reachable(rules, game.deck, final.score + 1, final, budgets)
+        finished = row["no_points_left"] is False
+    drops = None
+    if finished and c.exact and c.low > final.score:
+        drops = trajectory(game, c.low, budgets, hard)
+    elif finished and c.exact:
         drops = []
     if drops is not None:
         row["drops"] = [
