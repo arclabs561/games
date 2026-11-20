@@ -79,9 +79,16 @@ def _parse(words: list[str]) -> Answer:
     raise RuntimeError("Solver B: " + " ".join(words))
 
 
-def run(problems: list[str], budget: int = 0, seed: int = 0, fence: bool = False) -> list[Answer]:
+def run(
+    problems: list[str],
+    budget: int = 0,
+    seed: int = 0,
+    fence: bool = False,
+    autoplay: bool = False,
+) -> list[Answer]:
     """Solve each problem; `budget` caps stored positions (0 for none)."""
-    args = [str(binary()), str(budget), str(seed)] + (["fence"] if fence else [])
+    args = [str(binary()), str(budget), str(seed)]
+    args += (["fence"] if fence else []) + (["auto"] if autoplay else [])
     proc = subprocess.run(
         args, input="".join(p + "\n" for p in problems), capture_output=True, text=True
     )
@@ -109,20 +116,25 @@ def decide(
     restarts: int = 8,
     each: int = 1_000_000,
     cap: int = 0,
+    autoplay: bool = False,
 ) -> list[Answer]:
     """Verdicts with restarts, as `solver.decide`: a budgeted search, reseeded searches for
     the problems still open, then one search with budget `cap` (0 for none)."""
-    answers = run(problems, budget=first)
+    answers = run(problems, budget=first, autoplay=autoplay)
     for seed in range(1, restarts + 1):
         todo = [i for i, a in enumerate(answers) if a.verdict == "unknown"]
         if not todo:
             return answers
         for i, a in zip(
-            todo, run([problems[i] for i in todo], budget=each, seed=seed), strict=True
+            todo,
+            run([problems[i] for i in todo], budget=each, seed=seed, autoplay=autoplay),
+            strict=True,
         ):
             answers[i] = a
     todo = [i for i, a in enumerate(answers) if a.verdict == "unknown"]
     if todo:
-        for i, a in zip(todo, run([problems[i] for i in todo], budget=cap), strict=True):
+        for i, a in zip(
+            todo, run([problems[i] for i in todo], budget=cap, autoplay=autoplay), strict=True
+        ):
             answers[i] = a
     return answers

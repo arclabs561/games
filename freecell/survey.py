@@ -66,12 +66,13 @@ def _survey_a(args) -> list[dict]:
     return survey_a(*args)
 
 
-def survey_b(deals: list[int], cap: int = 0, levels=LEVELS) -> list[dict]:
+def survey_b(deals: list[int], cap: int = 0, levels=LEVELS, autoplay: bool = False) -> list[dict]:
     """Solver B on many deals, one level at a time for all of them."""
     out = []
     todo = list(deals)
     for cells in levels:
-        answers = native.decide([native.ms_problem(d, cells) for d in todo], cap=cap)
+        problems = [native.ms_problem(d, cells) for d in todo]
+        answers = native.decide(problems, cap=cap, autoplay=autoplay)
         nxt = []
         for deal, ans in zip(todo, answers, strict=True):
             if ans.verdict == "won":
@@ -95,14 +96,20 @@ def main() -> None:
     ap.add_argument("--workers", type=int, default=1, help="processes for Solver A")
     ap.add_argument("--cap", type=int, default=0, help="most positions in the last search")
     ap.add_argument("--levels", default="01234", help="free cells to try, in order")
+    ap.add_argument("--deals", help="comma-separated deal numbers, in place of a range")
+    ap.add_argument("--autoplay", action="store_true", help="Solver B plays safe cards home")
     ap.add_argument("--out", type=Path, default=Path("."))
     args = ap.parse_args()
     deals = list(range(args.start, args.stop))
+    if args.deals:
+        deals = [int(d) for d in args.deals.split(",")]
     if args.slice is not None:
         size = -(-len(deals) // args.slices)
         deals = deals[args.slice * size : (args.slice + 1) * size]
     args.out.mkdir(parents=True, exist_ok=True)
-    tag = "" if args.levels == "01234" else f"-cells{args.levels}"
+    tag = ("" if args.levels == "01234" else f"-cells{args.levels}") + (
+        "-auto" if args.autoplay else ""
+    )
     path = args.out / f"survey-{args.solver}{tag}-{deals[0]}-{deals[-1] + 1}.jsonl"
     t0 = time.time()
     cap = args.cap or None
@@ -110,7 +117,8 @@ def main() -> None:
     with path.open("w") as f:
         if args.solver == "b":
             for i in range(0, len(deals), 500):
-                for rec in survey_b(deals[i : i + 500], cap=args.cap, levels=levels):
+                chunk = deals[i : i + 500]
+                for rec in survey_b(chunk, cap=args.cap, levels=levels, autoplay=args.autoplay):
                     f.write(json.dumps(rec) + "\n")
                 f.flush()
         else:

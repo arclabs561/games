@@ -6,7 +6,7 @@
    it serves as the key of the position with no sorting. Columns in use are the cards on
    BASE; the rest are empty.
 
-   The search is a depth-first search over single-card moves with no autoplay. Every position
+   The search is a depth-first search over single-card moves, by default with no autoplay. Every position
    reached is stored in a hash table and never expanded twice. With no budget the search
    either finds a won position or visits every reachable position.
 
@@ -20,9 +20,10 @@
      lost <states> <most cards home> <cards that never move...>
      unknown <states>
    Arguments, all optional: the budget (the most positions stored, 0 for no limit), a seed
-   (0 for the fixed order; another number shuffles ties in the order of moves), and "fence":
-   then a lost problem is followed by its positions, one per line, each the 52 numbers of
-   the array, and a line "end".
+   (0 for the fixed order; another number shuffles ties in the order of moves), then the
+   words "fence" and "auto". With "fence", a lost problem is followed by its positions, one
+   per line, each the 52 numbers of the array, and a line "end". With "auto", safe cards are
+   played home after every move (see settle), which makes the stored positions fewer.
 */
 #include <stdint.h>
 #include <stdio.h>
@@ -218,10 +219,49 @@ static void order(Pos *p, Move *m, int n) {
 }
 
 /* ---- depth-first search with an explicit stack ---- */
-typedef struct { uint64_t first; int count, next; Move made; } Frame;
+typedef struct { uint64_t first; int count, next, nauto; Move made; } Frame;
 static Move *mv; static uint64_t mvcap;
 static uint8_t moved[NCARD]; /* cards moved on the way to some stored position */
 static Frame *fr; static uint64_t frcap;
+
+/* Optional autoplay ("auto" on the command line): after each move, play home every card
+   that can go home and on which only cards already home, or aces, could be placed. The
+   rule is the one Solver A uses, written again here. The cards played go on a stack of
+   their own, so that a step back undoes them with the move. */
+static int use_auto;
+static Move *au; static uint64_t aucap, nau;
+
+static int safe_home(const Pos *p, int c) {
+    if (p->home[st(c)] != rk(c) - 1) return 0;
+    for (int d = 0; d < NCARD; d++)
+        if (present[d] && rk(d) == rk(c) - 1 && red(d) != red(c) && rk(d) != 1 &&
+            p->home[st(d)] < rk(d))
+            return 0;
+    return 1;
+}
+static int settle(Pos *p) {
+    int count = 0, changed = use_auto;
+    while (changed) {
+        changed = 0;
+        for (int c = 0; c < NCARD; c++)
+            if (present[c] && p->under[c] != HOME && !p->covered[c] && safe_home(p, c)) {
+                Move a = {c, p->under[c], HOME};
+                do_move(p, a);
+                if (nau == aucap) {
+                    aucap = aucap ? 2 * aucap : 1 << 12;
+                    au = realloc(au, aucap * sizeof *au);
+                    if (!au) { fprintf(stderr, "out of memory\n"); exit(2); }
+                }
+                au[nau++] = a;
+                count++;
+                changed = 1;
+            }
+    }
+    return count;
+}
+static void unsettle(Pos *p, int k) {
+    while (k-- > 0) undo_move(p, au[--nau]);
+}
 
 static void need(uint64_t moves, uint64_t frames) {
     if (moves > mvcap) { while (moves > mvcap) mvcap = mvcap ? mvcap * 2 : 1 << 16;
@@ -241,36 +281,52 @@ static const char *dest(int to, char *buf) {
 
 static void solve(Pos *p, uint64_t budget, int want_fence) {
     reset();
-    insert(p);
+    nau = 0;
     memset(moved, 0, sizeof moved);
+    int root_auto = settle(p);
+    for (uint64_t i = 0; i < nau; i++) moved[au[i].card] = 1;
+    insert(p);
     int most = p->nhome;
-    if (p->nhome == deck_size) { printf("won 1\n"); return; }
+    char buf[8];
+    if (p->nhome == deck_size) {
+        printf("won 1");
+        for (uint64_t i = 0; i < nau; i++) printf(" %d>h", au[i].card);
+        printf("\n");
+        return;
+    }
     uint64_t depth = 0, top = 0;
     need(1024, 1);
     int n = gen(p, mv);
     order(p, mv, n);
-    fr[0] = (Frame){0, n, 0, {0, 0, 0}};
+    fr[0] = (Frame){0, n, 0, root_auto, {0, 0, 0}};
     top = n;
     for (;;) {
         Frame *f = &fr[depth];
         if (f->next == f->count) {
             if (depth == 0) break;
             top = f->first;
+            unsettle(p, f->nauto);
             undo_move(p, f->made);
             depth--;
             continue;
         }
         Move m = mv[f->first + f->next++];
         do_move(p, m);
-        if (!insert(p)) { undo_move(p, m); continue; }
+        int k = settle(p);
+        if (!insert(p)) { unsettle(p, k); undo_move(p, m); continue; }
         moved[m.card] = 1;
+        for (uint64_t i = nau - k; i < nau; i++) moved[au[i].card] = 1;
         if (p->nhome > most) most = p->nhome;
         if (p->nhome == deck_size) {
             printf("won %llu", (unsigned long long)nkeys);
-            char buf[8];
-            for (uint64_t d = 1; d <= depth; d++)
-                printf(" %d>%s", fr[d].made.card, dest(fr[d].made.to, buf));
-            printf(" %d>%s\n", m.card, dest(m.to, buf));
+            uint64_t a = 0;
+            for (uint64_t d = 0; d <= depth; d++) {
+                if (d) printf(" %d>%s", fr[d].made.card, dest(fr[d].made.to, buf));
+                for (int i = 0; i < fr[d].nauto; i++) printf(" %d>h", au[a++].card);
+            }
+            printf(" %d>%s", m.card, dest(m.to, buf));
+            while (a < nau) printf(" %d>h", au[a++].card);
+            printf("\n");
             return;
         }
         if (budget && nkeys >= budget) { printf("unknown %llu\n", (unsigned long long)nkeys); return; }
@@ -278,7 +334,7 @@ static void solve(Pos *p, uint64_t budget, int want_fence) {
         n = gen(p, mv + top);
         order(p, mv + top, n);
         depth++;
-        fr[depth] = (Frame){top, n, 0, m};
+        fr[depth] = (Frame){top, n, 0, k, m};
         top += n;
     }
     printf("lost %llu %d", (unsigned long long)nkeys, most);
@@ -330,7 +386,11 @@ static void ms_layout(long deal, int cols[][NCARD], int *len) {
 int main(int argc, char **argv) {
     uint64_t budget = argc > 1 ? strtoull(argv[1], 0, 10) : 0;
     uint64_t seed = argc > 2 ? strtoull(argv[2], 0, 10) : 0;
-    int want_fence = argc > 3 && !strcmp(argv[3], "fence");
+    int want_fence = 0;
+    for (int i = 3; i < argc; i++) {
+        if (!strcmp(argv[i], "fence")) want_fence = 1;
+        else if (!strcmp(argv[i], "auto")) use_auto = 1;
+    }
     char line[4096];
     static int cols[16][NCARD];
     int len[16];
