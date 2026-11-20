@@ -1,7 +1,40 @@
 #import "@preview/fletcher:0.5.8" as fletcher: node, edge
 #import "@preview/lilaq:0.6.0" as lq
 
-// Every number in this note is printed by tenzi.py, optimal.py or maximum.py; the plot reads turns.csv, which tenzi.py writes.
+// Every number in this note that a script computes is read from results.json, which report.py
+// writes from tenzi.py, optimal.py and maximum.py; the plot reads turns.csv, which tenzi.py
+// writes. The rules, the table of results, the checks and the open questions are the README's
+// shared sections (from docs/, filled by tools/sync_docs.py), so the note and the README say
+// the same. Numbers typed by hand are inputs, steps of hand arithmetic, or the slides' figures.
+#import "/tools/shared_docs.typ": shared, fmt
+#let R = json("results.json")
+#let readme = read("README.md")
+#let H = R.harmonic
+#let S = R.strategies
+
+// x rounded to d decimals, with trailing zeros: fix(0.12, 3) is "0.120". report.py stores
+// floats unrounded, and tests/test_tenzi.py checks that none sits on a rounding tie, where
+// Typst (which rounds the shortest decimal form) and Python (the binary value) could differ.
+#let fix(x, d) = {
+  let s = str(calc.round(x, digits: d))
+  if d == 0 { return s }
+  let parts = s.split(".")
+  let frac = if parts.len() > 1 { parts.at(1) } else { "" }
+  parts.at(0) + "." + frac + "0" * (d - frac.len())
+}
+#let pct(x, d) = fix(x * 100, d) + "%"
+// x as $m times 10^e$, with d decimals in m
+#let sci(x, d) = {
+  let e = calc.floor(calc.log(calc.abs(x), base: 10))
+  let m = calc.round(x / calc.pow(10.0, e), digits: d)
+  if calc.abs(m) >= 10 { m = m / 10; e = e + 1 }
+  $#fix(m, d) times 10^(#str(e))$
+}
+// "16.564848860842" as 16.564 848 860 842, in groups of three
+#let spaced(s) = {
+  let (whole, frac) = s.split(".")
+  $#(whole + "." + frac.slice(0, 3)) thin #frac.slice(3, 6) thin #frac.slice(6, 9) thin #frac.slice(9, 12)$
+}
 // ---------- editions (as in the Erase paper) ----------
 // print (default): US letter. phone: a narrow page that a phone shows at reading size,
 // compiled with sys input edition=phone. html: compiled with format "html"; drawings
@@ -48,7 +81,9 @@
 #show math.equation.where(block: true): it => if phone { fitw(it) } else { it }
 // tables with a 1fr column fill the width they get, so lay those out at 4.8in; tables
 // of auto columns keep their natural width (up to 7in) and are scaled down whole
-#show table: it => if phone {
+#set table(stroke: none)
+// the shared table of results (tools/shared_docs.typ) fills the width it gets
+#show table: it => if phone and it.at("label", default: none) != <shared-table> {
   let fr = type(it.columns) == array and it.columns.any(c => type(c) == fraction)
   wide(it, w: if fr { 4.8in } else { 7in })
 } else { it }
@@ -80,12 +115,11 @@ In *Tenzi* each player has ten dice. Everyone rolls at once; then each player ke
 
 = Two strategies
 
-The obvious plan is to keep whichever face came up most often. Call the number of dice showing the chosen face the *matched* count, $m$.
+The obvious plan is to keep whichever face came up most often. Call the number of dice showing the chosen face the *matched* count, $m$. The note compares the following ways to play.
 
-- The *fixed-face* strategy chooses the most common face after the first roll and never changes it. If two faces tie, either will do: the count is what matters.
-- The *switching* strategy changes face whenever the rerolled dice show more of another face than are already kept.
+#shared(readme, "rules")
 
-A *turn* is one roll, so the first roll is turn 1. The number of turns is random; we want its distribution.
+The first two are the *fixed-face* and the *switching* strategy. The number of turns is random; we want its distribution.
 
 = The first roll
 
@@ -95,7 +129,7 @@ The first roll fixes the starting count: the largest number of dice that show th
   kind: table,  // the table is built inside a context, so its kind must be given
   text(10.5pt, tworow(inset: (x: 4pt, y: 4pt),
     ([count], [2], [3], [4], [5], [6], [7], [8], [9, 10]),
-    ([chance], [6.75%], [52.93%], [31.05%], [7.81%], [1.30%], [0.15%], [0.01%], [\<0.001%]),
+    ([chance], ..range(2, 9).map(m => [#pct(R.first_roll.at(str(m)), 2)]), [\<0.001%]),
   )),
   caption: [The largest count after the first roll. Three of a kind is the usual start. Exact.],
 )
@@ -118,8 +152,9 @@ With $m$ dice matched, a turn rerolls the other $10 - m$, and each of them shows
       edge(label("m" + str(m)), label("m" + str(m)), "-|>", bend: 130deg, loop-angle: 90deg,
         label: text(7.5pt)[#calc.round(calc.pow(5 / 6, 10 - m) * 100)%], label-side: center)
     },
-    for (m, left) in ((2, "15.4"), (3, "14.7"), (4, "13.9"), (5, "13.0"), (6, "11.9"), (7, "10.6"), (8, "8.7"), (9, "6.0"), (10, "0")) {
-      node((m - 2, 0.6), text(9pt, left), stroke: none)
+    for m in range(2, 11) {
+      let left = R.turns_left_fixed.at(str(m))
+      node((m - 2, 0.6), text(9pt, if m == 10 { "0" } else { fix(left, 1) }), stroke: none)
     },
     node((-1.25, 0), text(9pt)[matched], stroke: none),
     node((-1.25, 0.6), text(9pt)[turns left], stroke: none),
@@ -133,7 +168,7 @@ which can be solved from $m = 9$ downward. At $m = 9$ only one die is rerolled, 
 
 = How long a game takes
 
-Following the chain turn by turn gives the exact distribution of the number of turns (@fig-turns). The mean is 15.35 turns, the median 14, and the most likely number 12. The tail is long: one game in 30 takes more than 30 turns.
+Following the chain turn by turn gives the exact distribution of the number of turns (@fig-turns). The mean is #fix(S.at("fixed face").mean, 2) turns, the median #S.at("fixed face").median, and the most likely number #S.at("fixed face").mode. The tail is long: #pct(S.at("fixed face").over_30, 1) of games take more than 30 turns.
 
 #figure(
   placement: if phone { auto } else { none },
@@ -148,30 +183,30 @@ Following the chain turn by turn gives the exact distribution of the number of t
       lq.bar(xs.slice(0, 45), ys.slice(0, 45), fill: luma(80%), stroke: luma(40%)),
     )))
   },
-  caption: [Chance that the fixed-face strategy finishes on each turn, up to 45 turns. The peak is at 12, the mean at 15.35. Exact.],
+  caption: [Chance that the fixed-face strategy finishes on each turn, up to 45 turns. The peak is at #S.at("fixed face").mode, the mean at #fix(S.at("fixed face").mean, 2). Exact.],
 ) <fig-turns>
 
-= Does switching help?
+= Does switching help? <sec-switch>
 
-The switching strategy is also a chain on the matched count, with a different step: after a reroll, the new count is the larger of the kept face's count and the largest count of any other face among the rerolled dice. Counting all outcomes of each reroll exactly gives a mean of 15.29 turns, against 15.35 for the fixed face. Switching saves about a twentieth of a turn per game. The median (14) and the most likely number (12) are the same.
+The switching strategy is also a chain on the matched count, with a different step: after a reroll, the new count is the larger of the kept face's count and the largest count of any other face among the rerolled dice. Counting all outcomes of each reroll exactly gives a mean of #fix(S.switching.mean, 2) turns, against #fix(S.at("fixed face").mean, 2) for the fixed face. Switching saves about a twentieth of a turn per game. The median (#S.switching.median) and the most likely number (#S.switching.mode) are the same.
 
 Switching rarely matters because it needs the rerolled dice to beat the kept ones. With three kept, seven rerolled dice must show four of some other face, and later in the game the kept group is too large to beat.
 
-= Naming the face first
+= Naming the face first <sec-named>
 
 Some players name the face before the first roll. Then each die is on its own: it needs a geometric number of rolls, with chance $1 slash 6$ each time, and the game lasts as long as the slowest of the ten. With $q = 5 slash 6$,
 $ P(T > k) = 1 - (1 - q^k)^10 = sum_(j=1)^10 (-1)^(j+1) binom(10, j) q^(j k), $
 and summing over $k$ gives the mean,
-$ E[T] = sum_(k >= 0) P(T > k) = sum_(j=1)^10 (-1)^(j+1) binom(10, j) / (1 - q^j) = 16.565 "turns," $
-with standard deviation 6.834. The chain started from no matched dice gives the same mean exactly. Choosing the face after the first roll is worth 1.2 turns.
+$ E[T] = sum_(k >= 0) P(T > k) = sum_(j=1)^10 (-1)^(j+1) binom(10, j) / (1 - q^j) = #fix(S.at("target first").mean, 3) "turns," $
+with standard deviation #fix(S.at("target first").sd, 3). The chain started from no matched dice gives the same mean exactly. Choosing the face after the first roll is worth #fix(S.at("target first").mean - S.at("fixed face").mean, 1) turns.
 
-Bacinski and Pennings @slides play this way and report a mean of 15.565 with standard deviation 6.834. Their mean is the exact one less one: their table of finishing times puts, beside each roll $k$, the exact chance of finishing on roll $k + 1$, to within 0.0006. Their state vectors do count the first roll ($S_20 - S_19 = 0.0401 = P(T = 20)$). A shift changes the mean but not the spread, so their standard deviation is exact.
+Bacinski and Pennings @slides play this way and report a mean of 15.565 with standard deviation 6.834. Their mean is the exact one less one: their table of finishing times puts, beside each roll $k$, the exact chance of finishing on roll $k + 1$, to within 0.0006. Their state vectors do count the first roll: $S_4$ gives #fix(R.target_first_shifted.done_by_4, 4) for ten matched dice, which is $P(T <= 4)$, and $S_20 - S_19 = #fix(R.target_first_shifted.on_20, 4) = P(T = 20)$. A shift changes the mean but not the spread, so their standard deviation is exact.
 
 = A formula good to ten decimals <sec-harmonic>
 
-The alternating sum hides a much simpler answer. Let $H_n$ be the $n$th harmonic number, $1 + 1 slash 2 + dots.c + 1 slash n$, and let $lambda = ln(6 slash 5) approx 0.1823$. Then
-$ H_10 / lambda + 1 / 2 = 16.564 thin 848 thin 860 thin 842, $
-while the exact mean is $16.564 thin 848 thin 861 thin 259$. The two differ by $4.18 times 10^(-10)$. With one die the same formula gives 5.985 against the exact 6, and with twenty dice it is off by $2.2 times 10^(-14)$. Why do ten alternating terms, most of them in the hundreds, collapse to a harmonic number, and what is the small remainder?
+The alternating sum hides a much simpler answer. Let $H_n$ be the $n$th harmonic number, $1 + 1 slash 2 + dots.c + 1 slash n$, and let $lambda = ln(6 slash 5) approx #fix(H.rate, 4)$. Then
+$ H_10 / lambda + 1 / 2 = #spaced(H.approx_10), $
+while the exact mean is #spaced(H.exact_10). The two differ by #sci(H.gap_10, 2). With one die the same formula gives #fix(H.one_die, 3) against the exact 6, and with twenty dice it is off by #sci(H.table.at("20").at(1), 1). Why do ten alternating terms, most of them in the hundreds, collapse to a harmonic number, and what is the small remainder?
 
 *Each die is a clock rounded up.* Give a die a continuous waiting time $X$ with $P(X > x) = e^(-lambda x) = (5 slash 6)^x$, an exponential time. Rounding it up to the next whole number, $ceil(X)$, gives $P(ceil(X) > k) = P(X > k) = (5 slash 6)^k$, the law of the die's geometric wait. So we may let each die be matched on roll $ceil(X)$. Rounding up and taking the largest commute, so the game lasts $T = ceil(M)$, where $M$ is the largest of the ten exponential times.
 
@@ -189,8 +224,8 @@ For a real number $s$, write $phi(s) = E[e^(i s M)]$ for the characteristic func
 _Proof._ A single exponential gap with rate $j lambda$ has characteristic function $j lambda slash (j lambda - i s)$, and the gaps are independent, so their product is $phi$. The sawtooth ${x} - 1 slash 2$ has the Fourier series $-sum_(k != 0) e^(2 pi i k x) slash (2 pi i k)$. Its symmetric partial sums are bounded, and they converge to the sawtooth at every $x$ that is not a whole number. The time $M$ has a density, so it is a whole number with chance zero. Taking expectations term by term (bounded convergence) gives $E[{M}] = 1 slash 2 - sum_(k != 0) phi(2 pi k) slash (2 pi i k)$. Then $E[T] = E[M] + 1 - E[{M}]$ gives the formula. #h(1fr)$qed$
 
 The terms for $k$ and $-k$ are complex conjugates. Together they have size at most
-$ 2 / (lambda y_k) product_(j = 1)^n (1 + y_k^2 / j^2)^(-1 slash 2), quad y_k = (2 pi k) / lambda approx 34.46 k. $
-Each die multiplies the bound by $j slash sqrt(j^2 + y_k^2)$, which is at most 0.28 when $j <= 10$. Each exponential gap smooths the distribution of $M$, and ten of them leave a fractional part that is even to ten decimals. For ten dice the terms with $k = plus.minus 1$ come to $4.18 times 10^(-10)$, nearly all of the remainder, and those with $k = plus.minus 2$ come to $2.3 times 10^(-13)$. `maximum.py` adds the first 200 pairs in 60-digit arithmetic. For 10, 20 and 50 dice the sum agrees with the exact remainder to 30 digits or more (@tab-harmonic).
+$ 2 / (lambda y_k) product_(j = 1)^n (1 + y_k^2 / j^2)^(-1 slash 2), quad y_k = (2 pi k) / lambda approx #fix(H.y, 2) k. $
+Each die multiplies the bound by $j slash sqrt(j^2 + y_k^2)$, which is at most #fix(H.largest_factor, 2) when $j <= 10$. Each exponential gap smooths the distribution of $M$, and ten of them leave a fractional part that is even to ten decimals. For ten dice the terms with $k = plus.minus 1$ come to #sci(H.size_k1, 3), nearly all of the remainder, and those with $k = plus.minus 2$ come to #sci(H.size_k2, 1). `maximum.py` adds the first 200 pairs in 60-digit arithmetic. For 10, 20 and 50 dice the sum agrees with the exact remainder to 30 digits or more (@tab-harmonic).
 
 #figure(
   text(10.5pt, table(
@@ -198,19 +233,16 @@ Each die multiplies the bound by $j slash sqrt(j^2 + y_k^2)$, which is at most 0
     table.hline(),
     table.header([dice $n$], [exact mean], [exact $-$ formula], [terms $k = plus.minus 1$]),
     table.hline(stroke: 0.5pt),
-    [1], [6.000000], [$1.5 times 10^(-2)$], [$9.2 times 10^(-3)$],
-    [2], [8.727273], [$5.0 times 10^(-5)$], [$4.6 times 10^(-5)$],
-    [3], [10.555445], [$-5.0 times 10^(-5)$], [$-4.6 times 10^(-5)$],
-    [5], [13.023662], [$7.1 times 10^(-7)$], [$7.0 times 10^(-7)$],
-    [10], [16.564849], [$4.2 times 10^(-10)$], [$4.2 times 10^(-10)$],
-    [20], [20.232936], [$2.2 times 10^(-14)$], [$2.2 times 10^(-14)$],
-    [100], [28.951806], [$4.1 times 10^(-21)$], [$4.1 times 10^(-21)$],
+    ..(1, 2, 3, 5, 10, 20, 100).map(n => {
+      let (mean, gap, term) = H.table.at(str(n))
+      ([#n], [#fix(mean, 6)], sci(gap, 1), sci(term, 1))
+    }).flatten(),
     table.hline(),
   )),
   caption: [The exact mean with the face named first, its difference from $H_n slash lambda + 1 slash 2$, and the two Fourier terms with $k = plus.minus 1$. The sign changes because the angle of $phi(2 pi)$ turns as dice are added. Exact, and 60-digit arithmetic.],
 ) <tab-harmonic>
 
-The remainder does not shrink forever. As $n$ grows, the product of the factors $(1 + y^2 slash j^2)^(-1 slash 2)$ converges to $sqrt(pi y slash sinh(pi y))$, by Euler's product for the sine at an imaginary point. So the size of the terms with $k = plus.minus 1$ tends to $(2 slash lambda) |Gamma(i y_1)| approx 1.45 times 10^(-23)$. Their angle keeps turning with $log n$, and the remainder settles into a wobble that repeats each time $n$ is multiplied by $6 slash 5$. Szpankowski and Rego found this wobble, with an error term of order $1 slash n$, as quoted by Eisenberg @eisenberg. He points out that for moderate $n$ that error term, not the wobble, sets the size of the remainder, and he studies it with the same Fourier analysis of ${M}$ used here. The terms here reach within a factor of 2 of the wobble's size only from 856 dice on. At ten dice the remainder is $10^13$ times larger than the wobble. Rice's method, which writes the alternating sum as a contour integral, gives the same identity: the pole at 0 gives $H_n slash lambda + 1 slash 2$, and the poles at $2 pi i k slash lambda$ give the Fourier terms.
+The remainder does not shrink forever. As $n$ grows, the product of the factors $(1 + y^2 slash j^2)^(-1 slash 2)$ converges to $sqrt(pi y slash sinh(pi y))$, by Euler's product for the sine at an imaginary point. So the size of the terms with $k = plus.minus 1$ tends to $(2 slash lambda) |Gamma(i y_1)| approx #sci(H.wobble, 2)$. Their angle keeps turning with $log n$, and the remainder settles into a wobble that repeats each time $n$ is multiplied by $6 slash 5$. Szpankowski and Rego found this wobble, with an error term of order $1 slash n$, as quoted by Eisenberg @eisenberg. He points out that for moderate $n$ that error term, not the wobble, sets the size of the remainder, and he studies it with the same Fourier analysis of ${M}$ used here. The terms here reach within a factor of 2 of the wobble's size only from #H.dice_for_wobble dice on. At ten dice the remainder is $10^#calc.floor(calc.log(H.gap_over_wobble, base: 10))$ times larger than the wobble. Rice's method, which writes the alternating sum as a contour integral, gives the same identity: the pole at 0 gives $H_n slash lambda + 1 slash 2$, and the poles at $2 pi i k slash lambda$ give the Fourier terms.
 
 = The race
 
@@ -219,49 +251,51 @@ With $n$ players who roll together, the game ends on the first turn on which som
 #figure(
   placement: auto,
   text(10.5pt, table(
-    columns: 6, align: right, stroke: none, inset: (x: 5pt, y: 3.5pt),
+    columns: 7, align: right, stroke: none, inset: (x: 5pt, y: 3.5pt),
     table.hline(),
-    table.header([players], [winning turn], [slides], [P(tie)], [one die left], [slides]),
+    table.header([players], [winning turn], [slides], [P(tie)], [one die left], [slides], [switching]),
     table.hline(stroke: 0.5pt),
-    [2], [12.90], [13.0], [0.048], [0.52], [0.53],
-    [3], [11.41], [11.4], [0.080], [0.91], [0.91],
-    [4], [10.54], [10.6], [0.103], [1.22], [1.21],
-    [6], [9.52], [9.6], [0.137], [1.70], [1.71],
-    [10], [8.48], [8.5], [0.181], [2.41], [2.37],
-    [30], [6.84], [6.8], [0.276], [4.38], [4.36],
+    // the slides' columns are their figures, cited; every other column is from results.json
+    ..((2, "13.0", "0.53"), (3, "11.4", "0.91"), (4, "10.6", "1.21"), (6, "9.6", "1.71"),
+       (10, "8.5", "2.37"), (20, "7.4", "3.58"), (30, "6.8", "4.36")).map(((n, turn, left)) => {
+      let (win, tie, one) = R.race.at("target first").at(str(n))
+      ([#n], [#fix(win, 2)], [#turn], [#fix(tie, 3)], [#fix(one, 2)], [#left], [#fix(R.race.switching.at(str(n)).at(0), 2)])
+    }).flatten(),
     table.hline(),
   )),
-  caption: [A race in which the face is named first, exact, against the slides @slides. The slides label each row with the number of other players. Their race means count the first roll, unlike their single-player mean. With switching, the winning turn comes about one turn sooner: 11.68 for two players and 5.89 for thirty.],
+  caption: [A race in which the face is named first, exact, against the slides @slides, and the mean winning turn when every player switches, which comes about one turn sooner. The slides label each row with the number of other players. Their race means count the first roll, unlike their single-player mean, and their share of players with one die left divides by everyone, winner included. The sums stop at #R.race_turns turns, where the chance of a longer game is below $10^(-14)$.],
 ) <tab-race>
 
-The slides' figures differ from the exact ones by up to 0.1 turns and 0.05 players, as a simulation would. A seeded simulation of 20,000 races of four players gives $10.506 plus.minus 0.041$, $0.107 plus.minus 0.004$ and $1.214 plus.minus 0.013$, against the exact 10.542, 0.103 and 1.216.
+#let RS = R.race_simulated.at("target first")
+#let R4 = R.race.at("target first").at("4")
+The slides' figures differ from the exact ones by up to 0.1 turns and 0.05 players, as a simulation would. A seeded simulation of #fmt(R.race_simulated.races) races of four players gives $#fix(RS.turn.at(0), 3) plus.minus #fix(RS.turn.at(1), 3)$, $#fix(RS.tie.at(0), 3) plus.minus #fix(RS.tie.at(1), 3)$ and $#fix(RS.one_left.at(0), 3) plus.minus #fix(RS.one_left.at(1), 3)$, against the exact #fix(R4.at(0), 3), #fix(R4.at(1), 3) and #fix(R4.at(2), 3).
 
-= The best strategy
+= The best strategy <sec-best>
 
-Is there anything better than switching? After a roll, all that matters is how many dice show each face, such as $(4, 3, 2, 1)$. The player keeps some dice and rerolls the rest, and each roll costs a turn. This is a Markov decision process with 34 kinds of roll, small enough to solve with exact fractions. Policy iteration starts from switching and stops at once: no keep improves on it. That holds when the kept dice must share one face, as the rules require, and also when any dice may be kept. So 15.2944 turns is the best possible mean.
+Is there anything better than switching? After a roll, all that matters is how many dice show each face, such as $(4, 3, 2, 1)$. The player keeps some dice and rerolls the rest, and each roll costs a turn. This is a Markov decision process with #R.optimal.kinds_of_roll kinds of roll, small enough to solve with exact fractions. Policy iteration starts from switching and stops at once: no keep improves on it. That holds when the kept dice must share one face, as the rules require, and also when any dice may be kept. So #fix(R.optimal.mean, 4) turns is the best possible mean.
 
 #together[
 After keeping $k$ dice of one face, the expected turns still to come are
 
 #align(center, text(10.5pt, tworow(inset: (x: 4pt, y: 3.5pt),
   ([$k$], [0, 1], [2], [3], [4], [5], [6], [7], [8], [9]),
-  ([turns], [15.29], [15.11], [14.66], [13.93], [13.02], [11.93], [10.56], [8.73], [6.00]),
+  ([turns], ..range(1, 10).map(k => [#fix(R.optimal.after_keeping.at(str(k)), 2)])),
 )))
 ]
 
-These fall as $k$ grows, so keeping more is always better, and every other keep loses at least 0.05 turns. One kept die is worth nothing: since faces are interchangeable, it is as good as rolling it. On small games, up to four dice on three faces, the method agrees with value iteration over every ordered roll and every subset of dice to keep.
+These fall as $k$ grows, so keeping more is always better, and every other keep loses at least #fix(R.optimal.margin.at("any dice"), 2) turns. One kept die is worth nothing: since faces are interchangeable, it is as good as rolling it. On small games, up to four dice on three faces, the method agrees with value iteration over every ordered roll and every subset of dice to keep.
 
 = Is switching also best in a race? <sec-deadline>
 
-A race rewards finishing before the others, not finishing in few turns on average. A strategy with a slightly larger mean could still finish by turn 10 more often. So fix a deadline $t$ and ask for the largest chance of being done by turn $t$. It solves a finite-horizon program. Let $V_0("roll")$ be 1 if all ten dice match and 0 otherwise, and let $V_s ("roll")$ be the largest, over the keeps allowed after the roll, of $sum P("keep" -> "next") V_(s - 1)("next")$. The best chance of being done by turn $t$ is then the average of $V_(t - 1)$ over the first roll. The values are whole numbers divided by $6^(10 s)$, so `optimal.py` computes them exactly with whole numbers, for every $s$ and every one of the 34 kinds of roll.
+A race rewards finishing before the others, not finishing in few turns on average. A strategy with a slightly larger mean could still finish by turn 10 more often. So fix a deadline $t$ and ask for the largest chance of being done by turn $t$. It solves a finite-horizon program. Let $V_0("roll")$ be 1 if all ten dice match and 0 otherwise, and let $V_s ("roll")$ be the largest, over the keeps allowed after the roll, of $sum P("keep" -> "next") V_(s - 1)("next")$. The best chance of being done by turn $t$ is then the average of $V_(t - 1)$ over the first roll. The values are whole numbers divided by $6^(10 s)$, so `optimal.py` computes them exactly with whole numbers, for every $s$ and every one of the #R.optimal.kinds_of_roll kinds of roll.
 
-The answer is yes, at every deadline that matters. *For every deadline up to turn 163 and every roll, keeping every die of the most common face is among the best keeps*, both when the kept dice must share one face and when any dice may be kept. Turn 163 is where the chance of being done reaches $1 - 10^(-12)$, so after it no strategy can gain more than $10^(-12)$. The best chance of being done by turn 5, 10, 14, 20 and 30 is 0.0159, 0.2505, 0.5310, 0.8142 and 0.9678, and these are the switching strategy's own chances. On small games, up to four dice on three faces, the program agrees with value iteration over every ordered roll and every subset of dice to keep. In every game of two to six dice on two to six faces, switching is again best for every deadline.
+The answer is yes, at every deadline that matters. *For every deadline up to turn #R.deadline.last and every roll, keeping every die of the most common face is among the best keeps*, both when the kept dice must share one face and when any dice may be kept. Turn #R.deadline.last is where the chance of being done reaches $1 - 10^(-12)$, so after it no strategy can gain more than $10^(-12)$. The best chance of being done by turn 5, 10, 14, 20 and 30 is #("5", "10", "14", "20", "30").map(t => fix(R.deadline.chances.at(t), 4)).join(", ", last: " and "), and these are the switching strategy's own chances. On small games, up to four dice on three faces, the program agrees with value iteration over every ordered roll and every subset of dice to keep. In every game of two to six dice on two to six faces, switching is again best for every deadline.
 
 A strategy that is best for every deadline is best for any race. Suppose the other players' choices do not depend on our dice, though they may be anything else and we may watch them. Fix everything the others roll and choose. Then the turn $tau$ on which the first of them finishes is fixed, and we win outright exactly when we are done by turn $tau - 1$. Whatever we do, even reacting to the others, is then a strategy for our own dice alone, and no strategy beats switching's chance of being done by that turn (a strategy that remembers the past or flips coins does no better than the program's best). Averaging over the others' play keeps the inequality. The same holds for winning or tying (done by turn $tau$), and for any mix of the two, such as counting a tie as half a win. So in a lockstep race, switching gives the largest chance of winning against any opponents who do not react to our dice.
 
 = Checks
 
-`tenzi.py` and `optimal.py` compute everything above with exact fractions, and `tenzi.py` also plays 100,000 seeded games with each strategy (@tab-checks).
+`tenzi.py` and `optimal.py` compute everything above with exact fractions, and `tenzi.py` also plays #fmt(R.simulated.games) seeded games with each strategy (@tab-checks).
 
 #figure(
   placement: auto,
@@ -270,20 +304,40 @@ A strategy that is best for every deadline is best for any race. Suppose the oth
     table.hline(),
     [strategy], [exact mean], [simulated mean (95% interval)],
     table.hline(stroke: 0.5pt),
-    [face named first], [16.565], [16.556 ± 0.042],
-    [fixed face], [15.349], [15.363 ± 0.042],
-    [switching], [15.294], [15.278 ± 0.042],
+    ..(("face named first", "target first"), ("fixed face", "fixed face"), ("switching", "switching")).map(((label, name)) => {
+      let (m, h) = R.simulated.at(name)
+      ([#label], [#fix(S.at(name).mean, 3)], [#fix(m, 3) ± #fix(h, 3)])
+    }).flatten(),
     table.hline(),
   ),
-  caption: [Exact means and simulated ones; each exact mean lies inside its simulated interval. Each simulation draws its games from its own generator, seeded with 1, 2 and 3, so the three share no random numbers and are independent checks.],
+  caption: [Exact means and simulated ones; each exact mean lies inside its simulated interval. Each simulation draws its games from its own generator, seeded with #("target first", "fixed face", "switching").map(n => str(R.simulated.seeds.at(n))).join(", ", last: " and "), so the three share no random numbers and are independent checks.],
 ) <tab-checks>
 
-The tests check that each distribution sums to 1 within $10^(-12)$, that its mean agrees with the value from the equations above, that the committed `turns.csv` matches what the script writes, that the race agrees with a seeded simulation of 3,000 races, that policy iteration agrees with value iteration on small games, and that the deadline program agrees with brute force on small games and gives switching's own chances for ten dice. They check the Fourier identity of @sec-harmonic to 30 digits for 10, 20 and 50 dice, and every number quoted from it.
+@tab-results lists each result and how it is known. The checks behind it are these.
+
+#shared(readme, "checks")
+
+The tests also check that each distribution sums to 1 within $10^(-12)$, and the Fourier identity of @sec-harmonic to 30 digits for 10, 20 and 50 dice.
+
+#[
+// on a phone the table may break across pages, and stays where it is introduced
+#show figure: set block(breakable: phone)
+#figure(
+  placement: if phone { none } else { auto },
+  kind: table,
+  caption: [The results and how each is known. Exact unless marked.],
+  [
+    #show table.cell.where(y: 0): set text(weight: "semibold")
+    #show table: set par(justify: false)
+    #set table.cell(breakable: false)
+    #set table(inset: (x: 5pt, y: 3.5pt))
+    #text(size: if phone { 9pt } else { 10pt }, shared(readme, "results", columns: (1fr, 1.1fr, 1.2fr)))
+  ],
+) <tab-results>
+]
 
 = Questions left open
 
-- *A proof for every deadline.* @sec-deadline checks that switching is best for each deadline by computing; an argument that covers every deadline, and every number of dice and faces, is still missing.
-- *Speed.* The slides @slides also ask how much a faster player gains; in a lockstep race every player rolls at the same pace.
-- *Other sizes.* The same chain and decision process work for any number of dice and faces.
+#shared(readme, "open")
 
 #bibliography("tenzi.yml", style: "ieee")
