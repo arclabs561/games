@@ -19,6 +19,7 @@ Parts and files (their numbers in the month's 62 files, which are in time order)
 import argparse
 import hashlib
 import json
+import os
 import platform
 import sys
 import time
@@ -33,7 +34,7 @@ import numpy as np
 
 from chess_ratings import blunders, estimate, games, trajectories
 from chess_ratings.maia import Maia, Query, history
-from chess_ratings.whatwould import run
+from chess_ratings.whatwould import distribution, run
 
 SALT = "chess-ratings-2026-11-20"
 BANDS = estimate.BANDS
@@ -288,19 +289,25 @@ TWO_KNIGHTS = ["e2e4", "e7e5", "g1f3", "b8c6", "f1c4", "g8f6", "f3g5"]
 
 def part_whatwould(args, out: Path) -> None:
     maia, meta = load_maia(args.model)
-    texts = []
+    ratings = (800, 1100, 1500, 1900, 2300)
+    texts, dists = [], {}
     for moves in (SCHOLAR, TWO_KNIGHTS):
         cmd = (
             "uv run python -m chess_ratings.whatwould --checkpoint maia3-5m.pt --moves "
             + " ".join(moves)
         )
-        texts.append("$ " + cmd + "\n" + run(maia, None, moves, (800, 1100, 1500, 1900, 2300), 3))
+        texts.append("$ " + cmd + "\n" + run(maia, None, moves, ratings, 3))
+        board = chess.Board()
+        for m in moves:
+            board.push_uci(m)
+        probs = distribution(maia, board, range(600, 2601, 100), use_history=True)
+        dists[" ".join(moves)] = {str(r): p for r, p in probs.items()}
     fen = "r1bqkb1r/pppp1ppp/2n2n2/4p2Q/2B1P3/8/PPPP1PPP/RNB1K1NR w KQkq - 4 4"
     cmd = f'uv run python -m chess_ratings.whatwould --checkpoint maia3-5m.pt "{fen}"'
-    texts.append("$ " + cmd + "\n" + run(maia, fen, [], (800, 1100, 1500, 1900, 2300), 3))
+    texts.append("$ " + cmd + "\n" + run(maia, fen, [], ratings, 3))
     (out / "whatwould.txt").write_text("\n\n".join(texts) + "\n")
     print("\n\n".join(texts), flush=True)
-    write(out, "whatwould_meta.json", meta)
+    write(out, "whatwould.json", meta | {"distributions": dists})
 
 
 def part_estimate(args, out: Path) -> None:
@@ -473,6 +480,7 @@ def main(argv=None) -> None:
     parser.add_argument("--positions", type=int, default=24)
     parser.add_argument("--nodes", type=int, default=100_000)
     parser.add_argument("--history", action=argparse.BooleanOptionalAction, default=True)
+    parser.add_argument("--run", default=None, help="upload OUT to runs/chess/RUN in the dataset")
     args = parser.parse_args(argv)
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
@@ -488,6 +496,23 @@ def main(argv=None) -> None:
         log(f"part {name} starts")
         parts[name](args, out)
         log(f"part {name} done")
+    if args.run:
+        upload(out, args.run)
+
+
+def upload(out: Path, run: str) -> None:
+    """Store OUT, with the commit and the running time, in the private runs dataset."""
+    hub = __import__("huggingface_hub")
+    manifest = {"commit": os.environ.get("COMMIT"), "seconds": time.time() - START, "run": run}
+    (out / "manifest.json").write_text(json.dumps(manifest, indent=1) + "\n")
+    hub.HfApi(token=os.environ["HF_TOKEN"]).upload_folder(
+        folder_path=str(out),
+        path_in_repo=f"runs/chess/{run}",
+        repo_id="arclabs561/games-runs",
+        repo_type="dataset",
+        commit_message=f"chess/{run}",
+    )
+    log(f"uploaded to runs/chess/{run}")
 
 
 if __name__ == "__main__":

@@ -262,6 +262,7 @@ def compute() -> dict:
             "games_until_90_percent_within_100": settled,
             "sd_after_300": float(paths[-1].std()),
             "mean_after_300": float(paths[-1].mean()),
+            "within_100_curve": [float(x) for x in within[:101]],
         }
     out["simulated"] = simulated
 
