@@ -1,0 +1,6 @@
+A0-status 12999 ok ok ok ok ok ok ok ok ok stopped
+A2-status 12999 ok ok ok ok ok ok ok ok ok stopped
+A3-status 12999 ok fallback-empty ok ok ok ok ok ok ok stopped
+A0-status 12005 ok ok ok ok ok ok ok ok ok ok ok ok ok ok fallback-illegal ok ok ok ok ok ok ok ok fallback-illegal ok ok ok ok ok ok ok ok ok fallback-empty ok fallback-empty fallback-empty fallback-empty ok ok ok ok ok ok ok ok ok ok ok ok
+A2-status 12005 ok ok ok ok ok ok ok ok ok retry ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok ok
+A3-status 12005 ok ok ok ok fallback-empty ok ok fallback-empty ok ok ok ok ok ok ok ok ok fallback-empty ok ok fallback-empty ok ok ok ok ok fallback-empty ok ok ok ok ok fallback-empty ok ok ok ok fallback-empty fallback-empty ok ok ok ok ok ok ok fallback-empty fallback-empty fallback-empty fallback-empty
