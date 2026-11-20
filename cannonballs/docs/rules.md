@@ -1,4 +1,4 @@
-- A **triangle** of side n has rows of 1, 2, ..., n balls. A **square** of side n has n rows of n.
-- A **tetrahedral pile** of n layers is a stack of triangles of side 1 to n, and a **square pile** a stack of squares of side 1 to n. Each ball above the bottom rests in the hollow between three or four balls below.
-- An **oblong pile** on an a by b base, with a ≤ b, has layers a by b, a − 1 by b − 1, and so on, up to a ridge of b − a + 1 balls.
+- A **triangle** of side $n$ has rows of 1, 2, ..., $n$ balls. A **square** of side $n$ has $n$ rows of $n$.
+- A **tetrahedral pile** of $n$ layers is a stack of triangles of side 1 to $n$, and a **square pile** a stack of squares of side 1 to $n$. Each ball above the bottom rests in the hollow between three or four balls below.
+- An **oblong pile** on an $a$ by $b$ base, with $a \le b$, has layers $a$ by $b$, $a - 1$ by $b - 1$, and so on, up to a ridge of $b - a + 1$ balls.
 - The balls sit at points of the face-centered cubic lattice. Two balls touch when their centers are one diameter apart.
