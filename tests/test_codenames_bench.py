@@ -265,7 +265,7 @@ def test_word2vec_reader():
         raw.write(w.encode() + b" " + struct.pack("<2f", *v) + b"\n")
     got = dict(bench_data.read_word2vec(io.BytesIO(raw.getvalue())))
     assert set(got) == set(rows)
-    assert all(np.array_equal(got[w], np.float32(v)) for w, v in rows.items())
+    assert all(np.array_equal(got[w], np.array(v, dtype=np.float32)) for w, v in rows.items())
     gz = io.BytesIO()
     with gzip.GzipFile(fileobj=gz, mode="wb") as fh:
         fh.write(raw.getvalue())
