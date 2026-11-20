@@ -538,6 +538,7 @@ def figure(rows: list[dict]) -> str:
                     f'<text x="{x0 + j * cell + cell / 2}" y="{top + len(ceils) * cell + 16}" '
                     f'text-anchor="middle">{sc}</text>'
                 )
+        diagonal = []
         for i, c in enumerate(ceils):
             y = top + i * cell
             if k == 0:
@@ -549,18 +550,23 @@ def figure(rows: list[dict]) -> str:
                 x = x0 + j * cell
                 shade = 0.0 if n == 0 else 0.12 + 0.88 * math.log1p(n) / math.log1p(biggest)
                 fill = "#f4f4f4" if sc > c else (f"rgba(31,90,160,{shade:.3f})" if n else "white")
-                stroke = "#222" if sc == c else "#ddd"
-                width_line = 1.6 if sc == c else 0.6
                 out.append(
                     f'<rect x="{x}" y="{y}" width="{cell}" height="{cell}" fill="{fill}" '
-                    f'stroke="{stroke}" stroke-width="{width_line}"/>'
+                    'stroke="#ddd" stroke-width="0.6"/>'
                 )
+                if sc == c:
+                    diagonal.append((x, y))
                 if n:
                     color = "white" if shade > 0.55 else "#111"
                     out.append(
                         f'<text x="{x + cell / 2}" y="{y + cell / 2 + 4}" text-anchor="middle" '
                         f'font-size="9" fill="{color}">{n}</text>'
                     )
+        out += [
+            f'<rect x="{x}" y="{y}" width="{cell}" height="{cell}" fill="none" stroke="#222" '
+            'stroke-width="1.6"/>'
+            for x, y in diagonal
+        ]
     out.append(
         f'<text x="14" y="{top + len(ceils) * cell / 2}" text-anchor="middle" '
         f'transform="rotate(-90 14 {top + len(ceils) * cell / 2})">ceiling of the deal</text>'

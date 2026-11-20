@@ -431,3 +431,26 @@ def test_committed_results_are_what_the_scripts_write():
     for s in (two, three):
         assert s["replay_matches"] == s["games"] and s["score_above_ceiling"] == 0
         assert s["perfect_games_with_ceiling_below_25"] == 0
+    # numbers the README quotes
+    assert (two["deal_below_25"], three["deal_below_25"]) == (19, 0)
+    assert f"{two['ruled_out_by_deal']:.3f}" == "0.013"
+    assert [f"{x:.2f}" for x in (two["below_ceiling"], *two["below_ceiling_ci"])] == [
+        "1.62",
+        "1.54",
+        "1.70",
+    ]
+    assert f"{three['below_ceiling']:.2f}" == "1.75"
+    assert f"{100 * two['deal_share_of_gap']:.2f}" == "0.79"
+    assert (two["perfect_of_winnable"], two["winnable"]) == (731, 1839)
+    assert [f"{x:.2f}" for x in (two["info_mean_score"], three["info_mean_score"])] == [
+        "15.06",
+        "22.22",
+    ]
+    assert f"{three['human_minus_info']:.2f}" == "1.04"
+    assert (two["drops"], two["traced_games"], three["drops"], three["traced_games"]) == (
+        2879,
+        1816,
+        2063,
+        1196,
+    )
+    assert two["ceilings"] == {"22": 1, "23": 3, "24": 15, "25": 1839}
