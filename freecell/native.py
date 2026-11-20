@@ -38,16 +38,16 @@ def compiler() -> str | None:
     return os.environ.get("CC") or shutil.which("cc") or shutil.which("gcc")
 
 
-def binary() -> Path:
-    """Path of the compiled Solver B, compiling it if needed."""
-    digest = hashlib.sha256(SOURCE.read_bytes()).hexdigest()[:12]
-    out = Path(tempfile.gettempdir()) / f"freecell-solver-b-{digest}"
+def binary(source: Path = SOURCE) -> Path:
+    """Path of the compiled solver (Solver B by default), compiling it if needed."""
+    digest = hashlib.sha256(source.read_bytes()).hexdigest()[:12]
+    out = Path(tempfile.gettempdir()) / f"freecell-{source.stem}-{digest}"
     if not out.exists():
         cc = compiler()
         if cc is None:
-            raise RuntimeError("Solver B needs a C compiler (cc)")
+            raise RuntimeError(f"{source.name} needs a C compiler (cc)")
         tmp = out.with_suffix(f".{os.getpid()}")
-        subprocess.run([cc, "-O2", "-o", str(tmp), str(SOURCE)], check=True)
+        subprocess.run([cc, "-O2", "-o", str(tmp), str(source)], check=True)
         tmp.replace(out)
     return out
 
