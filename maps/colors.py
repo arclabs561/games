@@ -12,6 +12,8 @@ from collections.abc import Sequence
 import numpy as np
 from matplotlib.colors import CSS4_COLORS
 
+from maps import portable
+
 Hex = str  # "#rrggbb"
 
 # Linear sRGB to cone-like responses, and cube-rooted responses to Lab (Ottosson's code).
@@ -47,7 +49,8 @@ def hex_to_rgb(colors: Sequence[Hex]) -> np.ndarray:
 def srgb_to_linear(rgb: np.ndarray) -> np.ndarray:
     """Undo the sRGB transfer curve (IEC 61966-2-1)."""
     rgb = np.asarray(rgb, float)
-    return np.where(rgb <= 0.04045, rgb / 12.92, ((rgb + 0.055) / 1.055) ** 2.4)
+    curve = portable.power(np.maximum(rgb + 0.055, 0.0) / 1.055, 2.4)
+    return np.where(rgb <= 0.04045, rgb / 12.92, curve)
 
 
 def apply(matrix: np.ndarray, rows: np.ndarray) -> np.ndarray:
@@ -62,7 +65,7 @@ def apply(matrix: np.ndarray, rows: np.ndarray) -> np.ndarray:
 
 def lms_to_oklab(lms: np.ndarray) -> np.ndarray:
     """Cube root, then the second matrix."""
-    return apply(LMS_TO_LAB, np.cbrt(lms))
+    return apply(LMS_TO_LAB, portable.cbrt(lms))
 
 
 def xyz_to_oklab(xyz: np.ndarray) -> np.ndarray:
@@ -84,8 +87,8 @@ def oklch(colors: Sequence[Hex]) -> np.ndarray:
     A gray's a and b are rounding error, so its hue angle would be noise; it gets 0.
     """
     lab = oklab(colors)
-    chroma = np.hypot(lab[:, 1], lab[:, 2])
-    hue = np.degrees(np.arctan2(lab[:, 2], lab[:, 1])) % 360
+    chroma = np.sqrt(lab[:, 1] ** 2 + lab[:, 2] ** 2)
+    hue = (portable.atan2(lab[:, 2], lab[:, 1]) * (180 / portable.PI)) % 360
     return np.column_stack([lab[:, 0], chroma, np.where(chroma < GRAY_CHROMA, 0.0, hue)])
 
 
