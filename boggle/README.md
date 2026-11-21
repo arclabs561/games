@@ -1,6 +1,6 @@
 # Common Words in Boggle
 
-The notebook estimates three things about each word and keeps them apart: how often it appears on a random board, how many points it offers, and how common it is in English. It reproduces, count for count, the post [Common on the board, rare in English](https://attobop.net/posts/boggle-words/), which revisits the 2016 version of this notebook. That version missed every Q word, and it ranked words by a single TF-IDF-like score. **The notebook is [here](https://github.com/arclabs561/games/blob/main/boggle/boggle.ipynb)**.
+Put three cubes in a row: **Qu, I, T**. You can spell *quit* with those three cubes. The 2016 notebook missed it, along with every other Q word. The [new notebook](boggle.ipynb) follows the Qu face as one cube and counts its two letters. It reproduces the counts in [Common on the board, rare in English](https://attobop.net/posts/boggle-words/). A word can be easy to roll, worth few points and rare in English. Those are three different things to measure.
 
 It also reproduces the three board scores in Peter Norvig's pytudes [Boggle notebook](https://github.com/norvig/pytudes/blob/main/ipynb/Boggle.ipynb), among them 10,112 points from 2,290 words for Boyan's 5 by 5 board, and shows that no change of one square and no swap of two improves that board. Searches from random boards do better: the best 5 by 5 board found scores 10,397 points from 2,338 words. It is the board Vanderkam (2025) found for ENABLE2K, and it is the best found, not a proved optimum.
 
@@ -28,7 +28,7 @@ Unless a line says it is simulated, the number is exact. The simulated ones come
 | Each of the 625 boards one square away from Boyan's scores less; the best of them 10,046. So the board is a strict local maximum for one-square changes. | Exact, every case |
 | With Big Boggle's minimum of four letters, Boyan's board scores 9,968 from 2,146 words. | Exact |
 | Hill climbing as Norvig describes it, from the board above with seed 1, reaches 3,102 points after 1,000 changes, against 3,623 for the best board. | One seeded run |
-| No swap of two squares improves Boyan's board either: all 300 swaps and all 625 changes of one square to one of the 26 faces score less. | Exact, every case |
+| No swap of two squares improves Boyan's board either: 21 of the 300 pairs show the same letter, so swapping them leaves the board unchanged. No swap scores more. | Exact, every case |
 | The best 5 by 5 board found, `ligdrmanesietildsracsepes`, scores 10,397 points from 2,338 words. 269 of 1,920 searches ended on it (14.0%, 12.5% to 15.6%), and none ended higher. | Best found, not optimal: 1,920 searches, seeds listed in `results/best-5x5.json` |
 | That board is Vanderkam's best 5 by 5 board for ENABLE2K, where he reports 10,406 points from 2,344 words; both counts are reproduced here. The second-best board found, at 10,383, is the board Adamovsky's DeepSearch reports as best for TWL06. | Exact scores; agree with cited sources |
 

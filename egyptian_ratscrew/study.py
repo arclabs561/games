@@ -15,7 +15,7 @@ from multiprocessing import Pool
 from pathlib import Path
 from statistics import fmean
 
-from egyptian_ratscrew.game import Game, play_game
+from egyptian_ratscrew.game import Draw, Game, play_game
 
 RUNS = Path(__file__).with_name("runs.json")
 CHUNK = 5_000  # games per seeded chunk; chunk k of a run with seed s uses Random(s * 1000 + k)
@@ -75,7 +75,8 @@ def chunk_summary(args: tuple) -> dict:
     results = games(shares, CHUNK, seed * 1000 + chunk, **kwargs)
     return {
         "wins": [sum(g.winner == i for g in results) for i in range(len(shares))],
-        "unfinished": sum(g.winner is None for g in results),
+        "unfinished": sum(g.winner is None and not isinstance(g, Draw) for g in results),
+        "draws": sum(isinstance(g, Draw) for g in results),
         "cards": Counter(g.cards for g in results if g.winner is not None),
         "tricks": Counter(g.tricks for g in results if g.winner is not None),
         "paid": sum(g.paid for g in results),
@@ -102,6 +103,7 @@ def run(
         "wins": [sum(p["wins"][i] for p in parts) for i in range(len(shares))],
         "chunk_wins": [p["wins"] for p in parts],
         "unfinished": sum(p["unfinished"] for p in parts),
+        "draws": sum(p["draws"] for p in parts),
         "paid": sum(p["paid"] for p in parts),
         "cards": length_summary(cards),
         "tricks": length_summary(tricks),

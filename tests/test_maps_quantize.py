@@ -53,3 +53,10 @@ def test_summaries_match_the_stored_seeds():
     for method in ("RaBitQ", "rotated rounding"):
         for row in res["methods"][method]:
             assert study.same(study.rounded(quantize.summary(row["rates"])), row["change"])
+
+
+def test_constant_coordinate_survives_rounding():
+    x = np.array([[7, 0], [7, 2]])
+    with np.errstate(divide="raise", invalid="raise"):
+        got = quantize.round_to_cells(x, 1)
+    np.testing.assert_array_equal(got, [[7, 0.5], [7, 1.5]])

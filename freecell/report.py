@@ -58,10 +58,9 @@ def published_least() -> dict[int, int]:
 def load(folders: list[Path] | None, solver: str) -> list[dict]:
     """Every record of one solver ('a' or 'b') below the folders, each deal and level once.
 
-    A later run of the same deal and level replaces an earlier one only if the earlier one
-    was left undecided. Records from runs of chosen levels only (`--levels`) are marked
-    `partial`: they give verdicts at those levels but not the least number of free cells."""
+    A decided verdict replaces an unknown one. Two decided verdicts must agree."""
     out: dict[tuple[int, int], dict] = {}
+    sources: dict[tuple[int, int], Path] = {}
     for folder in folders or []:
         for p in sorted(folder.rglob(f"survey-{solver}-*.jsonl")):
             for x in p.open():
@@ -69,40 +68,46 @@ def load(folders: list[Path] | None, solver: str) -> list[dict]:
                 r["autoplay"] = "-auto" in p.name
                 r["partial"] = "-cells" in p.name
                 k = r["deal"], r["cells"]
-                if k not in out or out[k]["verdict"] == "unknown":
+                previous = out.get(k)
+                if previous is None or previous["verdict"] == "unknown":
                     out[k] = r
+                    sources[k] = p
+                elif r["verdict"] not in ("unknown", previous["verdict"]):
+                    raise ValueError(
+                        f"conflicting verdicts for deal {k[0]} at {k[1]} cells: {sources[k]} and {p}"
+                    )
     return [out[k] for k in sorted(out)]
 
 
-def least(records: list[dict]) -> dict[int, int | None]:
-    """Least winning number of free cells per deal: 5 for a deal lost with 0 to 4, None if
-    a level was left open before a win."""
-    out: dict[int, int | None] = {}
-    for r in sorted(records, key=lambda r: (r["deal"], r["cells"])):
-        if r["partial"]:
-            continue
+def cell_bounds(records: list[dict]) -> dict[int, tuple[int, int]]:
+    """Bounds on the least winning cell count, with 5 meaning five or more."""
+    bounds = {}
+    for r in records:
+        deal, cells = r["deal"], r["cells"]
+        lo, hi = bounds.get(deal, (0, 5))
         if r["verdict"] == "won":
-            out.setdefault(r["deal"], r["cells"])
-        elif r["verdict"] == "unknown":
-            out.setdefault(r["deal"], None)
-        elif r["cells"] == 4:
-            out.setdefault(r["deal"], 5)
-    return out
+            hi = min(hi, cells)
+        elif r["verdict"] == "lost":
+            lo = max(lo, cells + 1)
+        if lo > hi:
+            raise ValueError(f"deal {deal}: won at {hi} cells but lost at {lo - 1}")
+        bounds[deal] = lo, hi
+    return bounds
+
+
+def least(records: list[dict]) -> dict[int, int | None]:
+    """A loss at k−1 and a win at k settle the minimum, even in separate runs."""
+    return {d: lo if lo == hi else None for d, (lo, hi) in cell_bounds(records).items()}
 
 
 def by_level(records: list[dict], deals=DEALS) -> dict[int, dict[str, int]]:
-    """For each number of free cells: deals won, lost and left undecided. A deal won with
-    fewer free cells is won; a deal left undecided with fewer is undecided."""
-    won_at: dict[int, int] = {}
-    lost = {(r["deal"], r["cells"]) for r in records if r["verdict"] == "lost"}
-    for r in records:
-        if r["verdict"] == "won":
-            won_at[r["deal"]] = min(r["cells"], won_at.get(r["deal"], 9))
+    """A win also counts at higher levels, and a loss counts at lower levels."""
+    bounds = cell_bounds(records)
     out = {}
     for k in range(5):
         row = Counter(
-            "won" if won_at.get(d, 9) <= k else "lost" if (d, k) in lost else "undecided"
-            for d in deals
+            "won" if hi <= k else "lost" if k < lo else "undecided"
+            for lo, hi in (bounds.get(d, (0, 5)) for d in deals)
         )
         out[k] = {v: row[v] for v in ("won", "lost", "undecided")}
     return out

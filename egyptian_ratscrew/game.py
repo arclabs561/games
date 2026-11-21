@@ -120,13 +120,17 @@ def simulate_challenge(royal: str, rng: random.Random) -> bool:
 
 
 class Game(NamedTuple):
-    """How one game went: cards laid, the winner (None if unfinished), the number of times a
+    """How one game went: cards laid, the winner (None for a draw or an unfinished game), the number of times a
     pile was picked up, and the number of cards paid for misslaps."""
 
     cards: int
     winner: int | None
     tricks: int
     paid: int
+
+
+class Draw(Game):
+    """All cards lie on the table with no claimant. Keep the ordinary four-field result."""
 
 
 def play_game(
@@ -141,8 +145,9 @@ def play_game(
 
     Every slappable pile is slapped, and player i wins the slap with chance slap_shares[i];
     players with no cards may still slap back in. The game ends when one player holds every
-    card that is not on the pile and no challenge is open. The winner is None if that has not
-    happened after max_cards cards. `hands` replaces the random deal; with slaps=False the
+    card that is not on the pile and no challenge is open. If the last cards were burned
+    and nobody holds a card or has a claim on the pile, the game is drawn. The winner is
+    None for a draw or if play would need more than max_cards cards. `hands` replaces the random deal; with slaps=False the
     game is Beggar-my-neighbour.
 
     With `misslaps`, after each card that cannot be slapped player i slaps by mistake with
@@ -185,10 +190,16 @@ def play_game(
         weights = [0 if i in out else s for i, s in enumerate(slap_shares)]
         return rng.choices(range(players), weights=weights)[0] if any(weights) else None
 
-    for laid in range(max_cards):
-        if challenger is None and sum(map(bool, hands)) == 1:
-            last = tricks + bool(pile or burned)
-            return Game(laid, next(i for i in range(players) if hands[i]), last, paid)
+    for laid in range(max_cards + 1):
+        if challenger is None:
+            remaining = sum(map(bool, hands))
+            if remaining == 0:
+                return Draw(laid, None, tricks, paid)
+            if remaining == 1:
+                last = tricks + bool(pile or burned)
+                return Game(laid, next(i for i in range(players) if hands[i]), last, paid)
+        if laid == max_cards:
+            break
         if not hands[player]:
             if challenger is not None:  # cannot answer: the challenger takes the pile
                 collect(challenger)

@@ -1,6 +1,6 @@
 # FreeCell
 
-Which numbered Microsoft FreeCell deals cannot be won? Among the first 32,000, deal 11982 is the only one lost with the standard four free cells, and 199 are lost with three. Both counts are exact here: every deal is decided at these levels, the two solvers agree wherever both decide, and the counts match the published ones. With fewer free cells, 6,618 deals are lost with two and 25,710 with one, with 1 and 3 deals left undecided. With no free cell, 31,931 are lost. Every number decided here matches the published per-deal list. Of the 31,931 deals lost with no free cell, 18,656 have a short reason that a separate program checks in milliseconds. The rest, and every loss with a free cell, rest on exhaustive search.
+Deal 11982 buries both black aces. With the usual four free cells, neither ace can ever move. Give yourself a fifth cell and you can win in 111 moves. Of the first 32,000 Microsoft deals, this is the only one lost with four cells. With three cells, 199 are lost. Every deal decided here agrees with the published per-deal list.
 
 ![Deal 11982 dealt into eight columns, with eight cards shaded: the ace and queen of clubs at the bottom of the fourth column, the ace of spades, three of hearts and six of hearts at the bottom of the second, the four of hearts and queen of spades at the bottom of the third, and the six of spades at the bottom of the sixth.](results/deal-11982.svg)
 
@@ -18,14 +18,14 @@ Which numbered Microsoft FreeCell deals cannot be won? Among the first 32,000, d
 
 ## Results
 
-Lost deals among the first 32,000, by the number of free cells. Exact: a win is a line of moves that `rules.replay` checks, and a loss is an exhaustive search that found no won position.
+The first 32,000 deals after the follow-up searches. Wins have lines of moves that `rules.replay` checks. Losses come from exhaustive search. Four levels are still open.
 
 | Free cells | Lost here | Won here | Undecided | Published lost | Source of the published count |
 |---:|---:|---:|---:|---:|---|
 | 4 | 1 | 31,999 | 0 | 1 | FreeCell FAQ (Keller) |
 | 3 | 199 | 31,801 | 0 | 199 | FreeCell FAQ |
-| 2 | 6,618 | 25,380 | 2 | 6,619 | Fish (2012) |
-| 1 | 25,708 | 6,286 | 6 | 25,711 | Pringle's list (2016); the FAQ gives at least 6,289 won |
+| 2 | 6,618 | 25,381 | 1 | 6,619 | Fish (2012) |
+| 1 | 25,710 | 6,287 | 3 | 25,711 | Pringle's list (2016); the FAQ gives at least 6,289 won |
 | 0 | 31,931 | 69 | 0 | 31,931 | FreeCell FAQ: 69 deals won |
 
 ![Bar chart of the first 32,000 deals by the least number of free cells that wins them: 69 need none, 6,216 need one, 19,083 need two, 6,419 need three, 198 need four, and one deal needs five or more. Fourteen deals are left out because Solver B left one of their levels undecided.](results/least-cells.svg)
@@ -36,7 +36,7 @@ Lost deals among the first 32,000, by the number of free cells. Exact: a win is 
 - **The published list.** Theodore Pringle's list gives the least winning number of free cells for each of the 32,000 deals. Solver B's number for each of its 31,986 decided deals equals it. The 69 deals won with no free cell are the FAQ's 69. The deals below 1000 that need all four are the FAQ's eleven.
 - **Undecided.** Eight deals are left undecided at one level by both solvers, within the budgets given under Usage. With one free cell: 9499, 13167 and 13599, which the published list says are won, and 20410, 24966 and 27708, which it says are lost. With two: 982, which Fish (2012) reports lost, and 17760, which the list says is won. Each of the eight is won with one more free cell than its undecided level, by a line that replays. The next section decides four of them.
 
-## The eight undecided levels
+## Following up the eight levels left open by the survey
 
 Four of the eight are decided here, and each agrees with the published list. Deals 20410 and 27708 are lost with one free cell: two layered solvers that share no code list every reachable position, and their counts are equal. Deals 9499, with one free cell, and 17760, with two, are won by lines that replay. Deals 13167, 13599, 24966 and 982 are still undecided. Every search of them ran out of memory, at 16 GB on GitHub's runners and at 32 GB on Hugging Face Jobs.
 
@@ -51,14 +51,14 @@ Four of the eight are decided here, and each agrees with the published list. Dea
 | 982 | 2 | undecided | every search ran out of memory | lost; Fish (2012) counts 3,095,862,346 positions with Horne's rule |
 | 17760 | 2 | won | a line of 136 moves that replays; the search visited 85,327,707 positions | won |
 
-The table with these levels decided:
+The original survey, before these four decisions:
 
 | Free cells | Lost | Won | Undecided |
 |---:|---:|---:|---:|
 | 4 | 1 | 31,999 | 0 |
 | 3 | 199 | 31,801 | 0 |
-| 2 | 6,618 | 25,381 | 1 |
-| 1 | 25,710 | 6,287 | 3 |
+| 2 | 6,618 | 25,380 | 2 |
+| 1 | 25,708 | 6,286 | 6 |
 | 0 | 31,931 | 69 | 0 |
 
 - **A search in layers.** Cards never leave a foundation, so the four foundation heights only grow. Solver C (`solver_c.c`) groups positions by their foundations and searches one group at a time, in order of cards home. A group is complete when its turn comes, since every position that can enter it has fewer cards home. Only that group is held in memory, and positions waiting for a later group go to files when memory runs short. A group can be split further. In each dealt column, the cards still in their dealt places end in a run where each card fits on the one below it. Where that run starts never rises: a card returns to its dealt place only by fitting on the card below, which lengthens the run. So a group and the eight starting points together also only move one way. This split cut the largest group of deal 11982 from 39,573 positions to 1,936. Solver C writes a position in about 120 bits relative to the deal: how many of each column's dealt cards are still in place, then one bit per card for the suit of each run card, since a run card is one rank lower and of the other color than the card below it.

@@ -94,3 +94,17 @@ def test_distortion_matches_the_jl_section():
     for kind in jl.KINDS:
         for k, median in zip(jl_res["k"], jl_res["median_worst"][kind], strict=True):
             assert study.same(res["kinds"][kind][res["k"].index(k)]["median_worst"], median)
+
+
+def test_bay_example_matches_the_readme():
+    words, x = data.codenames_words()
+    clue = list(words).index("bay")
+    projection = jl.projection(x.shape[1], 256, "gaussian", np.random.default_rng(0))
+    for vectors, expected_words, expected_scores in [
+        (x, ["ball", "bag"], [0.151, 0.142]),
+        (x @ projection, ["bag", "ball"], [0.226, 0.225]),
+    ]:
+        scores = guesses.cosines(vectors)[clue, :25]
+        top = np.argsort(-scores)[:2]
+        assert [words[i] for i in top] == expected_words
+        assert scores[top].round(3).tolist() == expected_scores
