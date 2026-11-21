@@ -113,7 +113,7 @@ python3 erase/make_certs.py     # writes certificates.jsonl.gz (about 2.5 min)
 python3 erase/verify_certs.py   # all 265,148 cases certified (about 10 s)
 python3 erase/simulate.py       # simulated figures, 30,000 deals each (about 4 min)
 python3 erase/targets.py --max 11 --certs   # targets 1 to 30 (about an hour)
-python3 erase/verify_targets.py # checks targets_certs.jsonl.gz (about 15 min)
+python3 -O erase/verify_targets.py  # 7,682,542 expressions and 23,648 blocked hands across 30 targets
 python3 erase/countdown.py      # Alliot's Countdown counts (about 3 min)
 python3 erase/twenty_four.py    # 24-game counts for three division rules (about 10 s)
 python3 erase/twenty_four.py 3 3 8 8   # one expression per rule, or "none"

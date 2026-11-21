@@ -106,6 +106,7 @@ def check_target(t, row, top, certs):
         raise ValueError(f"target {t}: unexpected multiset {next(iter(certs))}")
     print(f"t={t:2}: sizes {s} to {top}, {made:,} expressions, {by_remainder:,} blocked")
     remainders.cache_clear()
+    return made, by_remainder
 
 
 def main(path, *, targets=range(1, 31), max_cards=11):
@@ -120,6 +121,7 @@ def main(path, *, targets=range(1, 31), max_cards=11):
     ):
         raise ValueError("select targets 1 to 30 and a maximum within the published study")
     rows = {t: published["by_target"][str(t)] for t in expected}
+    counts = {}
     seen = set()
     certs = {}
     current = None
@@ -133,7 +135,7 @@ def main(path, *, targets=range(1, 31), max_cards=11):
                 if rec["threshold"] != s or rec["max"] != max_cards or not 1 <= s <= max_cards:
                     raise ValueError(f"target {t}: expected sizes {s} to {max_cards}")
                 if current is not None:
-                    check_target(current, rows[current], max_cards, certs)
+                    counts[current] = check_target(current, rows[current], max_cards, certs)
                 seen.add(t)
                 current = t
             else:
@@ -145,7 +147,20 @@ def main(path, *, targets=range(1, 31), max_cards=11):
                 certs[cards] = rec["expr"]
     if current is None or seen != expected:
         raise ValueError(f"missing targets: {sorted(expected - seen)}")
-    check_target(current, rows[current], max_cards, certs)
+    counts[current] = check_target(current, rows[current], max_cards, certs)
+    if max_cards == published["max_cards"]:
+        for target, (made, _) in counts.items():
+            claimed = rows[target]["made_from_threshold"]
+            if made != claimed:
+                raise ValueError(
+                    f"target {target}: expression count is {made:,}, results.json claims {claimed:,}"
+                )
+    made_total = sum(made for made, _ in counts.values())
+    blocked_total = sum(blocked_count for _, blocked_count in counts.values())
+    print(
+        f"Through hand size {max_cards}: targets checked {len(counts)}, "
+        f"expressions {made_total:,}, hands blocked by a remainder {blocked_total:,}."
+    )
 
 
 if __name__ == "__main__":

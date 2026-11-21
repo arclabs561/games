@@ -124,3 +124,25 @@ def test_release_checker_rejects_incomplete_or_duplicate_records(tmp_path, recor
 def test_threshold_needs_a_legal_unblocked_hand_that_cannot_make_target(example):
     with pytest.raises(ValueError, match="witness"):
         verify_targets.check_target(10, {"threshold": len(example) + 1, "example": example}, 8, {})
+
+
+def test_checker_compares_complete_count_to_published_result(tmp_path, monkeypatch, capsys):
+    # With one card, 1 makes the target and the other nine are blocked.
+    row = {"threshold": 1, "example": None, "made_from_threshold": 2}
+    published = {"targets": {"max_cards": 1, "by_target": {"1": row}}}
+    monkeypatch.setattr(verify_targets, "__file__", str(tmp_path / "verify_targets.py"))
+    path = tmp_path / "one.gz"
+    with gzip.open(path, "wt") as f:
+        for rec in (
+            {"target": 1, "threshold": 1, "max": 1},
+            {"target": 1, "cards": [1], "expr": "1"},
+        ):
+            f.write(json.dumps(rec) + "\n")
+    results = tmp_path / "results.json"
+    results.write_text(json.dumps(published))
+    with pytest.raises(ValueError, match="expression count is 1, results.json claims 2"):
+        verify_targets.main(path, targets=[1], max_cards=1)
+    row["made_from_threshold"] = 1
+    results.write_text(json.dumps(published))
+    verify_targets.main(path, targets=[1], max_cards=1)
+    assert "expressions 1, hands blocked by a remainder 9" in capsys.readouterr().out
