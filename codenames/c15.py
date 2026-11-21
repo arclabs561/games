@@ -240,6 +240,51 @@ def run(
     return summary
 
 
+# Inputs from the private dataset (in a job), for files that are not committed.
+
+DATASET = "arclabs561/games-runs"
+
+
+def fetch_text(spec: str) -> str:
+    """The text of a committed path, or of `hf:<path>` files in the private dataset
+    (several, comma-separated, joined in order)."""
+    if not spec.startswith("hf:"):
+        return Path(spec).read_text()
+    import os
+
+    from huggingface_hub import hf_hub_download
+
+    parts = []
+    for item in spec.removeprefix("hf:").split(","):
+        item = item.removeprefix("hf:")
+        local = hf_hub_download(
+            DATASET, item, repo_type="dataset", token=os.environ.get("HF_TOKEN")
+        )
+        parts.append(Path(local).read_text())
+    return "".join(p if p.endswith("\n") else p + "\n" for p in parts)
+
+
+def ensure_vectors() -> None:
+    """In a job: copy the word vectors from the branch outputs/codenames-embed."""
+    import shutil
+    import subprocess
+    import tempfile
+
+    from codenames import embed
+
+    if any(embed.COMPUTED.glob("*.npz")):
+        return
+    tmp = Path(tempfile.mkdtemp())
+    subprocess.run(
+        ["git", "clone", "-q", "--depth", "1", "--branch", "outputs/codenames-embed",
+         "https://github.com/arclabs561/games.git", str(tmp / "embed")],
+        check=True,
+    )  # fmt: skip
+    embed.COMPUTED.mkdir(parents=True, exist_ok=True)
+    for f in (tmp / "embed" / "codenames" / "vectors").glob("*.npz"):
+        shutil.copy(f, embed.COMPUTED / f.name)
+
+
 # Scoring (here).
 
 
@@ -325,14 +370,17 @@ def did(model: dict[str, np.ndarray], control: dict[str, np.ndarray], games, oth
     return out
 
 
-def score(guesses: Path = GUESSES, runs: Path = RUNS) -> dict:
+def score(guesses: str = str(GUESSES), runs: Path = RUNS) -> dict:
+    """Every number of the plan from guess lines (a committed file, or hf: paths)."""
     from codenames.c4score import rounded
 
-    g = read_lines(guesses.read_text())
+    text = fetch_text(guesses)
+    g = read_lines(text)
     games = [t.game for t in chosen()]
     result: dict = {
         "plan": PLAN,
-        "guesses_sha256": sha256(guesses.read_text()),
+        "guesses_sha256": sha256(text),
+        "guesses": guesses,
         "turn_seed": TURN_SEED,
         "turns": len(chosen()),
         "games": len(set(games)),
@@ -396,9 +444,14 @@ def main() -> None:
     parser.add_argument("--cap", type=float, default=0.0)
     parser.add_argument("--pilot", action="store_true", help="the turns after the scored ones")
     parser.add_argument("--out", type=Path)
+    parser.add_argument("--guesses", default=str(GUESSES), help="score: a file, or hf:path,...")
     args = parser.parse_args()
     if args.what == "score":
-        result = score()
+        ensure_vectors()
+        result = score(args.guesses)
+        if args.out and args.out.suffix != ".json":
+            args.out.mkdir(parents=True, exist_ok=True)
+            args.out = args.out / OUT.name
         (args.out or OUT).write_text(json.dumps(result, indent=1, sort_keys=True) + "\n")
         print(json.dumps(result.get("primary"), indent=1))
         return
