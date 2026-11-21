@@ -8,17 +8,17 @@ Each status comes from the question's wording, by the rules in the script's docs
 |---|---:|
 | blocked on data | 10 |
 | blocked on compute | 3 |
-| partly answered | 8 |
-| open | 61 |
+| partly answered | 7 |
+| open | 62 |
 
 | Game | Question | Status |
 |---|---|---|
 | [Common Words in Boggle](boggle/README.md) | **Findability and cancellation.** Whether a player finds a word, and whether an opponent finds it too, needs an experiment with people; the post describes one. | blocked on data |
-| [Common Words in Boggle](boggle/README.md) | **Unseen words.** The exact count of possible words lets estimators of the number of unseen words (Good and Turing, Chao) be scored against the truth. That has not been done. | open |
-| [Common Words in Boggle](boggle/README.md) | **Exact board probability of a word.** The chance of a whole board is a permanent. The chance that a board shows a given short word, such as "toe", is a finite sum over where the cubes carrying its letters land, but the paths overlap and the sum needs inclusion and exclusion. Only the simulated value is known here. | partly answered |
+| [Common Words in Boggle](boggle/README.md) | **Exact board probability of longer words.** For words of two or three faces the chance is exact, by counting colorings of the slots with bit masks. Four distinct faces need 5<sup>16</sup> colorings, about 1.5 × 10<sup>11</sup>, so longer words have only the upper bound. A second-moment (Bonferroni) lower bound over pairs of paths would bracket each chance. | open |
+| [Common Words in Boggle](boggle/README.md) | **An estimator that can see the tail.** The estimators here use only the counts of rare sightings. Whether a model of the chances (for example a mixture fitted to the bounds) predicts the 160,719 from 15,000 boards is untested. | open |
 | [Common Words in Boggle](boggle/README.md) | **Other editions.** Big Boggle (5 by 5) and Super Big Boggle (6 by 6) have other cubes and minimum lengths. The published listings of the 5 by 5 set disagree on one cube. | open |
 | [Common Words in Boggle](boggle/README.md) | **The best 5 by 5 board.** 1,920 searches found nothing above 10,397 points, Vanderkam's board. Whether any 5 by 5 board scores more is open: no bound is published, and branch and bound as for 4 by 4 boards is estimated at a billion CPU years. Longer searches, or a pool of boards climbed together as in Vanderkam's search, might find more. | open |
-| [Common Words in Boggle](boggle/README.md) | **The best board for `enable1.txt`.** Vanderkam's proof is for ENABLE2K. Whether `perslatgsineters` is also best for `enable1.txt` has not been checked. | partly answered |
+| [Common Words in Boggle](boggle/README.md) | **The best board for `enable1.txt`.** Vanderkam's proof is for ENABLE2K. Whether `perslatgsineters` is also best for `enable1.txt` has not been checked. The 3 by 3 search here is too slow for 4 by 4 boards, or for 3 by 4: his 2009 numbers put 3 by 4 at about 3,000 times the work of 3 by 3. | partly answered |
 | [Cannonballs](cannonballs/README.md) | **A short proof for the tetrahedral pile of 34 layers.** Avanesov's proof that 7,140 is the last number that is both a triangle and a tetrahedral pile uses heavy machinery. Is there a proof by Pell equations and remainders, like Anglin's for Lucas's problem? | open |
 | [Cannonballs](cannonballs/README.md) | **Oblong piles of every fixed shape.** For a base of $a$ by $a + c$, the squares are known exactly for each $c$ up to 20, one elliptic curve at a time. Is there a rule for which $c$ allow a pile of two or more layers that holds a square, as there is for a fixed short side? Up to 20, no curve of rank 0 gives one, and some curves of rank 1 give none either. | open |
 | [Cannonballs](cannonballs/README.md) | **Other packings.** The piles here are pieces of the face-centered cubic packing. A pile can also be built with each new layer turned the other way, as in the hexagonal close packing, which is equally dense. Which pile shapes stay stable then, and how do their counts and touching pairs change? | open |
