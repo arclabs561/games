@@ -25,6 +25,7 @@ import argparse
 import re
 import sys
 from pathlib import Path
+from urllib.parse import urljoin
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "OPEN.md"
@@ -144,6 +145,24 @@ def cell(text: str) -> str:
     return text.replace("|", "\\|")
 
 
+def root_links(question: str, folder: str) -> str:
+    """Rebase inline Markdown links from a game's README to the root index."""
+
+    def rebase(match: re.Match[str]) -> str:
+        target = match["target"]
+        if (
+            target is None
+            or target.startswith("/")
+            or re.match(r"[a-zA-Z][a-zA-Z0-9+.-]*:", target)
+        ):
+            return match[0]
+        destination = urljoin(f"/{folder}/README.md", target).lstrip("/")
+        return f"]({destination}"
+
+    # Leave inline code alone. A link title, when present, follows the destination.
+    return re.sub(r"`+[^`]*`+|\]\((?P<target>[^\s)]+)", rebase, question)
+
+
 def render(root: Path = ROOT) -> str:
     rows: list[tuple[str, str, str, str]] = []
     without: list[str] = []
@@ -154,7 +173,7 @@ def render(root: Path = ROOT) -> str:
         if not qs:
             without.append(f"[{name}]({folder.name}/README.md)")
         for q in qs:
-            rows.append((folder.name, name, q, status(q)))
+            rows.append((folder.name, name, root_links(q, folder.name), status(q)))
     counts = {s: sum(r[3] == s for r in rows) for s in STATUSES}
     lines = [
         "# Open questions",
