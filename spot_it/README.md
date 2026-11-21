@@ -1,6 +1,6 @@
 # Spot It
 
-Which two cards does the 55-card box leave out, and could a deck like this be made any other way? Any 55 cards of 8 symbols drawn from 57, every two sharing exactly one symbol, complete in exactly one way to the 57-card projective plane of order 7. So one symbol is on 6 cards and fourteen on 7, and these counts give the two missing cards. Proved, and checked on all 1,596 ways to remove two cards. Any nine cards hold three with a common symbol, and three cards drawn share one with chance exactly 6/55.
+Can you reconstruct the two missing cards from a box of Spot It? Count how often each symbol appears on the 55 cards. One appears six times. It belongs on both missing cards. Fourteen others appear seven times. If two of those never appear together, they belong on the same missing card. That gives exactly one way to draw the pair. The proof uses the rules of the deck, and a program checks all 1,596 ways to remove two cards from the full deck.
 
 ![Two round cards with eight generic symbols each, shapes in colors; exactly one symbol, a gold square, is on both cards and is circled with a dashed line on each.](figures/pair.svg)
 

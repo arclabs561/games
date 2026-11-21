@@ -1,18 +1,19 @@
 # Maps
 
-Seven questions about drawing data so that neighbors stay neighbors.
-
-- **Books by color.** Sorting a shelf by hue costs 3.1 times the total color jump of the shortest ordering of the 139 CSS colors. The shortest ordering, computed exactly, is not the one that keeps similar colors closest. Greedy search plus 2-opt comes within 2.6% of it.
-- **Random projections.** Random maps of 400 word vectors need about 1,000 dimensions to keep every squared distance within 20%. The worst distortion runs about a third below the exact union bound.
-- **SNE and t-SNE**, written from their papers and checked against scikit-learn, show the trade-off Venna and Kaski describe: t-SNE's maps are the more trustworthy, SNE's the more continuous.
-- **Self-organizing maps** keep the Pokémon's neighbors about as trustworthily as t-SNE but lose more of them, as Venna and Kaski (2001) found on other data.
-- **t-SNE from neighbor ranks alone** (kNN affinities, k = 15) matches Gaussian t-SNE's T(10) and C(10) on the Pokémon: over 20 paired seeds, both 95% intervals for the difference lie within ±0.0014. Its layouts match too, as Böhm, Berens and Kobak (2022) found on MNIST. It keeps fewer 5-neighborhoods, and on the word vectors it does better than Gaussian t-SNE.
-- **A random projection changes the guesser's pick** for 53% of Codenames boards and clues at k = 256 and 32% at k = 1,024, where the worst distortion is already about 0.2. Of the k tried, only 65,536 changes fewer than 5%.
-- **Quantized word vectors keep the pick far more cheaply.** RaBitQ, from the qntz library (arclabs561/qntz), changes 8.2% of picks at 4 bits per dimension and 4.0% at 5 bits. Rounding each dimension changes 10.7% and 5.4%, and a random rotation before rounding does not help it.
+How would you arrange books by color? Sorting by hue puts the grays together at the red end of the shelf. On a shelf of 139 CSS colors, the jumps between neighboring books add up to 3.1 times the smallest possible total. The drawing uses twelve books so you can see where the two orders differ.
 
 ![Twelve books in four orders: by HSV hue, by Oklab hue, along a Hilbert curve through the RGB cube, and the shortest ordering. The number after each label is the total color jump.](figures/shelf.svg)
 
 *Twelve books in four orders, with each order's total color jump. The hue sorts put the four grays in one block at the red end, and light pink beside crimson.*
+
+## What else do the maps keep?
+
+- **Random projections.** Random maps of 400 word vectors need about 1,000 dimensions to keep every squared distance within 20%. The worst distortion runs about a third below the exact union bound.
+- **Who ends up next to whom?** Pick a Pokémon and find its nearest neighbor on the t-SNE map. In 98% of cases that neighbor is among its 20 closest in the original stats. With SNE the share is under half. If you search farther out on the map, SNE recovers more of the original neighbors. The two tests ask different questions.
+- **Self-organizing maps** keep the Pokémon's neighbors about as trustworthily as t-SNE but lose more of them, as Venna and Kaski (2001) found on other data.
+- **t-SNE from neighbor ranks alone** (kNN affinities, k = 15) matches Gaussian t-SNE's T(10) and C(10) on the Pokémon: over 20 paired seeds, both 95% intervals for the difference lie within ±0.0014. Its layouts match too, as Böhm, Berens and Kobak (2022) found on MNIST. It keeps fewer 5-neighborhoods, and on the word vectors it does better than Gaussian t-SNE.
+- **A random projection changes the guesser's pick** for 53% of Codenames boards and clues at k = 256 and 32% at k = 1,024, where the worst distortion is already about 0.2. Of the k tried, only 65,536 changes fewer than 5%.
+- **Quantized word vectors keep the pick far more cheaply.** RaBitQ, from the qntz library (arclabs561/qntz), changes 8.2% of picks at 4 bits per dimension and 4.0% at 5 bits. Rounding each dimension changes 10.7% and 5.4%, and a random rotation before rounding does not help it.
 
 ## The questions as modeled
 
@@ -70,7 +71,7 @@ Hue sorts fail for three reasons, all visible in the picture above. Grays have n
 
 The two scores disagree. The shortest shelf has the least total jump and the best T(2) (0.993). But its C(5) is 0.908, against 0.964 for the 1D t-SNE and 0.948 for the 1D SOM. A shortest path visits each region of color once and leaves by its cheapest exit, so two close colors visited at different times end up far apart. Its largest single jump (0.407) is also larger than the SOM's (0.322) and t-SNE's (0.330).
 
-On 100 random shelves of 10 books, greedy + 2-opt finds the shortest ordering 91 times, and is never more than 4.2% longer. The 1D t-SNE is worse on 10 books (22.5% over) than on 139 (13.9%): on a line, points cannot pass each other, so an early wrong order can stay. The 10-book number depends on the random start; over t-SNE seeds 0 to 9 it runs from 17.6% to 22.5%. With the paper's learning rate of 100, ten books fly hundreds of units apart; the package uses 10.
+For the 139 colors, greedy + 2-opt comes within 2.6% of the shortest ordering. On 100 random shelves of 10 books it finds the shortest ordering 91 times, and is never more than 4.2% longer. The 1D t-SNE is worse on 10 books (22.5% over) than on 139 (13.9%): on a line, points cannot pass each other, so an early wrong order can stay. The 10-book number depends on the random start; over t-SNE seeds 0 to 9 it runs from 17.6% to 22.5%. With the paper's learning rate of 100, ten books fly hundreds of units apart; the package uses 10.
 
 ## Random projections ([`jl.ipynb`](jl.ipynb))
 

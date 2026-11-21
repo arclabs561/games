@@ -9,7 +9,7 @@ Taken from the READMEs that read best here (Erase, Spot It, EV Nova, Boggle) and
 
 ## Order of sections
 
-1. **Opening, five lines at most.** The question in a player's words, then what was found. A reader who stops here should know the answer and how sure it is.
+1. **Opening.** Find the move, deal or comparison farther down the page that explains the answer. Try it in the first paragraph. In Spot It, counting the symbol seen six times tells you what the two missing cards share. Keep the assumption that makes the answer true. In the root index pick one finding per game and link to the rest.
 2. **Rules as modeled.** Each ambiguous rule and the reading taken. Name other readings and say whether they change the answer.
 3. **Results.** One table, with one row per claim and a column "How it is known":
    - proved;

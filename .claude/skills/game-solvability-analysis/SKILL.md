@@ -46,7 +46,7 @@ other kinds of games needed, and section 10 the mistakes made along the way.
   definition with the count.
 - Put every simulation in one committed script with fixed seeds (`simulate.py`), and quote its
   output in the paper. One-off scripts get lost, and then a printed figure cannot be reproduced.
-  Use the same sample size throughout (30,000 deals). Cross-check any shortcut solver against
+  Erase used 30,000 deals for its simulations. For another game, size the run for the difference the study needs to resolve and report the number of trials. Cross-check any shortcut solver against
   the general one on a few thousand deals before trusting it.
 - Shortcuts that make restricted readings fast: with + only a group is a set that sums to the
   target; with + and −, brackets reach every choice of signs with at least one plus, so a set
