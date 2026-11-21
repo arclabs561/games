@@ -224,7 +224,7 @@ def repeat(args) -> dict:
     count the prompts whose move changed and whose reply text changed."""
     from concurrent.futures import ThreadPoolExecutor
 
-    from hanabi.hosted import Hosted, Meter, RouterClient, fetch_models, listed_price
+    from hanabi.hosted import CapError, Hosted, Meter, RouterClient, fetch_models, listed_price
 
     source = Path(args.source)
     if args.source.startswith("hf:"):
@@ -250,11 +250,22 @@ def repeat(args) -> dict:
         reasoning_effort=args.reasoning_effort, client=RouterClient(token), log=calls.append,
     )  # fmt: skip
     jobs = [p for p in prompts for _ in range(args.times)]
+
+    def send(prompt: str) -> str | None:
+        try:
+            return player(prompt)
+        except CapError:  # the meter's reservation; the call was not sent
+            return None
+
     with ThreadPoolExecutor(args.workers) as pool:
-        replies = list(pool.map(player, jobs))
-    moves_changed = text_changed = 0
+        replies = list(pool.map(send, jobs))
+    moves_changed = text_changed = complete = 0
     for i, p in enumerate(prompts):
         got = replies[i * args.times : (i + 1) * args.times]
+        got = [r for r in got if r is not None]
+        if len(got) < args.times:
+            continue
+        complete += 1
         moves_changed += len({last_move(originals[p]), *(last_move(r) for r in got)}) > 1
         text_changed += len({originals[p], *got}) > 1
     out = Path(args.out)
@@ -265,6 +276,8 @@ def repeat(args) -> dict:
     result = {
         "source": args.source,
         "prompts": len(prompts),
+        "prompts_sent_every_time": complete,
+        "not_sent": sum(r is None for r in replies),
         "times": args.times,
         "move_changed": moves_changed,
         "reply_changed": text_changed,
@@ -300,8 +313,26 @@ def main(argv=None) -> int:
     if args.command == "repeat":
         repeat(args)
         return 0
-    result = report(Path(args.runs), args.label)
-    Path(args.out).write_text(json.dumps(result, indent=1, sort_keys=True) + "\n")
+    runs = Path(args.runs)
+    if args.runs.startswith("hf:"):  # in a job: the run's files from the private dataset
+        from huggingface_hub import snapshot_download
+
+        sub = args.runs.removeprefix("hf:")
+        patterns = [f"{sub}/{f}" for f in ("summary.json", "scores.jsonl", "games.jsonl")]
+        runs = (
+            Path(
+                snapshot_download(
+                    "arclabs561/games-runs", repo_type="dataset", allow_patterns=patterns
+                )
+            )
+            / sub
+        )
+    result = report(runs, args.label)
+    out = Path(args.out)
+    if out.suffix != ".json":
+        out.mkdir(parents=True, exist_ok=True)
+        out = out / "h5.json"
+    out.write_text(json.dumps(result, indent=1, sort_keys=True) + "\n")
     print(json.dumps(result["primary"], indent=1))
     return 0
 
