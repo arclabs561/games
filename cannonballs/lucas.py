@@ -282,7 +282,7 @@ def runs_with_square_layers(k: int) -> list[int]:
 
 def truncated_table(max_layers: int, search: int) -> list[tuple[int, str, int | None]]:
     """For each number of layers, how it is settled: ("found", smallest top), ("blocked",
-    modulus) or ("square", None) when the layer count is a square handled by factoring."""
+    modulus), ("square", None) when factoring rules out every top, or ("unresolved", None)."""
     rows = []
     for layers in range(1, max_layers + 1):
         top = smallest_top(layers, search)
@@ -292,10 +292,12 @@ def truncated_table(max_layers: int, search: int) -> list[tuple[int, str, int | 
         k = isqrt(layers)
         if k * k == layers and layers % 6 in (1, 5):
             tops = [t for t in runs_with_square_layers(k) if t >= 1]
-            assert not tops, (layers, tops)  # a top >= 1 would have been found by the search
-            rows.append((layers, "square", None))
+            rows.append((layers, "found", min(tops)) if tops else (layers, "square", None))
             continue
-        rows.append((layers, "blocked", run_first_block(layers)))
+        modulus = run_first_block(layers)
+        rows.append(
+            (layers, "unresolved", None) if modulus is None else (layers, "blocked", modulus)
+        )
     return rows
 
 

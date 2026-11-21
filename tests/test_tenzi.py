@@ -7,7 +7,7 @@ from fractions import Fraction
 from pathlib import Path
 from statistics import mean, stdev
 
-from tenzi import tenzi
+from tenzi import maximum, tenzi
 
 
 def test_first_roll():
@@ -141,10 +141,27 @@ def test_switching_is_best_for_every_deadline():
             assert best == cumulative
 
 
+def test_maximum_preserves_decimal_precision():
+    import subprocess
+    import sys
+
+    # Collection may already have imported maximum in the test process.
+    code = """
+from decimal import getcontext
+getcontext().prec = 17
+from tenzi import maximum
+assert getcontext().prec == 17
+assert len(maximum.rate().as_tuple().digits) == 60
+assert getcontext().prec == 17
+"""
+    subprocess.run(
+        [sys.executable, "-c", code], cwd=Path(__file__).resolve().parents[1], check=True
+    )
+
+
+@maximum.sixty_digits()
 def test_harmonic_approximation_and_its_fourier_terms():
     from decimal import Decimal
-
-    from tenzi import maximum
 
     mean_t, _ = tenzi.target_first_moments()
     assert maximum.exact_mean(10) == mean_t
@@ -203,8 +220,6 @@ def test_simulated_results_are_current():
 
 
 def test_quoted_values_agree_with_the_scripts():
-    from tenzi import maximum
-
     r, h = COMMITTED, COMMITTED["harmonic"]
     # the slides report the named-face game without its first roll, and these state vectors
     assert f"{r['target_first_shifted']['done_by_4']:.4f}" == "0.0014"

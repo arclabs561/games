@@ -2,7 +2,7 @@
 
 <!-- shared:summary -->
 
-How many turns does a game of Tenzi take, and what is the best way to play? Keeping the face that is most common after the first roll, a game takes 15.35 turns on average; switching faces when another group grows larger lowers that to 15.29. No strategy does better, either on average or in the chance of being done by any given turn, so switching also wins races most often. Exact, by a Markov chain and a Markov decision process, and checked by simulation.
+You keep four sixes. On the next roll, five of the other dice come up twos. Switch to twos. In ten-die Tenzi, switching whenever a bigger group turns up takes 15.29 rolls on average, the best possible mean. Sticking with the first face takes 15.35. Switching also gives the best chance of finishing by any deadline through roll 163. By then its chance of still rolling is below one in a trillion.
 
 <!-- /shared -->
 
@@ -71,8 +71,8 @@ All results are exact unless marked.
 
 - **A proof for every deadline.** Switching is best for every deadline up to turn 163, by computation. An argument that covers every deadline, and every number of dice and faces, is still missing.
 - **Speed.** The slides ask how much a faster player gains; in a lockstep race every player rolls at the same pace. Their chart of a player who rolls faster gives a jump of 0.0235 at equal speeds, about half the exact chance of a tie between two players, 0.048. Where does 0.0235 come from?
-- **Players who react.** What is the best strategy in a race against players who watch our dice and react to them? The argument that switching is best assumes that the others' choices do not depend on our dice.
-- **Other sizes.** The same chain and decision process work for any number of dice and faces. Every deadline has been checked only for ten dice on six faces and for two to six dice on two to six faces.
+- **Players who react.** What is the best strategy in a race against players who watch our dice and react to them? The race bound assumes that the other players make their choices independently of our dice.
+- **Other sizes.** The same chain and decision process work for any number of dice and faces. For two to six dice on two to six faces, switching was best through the last deadline checked for each game.
 
 <!-- /shared -->
 

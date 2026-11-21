@@ -25,11 +25,12 @@ measures the size of each term. The term for k = +-1 has size
     uv run python -m tenzi.maximum
 """
 
-from decimal import Decimal, getcontext
+from collections.abc import Generator
+from contextlib import contextmanager
+from decimal import Context, Decimal, localcontext
 from fractions import Fraction
 from math import comb
 
-getcontext().prec = 60
 PI = Decimal("3.14159265358979323846264338327950288419716939937510582097494459230781640628")
 
 type Complex = tuple[Decimal, Decimal]  # (real, imaginary), in Decimal arithmetic
@@ -53,16 +54,26 @@ assert exact_mean(2) == Fraction(96, 11)  # 2 * 6 - 1 / (1 - (5/6)^2) = 12 - 36/
 assert abs(tail_sum_mean(3) - exact_mean(3)) < Fraction(1, 10**25)
 
 
+@contextmanager
+def sixty_digits() -> Generator[None, None, None]:
+    """Use the paper's arithmetic for one calculation, preserving the caller's context."""
+    with localcontext(Context(prec=60)):
+        yield
+
+
+@sixty_digits()
 def decimal(x: Fraction) -> Decimal:
     """A Fraction as a Decimal."""
     return Decimal(x.numerator) / Decimal(x.denominator)
 
 
+@sixty_digits()
 def rate(faces: int = 6) -> Decimal:
     """lam = ln(faces / (faces - 1)), the rate of the exponential time behind one die."""
     return (Decimal(faces) / Decimal(faces - 1)).ln()
 
 
+@sixty_digits()
 def harmonic_approximation(dice: int, faces: int = 6) -> Decimal:
     """H_n / lam + 1/2."""
     harmonic = sum((Fraction(1, j) for j in range(1, dice + 1)), Fraction(0))
@@ -74,6 +85,7 @@ def times(a: Complex, b: Complex) -> Complex:
     return (a[0] * b[0] - a[1] * b[1], a[0] * b[1] + a[1] * b[0])
 
 
+@sixty_digits()
 def characteristic(dice: int, faces: int, s: Decimal) -> Complex:
     """phi(s) = E[exp(i s M)] = prod_j j lam / (j lam - i s), for the longest exponential time M."""
     lam, value = rate(faces), (Decimal(1), Decimal(0))
@@ -84,16 +96,19 @@ def characteristic(dice: int, faces: int, s: Decimal) -> Complex:
     return value
 
 
+@sixty_digits()
 def fourier_term(dice: int, faces: int, k: int) -> Decimal:
     """The terms for k and -k together: 2 Re(phi(2 pi k) / (2 pi i k)) = Im(phi(2 pi k)) / (pi k)."""
     return characteristic(dice, faces, 2 * PI * k)[1] / (PI * k)
 
 
+@sixty_digits()
 def fourier_sum(dice: int, faces: int = 6, terms: int = 200) -> Decimal:
     """The sum of the Fourier terms for 1 <= k <= terms."""
     return sum((fourier_term(dice, faces, k) for k in range(1, terms + 1)), Decimal(0))
 
 
+@sixty_digits()
 def term_size(dice: int, faces: int = 6, k: int = 1) -> Decimal:
     """|terms k and -k| = (2 / (lam y)) prod_j (1 + y^2 / j^2)^(-1/2), with y = 2 pi k / lam."""
     lam = rate(faces)
@@ -104,6 +119,7 @@ def term_size(dice: int, faces: int = 6, k: int = 1) -> Decimal:
     return size
 
 
+@sixty_digits()
 def wobble_amplitude(faces: int = 6, k: int = 1) -> Decimal:
     """The limit of term_size as dice -> infinity: (2 / lam) |Gamma(i y)|.
 
@@ -115,6 +131,7 @@ def wobble_amplitude(faces: int = 6, k: int = 1) -> Decimal:
     return 2 / lam * (PI / (y * sinh)).sqrt()
 
 
+@sixty_digits()
 def dice_for_wobble(faces: int = 6, within: Decimal = Decimal(2)) -> int:
     """The fewest dice for which the k = 1 term is within a factor `within` of its limit."""
     lam = rate(faces)
@@ -126,6 +143,7 @@ def dice_for_wobble(faces: int = 6, within: Decimal = Decimal(2)) -> int:
     return n
 
 
+@sixty_digits()
 def main() -> None:
     print("Named face, n dice: exact mean against H_n / ln(6/5) + 1/2 (60-digit arithmetic)")
     print("   n  exact mean          exact - approximation  Fourier sum, 200 terms  k = 1 alone")

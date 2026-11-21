@@ -4,7 +4,7 @@
 
 You beat a friend at Peggle six games out of ten. What are the chances you’re the better player? Suppose each duel is independent and your chance of winning stays the same. If you start out treating every win rate from 0% to 100% as equally plausible, those six wins give you about a 72.6% chance of being better. The exact answer under that uniform prior is 743/1024.
 
-What if you keep playing until one of you is 95% sure? Even two evenly matched players reach that threshold 52.8% of the time within 100 games.
+What if you keep playing until one of you is 95% sure? Between two evenly matched players, the chance that either player reaches that threshold within 100 games is 52.8%.
 
 <!-- /shared -->
 

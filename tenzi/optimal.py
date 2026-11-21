@@ -180,7 +180,7 @@ def by_turn(
     largest, over keeps, of sum P(keep -> next) V_(t-1)(next). Values are kept as whole numbers
     times faces^(-dice t), so the arithmetic is exact and fast. Returns the best chances from the
     start, and every (t, roll, best keeps) where keeping every die of the most common face is
-    not among the best keeps; switching is best for every deadline when that list is empty.
+    not among the best keeps. An empty list certifies the deadlines in best_chances.
     """
     scale, done = faces**dice, (dice,)
     weights = {  # outcomes(keep) times faces^dice, as whole numbers

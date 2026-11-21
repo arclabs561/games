@@ -187,15 +187,15 @@ def test_new_rules():
 
 
 def test_safe_threshold_matches_a_search_over_every_threshold():
-    cap = 12
-    posteriors = sorted({better(k, n) for n in range(1, cap + 1) for k in range(n + 1)})
-    posteriors = [b for b in posteriors if b >= stopping.SURE]
-    for alpha in (Fraction(1, 20), Fraction(1, 50)):
-        chances = [brute_force(HALF, cap, stopping.posterior_rule(b)) for b in posteriors]
-        safe = [o.first + o.second <= alpha for o in chances]
-        i = safe.index(True)
-        assert all(safe[i:])  # a stricter threshold is never less safe
-        assert stopping.safe_threshold(cap, alpha) == (posteriors[i - 1], posteriors[i])
+    for cap in (1, 2, 4, 5, 6, 12):
+        posteriors = {better(k, n) for n in range(1, cap + 1) for k in range(n + 1)}
+        thresholds = sorted({HALF, Fraction(1)} | {p for p in posteriors if p >= HALF})
+        for alpha in (Fraction(0), Fraction(1, 20), Fraction(1, 50), Fraction(3, 4)):
+            outcomes = [brute_force(HALF, cap, stopping.posterior_rule(b)) for b in thresholds]
+            safe = [o.first + o.second <= alpha for o in outcomes]
+            i = safe.index(True)
+            assert i and all(safe[i:])
+            assert stopping.safe_threshold(cap, alpha) == (thresholds[i - 1], thresholds[i])
 
 
 def test_stricter_thresholds():

@@ -243,6 +243,15 @@ def test_truncated_piles_match_oeis_a001032():
             assert m is not None and lucas.run_blocked_mod(layers, m)
 
 
+def test_short_search_distinguishes_unresolved_from_blocked():
+    assert lucas.truncated_table(3, 1) == [
+        (1, "found", 1),
+        (2, "unresolved", None),  # the witness is 3² + 4² = 5²
+        (3, "blocked", 3),
+    ]
+    assert lucas.truncated_table(2, 3)[1] == (2, "found", 3)
+
+
 def test_oblong_rule_against_residues_and_brute_force():
     for a in range(1, 151):
         r = lucas.oblong_square(a)
