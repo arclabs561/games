@@ -1,0 +1,24 @@
+{
+ "experiment": "R1-curves",
+ "run": "seed-20",
+ "commit": "01932ad0d0f814923080455ee43e5249b3b11f69",
+ "platform": "actions",
+ "command": [
+  "python",
+  "-m",
+  "chess_ratings.puzzles",
+  "curves",
+  "--shard",
+  "SEED",
+  "--shards",
+  "20",
+  "--out",
+  "OUT"
+ ],
+ "returncode": 0,
+ "seconds": 1161.0,
+ "job_id": "44824743172",
+ "hardware": "GitHub Actions 1000101842",
+ "gpu": null,
+ "python": "3.14.4"
+}
