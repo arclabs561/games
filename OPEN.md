@@ -1,12 +1,12 @@
 # Open questions
 
-81 open questions from 18 games' READMEs, collected by `tools/open_questions.py`. Edit the READMEs, not this file, then run `python3 tools/open_questions.py`; a test checks that this file is current.
+82 open questions from 18 games' READMEs, collected by `tools/open_questions.py`. Edit the READMEs, not this file, then run `python3 tools/open_questions.py`; a test checks that this file is current.
 
 Each status comes from the question's wording, by the rules in the script's docstring. It guides the choice of what to work on next and is not itself a finding.
 
 | Status | Questions |
 |---|---:|
-| blocked on data | 10 |
+| blocked on data | 11 |
 | blocked on compute | 3 |
 | partly answered | 8 |
 | open | 60 |
@@ -28,6 +28,7 @@ Each status comes from the question's wording, by the rules in the script's docs
 | [Chess: what a rating says, and what a player at a rating plays](chess_ratings/README.md) | Would Maia3-79M or Allie 2.1 estimate a rating from one game better than Maia3-5M, and is the error floor set by the model or by the noise in the rating itself (about 31 points)? | open |
 | [Chess: what a rating says, and what a player at a rating plays](chess_ratings/README.md) | With one game a day instead of back to back, the deviation grows between games by 0.21436 σ² per day. How does that change the games needed to settle? | open |
 | [Codenames](codenames/README.md) | Does the single-peak property of the value of a turn hold for every weighting? | open |
+| [Codenames](codenames/README.md) | Why do language-model guessers agree with people more often when a board's other words are swapped for nouns of the same frequency, while the embedding guessers do not change (plan C15)? | blocked on data |
 | [Codenames](codenames/README.md) | Why does a better model of human guesses not make a better giver? The linear maps gave fewer words per clue on 100 boards, without intervals, and the LoRA encoder shows no detectable difference. | open |
 | [Codenames](codenames/README.md) | Does population training add anything over a count of one when the rule is a preregistered baseline, and do C3's policies or the count-1 rule do better than self-play with language-model guessers or with people? | blocked on data |
 | [Codenames](codenames/README.md) | Did gpt-oss-120b see Cultural Codes in training? Its agreement with people could be rechecked on the test turns with the other board words swapped for words of the same frequency, against the same change for the embedding guessers. | blocked on data |

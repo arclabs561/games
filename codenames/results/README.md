@@ -16,6 +16,7 @@ Detail behind the [Codenames README](../README.md): one note per question, then 
 | [c7.md](c7.md) | GRPO training of a small language model to choose | `experiments/plans/C7.md` |
 | [c10.md](c10.md) | A language model as the listener inside the giver | `experiments/plans/C10.md` |
 | [c11.md](c11.md) | The population pick with language-model guessers | `experiments/plans/C11.md`, part A |
+| [c15.md](c15.md) | A probe of memorization: shuffled and swapped boards of human turns | `experiments/plans/C15.md` |
 | [bench.md](bench.md) | The AI competition framework's word-vector bots, replayed and played against this folder's givers | exploratory |
 | [llm-providers.md](llm-providers.md) | Which provider served each hosted call, and how to pin one | exploratory |
 | [mathematics.md](mathematics.md) | Exact turn odds, the best count, and the single-peak observation | |

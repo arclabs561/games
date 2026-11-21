@@ -1,0 +1,321 @@
+{
+ "controls": {
+  "google/embeddinggemma-2": {
+   "O": {
+    "ci": [
+     0.5757,
+     0.6186
+    ],
+    "mean": 0.5973,
+    "n": 2009
+   },
+   "S": {
+    "ci": [
+     0.5757,
+     0.6186
+    ],
+    "mean": 0.5973,
+    "n": 2009
+   },
+   "W": {
+    "ci": [
+     0.5762,
+     0.619
+    ],
+    "mean": 0.5978,
+    "n": 2009
+   }
+  },
+  "potion+map": {
+   "O": {
+    "mean": 0.704
+   },
+   "S": {
+    "mean": 0.704
+   },
+   "W": {
+    "mean": 0.7019
+   }
+  }
+ },
+ "games": 263,
+ "guesses": "hf:runs/c15/test-gpt-oss-120b/guesses.txt,hf:runs/c15/test-llama-3.3-70b/guesses.txt,hf:runs/c15/repeat/guesses.txt",
+ "guesses_sha256": "bfde01f630d937ac4a6fa3d4ecba1a6c3c80fc7d8460b9e7f2140c7dc5955f55",
+ "margin": 0.03,
+ "models": {
+  "gpt-oss-120b": {
+   "agreement": {
+    "O": {
+     "ci": [
+      0.657,
+      0.6979
+     ],
+     "mean": 0.6778,
+     "n": 2008
+    },
+    "S": {
+     "ci": [
+      0.6607,
+      0.7014
+     ],
+     "mean": 0.6814,
+     "n": 2009
+    },
+    "W": {
+     "ci": [
+      0.7104,
+      0.7492
+     ],
+     "mean": 0.7302,
+     "n": 2009
+    }
+   },
+   "did": {
+    "S vs google/embeddinggemma-2": {
+     "ci": [
+      -0.0153,
+      0.0074
+     ],
+     "control_drop": 0.0,
+     "detectable_effect": 0.0184,
+     "games": 263,
+     "inside_margin": true,
+     "mean": -0.004,
+     "model_drop": -0.004,
+     "n": 2008,
+     "turns_dropped": 1
+    },
+    "S vs potion+map": {
+     "ci": [
+      -0.0153,
+      0.0074
+     ],
+     "control_drop": 0.0,
+     "detectable_effect": 0.0184,
+     "games": 263,
+     "inside_margin": true,
+     "mean": -0.004,
+     "model_drop": -0.004,
+     "n": 2008,
+     "turns_dropped": 1
+    },
+    "W vs google/embeddinggemma-2": {
+     "ci": [
+      -0.0773,
+      -0.0278
+     ],
+     "control_drop": -0.0005,
+     "detectable_effect": 0.0431,
+     "games": 263,
+     "inside_margin": false,
+     "mean": -0.0523,
+     "model_drop": -0.0528,
+     "n": 2008,
+     "turns_dropped": 1
+    },
+    "W vs potion+map": {
+     "ci": [
+      -0.0734,
+      -0.0355
+     ],
+     "control_drop": 0.0016,
+     "detectable_effect": 0.0414,
+     "games": 263,
+     "inside_margin": false,
+     "mean": -0.0544,
+     "model_drop": -0.0528,
+     "n": 2008,
+     "turns_dropped": 1
+    }
+   },
+   "named_original_word_on_W": 12,
+   "repeat": {
+    "O": {
+     "changed": 0,
+     "prompts": 20,
+     "sends": 3
+    },
+    "S": {
+     "changed": 1,
+     "prompts": 20,
+     "sends": 3
+    },
+    "W": {
+     "changed": 3,
+     "prompts": 20,
+     "sends": 3
+    }
+   },
+   "replies": {
+    "O": {
+     "0": 637,
+     "1": 1342,
+     "H": 19,
+     "M": 10,
+     "n": 1
+    },
+    "S": {
+     "0": 635,
+     "1": 1342,
+     "H": 27,
+     "M": 5
+    },
+    "W": {
+     "0": 530,
+     "1": 1434,
+     "H": 33,
+     "M": 12
+    }
+   },
+   "turns": 2009
+  },
+  "llama-3.3-70b": {
+   "agreement": {
+    "O": {
+     "ci": [
+      0.6103,
+      0.6695
+     ],
+     "mean": 0.6404,
+     "n": 1004
+    },
+    "S": {
+     "ci": [
+      0.6153,
+      0.6744
+     ],
+     "mean": 0.6454,
+     "n": 1004
+    },
+    "W": {
+     "ci": [
+      0.6739,
+      0.7304
+     ],
+     "mean": 0.7029,
+     "n": 1003
+    }
+   },
+   "did": {
+    "S vs google/embeddinggemma-2": {
+     "ci": [
+      -0.0268,
+      0.0166
+     ],
+     "control_drop": 0.0,
+     "detectable_effect": 0.0337,
+     "games": 138,
+     "inside_margin": true,
+     "mean": -0.005,
+     "model_drop": -0.005,
+     "n": 1004,
+     "turns_dropped": 0
+    },
+    "S vs potion+map": {
+     "ci": [
+      -0.0268,
+      0.0166
+     ],
+     "control_drop": 0.0,
+     "detectable_effect": 0.0337,
+     "games": 138,
+     "inside_margin": true,
+     "mean": -0.005,
+     "model_drop": -0.005,
+     "n": 1004,
+     "turns_dropped": 0
+    },
+    "W vs google/embeddinggemma-2": {
+     "ci": [
+      -0.0941,
+      -0.0314
+     ],
+     "control_drop": 0.001,
+     "detectable_effect": 0.0615,
+     "games": 137,
+     "inside_margin": false,
+     "mean": -0.0628,
+     "model_drop": -0.0618,
+     "n": 1003,
+     "turns_dropped": 1
+    },
+    "W vs potion+map": {
+     "ci": [
+      -0.0923,
+      -0.0325
+     ],
+     "control_drop": 0.0008,
+     "detectable_effect": 0.0586,
+     "games": 137,
+     "inside_margin": false,
+     "mean": -0.0626,
+     "model_drop": -0.0618,
+     "n": 1003,
+     "turns_dropped": 1
+    }
+   },
+   "named_original_word_on_W": 7,
+   "repeat": {
+    "O": {
+     "changed": 8,
+     "prompts": 20,
+     "sends": 3
+    },
+    "S": {
+     "changed": 1,
+     "prompts": 20,
+     "sends": 3
+    },
+    "W": {
+     "changed": 0,
+     "prompts": 20,
+     "sends": 3
+    }
+   },
+   "replies": {
+    "O": {
+     "0": 359,
+     "1": 642,
+     "H": 1,
+     "M": 2
+    },
+    "S": {
+     "0": 354,
+     "1": 646,
+     "H": 2,
+     "M": 2
+    },
+    "W": {
+     "0": 296,
+     "1": 705,
+     "M": 2,
+     "n": 1
+    }
+   },
+   "turns": 1004
+  }
+ },
+ "plan": "experiments/plans/C15.md",
+ "primary": {
+  "h_memory": {
+   "ci": [
+    -0.0773,
+    -0.0278
+   ],
+   "control_drop": -0.0005,
+   "detectable_effect": 0.0431,
+   "games": 263,
+   "inside_margin": false,
+   "mean": -0.0523,
+   "model_drop": -0.0528,
+   "n": 2008,
+   "turns_dropped": 1
+  }
+ },
+ "swap": {
+  "replacements_outside_window": 0,
+  "turns_with_one": 0
+ },
+ "turn_seed": 15001,
+ "turns": 2009
+}

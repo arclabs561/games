@@ -1,0 +1,45 @@
+{
+ "plan": "experiments/plans/C15.md",
+ "cost_method": "the meter: reported cost, else reported tokens times the provider's listed price",
+ "jobs": [
+  {
+   "run": "pilot",
+   "job": "6b00b3464fdc5ab3c55bebe8",
+   "commit": "0fbad89a25e8b5d9296b2cff16f2b8e0795357a3",
+   "spent": 0.004155,
+   "cap": 0.02
+  },
+  {
+   "run": "test-gpt-oss-120b",
+   "job": "6b00b58f4fdc5ab3c55bee69",
+   "commit": "0fbad89a25e8b5d9296b2cff16f2b8e0795357a3",
+   "spent": 0.225252,
+   "cap": 0.4,
+   "guesses_sha256": "6e9f345506a10868919d4f4198aa17015d592b47005c77f95d1d2b0aa1f3d053"
+  },
+  {
+   "run": "test-llama-3.3-70b",
+   "job": "6b00b5924fdc5ab3c55bee6d",
+   "commit": "0fbad89a25e8b5d9296b2cff16f2b8e0795357a3",
+   "spent": 0.096452,
+   "cap": 0.2,
+   "guesses_sha256": "32caee6491c55fbfe4f271ab463f7dcd4d3c3d1b81308ed675950f6e302eafb8"
+  },
+  {
+   "run": "repeat",
+   "job": "6b00b5954fdc5ab3c55bee6f",
+   "commit": "0fbad89a25e8b5d9296b2cff16f2b8e0795357a3",
+   "spent": 0.007651,
+   "cap": 0.03,
+   "guesses_sha256": "9bca5d5ee2fa4c7cc8baf118d3f641c8cd3cd095828387333f9c3f8955482bda"
+  },
+  {
+   "run": "score",
+   "job": "6b0114a04fdc5ab3c55c586c",
+   "commit": "5023ab593ad1b748edcd3915124144021b5d7e69",
+   "spent": 0.0,
+   "note": "no model calls; cpu-basic time only"
+  }
+ ],
+ "total_spent": 0.33351
+}

@@ -58,6 +58,7 @@ Guessing results are shares of turns where the guess is the person's word; givin
 | Linear map on potion's clue vectors | +0.088 (0.063 to 0.114), to 0.632 | same; five training seeds; plan C1 | [c1](results/c1.md) |
 | LoRA on Qwen3-Embedding-0.6B, minus the potion map | −0.007 (−0.041 to 0.028), no detectable difference | same; three seeds; plan C2, use 2 | [c2](results/c2.md) |
 | gpt-oss-120b as guesser, minus EmbeddingGemma 2 | +0.102 (0.071 to 0.135) | same; one reply per prompt; plan C4, use 3 | [c4](results/c4.md) |
+| Memorization probe: gpt-oss-120b's drop in agreement when the other board words are swapped, minus EmbeddingGemma 2's | −0.052 (−0.077 to −0.028): the model agrees more on swapped boards; no sign of memory | played out, one reply per prompt, 2,009 training turns in 263 games, 10,000 resamples of games; plan C15, not a use of the test turns | [c15](results/c15.md) |
 | Teacher's labels added to the human turns | +0.033 (0.009 to 0.059), to 0.659; 0.005 to 0.062 with seeds resampled | same; three seeds per arm; plan C8, use 4 | [c8](results/c8.md) |
 | Clue value kept with another model's guesser | 57% to 73% | exact, 200 boards, eight models; exploratory, no interval | [crossplay](results/crossplay.md) |
 | Population training minus self-play, held-out embedding guesser | +0.31 (0.26 to 0.36) | exact, 200 boards, 70 runs; stratified bootstrap; plan C3 | [c3](results/c3.md) |
@@ -84,7 +85,7 @@ CI runs the tests; runs that need models, GPUs or paid calls do not run in CI.
 
 ## Which models predict human guesses?
 
-The test turns come from Cultural Codes, split so that no game has turns on both sides (plan C1). The published split puts turns of 165 games in more than one file. The map's gain holds at the same size on the new split. Instruction prefixes help the instruction-trained models a little and ruin the others. The published-split column has no intervals here; [guessers.md](results/guessers.md) gives them. Detail: [c1.md](results/c1.md).
+The test turns come from Cultural Codes, split so that no game has turns on both sides (plan C1). A probe of memorization (plan C15, [c15.md](results/c15.md)) found none: on 2,009 training turns, swapping the board's other words for nouns of the same frequency raises gpt-oss-120b's agreement with the person by 5.3 points and leaves EmbeddingGemma 2's unchanged. The published split puts turns of 165 games in more than one file. The map's gain holds at the same size on the new split. Instruction prefixes help the instruction-trained models a little and ruin the others. The published-split column has no intervals here; [guessers.md](results/guessers.md) gives them. Detail: [c1.md](results/c1.md).
 
 | Model | Split by game: same word (95% interval) | Published split |
 |---|---|---|
@@ -200,6 +201,7 @@ Only Cultural Codes and EAT are used in the numbers above. Prompts, replies, ada
 ## Open questions
 
 - Does the single-peak property of the value of a turn hold for every weighting?
+- Why do language-model guessers agree with people more often when a board's other words are swapped for nouns of the same frequency, while the embedding guessers do not change (plan C15)?
 - Why does a better model of human guesses not make a better giver? The linear maps gave fewer words per clue on 100 boards, without intervals, and the LoRA encoder shows no detectable difference.
 - Does population training add anything over a count of one when the rule is a preregistered baseline, and do C3's policies or the count-1 rule do better than self-play with language-model guessers or with people?
 - Did gpt-oss-120b see Cultural Codes in training? Its agreement with people could be rechecked on the test turns with the other board words swapped for words of the same frequency, against the same change for the embedding guessers.
