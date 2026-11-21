@@ -120,3 +120,26 @@ def test_committed_sample_contains_the_exact_shares():
 def test_committed_figure_is_current():
     committed_svg = (HERE / "figures" / "difficulty.svg").read_text()
     assert committed_svg == difficulty.figure(committed())
+
+
+@pytest.mark.parametrize(
+    ("partitions", "seeds", "error"),
+    [
+        ([], [], "no exact shards"),
+        ([(0, 2), (1, 3)], [], "same partition"),
+        ([(0, 2)], [], "same partition"),
+        ([(0, 1)], [], "seeds"),
+        ([(0, 1)], [*range(1, 10), 9], "seeds"),
+    ],
+)
+def test_report_rejects_incomplete_runs(tmp_path, partitions, seeds, error):
+    for i, (part, count) in enumerate(partitions):
+        (tmp_path / f"difficulty-exact-{i}.json").write_text(
+            json.dumps({"part": part, "parts": count})
+        )
+    for i, seed in enumerate(seeds):
+        (tmp_path / f"difficulty-sample-{i}.json").write_text(
+            json.dumps({"seed": seed, "samples": 20_000})
+        )
+    with pytest.raises(ValueError, match=error):
+        difficulty.report(tmp_path)

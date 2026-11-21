@@ -2,7 +2,7 @@
 
 How much does it cost to guarantee a win in five guesses? Play once against each of the 1,296 possible codes. The strategy with the best average takes 5,625 guesses in all. The best one that always finishes in five takes 5,626. One extra guess buys the guarantee across the whole set. Koyama and Lai found both totals in 1993. Here an exhaustive search reproduces them, and you can replay both [strategies](#what-is-the-best-strategy) against every code.
 
-Fallout 3 gives you four guesses at a terminal password. On 1,000 simulated screens of 20 short words each, the best strategy cracks 92.5% of passwords. Guessing at random among words that still fit the clues cracks 67.8%. Both chances were computed exactly for each screen.
+Fallout 3 gives you four guesses at a terminal password. We drew 1,000 screens of 20 short words from the ENABLE dictionary. With each word equally likely to be the password, the best strategy cracks 92.5%. Guessing at random among words that still fit the clues cracks 67.8%. Both chances were computed exactly for each screen.
 
 ![A dark terminal panel lists 18 five-letter words in two columns. A log on the right shows the guesses PLANT, QUEEN and RIVER with likeness 0, 1 and 2, then WATER as the one candidate left and an exact match.](figures/terminal.svg)
 

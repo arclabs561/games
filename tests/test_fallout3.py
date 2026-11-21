@@ -110,6 +110,12 @@ def test_fallout_4_screens_match_math_goes_pop_part_2():
         assert abs(float(fo.random_candidate(table)) / 12 - random_won) < 0.001
 
 
+@pytest.mark.parametrize("score", [fo.most_cracked, fo.random_candidate])
+def test_negative_attempt_budget(score):
+    with pytest.raises(ValueError, match="attempts"):
+        score(fo.likeness_table(SMALL), -1)
+
+
 def test_every_small_screen_exhaustively():
     """On all 126 five-word screens of SMALL: the optimum matches brute force for every
     attempt limit, no strategy beats it, each compiled guess tree matches turn-by-turn play,
@@ -117,7 +123,7 @@ def test_every_small_screen_exhaustively():
     for screen in itertools.combinations(SMALL, 5):
         table = fo.likeness_table(screen)
         n = len(screen)
-        for left in (1, 2, 3, 4):
+        for left in range(5):
             values = fo.most_cracked(table, left)
             assert max(values) == brute_best(screen, list(screen), left), (screen, left)
         assert max(fo.most_cracked(table, n)) == n
@@ -126,7 +132,7 @@ def test_every_small_screen_exhaustively():
             counts = fo.guess_counts(table, strategy)
             assert counts == [replay(screen, strategy, p) for p in screen]
             assert sum(c <= fo.ATTEMPTS for c in counts) <= best
-        for left in (1, 2, 4):
+        for left in (0, 1, 2, 4):
             chance = sum(brute_random(list(screen), p, left) for p in screen)
             assert fo.random_candidate(table, left) == chance
 

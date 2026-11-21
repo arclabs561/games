@@ -4,6 +4,8 @@ import random
 from fractions import Fraction
 from itertools import combinations
 
+import pytest
+
 from spot_it import chance, extend, field, missing, plane
 
 
@@ -19,6 +21,12 @@ def test_field_axioms():
     # In GF(4) = {0, 1, x, x + 1}, written 0, 1, 2, 3: x · x = x + 1 and x · (x + 1) = 1.
     f4 = field.gf(4)
     assert f4.mul[2][2] == 3 and f4.mul[2][3] == 1
+
+
+@pytest.mark.parametrize("i,j", [(0, 0), (0, 57), (-1, 1), (57, 0)])
+def test_remove_two_distinct_cards(i, j):
+    with pytest.raises(ValueError, match="distinct"):
+        chance.deck_55(i, j)
 
 
 def test_planes():

@@ -2,7 +2,9 @@
 
 <!-- shared:summary -->
 
-Which deals of this make-ten card game cannot be cleared? The answer depends on how the rules are read. The printed rules erase pairs that sum to 10. Under them 96.02% of deals are stuck, and with addition alone 71.10% are. Under the most generous reading of the sheet's variation, which combines any number of cards with +, − and ×, only 12,362,536 of the 2,530,881,913,560 possible deals are stuck, about 1 in 204,722. All three counts are exact, and the last comes with a proof and machine-checked certificates. The rest of this page is about that reading. There, a deal that can be cleared can always be cleared in one group, and a stuck hand without a 0 is caught by a remainder argument, mod 3 or mod 4. Ten is not special: for every target from 1 to 30, the hands that cannot make it are caught in the same way from 7, 8 or 9 cards on, checked through 11 cards.
+Your score in Erase is the number of cards you have left. Could everyone always score zero? Under the printed rules you erase pairs that add to 10. Even with perfect play, 96.02% of deals leave cards behind. Let a player add as many cards as they like and the share drops to 71.10%.
+
+Now allow subtraction and multiplication too. A zero can take any spare cards with it: multiply them by zero and add the result to your 10. Counting every deal under these rules leaves only 12,362,536 stuck deals out of 2,530,881,913,560, about one in 204,722. Every other deal can be cleared in one group.
 
 <!-- /shared -->
 
@@ -62,7 +64,7 @@ All results are exact. A row that names no reading of the rules is for the gener
 - `count.py` gets the count of stuck deals by brute force. It uses none of the theorems. With `--pairs` and `--addition` it counts the deals that the printed rules and addition alone leave stuck; the tests compare both rules with brute-force searches on random deals.
 - `simulate.py` reruns every simulated figure with fixed seeds: + and −, "grab the pairs first," small groups, and play without brackets. It also simulates addition only, as a check on the exact count.
 - `smt/z3_programs.py` and `smt/statespace.py` check the impossible cases with two other methods. The tests run `statespace.py`; the z3 check takes about 2.5 min and is run by hand.
-- For the targets 1 to 30, `targets.py --certs` writes one expression for each multiset from the threshold up that makes the target. `verify_targets.py` lists the multisets itself and checks each expression with Python's own parser, and decides every other multiset with its own search over remainders. It shares no code with `targets.py`.
+- For targets 1 to 30, `verify_targets.py` checks the thresholds in `results.json` through 11 cards. At each size it lists the multisets, evaluates the supplied expressions and checks that a remainder blocks each remaining hand. One hand just below each threshold can neither make the target nor be ruled out by those remainders. A separate search checks that hand. The checker shares no code with `targets.py`.
 - `report.py` writes every number quoted in the README and the paper to `results.json`. The tests recompute its cheaper parts and check that the README's shared sections are what `tools/sync_docs.py` writes from `docs/` and `results.json`.
 
 CI runs the tests and the z3 lemma check, and rebuilds the paper's PDFs to check that they are current. The certificate files are generated, not stored, so CI does not check them.

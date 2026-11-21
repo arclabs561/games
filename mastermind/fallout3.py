@@ -156,6 +156,10 @@ def candidate_parts(table: Table) -> Callable[[tuple[int, ...]], list[tuple[int,
 def random_candidate(table: Table, attempts: int = ATTEMPTS) -> Fraction:
     """When every guess is a candidate chosen uniformly at random, the expected number of
     passwords on the screen cracked within `attempts`. Exact."""
+    if attempts < 0:
+        raise ValueError("attempts must be nonnegative")
+    if attempts == 0:
+        return Fraction(0)
     parts = candidate_parts(table)
 
     @cache
@@ -186,6 +190,10 @@ def most_cracked(
     """For each first guess, the most candidates that can be cracked within `attempts` when
     that word is guessed first and every later guess is the best one. The best of these is
     the optimum over all strategies. Exact, by search with memoization."""
+    if attempts < 0:
+        raise ValueError("attempts must be nonnegative")
+    if attempts == 0:
+        return [0] * len(table)
     n, length = len(table), table[0][0]
     every = tuple(range(n)) if candidates is None else tuple(candidates)
 
