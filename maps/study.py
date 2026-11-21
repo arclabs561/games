@@ -1,6 +1,6 @@
 """Every number the README quotes, computed once and written to results/maps.json.
 
-    uv run python -m maps.study          # all sections (about five minutes on one core)
+    uv run python -m maps.study          # all sections (about an hour on one core)
     uv run python -m maps.study jl som   # some of them
 
 The notebooks call the same cached functions, so they show the same runs. A test reruns
@@ -15,12 +15,25 @@ from pathlib import Path
 
 import numpy as np
 
-from maps import colors, data, jl, paths, portable, ranks, shelf, sne, som
+from maps import (
+    colors,
+    data,
+    guesses,
+    jl,
+    paths,
+    portable,
+    quantize,
+    ranks,
+    ranktsne,
+    shelf,
+    sne,
+    som,
+)
 
 RESULTS = Path(__file__).parent / "results" / "maps.json"
 MAPS = Path(__file__).parent / "results" / "maps.npz"  # the maps that the figures draw
 QUICK = ("hand", "jl", "som")
-SLOW = ("css", "benchmark", "sne")
+SLOW = ("css", "benchmark", "sne", "ranktsne", "guesses", "quantize")
 
 # A shelf with the colors that trouble a hue sort: grays, browns and pastels.
 HAND = [
@@ -330,6 +343,9 @@ SECTIONS = {
     "jl": jl_section,
     "sne": sne_section,
     "som": som_section,
+    "ranktsne": ranktsne.section,
+    "guesses": guesses.section,
+    "quantize": quantize.section,
 }
 
 

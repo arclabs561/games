@@ -7,6 +7,7 @@ state of the solver. Arithmetic is exact, with fractions. The cost grows like fa
 times the number of score cards, so only games with a few dice, faces and boxes are feasible.
 """
 
+from collections.abc import Callable
 from fractions import Fraction
 from functools import cache
 from itertools import product
@@ -16,8 +17,12 @@ from yahtzee.rules import UPPER, Rules, bonus, box_score, legal
 type Card = tuple[int | None, ...]  # points per box, None while open
 
 
-def brute_force(rules: Rules) -> Fraction:
-    """The expected final score under optimal play, from an empty score card."""
+def brute_force(rules: Rules, utility: Callable[[int], Fraction] | None = None) -> Fraction:
+    """The expected final score under optimal play, from an empty score card.
+
+    With `utility`, the expected utility of the final score under the play that maximizes it,
+    for example the chance of scoring at least T with `lambda s: Fraction(s >= T)`.
+    """
     cats = rules.categories
     faces = range(1, rules.faces + 1)
 
@@ -28,9 +33,10 @@ def brute_force(rules: Rules) -> Fraction:
 
     @cache
     def game(card: Card, extra: int) -> Fraction:
-        """Expected final score from the start of a turn; `extra` is the Yahtzee bonus so far."""
+        """Expected final value from the start of a turn; `extra` is the Yahtzee bonus so far."""
         if None not in card:
-            return Fraction(final(card, extra))
+            s = final(card, extra)
+            return Fraction(s) if utility is None else utility(s)
         rolls = list(product(faces, repeat=rules.dice))
         return sum((roll_value(card, extra, d, rules.rolls - 1) for d in rolls), Fraction(0)) / len(
             rolls

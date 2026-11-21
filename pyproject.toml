@@ -81,6 +81,7 @@ egyptian_ratscrew = [
 maps = [
     "matplotlib>=3.11",
     "numpy>=2.5",
+    "qntz==0.1.3",
     "scikit-learn>=1.9",
     "scipy>=1.18",
 ]

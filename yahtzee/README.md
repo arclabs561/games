@@ -35,6 +35,10 @@ Verhoeff and Glenn let the player put a Yahtzee in any open box (**free choice**
 | Glenn's rule lists for people score 226.09 under the readings here; he reports 218.18 | Exact (20,000 seeded games: 226.01 ± 0.92); gap of 7.9 not resolved | [card-search](results/card-search.md) |
 | Of 17 pieces of advice, 9 cost under half a point; "stop rolling on three of a kind" costs 36.18 | Exact, one solve per piece | [advice](results/advice.md) |
 | Optimal play averages 254.80 ± 0.83 and greedy 217.42 ± 0.68 in seeded games | Simulated, 20,000 games, seed 1, 95% interval; contains the exact values | [variants](results/variants.md) |
+| Head to head, optimal play for the mean beats the cheat sheet in 57.03% of games and ties in 0.62% | Exact; in 20,000 seeded games of each (seeds 3 and 4), 57.32% (56.63% to 58.00%) | [head to head](#how-often-does-optimal-play-beat-the-cheat-sheet) |
+| Playing to beat the sheet's score raises that to 57.35%; against optimal play, to 50.02% from 49.66%, or 50.36% with a tie as half a win | Exact; one solve per opponent, on GitHub Actions | [head to head](#how-often-does-optimal-play-beat-the-cheat-sheet) |
+| The best chance of scoring 250 or more is 54.19%, against 48.37% for optimal play; of 300 or more, 17.60% against 14.33% | Exact, a solve for every target at once; checked against brute force on small games | [targets](#what-is-the-best-chance-of-reaching-a-score) |
+| The best chances, summed over all targets, give 264.4781; Pawlewicz reports 264.449 | Exact; disagrees with a cited source by 0.029, cause unknown | [targets](#what-is-the-best-chance-of-reaching-a-score) |
 
 ## How the results are checked
 
@@ -138,6 +142,34 @@ Each piece was taken from a strategy page, forum or rule booklet and made precis
 | Upper boxes take three or more of their face, or a zero | 9.79 |
 | With three of a kind and the bonus not made, stop rolling | 36.18 |
 
+## How often does optimal play beat the cheat sheet?
+
+In 57.03% of games, with 0.62% ties and 42.35% losses. The rules give the game to the higher total. Here two players keep separate score cards and do not react to each other: one plays for the highest mean, the other follows the cheat sheet. The 11.41-point gap in means is small beside the spread of one game. The margin has median 12 points and quartiles −34 and 57, and the sheet wins by 50 points or more in 18.98% of games. All exact, from the two exact score distributions (`versus.py`, [`results/versus.json`](results/versus.json)). In 20,000 seeded games of each (seeds 3 and 4), optimal play won 57.32% (95% interval 56.63% to 58.00%).
+
+Playing to win, knowing the opponent's strategy but not the opponent's dice, changes little. Against the sheet, the best such play wins 57.35% of games. Against optimal play for the mean, it wins 50.02%, while optimal play against itself wins 49.66% and ties 0.68%. Counting a tie as half a win, the best play against optimal scores 0.5036. Glenn's CIG 2007 paper could not be read here, so any value it gives for this is not compared. Each of these values is one solve of the program below with the opponent's score distribution at the end of the game, on GitHub Actions (branches `compute/yahtzee-target-44788982543` and `compute/yahtzee-target-sheet-44791753155`).
+
+## What is the best chance of reaching a score?
+
+Some players need T points, to set a record or to pass an opponent who has finished. They can do better than optimal play for the mean. Every target has its own best strategy. `target.py` stores in each state the best chance of scoring each number of points still needed, as Pawlewicz (2010) does, and solves all targets at once. The full game took 48 minutes on four cores of a GitHub Actions runner ([`results/target.json`](results/target.json)).
+
+<img src="chances.svg" width="760" alt="The chance of scoring T or more against T from 100 to 500, for three players: the best chance for each target, optimal play for the mean, and the cheat sheet. The best chance lies above optimal play everywhere, by up to 7.65 points of chance near 240, and optimal play lies above the cheat sheet.">
+
+*The chance of scoring T or more. The top curve takes a different strategy for each T; the other two are one strategy each. All exact.*
+
+| Target T | Best chance | Optimal play for the mean | Cheat sheet |
+|---:|---:|---:|---:|
+| 150 | 99.79% | 99.12% | 98.08% |
+| 200 | 91.08% | 86.36% | 78.37% |
+| 250 | 54.19% | 48.37% | 38.12% |
+| 300 | 17.60% | 14.33% | 12.39% |
+| 350 | 9.76% | 7.24% | 6.87% |
+| 400 | 4.93% | 3.84% | 3.16% |
+| 500 | 1.00% | 0.72% | 0.59% |
+
+The gain is largest near 240 points, where the best chance is 7.65 points higher than optimal play's. The program is checked against `brute.py`, told to maximize the chance of a target, on five small games, one of them with three rolls; they agree to 10⁻¹². Each state computes only the targets that the rest of the game can still reach, and a test checks that computing every target changes nothing.
+
+Pawlewicz treats the best chances as if they were one score distribution. Its mean, the sum of the best chances over all targets, is 264.4781 here, against his 264.449. The difference, 0.029, is not explained. His optimal mean, 254.589, is the value here (254.5896) cut off after three decimals, or Kelly and Liese's fraction (254.5894) rounded. If the second, the two disagreements may share a cause, such as a reading of the rules; that is a guess.
+
 ## Data
 
 | Source | What | License | Committed |
@@ -177,6 +209,9 @@ uv run python -m yahtzee.glenn             # Glenn's rule lists, exactly; half a
 uv run python -m yahtzee.cards             # frontier, cheat sheet, figures; about 15 minutes
 uv run python -m yahtzee.advice all        # every piece of advice; about 40 minutes
 uv run python -m yahtzee.learn learn --start base --seed 1 --out yahtzee/results   # hours; run on GitHub Actions
+uv run python -m yahtzee.versus            # head to head with the cheat sheet; about 10 minutes
+uv run python -m yahtzee.target reach --workers 4 --out DIR   # best chance of each target; 48 min on Actions
+uv run python -m yahtzee.target report --runs DIR             # results/target.json and chances.svg
 ```
 
 ## Files
@@ -189,4 +224,5 @@ uv run python -m yahtzee.learn learn --start base --seed 1 --out yahtzee/results
 | `study.py` | Every number of the optimal-play notes; writes `openings.csv` and `distribution.csv` |
 | `human.py`, `learn.py`, `cards.py` | Strategy cards and their exact scores; the search; `results/cards.json` and both figures |
 | `glenn.py`, `advice.py` | Glenn's rule lists; the advice, written to `results/advice.json` |
+| `versus.py`, `target.py` | Head to head with the cheat sheet; the best chance of each target and the best play against a known opponent, written to `results/versus.json`, `results/target.json` and `chances.svg` |
 | `results/` | Every card the searches recorded, and notes with the detail behind each section ([index](results/README.md)) |

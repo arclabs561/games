@@ -1,6 +1,7 @@
 """The Yahtzee README and its notes keep every number the README held before the notes."""
 
-from tests.readme_moves import lost, unexplained
+from tests.readme_moves import lost, numbers, unexplained
+from tests.test_yahtzee_target import added_text
 
 NOTES = [
     "README.md",
@@ -18,4 +19,5 @@ def test_no_number_lost():
 
 
 def test_no_number_new():
-    assert unexplained("yahtzee", NOTES, set()) == []
+    # The sections added later are checked against their results in test_yahtzee_target.
+    assert unexplained("yahtzee", NOTES, numbers(added_text())) == []

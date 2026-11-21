@@ -183,5 +183,7 @@ def test_readme_percentages_are_written_by_the_scripts():
     written += (FOLDER / "results" / "simulation.md").read_text()
     written += (FOLDER / "results" / "prosperity.md").read_text()
     written += (FOLDER / "results" / "prosperity_simulation.md").read_text()
+    written += (FOLDER / "results" / "second.md").read_text()
+    written += (FOLDER / "results" / "second_simulation.md").read_text()
     for p in set(re.findall(r"\d+\.\d+%", readme)):
         assert p in written or f"| {p[:-1]} |" in written, p  # printed by a calculator

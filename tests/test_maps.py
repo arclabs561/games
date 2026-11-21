@@ -385,7 +385,8 @@ def test_quick_results_are_current(name):
 
 @pytest.mark.parametrize("name", list(figures.FIGURES))
 def test_figures_are_current(name, tmp_path):
-    draw.save_svg(figures.FIGURES[name](), tmp_path / "figure.svg")
+    with draw.style():
+        draw.save_svg(figures.FIGURES[name](), tmp_path / "figure.svg")
     assert (tmp_path / "figure.svg").read_bytes() == (figures.OUT / f"{name}.svg").read_bytes()
 
 

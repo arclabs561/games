@@ -1,15 +1,15 @@
 # Open questions
 
-81 open questions from 18 games' READMEs, collected by `tools/open_questions.py`. Edit the READMEs, not this file, then run `python3 tools/open_questions.py`; a test checks that this file is current.
+82 open questions from 18 games' READMEs, collected by `tools/open_questions.py`. Edit the READMEs, not this file, then run `python3 tools/open_questions.py`; a test checks that this file is current.
 
 Each status comes from the question's wording, by the rules in the script's docstring. It guides the choice of what to work on next and is not itself a finding.
 
 | Status | Questions |
 |---|---:|
-| blocked on data | 11 |
+| blocked on data | 10 |
 | blocked on compute | 3 |
-| partly answered | 7 |
-| open | 60 |
+| partly answered | 8 |
+| open | 61 |
 
 | Game | Question | Status |
 |---|---|---|
@@ -47,7 +47,7 @@ Each status comes from the question's wording, by the rules in the script's docs
 | [Erase](erase/README.md) | Do the thresholds hold for multisets of more than 11 cards, for 10 or for any other target? A deal never holds more than 11 cards, and every threshold here, that of 10 included, is checked only that far. | open |
 | [Erase](erase/README.md) | Does any target above 30 have a threshold above 9? Among the targets checked only 14 reaches 9, because of one multiset of eight cards. | partly answered |
 | [EV Nova and Naev](ev_nova/README.md) | Whether Naev's mean prices match the game. A running copy of Naev could check a few spobs. | blocked on data |
-| [EV Nova and Naev](ev_nova/README.md) | Time, checked in the game. The rates per period above rest on a flight model read from the source. Timing one leg in a running copy of Naev, from take-off at Burnan to take-off at Samell, would test it; the model gives 2.33 periods for it. | blocked on data |
+| [EV Nova and Naev](ev_nova/README.md) | Time. A jump in Naev takes flying time that depends on the system, and the source comments put a jump at about three periods and a landing at about one. Rates per period would need a model of flight time. The map positions in `naev.json` are a first step: a jump point marked `autopos` lies at the system's radius, in the direction of the target system (`src/space.c`), so the distance flown inside a system between two such points can be computed. Ship speeds and the time of the jump itself are still needed. | partly answered |
 | [EV Nova and Naev](ev_nova/README.md) | Missions against trading. Cargo missions in both games pay for delivery and need no capital. They are not modeled. | open |
 | [EV Nova and Naev](ev_nova/README.md) | Price drift in Naev, used on purpose. Prices in a system rise and fall together, with periods of a few hundred periods, so waiting for a good phase may beat flying at once. | open |
 | [EV Nova and Naev](ev_nova/README.md) | Story changes. EV Nova's galaxy changes with control bits, and Naev's with its campaign. Only the start of an EV Nova game and Naev's base data are studied. EV Nova's disasters (`öops`), which shift one price for a while, are left out, as are hypergates and wormholes. | open |
@@ -63,9 +63,10 @@ Each status comes from the question's wording, by the rules in the script's docs
 | [Hanabi](hanabi/README.md) | Whether the gap between self-play and cross-play at α = 0.05 closes with more training, as in Forkel et al. | blocked on compute |
 | [Maps](maps/README.md) | Does CIEDE2000 instead of Oklab distance change which shelf method wins? | open |
 | [Maps](maps/README.md) | A NeRV sweep (λ KL(P‖Q) + (1 − λ) KL(Q‖P)) would trace the whole frontier between precision and recall on these data; λ = 1 is SNE, already implemented. | open |
-| [Maps](maps/README.md) | How far apart are t-SNE's local minima on the Pokémon, over 20 seeds, in cost and in T and C? | open |
+| [Maps](maps/README.md) | How far apart are t-SNE's local minima on the Pokémon in cost? Over 20 seeds, T(10) runs from 0.966 to 0.972; the costs were not compared. | open |
+| [Maps](maps/README.md) | Do kNN affinities match Gaussian ones on the Pokémon under openTSNE's optimizer (exaggeration 12 for 250 steps, learning rate n/12), as Böhm et al. ran them? | open |
 | [Maps](maps/README.md) | How do T and C of a SOM move with grid size, and does Kohonen's batch algorithm reach the same scores? | open |
-| [Maps](maps/README.md) | How often does a random projection change which word a Codenames guesser picks? That asks about cosine rankings, a sharper test than distortion. | open |
+| [Maps](maps/README.md) | With clues from a larger vocabulary than the deck, and a giver who picks clues for a margin, do fewer picks change? | open |
 | [Mastermind](mastermind/README.md) | How does the game choose a screen's words, and are duds chosen to share letters with the password? A list of real screens would settle whether the ENABLE screens here are easier or harder than the game's. | blocked on data |
 | [Mastermind](mastermind/README.md) | ENABLE has many words that a game would not use, such as JAUK and WHIT. Would screens of common words change the table? | open |
 | [Mastermind](mastermind/README.md) | Is there a rule for the first guess that keeps more of the best possible chance than minimax's 99.41%? | open |
