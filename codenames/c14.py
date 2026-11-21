@@ -245,7 +245,15 @@ def choose(
 
 
 def guess(
-    models, picks: str, seed: int, boards: range, times: int, meter, out: Path, workers: int
+    models,
+    picks: str,
+    seed: int,
+    boards: range,
+    times: int,
+    meter,
+    out: Path,
+    workers: int,
+    arms=None,
 ) -> dict:
     """C4's guesser prompt with each chooser's played action and F, once per distinct
     (board, clue, count) and model, played out (`c11.send_all`); with times > 0, the
@@ -253,7 +261,7 @@ def guess(
     from codenames import c11
     from codenames.hosted import Hosted
 
-    arms = [f"{m}-played" for m in CHOOSERS] + ["F"]
+    arms = arms or [f"{m}-played" for m in CHOOSERS] + ["F"]
     by_arm = c11.targets(picks + F_LINES.read_text(), seed, boards, arms)
     keys = {k: b for rows in by_arm.values() for k, b in rows}
     lines: list[str] = []
@@ -281,17 +289,67 @@ def guess(
     return summary
 
 
+# Inputs from the private dataset (in a job), for files that are not committed.
+
+DATASET = "arclabs561/games-runs"
+
+
+def fetch_text(spec: str) -> str:
+    """The text of a committed path, or of `hf:<path>` files in the private dataset
+    (several, comma-separated, joined in order)."""
+    if not spec.startswith("hf:"):
+        return Path(spec).read_text()
+    import os
+
+    from huggingface_hub import hf_hub_download
+
+    parts = []
+    for item in spec.removeprefix("hf:").split(","):
+        item = item.removeprefix("hf:")
+        local = hf_hub_download(
+            DATASET, item, repo_type="dataset", token=os.environ.get("HF_TOKEN")
+        )
+        parts.append(Path(local).read_text())
+    return "".join(p if p.endswith("\n") else p + "\n" for p in parts)
+
+
+def ensure_vectors() -> None:
+    """In a job: copy the word vectors from the branch outputs/codenames-embed."""
+    import shutil
+    import subprocess
+    import tempfile
+
+    from codenames import embed
+
+    if any(embed.COMPUTED.glob("*.npz")):
+        return
+    tmp = Path(tempfile.mkdtemp())
+    subprocess.run(
+        ["git", "clone", "-q", "--depth", "1", "--branch", "outputs/codenames-embed",
+         "https://github.com/arclabs561/games.git", str(tmp / "embed")],
+        check=True,
+    )  # fmt: skip
+    embed.COMPUTED.mkdir(parents=True, exist_ok=True)
+    for f in (tmp / "embed" / "codenames" / "vectors").glob("*.npz"):
+        shutil.copy(f, embed.COMPUTED / f.name)
+
+
 # Scoring (here).
 
 
-def score(picks_path: Path = PICKS, guesses: Path = GUESSES, runs: Path = RUNS) -> dict:
+def score(picks_spec: str = str(PICKS), guesses: str | None = None, runs: Path = RUNS) -> dict:
+    """Every number of the plan. A chooser whose test job was stopped by its cap on some
+    board is not scored: the plan quotes no number from a stopped run."""
     from codenames.actions import expand, values
     from codenames.c4score import bootstrap, holm, rounded
     from codenames.c6score import guessers
     from codenames.c11 import column, read_guesses
 
     weighers, strangers, _, _ = guessers()
-    picks = c4.read_clue_lines(picks_path.read_text() + F_LINES.read_text())
+    picks_text = fetch_text(picks_spec)
+    picks = c4.read_clue_lines(picks_text + F_LINES.read_text())
+    stopped = {m: sum(w == "stopped" for _, _, w in picks[(m, TEST)]) for m in CHOOSERS}
+    scored = [m for m in CHOOSERS if stopped[m] == 0]
     bs = c4.boards(TEST, N[TEST])
     lists_ = read_action_lines(ACTIONS.read_text())[TEST]
     st = []
@@ -308,8 +366,8 @@ def score(picks_path: Path = PICKS, guesses: Path = GUESSES, runs: Path = RUNS) 
 
     f = value("F")
     oracle = np.array([v.max() for _, v in st])
-    prim = {}
-    for m in CHOOSERS:
+    prim: dict = {}
+    for m in scored:
         d = value(f"{m}-played") - f
         prim[m] = bootstrap(d)
         sd = float(np.std(d, ddof=1))
@@ -318,12 +376,20 @@ def score(picks_path: Path = PICKS, guesses: Path = GUESSES, runs: Path = RUNS) 
             mde_at_holm=HOLM_Z * sd / np.sqrt(len(d)),
             mde_at_0_05=MDE_Z * sd / np.sqrt(len(d)),
         )
-    rej = holm({m: prim[m]["p"] for m in CHOOSERS})
-    for m in CHOOSERS:
+    rej = holm({m: prim[m]["p"] for m in scored})
+    for m in scored:
         prim[m]["holm_rejects"] = bool(rej[m])
         prim[m]["inside_margin"] = bool(-DELTA < prim[m]["ci"][0] and prim[m]["ci"][1] < DELTA)
-    sec: dict = {"oracle_minus_f": bootstrap(oracle - f), "f": bootstrap(f)}
+    sec: dict = {
+        "oracle_minus_f": bootstrap(oracle - f),
+        "f": bootstrap(f),
+        "stopped_boards": stopped,
+    }
     for m in CHOOSERS:
+        if m not in scored:
+            why = dict(Counter(str(w) for _, _, w in picks[(m, TEST)]))
+            sec[m] = {"why": why, "not_scored": "stopped by the cap"}
+            continue
         named = np.array([c is not None for c, _, _ in picks[(m, TEST)]])
         d = value(f"{m}-played") - f
         sec[m] = {
@@ -332,9 +398,9 @@ def score(picks_path: Path = PICKS, guesses: Path = GUESSES, runs: Path = RUNS) 
             "conditional_on_named": bootstrap(d[named]) if named.sum() > 1 else None,
             "why": dict(Counter(str(w) for _, _, w in picks[(m, TEST)])),
         }
-    if guesses.exists():
-        g = read_guesses(guesses.read_text())
-        for m in CHOOSERS:
+    if guesses:
+        g = read_guesses(fetch_text(guesses))
+        for m in scored:
             for gm in LLM_GUESSERS:
                 a, b = column(g[(f"{m}-played", gm, TEST, 0)]), column(g[("F", gm, TEST, 0)])
                 ok = ~np.isnan(a - b)
@@ -342,7 +408,9 @@ def score(picks_path: Path = PICKS, guesses: Path = GUESSES, runs: Path = RUNS) 
     result = {
         "plan": PLAN,
         "seed": TEST,
-        "picks_sha256": sha256(picks_path.read_text()),
+        "picks_sha256": sha256(picks_text),
+        "inputs": {"picks": picks_spec, "guesses": guesses},
+        "holm_family": scored,
         "primary": prim,
         "secondary": sec,
     }
@@ -361,7 +429,11 @@ def main() -> None:
     parser.add_argument("--seed", type=int, default=PILOT)
     parser.add_argument("--n", type=int)
     parser.add_argument("--boards", type=parse_range)
-    parser.add_argument("--picks", type=Path, default=PICKS)
+    parser.add_argument("--picks", default=str(PICKS), help="a file, or hf:path")
+    parser.add_argument("--guesses", help="score: a file, or hf:path,...")
+    parser.add_argument(
+        "--arms", help="guess: arms, comma-separated (default: both choosers and F)"
+    )
     parser.add_argument("--max-tokens", default="", help="choose: model=tokens,... (the cap rule)")
     parser.add_argument("--repeat", type=int, default=0)
     parser.add_argument(
@@ -379,7 +451,11 @@ def main() -> None:
         print(ACTIONS, sha256(a), F_LINES, sha256(f))
         return
     if args.what == "score":
-        result = score()
+        ensure_vectors()
+        result = score(args.picks, args.guesses)
+        if args.out and args.out.suffix != ".json":
+            args.out.mkdir(parents=True, exist_ok=True)
+            args.out = args.out / OUT.name
         (args.out or OUT).write_text(json.dumps(result, indent=1, sort_keys=True) + "\n")
         print(json.dumps(result["primary"], indent=1))
         return
@@ -409,9 +485,9 @@ def main() -> None:
         return
     c4.price_models(models, args.out)
     times = args.times if args.what == "repeat" else 0
-    guess(
-        models, args.picks.read_text(), args.seed, args.boards, times, meter, args.out, args.workers
-    )
+    arms = args.arms.split(",") if args.arms else None
+    picks = fetch_text(args.picks)
+    guess(models, picks, args.seed, args.boards, times, meter, args.out, args.workers, arms)
 
 
 if __name__ == "__main__":
