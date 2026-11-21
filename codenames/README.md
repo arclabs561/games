@@ -32,7 +32,7 @@ Across 551 turns where a person picked one word, gpt-oss-120b matched them 358 t
   - The trained potion giver's clues are a form of a board word, or share a compound part with one, on 16.6% of boards, against 3.5% for self-play. The rulebook forbids both; every experiment here filtered clues only by substrings.
   - On the AI competition's single-team score, it takes 1.24 turns (0.48 to 2.00) more than self-play when the framework's own guessers play (exploratory).
 
-  No language model or person has scored C3's policies. C11 scored a related population pick (C10's, untrained) with two language models: no detectable lead (−0.023, interval −0.101 to 0.054), against a lead of 0.22 under potion.
+  No language model or person has scored C3's policies. C11 scored a related population pick (C10's, untrained) with two language models: no detectable lead (−0.020, interval −0.096 to 0.055), against a lead of 0.22 under potion.
 - **What did not help.**
   - Language models as givers lose 0.29 to 0.89 words per turn, with a fixed prompt, little or no reasoning and no retry.
   - Choosing among 120 legal actions, Qwen3.8-27B is 0.059 words per turn below the embedding giver's first choice. The 64-token reply cap decided that result: on 58% of boards its action was the first choice, by fallback.
@@ -75,7 +75,7 @@ Guessing results are shares of turns where the guess is the person's word; givin
 | Language-model giver minus the embedding giver | −0.304 (−0.460 to −0.166) | exact under seven unseen embedding guessers, 200 boards; plan C4 | [c4](results/c4.md) |
 | Language model choosing among 120 actions, minus first choice | −0.059 (−0.116 to −0.005); first choice by fallback on 58% of boards | same, 200 boards; plan C6 | [c6](results/c6.md) |
 | gpt-oss-120b as listener, minus first choice | −0.151 (−0.204 to −0.099) | exact, 300 boards; Holm over four tests; plan C10 | [c10](results/c10.md) |
-| Population pick minus first choice, two language-model guessers | −0.023 (−0.101 to 0.054), no detectable difference | played out once per clue, 998 boards; Holm over two tests; plan C11 | [c11](results/c11.md) |
+| Population pick minus first choice, two language-model guessers | −0.020 (−0.096 to 0.055), no detectable difference | played out once per clue, 998 boards; Holm over two tests; plan C11 | [c11](results/c11.md) |
 | GRPO-trained Qwen3.5-2B minus the feature policy | −0.107 (−0.162 to −0.057); a collapsed run | exact, 200 boards, three seed pairs; plan C7 | [c7](results/c7.md) |
 | A higher assassin cost never raises the largest best count | holds | proved | [mathematics](results/mathematics.md) |
 | The value of asking for n words has a single peak in n | holds on 267,237 clues and 100,000 random weightings | checked by computer, not proved | [mathematics](results/mathematics.md) |
@@ -171,12 +171,12 @@ No (plan C10). gpt-oss-120b guesses on each of the giver's 10 best clues, and th
 
 ## Does the population pick's lead hold with language-model guessers?
 
-No lead is detectable (plan C11, part A). C10's population pick P leads the first choice F by 0.239 words per turn under the embedding strangers. On 1,000 fresh boards with strictly legal clues, P − F is 0.22 under potion and −0.023 (−0.101 to 0.054) under gpt-oss-120b and Llama 3.3 70B, each answering once per clue. With P the models find fewer words and hit the assassin less often, and the two effects cancel. The language models never stop early and potion's τ is fitted to people, so H-A2 compares this protocol with the fitted guesser more than one model family with another. The scorer filled short rankings with the remaining board words in printed order. How much that changed the result is unknown. On the 40 boards chosen for the human pilot, potion's lead was 0.182 and the two language models averaged −0.213 with that scorer. People have yet to play those boards. Detail: [c11.md](results/c11.md).
+On the 998 boards where both models answered both clues, the population pick P scored 0.020 below the giver’s first choice F. The interval allows a small lead either way. The held-out embedding guesser, potion, scored 0.222 higher with P on those same boards. Potion’s willingness to guess was fitted to human first picks. The two language models each answered once per clue. People have yet to play the pilot. [Scores and replay](results/c11.md).
 
 | Hypothesis (Holm over both) | Difference (95% interval) | Holm |
 |---|---|---|
-| H-A1: P − F, mean of the two language models | −0.023 (−0.101 to 0.054) | does not reject |
-| H-A2: H-A1's difference minus P − F under potion | −0.245 (−0.329 to −0.161) | rejects 0 |
+| H-A1: P − F, mean of the two language models | −0.020 (−0.096 to 0.055) | does not reject |
+| H-A2: H-A1's difference minus P − F under potion | −0.242 (−0.324 to −0.160) | rejects 0 |
 
 ## The best count
 
@@ -195,7 +195,7 @@ The official word lists belong to Czech Games Edition and are not committed. `be
 | SWOW-EN18, USF norms | word associations | CC BY-NC-ND 3.0; no license stated | no; loaders only |
 | Eight embedding models | potion, wordllama, granite, bge, Qwen3, two harrier, EmbeddingGemma 2 | MIT or Apache 2.0 | no |
 
-Only Cultural Codes and EAT are used in the numbers above. Prompts, replies, adapters and the teacher's labels are in the private dataset `arclabs561/games-runs`.
+Only Cultural Codes and EAT are used in the numbers above. Prompts, replies, adapters and the teacher's labels are kept privately.
 
 ## Related work
 
