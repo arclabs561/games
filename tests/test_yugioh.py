@@ -5,6 +5,8 @@ from fractions import Fraction
 from math import comb
 from pathlib import Path
 
+import pytest
+
 from yugioh import calc, draws, figures, odds, tables
 from yugioh.draws import Engine, p_engine, simulate_engine
 from yugioh.odds import FIRST, NEEDS, SECOND, Deck, Name, by_role
@@ -187,3 +189,15 @@ def test_readme_percentages_are_written_by_the_scripts():
     written += (FOLDER / "results" / "second_simulation.md").read_text()
     for p in set(re.findall(r"\d+\.\d+%", readme)):
         assert p in written or f"| {p[:-1]} |" in written, p  # printed by a calculator
+
+
+def test_split_rows_for_one_name():
+    same = [Name("A", "starter", 1)] * 2
+    assert odds.p_named(same, 2, odds.two_different_starters) == 0
+    assert odds.p_brute(same, 2, odds.two_different_starters) == 0
+    for invalid in [same * 2, [*same, Name("A", "other", 1)]]:
+        for score in (odds.p_named, odds.p_brute):
+            with pytest.raises(ValueError):
+                score(invalid, 2, odds.two_different_starters)
+    with pytest.raises(ValueError):
+        odds.named(Deck(2, 1), copies=0)

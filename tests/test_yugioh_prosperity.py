@@ -63,3 +63,15 @@ def test_simulation_agrees(preferred):
 def test_committed_results_are_current():
     path = Path(pros.__file__).parent / "results" / "prosperity.md"
     assert path.read_text() == pros.report()
+
+
+def test_spent_and_revealed_effect_cards_count_as_other_only_while_held():
+    def want(h):
+        return h[3] >= 2
+
+    for draw2 in (0, 1):
+        deck = Deck(3, 1)
+        exact = pros.p_prosperity(deck, 1, want, look=1, draw2=draw2)
+        assert exact == pros.p_brute(pros.kinds(deck, draw2), 1, 1, want)
+    # A draw-two can be revealed, taken and counted as an ordinary card in hand.
+    assert pros.p_reveal((0, 0, 0, 0, 0, 1), (0, 0, 0, 0), 1, lambda h: h[3] == 1) == 1

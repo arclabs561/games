@@ -12,7 +12,7 @@ from fractions import Fraction
 from pathlib import Path
 
 from yugioh.odds import FIRST, SECOND, fewest, wilson
-from yugioh.roles import Deck, Need, group, need, p_naive, p_need, simulate
+from yugioh.roles import Deck, Need, group, need, p_going_second, p_naive, p_need, simulate
 from yugioh.tables import TARGETS, pct, table
 
 RESULTS = Path(__file__).parent / "results"
@@ -68,8 +68,11 @@ def exact(p: Fraction) -> str:
 def hand_traps() -> list[str]:
     rows = []
     for k, label in ((1, "at least one"), (2, "at least two")):
-        for n, side in ((FIRST, "first"), (SECOND, "second")):
-            rows.append([f"{label}, going {side}"] + [fewest_traps(t, n, k) for t in TARGETS])
+        for n, side in (
+            (FIRST, "before the first opponent turn"),
+            (SECOND, "after the sixth draw"),
+        ):
+            rows.append([f"{label}, {side}"] + [fewest_traps(t, n, k) for t in TARGETS])
     assert all(
         fewest_traps(t, n, 1) == fewest(t, SIZE, n) for t in TARGETS for n in (FIRST, SECOND)
     )
@@ -82,7 +85,7 @@ def hand_traps() -> list[str]:
         + table(["Hand traps in hand", *[f"{float(t):.0%}" for t in TARGETS]], rows)
         + [
             "At least one is the same count as for starters, since only the number of cards "
-            "matters. With 12 hand traps, going second gives at least one with chance "
+            "matters. With 12 hand traps, the first six cards contain at least one with chance "
             f"{pct(twelve[0])} and at least two with chance {pct(twelve[1])}.",
             "",
         ]
@@ -92,7 +95,7 @@ def hand_traps() -> list[str]:
 def starter_and_trap() -> list[str]:
     traps = (6, 9, 12, 15)
     rows = [
-        [s] + [pct(p_need(plain(s, t), SECOND, STARTER_AND_TRAP, SIZE)) for t in traps]
+        [s] + [pct(p_going_second(plain(s, t), SECOND, STARTER_AND_TRAP, SIZE)) for t in traps]
         for s in (9, 12, 15)
     ]
     combo = []
@@ -100,18 +103,25 @@ def starter_and_trap() -> list[str]:
         d = example(traps=t)
         combo.append(
             [t]
-            + [pct(p_need(d, SECOND, w, SIZE)) for w in (STARTER_AND_TRAP, FULL_COMBO)]
-            + [pct(p_need(d, SECOND, STARTER_OR_TRAP, SIZE))]
+            + [pct(p_going_second(d, SECOND, w, SIZE)) for w in (STARTER_AND_TRAP, FULL_COMBO)]
+            + [pct(p_going_second(d, SECOND, STARTER_OR_TRAP, SIZE))]
         )
-    best = max(range(1, 28), key=lambda s: p_need(plain(s, 28 - s), SECOND, STARTER_AND_TRAP, SIZE))
-    top = p_need(plain(best, 28 - best), SECOND, STARTER_AND_TRAP, SIZE)
+    best = max(
+        range(1, 28), key=lambda s: p_going_second(plain(s, 28 - s), SECOND, STARTER_AND_TRAP, SIZE)
+    )
+    top = p_going_second(plain(best, 28 - best), SECOND, STARTER_AND_TRAP, SIZE)
     return (
         ["## A starter and a hand trap, going second", ""]
-        + ["Going second (6 cards) in 40, with no card in both roles:", ""]
+        + [
+            "The hand trap must be among the opening five. A starter or extender may arrive on the sixth draw. No card in this table has both roles:",
+            "",
+        ]
         + table(["Starters \\ Hand traps", *map(str, traps)], rows)
         + [
             f"With 28 cards to split between the two roles, {best} starters and {28 - best} "
             f"hand traps give the most, {pct(top)}.",
+            "",
+            f"If both roles may arrive by six, 12 starters and 12 traps give {pct(p_need(plain(12, 12), SECOND, STARTER_AND_TRAP, SIZE))}.",
             "",
             "The example deck (12 starters, 9 extenders, 3 bricks), with some of its 16 other "
             "cards as hand traps, going second:",
@@ -230,8 +240,9 @@ CHECKS: list[tuple[str, Deck, int, Need]] = [
 def simulation() -> str:
     rows = []
     for label, deck, n, want in CHECKS:
-        p = p_need(deck, n, want, SIZE)
-        hits = simulate(deck, n, want, SIZE, TRIALS, SEED)
+        score = p_going_second if n == SECOND else p_need
+        p = score(deck, n, want, SIZE)
+        hits = simulate(deck, n, want, SIZE, TRIALS, SEED, going_second=n == SECOND)
         lo, hi = wilson(hits, TRIALS)
         inside = "yes" if lo <= p <= hi else "no"
         rows.append([label, pct(p, 4), f"{hits / TRIALS:.4%}", f"{lo:.4%} to {hi:.4%}", inside])

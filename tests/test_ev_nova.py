@@ -416,3 +416,48 @@ def test_guides_are_well_formed():
             for commodity, a, b in leg:
                 assert commodity in evnova.COMMODITIES
                 assert {a, b} <= {"low", "medium", "high"}
+
+
+def test_certificate_checks_only_edges_inside_each_cyclic_component():
+    edges = {(a, b): (0, Fraction(1)) for a, b in (("A", "B"), ("B", "A"), ("C", "D"), ("D", "C"))}
+    edges["B", "C"] = (99, Fraction(1))
+    best = best_route(edges)
+    assert best is not None and best.rate == 0 and check_certificate(edges, best)
+    loops = {("A", "A"): (1, Fraction(1)), ("B", "B"): (10, Fraction(1))}
+    forged = Best(Fraction(1), ("A",), {"A": Fraction(1)}, {"A": Fraction(0)})
+    assert not check_certificate(loops, forged)
+
+
+def test_fuel_has_to_last_for_the_return_leg():
+    from ev_nova.routes import fuel_trade_graph
+
+    def best(tank, fuel):
+        galaxy = Galaxy(
+            {"X": ("Y",), "Y": ("X",)},
+            {"A": "X", "B": "Y"},
+            {"A": {"ore": 1}, "B": {"ore": 11}},
+            frozenset(fuel),
+        )
+        return best_route(fuel_trade_graph(galaxy, tank, Fraction(1)))
+
+    assert best(1, ()) is None
+    assert best(1, ("X",)) is None
+    for tank, fuel in [(2, ("X",)), (1, ("X", "Y"))]:
+        route = best(tank, fuel)
+        assert route is not None and route.rate == Fraction(5, 2)
+
+
+def test_study_defaults_to_the_nova_export(monkeypatch, tmp_path):
+    from ev_nova import study
+
+    path = tmp_path / "NovaConText.txt"
+    runs = []
+    monkeypatch.setenv("EV_NOVA_CONTEXT", str(path))
+    monkeypatch.setattr("sys.argv", ["ev_nova.study"])
+    monkeypatch.setattr(study, "nova_study", runs.append)
+    monkeypatch.setattr(study, "archived_study", lambda: pytest.fail("ran the archive"))
+    study.main()
+    assert runs == [path]
+    monkeypatch.delenv("EV_NOVA_CONTEXT")
+    with pytest.raises(SystemExit):
+        study.main()

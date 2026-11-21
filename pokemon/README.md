@@ -1,6 +1,6 @@
 # Pokémon
 
-Which attacking types cover the type chart, which typings take the least damage, and what is the chart's equilibrium as a game? No six attacking types are super-effective against all 18; ten sets of seven are. Steel/Fairy takes the least. Played as a duel, the chart has a unique equilibrium on 11 types that matches every weight Schmitz (2021) published, and only 4.7% to 5.2% of the chart is a ranking. All exact. The equilibrium does not predict what people play on the Showdown ladder (bootstrap interval). No team of six is best: over 40 popular Pokémon, five models of a battle each have a mixed equilibrium of 3 to 15 teams.
+Which attacking types cover the type chart, which typings take the least damage, and what is the chart's equilibrium as a game? No six attacking types are super-effective against all 18; ten sets of seven are. Give each of the 18 attacking types one hit. Among the typings in the game, Steel/Fairy takes the least total damage from those hits. Played as a duel, the chart has a unique equilibrium on 11 types that matches every weight Schmitz (2021) published, and only 4.7% to 5.2% of the chart is a ranking. All exact. On the Gen 9 OU ladder, counting how many Pokémon have a typing ranks its usage better than the duel equilibrium does. No team of six is best: over 40 popular Pokémon, five models of a battle each have a mixed equilibrium of 3 to 15 teams.
 
 ![The Generation 6 type chart: attacking types down the side, defending types across the top. Colored cells are 2 (red), 1/2 (light blue) and 0 (black); blank cells are 1.](figures/type-chart.svg)
 
@@ -10,7 +10,7 @@ Which attacking types cover the type chart, which typings take the least damage,
 
 - **The chart.** `pokemon_types.py` holds the Generation 6 chart: 18 types, and the multiplier when each attacks each. `chart(g)` gives the chart of any generation (below). A move against a Pokémon with two types gets the product of the two multipliers, so it can be 4, 2, 1, 1/2, 1/4 or 0.
 - **Typings.** A typing is one type or a pair, 171 in all. The analyses use either all 171, or those that some Pokémon or form has in a given generation (146 as of Generation 7, 162 as of Generation 9).
-- **What is left out.** Base stats, abilities, moves, items, the bonus for a move of the user's own type and Terastallization are not modeled, except that the notebook's Pokémon scores use the total of the base stats. A typing is assumed to attack with moves of its own types.
+- **Chart and notebook only.** Base stats, abilities, moves, items, the bonus for a move of the user's own type and Terastallization are not modeled, except that the notebook's Pokémon scores use the total of the base stats. A typing attacks with its own types. The [team study](results/team-study.md) adds moves, abilities and stats.
 - **Arbitrary scores.** The notebook's coverage score and its attack and defense scores are sums chosen for simplicity; its rankings of Pokémon depend on them, and are not facts about the games.
 
 ## Results
@@ -27,7 +27,7 @@ The last column links the note in [`results/`](results/README.md) with the detai
 | Log-ratio game: unique at k = 1; for k = 2, 3, 4, 6 and 10 the optimal strategies form a segment, along which Ghost's weight runs from 0 to a bound such as 5/79. | Exact, with the segment proved | [games](results/games.md) |
 | 16 rock-paper-scissors triangles of super-effective types, 5 of them with each type also resisting the one it hits. | Exact, by two methods | [games](results/games.md) |
 | The ranking part of the chart carries 14/297 (4.7%) of its squared norm with k = 1 and 89/1701 (5.2%) with k = 2; Steel ranks first. | Exact, checked against least squares | [ranking](results/ranking.md) |
-| Equilibrium weight against usage on `gen9ou`: Spearman's ρ is 0.08, against 0.40 for the number of Pokémon with each typing. The difference, Δρ, is −0.32, with interval −0.56 to −0.08, so the equilibrium does not predict use beyond availability. | Bootstrap over typings, 10,000 resamples, seed 0, 95% interval (plan P1) | [usage-test](results/usage-test.md) |
+| Equilibrium weight against usage on `gen9ou`: Spearman's ρ is 0.08, against 0.40 for the number of Pokémon with each typing. The difference, Δρ, is −0.32, with interval −0.56 to −0.08, so the count ranks usage better. | Bootstrap over typings, 10,000 resamples, seed 0, 95% interval (plan P1) | [usage-test](results/usage-test.md) |
 | Fighting/Ice has the most conflicting types; Ground/Ice and Fighting/Ice attack best; Ice/Rock defends worst. | Exact, given the notebook's sums | `pokemon.ipynb` |
 | With the notebook's mix of base stats and typing, Empoleon is the best final starter of Generations 1 to 7, and Celesteela the best Pokémon new in Generation 7 that is not legendary. | Exact, given an arbitrary score | `pokemon.ipynb` |
 | Teams of six from the 40 most used Pokémon of `gen9ou`, under perfect switching: the team game over all 3,838,380 teams has an equilibrium on 3, 11, 11, 15 and 11 teams at levels 1 to 5 (types, moves, abilities, stats, simulator). No team scores above 0 against it. | Exact: double oracle, then every team checked in rationals; level 5's matchups are simulated (50 battles per pair, seed 0) | [team-study](results/team-study.md) |
@@ -60,7 +60,7 @@ The last column links the note in [`results/`](results/README.md) with the detai
 
 ## Does the equilibrium predict what people play?
 
-No. Plan P1 (`experiments/plans/P1.md`, with its amendments) compares two Spearman correlations with usage share on Smogon's `gen9ou` statistics, twelve months pooled, over 147 typings. The plan counts the equilibrium as predicting use beyond availability only if the interval for Δρ lies above 0. It lies below: 126 of the 147 typings get weight 0, among them the most used, Fighting/Ground. Detail: [usage-test.md](results/usage-test.md) and [p1.md](results/p1.md).
+On Smogon's Gen 9 OU ladder, counting the available Pokémon and forms of each typing ranks usage better. Plan P1 compared two rankings separately over the same 147 typings, pooling twelve months. The equilibrium assigns weight 0 to 126 typings, including Fighting/Ground, the most used. Whether its weights add information to the count would take a joint model. [Study](results/usage-test.md) and [full results](results/p1.md).
 
 | Correlation with usage share, over 147 typings | ρ | 95% interval |
 |---|---|---|

@@ -8,34 +8,36 @@ Fewest hand traps for the chance in each column:
 
 | Hand traps in hand | 80% | 90% | 95% |
 |---|---:|---:|---:|
-| at least one, going first | 11 | 14 | 18 |
-| at least one, going second | 9 | 12 | 15 |
-| at least two, going first | 20 | 23 | 26 |
-| at least two, going second | 17 | 20 | 23 |
+| at least one, before the first opponent turn | 11 | 14 | 18 |
+| at least one, after the sixth draw | 9 | 12 | 15 |
+| at least two, before the first opponent turn | 20 | 23 | 26 |
+| at least two, after the sixth draw | 17 | 20 | 23 |
 
-At least one is the same count as for starters, since only the number of cards matters. With 12 hand traps, going second gives at least one with chance 90.18% and at least two with chance 59.46%.
+At least one is the same count as for starters, since only the number of cards matters. With 12 hand traps, the first six cards contain at least one with chance 90.18% and at least two with chance 59.46%.
 
 ## A starter and a hand trap, going second
 
-Going second (6 cards) in 40, with no card in both roles:
+The hand trap must be among the opening five. A starter or extender may arrive on the sixth draw. No card in this table has both roles:
 
 | Starters \ Hand traps | 6 | 9 | 12 | 15 |
 |---|---:|---:|---:|---:|
-| 9 | 50.39% | 63.58% | 71.71% | 76.41% |
-| 12 | 57.09% | 71.71% | 80.58% | 85.62% |
-| 15 | 61.05% | 76.41% | 85.62% | 90.78% |
+| 9 | 44.53% | 57.97% | 67.19% | 73.24% |
+| 12 | 50.53% | 65.52% | 75.69% | 82.24% |
+| 15 | 54.11% | 69.94% | 80.56% | 87.33% |
 
-With 28 cards to split between the two roles, 14 starters and 14 hand traps give the most, 88.03%.
+With 28 cards to split between the two roles, 13 starters and 15 hand traps give the most, 84.29%.
+
+If both roles may arrive by six, 12 starters and 12 traps give 80.58%.
 
 The example deck (12 starters, 9 extenders, 3 bricks), with some of its 16 other cards as hand traps, going second:
 
 | Hand traps | A starter and a hand trap | A starter, an extender and a hand trap | A starter or a hand trap |
 |---|---:|---:|---:|
 | 0 | 0.00% | 0.00% | 90.18% |
-| 6 | 57.09% | 43.18% | 98.06% |
-| 9 | 71.71% | 55.17% | 99.29% |
-| 12 | 80.58% | 62.81% | 99.79% |
-| 15 | 85.62% | 67.35% | 99.96% |
+| 6 | 50.53% | 37.97% | 97.37% |
+| 9 | 65.52% | 50.01% | 98.84% |
+| 12 | 75.69% | 58.52% | 99.56% |
+| 15 | 82.24% | 64.26% | 99.87% |
 
 ## Starters that are also extenders
 
