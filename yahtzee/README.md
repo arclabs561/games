@@ -76,6 +76,7 @@ Par: Aces 4, Twos 6, Threes 9, Fours 11, Fives 14, Sixes 17, Three of a Kind 23,
 Until the bonus is made, count an upper box's points minus par 2.75 times.
 
 The most common face is the face on the most dice, the higher one on a tie.
+For equally long runs, keep the higher run. For equal box margins, take the first box in the par list.
 
 Its expected score is 243.18 (exact), with standard deviation 61.78 and median 236. In 20,000 seeded games (seed 1) it averaged 242.61 ± 0.85, which contains the exact value. The keeps lose more than the boxes. Played with the sheet's boxes and optimal keeps, the score would be 252.23. With the sheet's keeps and optimal boxes, it would be 245.56.
 
@@ -102,7 +103,7 @@ Optimal play earns the upper bonus's 35 points in 68.12% of games, 23.84 points 
 
 ## What should a player keep after the first roll?
 
-Every die of the most common face, for the 6,156 of the 7,776 ordered rolls that hold a pair or more, full houses included. In 900 rolls with a pair, the pair is given up for a straight draw or a single high die. `openings.csv` gives the best keep for each of the 252 first rolls; [openings.md](results/openings.md) has the examples and the closest decision.
+Of the 7,776 ordered first rolls, 7,056 contain a repeated face. On 6,156 of those, keep every die of a most common face, full houses included. On the other 900, keep a straight draw or a single high die. From 1 1 2 3 6, keep the 6. `openings.csv` gives the best keep for each of the 252 first rolls; [openings.md](results/openings.md) has the examples and the closest decision.
 
 ## How far behind is greedy play?
 

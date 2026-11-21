@@ -11,12 +11,14 @@ from hanabi.llm import (
 from hanabi.rules import (
     Rules,
     color_of,
+    discard,
     full_deck,
     hint,
     legal_actions,
     new_game,
     play,
     seeded_deck,
+    step,
 )
 
 R3 = Rules(players=3)
@@ -52,6 +54,25 @@ def test_deduction_counts_visible_cards():
     poss = possible_values(s, 1)  # player 1 sees three R1s, so no card of theirs is an R1
     assert all(0 not in vals for vals in poss)
     assert "could be" in observation(s, 1, [], deduction=True)
+
+
+def test_known_red_five_cannot_be_the_new_draw():
+    rules = Rules()
+    s = new_game(rules, seeded_deck(rules, 2))
+    for action in [hint(1, "color", 0), hint(0, "color", 2), hint(1, "rank", 5), discard(0)]:
+        step(s, action)
+    candidates = possible_values(s, 1)
+    assert candidates[2] == [4]  # R5
+    assert 4 not in candidates[-1]
+    assert all(card in slot for card, slot in zip(s.hands[1], candidates, strict=True))
+
+
+def test_two_ambiguous_slots_can_exhaust_both_twos():
+    rules = Rules(colors=2, counts=(2, 1), hand_size=3, players=1)
+    s = new_game(rules, [1, 3, 0, 0, 2, 2])
+    # Each color has one two. The third slot must hold a one.
+    s.knowledge[0] = [(3, 2), (3, 2), (3, 3)]
+    assert possible_values(s, 0) == [[1, 3], [1, 3], [0, 2]]
 
 
 def test_a_scripted_player_finishes_a_game():

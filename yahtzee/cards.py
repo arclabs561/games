@@ -113,7 +113,8 @@ def sheet_lines(card: Strategy) -> list[str]:
             f"Until the bonus is made, count an upper box's points minus par {card.weight:g} times."
         )
     tests = {t for r in (*card.keep_rules, *card.box_rules) for t in r.tests}
-    return lines + ["", MOST] + ([PACE] if "on pace for the bonus" in tests else [])
+    ties = "For equally long runs, keep the higher run. For equal box margins, take the first box in the par list."
+    return lines + ["", MOST, ties] + ([PACE] if "on pace for the bonus" in tests else [])
 
 
 SHEET_KEEPS = KEEP_WORDS | {

@@ -229,6 +229,7 @@ def run_games(args, models: list[dict] | None = None, client=None) -> int:
         "provider": args.provider,
         "players": args.players,
         "deduction": deduction,
+        "deduction_method": "whole hand" if deduction else "off",
         "seeds": seeds,
         "max_tokens": args.max_tokens,
         "reasoning_effort": args.reasoning_effort,
@@ -464,6 +465,8 @@ def report(args) -> int:
                 "huggingface_hub",
             )
         }
+        if "deduction_method" in summary:
+            arm["deduction_method"] = summary["deduction_method"]
         arm["served_models"] = sorted({m for r in rows for m in r.get("served_models", [])})
         arm["planned_seeds"] = summary["seeds"]
         if prefix:
@@ -499,6 +502,8 @@ def report(args) -> int:
     by_key = {
         (a["label"], a["model"], a["players"], a["max_tokens"], a["deduction"]): a for a in arms
     }
+    if len(by_key) != len(arms):
+        raise ValueError("Duplicate H2 arms: give separate experiments different labels.")
     for (label, model, p, cap, ded), on in sorted(by_key.items()):
         off = by_key.get((label, model, p, cap, False))
         shared = set(on.get("seeds", [])) & set(off.get("seeds", [])) if off else set()
@@ -520,6 +525,11 @@ def report(args) -> int:
                     "players": p,
                     "max_tokens": cap,
                     "what": "gap with deduction off minus gap with deduction on, by deal",
+                    **(
+                        {"deduction_method": on["deduction_method"]}
+                        if "deduction_method" in on
+                        else {}
+                    ),
                     **paired(gap, gap_off),
                 }
             )
