@@ -409,6 +409,43 @@ def test_evnova_game_data():
         assert all(stop in g.stop_system for stop in guide.stops), guide.name
 
 
+@pytest.mark.skipif(not CONTEXT, reason="set EV_NOVA_CONTEXT to the EV Nova 1.1.1 export")
+def test_starting_trade_loop_bound():
+    """A fixed certificate for the six standard commodities, independent of the route solver."""
+    g, _ = evnova.galaxy(evnova.read_context(Path(CONTEXT or "")))
+    legs = trade_graph(g)
+    kane, altia = "Port Kane (Kania)", "Altia (Altair)"
+    assert (g.prices[kane]["Equipment"], g.prices[altia]["Equipment"]) == (440, 687)
+    assert (g.prices[altia]["Medical Supplies"], g.prices[kane]["Medical Supplies"]) == (750, 937)
+    assert legs[kane, altia] == (247, 1) and legs[altia, kane] == (187, 1)
+    joccika, vella = "Joccika (Vella Jocci)", "Vella (Vella)"
+    assert legs[joccika, vella] == (337, 1) and legs[vella, joccika] == (87, 1)
+
+    # Independently obtained by shortest paths with weight 217 * jumps - gain.
+    # Give every other port zero. The differences cancel around any closed route.
+    allowance = {
+        "Tekel (Tekel)": 120,
+        "Vella (Vella)": 120,
+        "Feret (Moash Teckra)": 38,
+        "Alala Prime (Moash Alala)": 30,
+        "Altia (Altair)": 30,
+        "Aurora (Aurora)": 30,
+        "Dani (Dani)": 30,
+        "Kel'ar Iy (Kel'ariy)": 30,
+        "Moash (Moash)": 30,
+        "Palein (Dani Evera)": 30,
+        "Tre'a Ca (Tre'minor)": 30,
+        "Tre'ar Teschesch (Tre'helov)": 30,
+        "Ver'ar Sho (Ver'ashan)": 30,
+        "New Babylon (Nesre Primus)": 8,
+        "New England (Wolf 359)": 8,
+    }
+    assert allowance.keys() <= g.prices.keys()
+    assert len(legs) == 141 * 140
+    for (a, b), (gain, jumps) in legs.items():
+        assert gain <= 217 * jumps + allowance.get(b, 0) - allowance.get(a, 0), (a, b)
+
+
 def test_guides_are_well_formed():
     for guide in GUIDES:
         assert len(guide.legs) == len(guide.stops) == len(guide.jumps), guide.name

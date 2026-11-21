@@ -1,6 +1,6 @@
 # Escape Velocity Nova
 
-Buy Equipment at Port Kane, jump to Altia and sell it for 247 credits more per ton. Bring Medical Supplies back for another 187. That pays 217 credits per ton per jump. Two other round trips tie it. At the start of EV Nova 1.1.1, no loop earns more if you land once per system visit.
+Buy Equipment at Port Kane, jump to Altia and sell it for 247 credits more per ton. Bring Medical Supplies back for another 187. That pays 217 credits per ton per jump. Two other round trips tie it. At the start of EV Nova 1.1.1, no loop with the six standard commodities earns more if you land once per system visit.
 
 ![A schematic map of EV Nova systems as circles with their trading stops: Sol, Kania, Altair, Tuatha, Dani Fort, Dani, Dani Evera and Ver'ashan. Lines join the stops of the best routes, labeled with jumps per leg.](figures/evnova_routes.svg)
 
@@ -40,6 +40,10 @@ The EV Nova wiki lists recommended routes on its [Trade Routes](https://evnova.m
 - The wiki's commodity table gives Polaris equipment as 600, 750 and 825, and some Auroran prices that do not follow the 80% and 125% rule. The data have one base price per commodity (STR# 4004). Ranks carry a price modifier (`PriceMod` in the rank resources), which might explain the difference; this was not checked.
 
 ## How the results are checked
+
+A single jump can pay more than 217. Buy Medical Supplies at Joccika for 600 and sell at Vella for 937. The best load back is Industrial, from 350 to 437. That gives (337 + 87) / 2 = 212 per jump. Port Kane and Altia pay better because of the return cargo.
+
+Could a longer loop beat both? The [test on the original export](../tests/test_ev_nova.py) assigns a number to each port. For all 19,740 directed trade legs, the gain is at most 217 times the jump count plus the destination’s number minus the starting port’s number. Those numbers cancel when you come home. Port Kane and Altia reach the bound exactly.
 
 - Howard's method is compared with brute force, which lists every simple cycle, on 400 random galaxies, each at four landing costs. The best route is always a simple cycle: a cycle that visits a stop twice splits into two shorter cycles, and its rate lies between theirs.
 - Karp's algorithm (1978) finds a maximum-mean cycle in a graph where every edge costs one unit. It runs on a second model of the same problem, with one node for each system and cargo held. Its answer matches Howard's on the random galaxies, and on EV Nova when counting jumps only and when a landing costs one jump. Karp's method is also compared with brute force on 300 random graphs.
