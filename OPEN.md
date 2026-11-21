@@ -6,10 +6,10 @@ Each status comes from the question's wording, by the rules in the script's docs
 
 | Status | Questions |
 |---|---:|
-| blocked on data | 10 |
+| blocked on data | 9 |
 | blocked on compute | 3 |
 | partly answered | 8 |
-| open | 60 |
+| open | 61 |
 
 | Game | Question | Status |
 |---|---|---|
@@ -29,7 +29,7 @@ Each status comes from the question's wording, by the rules in the script's docs
 | [Chess: what a rating says, and what a player at a rating plays](chess_ratings/README.md) | With one game a day instead of back to back, the deviation grows between games by 0.21436 σ² per day. How does that change the games needed to settle? | open |
 | [Codenames](codenames/README.md) | Does the single-peak property of the value of a turn hold for every weighting? | open |
 | [Codenames](codenames/README.md) | Why does a better model of human guesses not make a better giver? The linear maps gave fewer words per clue on 100 boards, without intervals, and the LoRA encoder shows no detectable difference. | open |
-| [Codenames](codenames/README.md) | Does population training add anything over a count of one when the rule is a preregistered baseline, and do C3's policies or the count-1 rule do better than self-play with language-model guessers or with people? | blocked on data |
+| [Codenames](codenames/README.md) | With language-model guessers, C3's self-play giver beats its population giver and the count-1 rule (plan C13). Which kind of stranger do people resemble? | open |
 | [Codenames](codenames/README.md) | Did gpt-oss-120b see Cultural Codes in training? Its agreement with people could be rechecked on the test turns with the other board words swapped for words of the same frequency, against the same change for the embedding guessers. | blocked on data |
 | [Codenames](codenames/README.md) | Would five epochs on the human turns alone give part of the teacher's gain, and does the gain grow with more teacher turns? | open |
 | [Codenames](codenames/README.md) | Would language-model givers do better with a prompt that states the whole clue rule and the cost of the assassin, or with a retry after an illegal clue? | open |

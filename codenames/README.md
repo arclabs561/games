@@ -62,6 +62,7 @@ Guessing results are shares of turns where the guess is the person's word; givin
 | Clue value kept with another model's guesser | 57% to 73% | exact, 200 boards, eight models; exploratory, no interval | [crossplay](results/crossplay.md) |
 | Population training minus self-play, held-out embedding guesser | +0.31 (0.26 to 0.36) | exact, 200 boards, 70 runs; stratified bootstrap; plan C3 | [c3](results/c3.md) |
 | Population training minus the count-1 rule | +0.009 (−0.016 to 0.034), no detectable difference | same boards and bootstrap, 14 tasks; exploratory | [c3](results/c3.md) |
+| Same two comparisons with language-model guessers: population minus self-play; minus the count-1 rule | −0.148 (−0.258 to −0.035); +0.114 (0.065 to 0.168) | played out, one reply per clue, 375 of 400 boards, two guessers, two givers, five seeds; stratified bootstrap, Holm over both; plan C13 | [c13](results/c13.md) |
 | Population giver's clues that break the printed rule | potion 16.6% (11.6% to 21.9%), self-play 3.5% (1.0% to 6.0%) | checked by `legality.py`, intervals over boards; exploratory | [legality](results/diagnostics/legality.md) |
 | Population minus self-play, competition score (turns, lower is better) | +1.24 (0.48 to 2.00) | simulated, 200 boards, one training seed; exploratory | [bench](results/bench.md) |
 | Language-model giver minus the embedding giver | −0.304 (−0.460 to −0.166) | exact under seven unseen embedding guessers, 200 boards; plan C4 | [c4](results/c4.md) |
@@ -138,6 +139,8 @@ With embedding strangers it does, and a count of one accounts for nearly all of 
 | EAT guesser, population minus self-play | 0.39 (0.31 to 0.46) |
 | Own model, population minus self-play | −0.50 (−0.53 to −0.46) |
 
+With language-model guessers the order changes (plan C13, [c13.md](results/c13.md)). On 400 fresh boards, scored by gpt-oss-120b and Llama 3.3 70B with one played-out reply per clue, population training trails self-play by 0.15 words per turn (−0.26 to −0.03) and beats the count-1 rule by 0.11 (0.06 to 0.17); Holm's correction rejects 0 for both. The same picks scored exactly by each task's held-out embedding guesser give population minus self-play +0.22 and +0.35 for the two givers, as in C3. Self-play asks for 2.8 to 3.0 words on average, population training for 1.1 to 1.2. The caution that population training learns pays with embedding strangers and costs with these language-model strangers; asking for exactly one word costs more. These are model partners, a proxy for people.
+
 ## Can a language model choose well among legal clues?
 
 Not in these runs (plans C6 and C7). The EmbeddingGemma 2 giver proposes 30 legal clues with counts 1 to 4, and six hosted models choose one of the 120 actions. The best action in each list is worth 0.444 more than the giver's first choice, yet no model scored above the first choice. With thinking off and a 64-token cap, the selected model's replies were cut off on 84 of 200 boards. Detail: [c6.md](results/c6.md).
@@ -201,7 +204,7 @@ Only Cultural Codes and EAT are used in the numbers above. Prompts, replies, ada
 
 - Does the single-peak property of the value of a turn hold for every weighting?
 - Why does a better model of human guesses not make a better giver? The linear maps gave fewer words per clue on 100 boards, without intervals, and the LoRA encoder shows no detectable difference.
-- Does population training add anything over a count of one when the rule is a preregistered baseline, and do C3's policies or the count-1 rule do better than self-play with language-model guessers or with people?
+- With language-model guessers, C3's self-play giver beats its population giver and the count-1 rule (plan C13). Which kind of stranger do people resemble?
 - Did gpt-oss-120b see Cultural Codes in training? Its agreement with people could be rechecked on the test turns with the other board words swapped for words of the same frequency, against the same change for the embedding guessers.
 - Would five epochs on the human turns alone give part of the teacher's gain, and does the gain grow with more teacher turns?
 - Would language-model givers do better with a prompt that states the whole clue rule and the cost of the assassin, or with a retry after an illegal clue?
