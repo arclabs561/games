@@ -33,6 +33,7 @@ Intervals are 95% intervals. The last column links the note in [`results/`](resu
 | Human two-player games: the deal ruled out 0.013 (0.007 to 0.019) of 1.63 points below 25; 19 of 1,858 deals stop below 25, and none of 1,221 three-player deals | Exact search of each deal; bootstrap over games, 10,000 resamples, seed 0 | [humans](results/humans.md) |
 | gpt-oss-120b in self-play plays 18.63 (16.70 to 20.57) points below the ceiling; DeepSeek-V3.2 loses every game | Plan H2: 30 seeded deals, one game each; bootstrap over deals | [h2](results/h2.md) |
 | Listing what each own card can still be changes gpt-oss-120b's gap by −0.79 (−3.71 to 2.25) | Plan H2, paired on 24 deals | [h2](results/h2.md) |
+| With three players and the reply cap at 16,384, gpt-oss-120b scores 11.47 (9.67 to 13.47) points below the information strategy on the same deals, and below it on all 30 | Plan H5: 30 seeded deals, one game each; bootstrap over deals | [h5](results/h5.md) |
 | A larger entropy bonus raises cross-play of independent PPO by 1.12 (0.83 to 1.41) points in a two-color game | Plan H4: 8 seeds an arm, 2,000 deals; bootstrap over deals and seeds | [h4](results/h4.md) |
 
 ## How the results are checked
@@ -99,6 +100,13 @@ Plan H2 ([plan](../experiments/plans/H2.md), with two dated amendments) seats th
 | DeepSeek-V3.2, deduction on | 30 | 25 | 0 | 30 |
 | DeepSeek-V3.2, deduction off | 30 | 25 | 0 | 30 |
 
+Plan H5 ([plan](../experiments/plans/H5.md), with one dated amendment) plays H2's unrun three-player part: gpt-oss-120b in all three seats, deals 0 to 29, with the reply cap raised to 16,384 tokens. 2 of 1,941 replies reached the cap, against a quarter of turns in H2. The model scored 11.47 points below the information strategy (9.67 to 13.47), and 14.3 below the ceiling of 25 (12.6 to 16.23). The interval reaches below 10, so by the plan's rule the gap is reported as it is, with a detectable effect of 2.75 points. Every life was lost on the model's own move. Sending 20 test prompts twice more changed the move on 12. The runs cost $1.85 to $1.90 by the meter, against a cap of $3.45. Detail: [h5.md](results/h5.md).
+
+| Three players | Deals | Gap to the information strategy | Gap to the ceiling | Mean score | Lost all lives |
+|---|---:|---|---|---:|---:|
+| gpt-oss-120b, deduction on, cap 16,384 | 30 | 11.47 (9.67 to 13.47) | 14.3 (12.6 to 16.23) | 10.7 | 5 |
+| Information strategy | 30 | 0 | 2.83 | 22.17 | not counted |
+
 ## Independent PPO in a two-color game
 
 Plan H4 ([plan](../experiments/plans/H4.md), with two dated amendments) asks whether a larger entropy bonus makes policies trained apart play well together, as Forkel et al. (2025) report for the full game. H4 makes the same comparison on a game of two colors, top score 10, in JaxMARL, with 8 seeds an arm trained for 1.999 × 10⁸ steps each. Of the 2,000 test deals, 1,957 reach 10 with every card in view. The larger bonus raises cross-play, and also self-play, but self-play still beats cross-play at α = 0.05. The training curves had not flattened. The four GPU jobs cost $2.21 against a cap of $6.40. Detail, with behavior per seed: [h4.md](results/h4.md).
@@ -163,6 +171,7 @@ uv run python -m hanabi.figures                           # the picture of a dea
 | `upper_bound.py`, `h1.py` | Exact counts on small decks, sampled verdicts on the full game, plan H1's summary |
 | `humans_data.py`, `humans.py`, `ceiling.py` | The human games, their ceilings and the command line |
 | `llm.py`, `hosted.py`, `h2.py` | Plan H2: text observations, hosted models with a cost meter, the games and the report |
+| `h5.py` | Plan H5: the three-player report against the information strategy, the behavior replay and the repeat check |
 | `jax_bridge.py`, `ippo.py`, `h4.py` | Plan H4: JaxMARL beside `rules.py`, recurrent IPPO, and the evaluation |
 | `figures.py`, `figures/` | The picture of a deal; a test checks it is current |
 | `results/` | Each experiment's results files, and notes with the detail behind each section ([index](results/README.md)) |

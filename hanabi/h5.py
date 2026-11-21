@@ -120,6 +120,24 @@ def report(runs: Path, label: str = "confirmatory") -> dict:
                 "behavior": b,
             }
         )
+    meta = {
+        k: summary.get(k)
+        for k in (
+            "run",
+            "model",
+            "provider",
+            "max_tokens",
+            "reasoning_effort",
+            "spent",
+            "stopped_at_seed",
+        )
+    }
+    return summarize(meta, deals)
+
+
+def summarize(meta: dict, deals: list[dict]) -> dict:
+    """The primary and secondary numbers from the per-deal records alone."""
+    rules = Rules(players=PLAYERS)
     gap = [d["information_strategy"] - d["score"] for d in deals]
     sd = (
         (sum((x - h2.mean(gap)) ** 2 for x in gap) / (len(gap) - 1)) ** 0.5
@@ -186,13 +204,7 @@ def report(runs: Path, label: str = "confirmatory") -> dict:
     }
     return {
         "plan": PLAN,
-        "run": summary["run"],
-        "model": summary["model"],
-        "provider": summary["provider"],
-        "max_tokens": summary["max_tokens"],
-        "reasoning_effort": summary["reasoning_effort"],
-        "spent": summary["spent"],
-        "stopped_at_seed": summary.get("stopped_at_seed"),
+        **meta,
         "bootstrap": "95% percentile, 10,000 resamples over deals, seed 0",
         "primary": primary,
         "secondary": sec,

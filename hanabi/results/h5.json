@@ -1,0 +1,1384 @@
+{
+ "bootstrap": "95% percentile, 10,000 resamples over deals, seed 0",
+ "deals": [
+  {
+   "behavior": {
+    "fireworks": 13,
+    "hints": 32,
+    "hints_followed_by_a_touched_play": 11,
+    "lives_lost_by_fallbacks": 0,
+    "lives_lost_by_model": 0,
+    "score": 13,
+    "seats": [
+     {
+      "discards": 9,
+      "hints": 13,
+      "misplays": 0,
+      "plays": 2
+     },
+     {
+      "discards": 8,
+      "hints": 9,
+      "misplays": 0,
+      "plays": 6
+     },
+     {
+      "discards": 8,
+      "hints": 10,
+      "misplays": 0,
+      "plays": 5
+     }
+    ]
+   },
+   "calls": 70,
+   "ceiling": 25,
+   "completion_tokens": 264971,
+   "cost": 0.0692305,
+   "fallbacks": 0,
+   "information_strategy": 22,
+   "lives_lost": 0,
+   "score": 13,
+   "score_at_failure": 13,
+   "seed": 0,
+   "truncated": 0,
+   "turns": 70,
+   "verdict": "won"
+  },
+  {
+   "behavior": {
+    "fireworks": 11,
+    "hints": 27,
+    "hints_followed_by_a_touched_play": 11,
+    "lives_lost_by_fallbacks": 0,
+    "lives_lost_by_model": 3,
+    "score": 0,
+    "seats": [
+     {
+      "discards": 8,
+      "hints": 9,
+      "misplays": 1,
+      "plays": 4
+     },
+     {
+      "discards": 6,
+      "hints": 8,
+      "misplays": 2,
+      "plays": 7
+     },
+     {
+      "discards": 7,
+      "hints": 10,
+      "misplays": 0,
+      "plays": 3
+     }
+    ]
+   },
+   "calls": 62,
+   "ceiling": 25,
+   "completion_tokens": 206710,
+   "cost": 0.05434515,
+   "fallbacks": 1,
+   "information_strategy": 22,
+   "lives_lost": 3,
+   "score": 0,
+   "score_at_failure": 11,
+   "seed": 1,
+   "truncated": 0,
+   "turns": 62,
+   "verdict": "won"
+  },
+  {
+   "behavior": {
+    "fireworks": 12,
+    "hints": 31,
+    "hints_followed_by_a_touched_play": 13,
+    "lives_lost_by_fallbacks": 0,
+    "lives_lost_by_model": 1,
+    "score": 12,
+    "seats": [
+     {
+      "discards": 10,
+      "hints": 10,
+      "misplays": 0,
+      "plays": 3
+     },
+     {
+      "discards": 6,
+      "hints": 12,
+      "misplays": 0,
+      "plays": 4
+     },
+     {
+      "discards": 7,
+      "hints": 9,
+      "misplays": 1,
+      "plays": 6
+     }
+    ]
+   },
+   "calls": 67,
+   "ceiling": 25,
+   "completion_tokens": 218083,
+   "cost": 0.0574035,
+   "fallbacks": 1,
+   "information_strategy": 18,
+   "lives_lost": 1,
+   "score": 12,
+   "score_at_failure": 12,
+   "seed": 2,
+   "truncated": 0,
+   "turns": 67,
+   "verdict": "won"
+  },
+  {
+   "behavior": {
+    "fireworks": 11,
+    "hints": 31,
+    "hints_followed_by_a_touched_play": 10,
+    "lives_lost_by_fallbacks": 0,
+    "lives_lost_by_model": 2,
+    "score": 11,
+    "seats": [
+     {
+      "discards": 6,
+      "hints": 14,
+      "misplays": 0,
+      "plays": 3
+     },
+     {
+      "discards": 11,
+      "hints": 8,
+      "misplays": 1,
+      "plays": 4
+     },
+     {
+      "discards": 7,
+      "hints": 9,
+      "misplays": 1,
+      "plays": 6
+     }
+    ]
+   },
+   "calls": 68,
+   "ceiling": 25,
+   "completion_tokens": 230873,
+   "cost": 0.0606296,
+   "fallbacks": 0,
+   "information_strategy": 23,
+   "lives_lost": 2,
+   "score": 11,
+   "score_at_failure": 11,
+   "seed": 3,
+   "truncated": 0,
+   "turns": 68,
+   "verdict": "won"
+  },
+  {
+   "behavior": {
+    "fireworks": 15,
+    "hints": 28,
+    "hints_followed_by_a_touched_play": 15,
+    "lives_lost_by_fallbacks": 0,
+    "lives_lost_by_model": 2,
+    "score": 15,
+    "seats": [
+     {
+      "discards": 6,
+      "hints": 15,
+      "misplays": 0,
+      "plays": 1
+     },
+     {
+      "discards": 7,
+      "hints": 6,
+      "misplays": 2,
+      "plays": 9
+     },
+     {
+      "discards": 7,
+      "hints": 7,
+      "misplays": 0,
+      "plays": 7
+     }
+    ]
+   },
+   "calls": 65,
+   "ceiling": 25,
+   "completion_tokens": 220534,
+   "cost": 0.05791705,
+   "fallbacks": 1,
+   "information_strategy": 23,
+   "lives_lost": 2,
+   "score": 15,
+   "score_at_failure": 15,
+   "seed": 4,
+   "truncated": 1,
+   "turns": 65,
+   "verdict": "won"
+  },
+  {
+   "behavior": {
+    "fireworks": 12,
+    "hints": 30,
+    "hints_followed_by_a_touched_play": 8,
+    "lives_lost_by_fallbacks": 0,
+    "lives_lost_by_model": 2,
+    "score": 12,
+    "seats": [
+     {
+      "discards": 12,
+      "hints": 11
+     },
+     {
+      "discards": 6,
+      "hints": 12,
+      "misplays": 0,
+      "plays": 4
+     },
+     {
+      "discards": 5,
+      "hints": 7,
+      "misplays": 2,
+      "plays": 10
+     }
+    ]
+   },
+   "calls": 67,
+   "ceiling": 25,
+   "completion_tokens": 203028,
+   "cost": 0.05369745,
+   "fallbacks": 1,
+   "information_strategy": 24,
+   "lives_lost": 2,
+   "score": 12,
+   "score_at_failure": 12,
+   "seed": 5,
+   "truncated": 0,
+   "turns": 67,
+   "verdict": "won"
+  },
+  {
+   "behavior": {
+    "fireworks": 7,
+    "hints": 26,
+    "hints_followed_by_a_touched_play": 8,
+    "lives_lost_by_fallbacks": 0,
+    "lives_lost_by_model": 3,
+    "score": 0,
+    "seats": [
+     {
+      "discards": 6,
+      "hints": 10,
+      "misplays": 1,
+      "plays": 2
+     },
+     {
+      "discards": 6,
+      "hints": 9,
+      "misplays": 0,
+      "plays": 3
+     },
+     {
+      "discards": 6,
+      "hints": 7,
+      "misplays": 2,
+      "plays": 5
+     }
+    ]
+   },
+   "calls": 54,
+   "ceiling": 25,
+   "completion_tokens": 156579,
+   "cost": 0.04150115,
+   "fallbacks": 0,
+   "information_strategy": 19,
+   "lives_lost": 3,
+   "score": 0,
+   "score_at_failure": 7,
+   "seed": 6,
+   "truncated": 0,
+   "turns": 54,
+   "verdict": "won"
+  },
+  {
+   "behavior": {
+    "fireworks": 11,
+    "hints": 30,
+    "hints_followed_by_a_touched_play": 10,
+    "lives_lost_by_fallbacks": 0,
+    "lives_lost_by_model": 2,
+    "score": 11,
+    "seats": [
+     {
+      "discards": 9,
+      "hints": 12,
+      "misplays": 0,
+      "plays": 2
+     },
+     {
+      "discards": 9,
+      "hints": 9,
+      "misplays": 1,
+      "plays": 4
+     },
+     {
+      "discards": 6,
+      "hints": 9,
+      "misplays": 1,
+      "plays": 7
+     }
+    ]
+   },
+   "calls": 67,
+   "ceiling": 25,
+   "completion_tokens": 221130,
+   "cost": 0.058146500000000004,
+   "fallbacks": 0,
+   "information_strategy": 22,
+   "lives_lost": 2,
+   "score": 11,
+   "score_at_failure": 11,
+   "seed": 7,
+   "truncated": 0,
+   "turns": 67,
+   "verdict": "won"
+  },
+  {
+   "behavior": {
+    "fireworks": 12,
+    "hints": 30,
+    "hints_followed_by_a_touched_play": 9,
+    "lives_lost_by_fallbacks": 0,
+    "lives_lost_by_model": 2,
+    "score": 12,
+    "seats": [
+     {
+      "discards": 9,
+      "hints": 7,
+      "misplays": 1,
+      "plays": 7
+     },
+     {
+      "discards": 4,
+      "hints": 14,
+      "misplays": 0,
+      "plays": 4
+     },
+     {
+      "discards": 10,
+      "hints": 9,
+      "misplays": 1,
+      "plays": 3
+     }
+    ]
+   },
+   "calls": 67,
+   "ceiling": 25,
+   "completion_tokens": 224291,
+   "cost": 0.0589183,
+   "fallbacks": 0,
+   "information_strategy": 22,
+   "lives_lost": 2,
+   "score": 12,
+   "score_at_failure": 12,
+   "seed": 8,
+   "truncated": 0,
+   "turns": 67,
+   "verdict": "won"
+  },
+  {
+   "behavior": {
+    "fireworks": 14,
+    "hints": 27,
+    "hints_followed_by_a_touched_play": 13,
+    "lives_lost_by_fallbacks": 0,
+    "lives_lost_by_model": 2,
+    "score": 14,
+    "seats": [
+     {
+      "discards": 8,
+      "hints": 11,
+      "misplays": 1,
+      "plays": 3
+     },
+     {
+      "discards": 10,
+      "hints": 7,
+      "misplays": 1,
+      "plays": 5
+     },
+     {
+      "discards": 4,
+      "hints": 9,
+      "misplays": 0,
+      "plays": 8
+     }
+    ]
+   },
+   "calls": 65,
+   "ceiling": 25,
+   "completion_tokens": 202526,
+   "cost": 0.05342885,
+   "fallbacks": 1,
+   "information_strategy": 25,
+   "lives_lost": 2,
+   "score": 14,
+   "score_at_failure": 14,
+   "seed": 9,
+   "truncated": 0,
+   "turns": 65,
+   "verdict": "won"
+  },
+  {
+   "behavior": {
+    "fireworks": 12,
+    "hints": 30,
+    "hints_followed_by_a_touched_play": 11,
+    "lives_lost_by_fallbacks": 0,
+    "lives_lost_by_model": 2,
+    "score": 12,
+    "seats": [
+     {
+      "discards": 7,
+      "hints": 11,
+      "misplays": 1,
+      "plays": 4
+     },
+     {
+      "discards": 9,
+      "hints": 9,
+      "misplays": 0,
+      "plays": 4
+     },
+     {
+      "discards": 6,
+      "hints": 10,
+      "misplays": 1,
+      "plays": 6
+     }
+    ]
+   },
+   "calls": 66,
+   "ceiling": 25,
+   "completion_tokens": 209666,
+   "cost": 0.0552786,
+   "fallbacks": 0,
+   "information_strategy": 23,
+   "lives_lost": 2,
+   "score": 12,
+   "score_at_failure": 12,
+   "seed": 10,
+   "truncated": 0,
+   "turns": 66,
+   "verdict": "won"
+  },
+  {
+   "behavior": {
+    "fireworks": 12,
+    "hints": 26,
+    "hints_followed_by_a_touched_play": 8,
+    "lives_lost_by_fallbacks": 0,
+    "lives_lost_by_model": 3,
+    "score": 0,
+    "seats": [
+     {
+      "discards": 8,
+      "hints": 9,
+      "misplays": 1,
+      "plays": 4
+     },
+     {
+      "discards": 7,
+      "hints": 8,
+      "misplays": 2,
+      "plays": 5
+     },
+     {
+      "discards": 5,
+      "hints": 9,
+      "misplays": 0,
+      "plays": 6
+     }
+    ]
+   },
+   "calls": 61,
+   "ceiling": 25,
+   "completion_tokens": 175187,
+   "cost": 0.0463849,
+   "fallbacks": 0,
+   "information_strategy": 25,
+   "lives_lost": 3,
+   "score": 0,
+   "score_at_failure": 12,
+   "seed": 11,
+   "truncated": 0,
+   "turns": 61,
+   "verdict": "won"
+  },
+  {
+   "behavior": {
+    "fireworks": 13,
+    "hints": 31,
+    "hints_followed_by_a_touched_play": 10,
+    "lives_lost_by_fallbacks": 0,
+    "lives_lost_by_model": 1,
+    "score": 13,
+    "seats": [
+     {
+      "discards": 8,
+      "hints": 13,
+      "misplays": 0,
+      "plays": 2
+     },
+     {
+      "discards": 7,
+      "hints": 11,
+      "misplays": 1,
+      "plays": 5
+     },
+     {
+      "discards": 8,
+      "hints": 7,
+      "misplays": 0,
+      "plays": 7
+     }
+    ]
+   },
+   "calls": 68,
+   "ceiling": 25,
+   "completion_tokens": 221290,
+   "cost": 0.0582055,
+   "fallbacks": 0,
+   "information_strategy": 21,
+   "lives_lost": 1,
+   "score": 13,
+   "score_at_failure": 13,
+   "seed": 12,
+   "truncated": 0,
+   "turns": 68,
+   "verdict": "won"
+  },
+  {
+   "behavior": {
+    "fireworks": 10,
+    "hints": 33,
+    "hints_followed_by_a_touched_play": 9,
+    "lives_lost_by_fallbacks": 0,
+    "lives_lost_by_model": 2,
+    "score": 10,
+    "seats": [
+     {
+      "discards": 12,
+      "hints": 7,
+      "misplays": 0,
+      "plays": 5
+     },
+     {
+      "discards": 5,
+      "hints": 15,
+      "misplays": 2,
+      "plays": 4
+     },
+     {
+      "discards": 9,
+      "hints": 11,
+      "misplays": 0,
+      "plays": 3
+     }
+    ]
+   },
+   "calls": 71,
+   "ceiling": 25,
+   "completion_tokens": 239075,
+   "cost": 0.0628501,
+   "fallbacks": 0,
+   "information_strategy": 19,
+   "lives_lost": 2,
+   "score": 10,
+   "score_at_failure": 10,
+   "seed": 13,
+   "truncated": 0,
+   "turns": 71,
+   "verdict": "won"
+  },
+  {
+   "behavior": {
+    "fireworks": 13,
+    "hints": 29,
+    "hints_followed_by_a_touched_play": 14,
+    "lives_lost_by_fallbacks": 0,
+    "lives_lost_by_model": 2,
+    "score": 13,
+    "seats": [
+     {
+      "discards": 6,
+      "hints": 6,
+      "misplays": 1,
+      "plays": 10
+     },
+     {
+      "discards": 9,
+      "hints": 11,
+      "misplays": 1,
+      "plays": 2
+     },
+     {
+      "discards": 7,
+      "hints": 12,
+      "misplays": 0,
+      "plays": 3
+     }
+    ]
+   },
+   "calls": 66,
+   "ceiling": 25,
+   "completion_tokens": 224861,
+   "cost": 0.0589792,
+   "fallbacks": 1,
+   "information_strategy": 24,
+   "lives_lost": 2,
+   "score": 13,
+   "score_at_failure": 13,
+   "seed": 14,
+   "truncated": 1,
+   "turns": 66,
+   "verdict": "won"
+  },
+  {
+   "behavior": {
+    "fireworks": 11,
+    "hints": 32,
+    "hints_followed_by_a_touched_play": 10,
+    "lives_lost_by_fallbacks": 0,
+    "lives_lost_by_model": 2,
+    "score": 11,
+    "seats": [
+     {
+      "discards": 10,
+      "hints": 12,
+      "misplays": 0,
+      "plays": 1
+     },
+     {
+      "discards": 6,
+      "hints": 13,
+      "misplays": 1,
+      "plays": 4
+     },
+     {
+      "discards": 8,
+      "hints": 7,
+      "misplays": 1,
+      "plays": 8
+     }
+    ]
+   },
+   "calls": 69,
+   "ceiling": 25,
+   "completion_tokens": 227590,
+   "cost": 0.05989755,
+   "fallbacks": 0,
+   "information_strategy": 25,
+   "lives_lost": 2,
+   "score": 11,
+   "score_at_failure": 11,
+   "seed": 15,
+   "truncated": 0,
+   "turns": 69,
+   "verdict": "won"
+  },
+  {
+   "behavior": {
+    "fireworks": 11,
+    "hints": 31,
+    "hints_followed_by_a_touched_play": 11,
+    "lives_lost_by_fallbacks": 0,
+    "lives_lost_by_model": 1,
+    "score": 11,
+    "seats": [
+     {
+      "discards": 10,
+      "hints": 12,
+      "misplays": 0,
+      "plays": 1
+     },
+     {
+      "discards": 6,
+      "hints": 8,
+      "misplays": 1,
+      "plays": 9
+     },
+     {
+      "discards": 9,
+      "hints": 11,
+      "misplays": 0,
+      "plays": 2
+     }
+    ]
+   },
+   "calls": 68,
+   "ceiling": 25,
+   "completion_tokens": 237759,
+   "cost": 0.0623711,
+   "fallbacks": 1,
+   "information_strategy": 22,
+   "lives_lost": 1,
+   "score": 11,
+   "score_at_failure": 11,
+   "seed": 16,
+   "truncated": 0,
+   "turns": 68,
+   "verdict": "won"
+  },
+  {
+   "behavior": {
+    "fireworks": 14,
+    "hints": 30,
+    "hints_followed_by_a_touched_play": 12,
+    "lives_lost_by_fallbacks": 0,
+    "lives_lost_by_model": 1,
+    "score": 14,
+    "seats": [
+     {
+      "discards": 6,
+      "hints": 12,
+      "misplays": 1,
+      "plays": 5
+     },
+     {
+      "discards": 8,
+      "hints": 8,
+      "misplays": 0,
+      "plays": 6
+     },
+     {
+      "discards": 8,
+      "hints": 10,
+      "misplays": 0,
+      "plays": 4
+     }
+    ]
+   },
+   "calls": 67,
+   "ceiling": 25,
+   "completion_tokens": 207746,
+   "cost": 0.05475675,
+   "fallbacks": 0,
+   "information_strategy": 21,
+   "lives_lost": 1,
+   "score": 14,
+   "score_at_failure": 14,
+   "seed": 17,
+   "truncated": 0,
+   "turns": 67,
+   "verdict": "won"
+  },
+  {
+   "behavior": {
+    "fireworks": 8,
+    "hints": 18,
+    "hints_followed_by_a_touched_play": 4,
+    "lives_lost_by_fallbacks": 0,
+    "lives_lost_by_model": 3,
+    "score": 0,
+    "seats": [
+     {
+      "discards": 1,
+      "hints": 7,
+      "misplays": 3,
+      "plays": 6
+     },
+     {
+      "discards": 7,
+      "hints": 6
+     },
+     {
+      "discards": 3,
+      "hints": 5,
+      "misplays": 0,
+      "plays": 5
+     }
+    ]
+   },
+   "calls": 40,
+   "ceiling": 25,
+   "completion_tokens": 124422,
+   "cost": 0.0328524,
+   "fallbacks": 0,
+   "information_strategy": 24,
+   "lives_lost": 3,
+   "score": 0,
+   "score_at_failure": 8,
+   "seed": 18,
+   "truncated": 0,
+   "turns": 40,
+   "verdict": "won"
+  },
+  {
+   "behavior": {
+    "fireworks": 10,
+    "hints": 31,
+    "hints_followed_by_a_touched_play": 11,
+    "lives_lost_by_fallbacks": 0,
+    "lives_lost_by_model": 2,
+    "score": 10,
+    "seats": [
+     {
+      "discards": 6,
+      "hints": 11,
+      "misplays": 0,
+      "plays": 6
+     },
+     {
+      "discards": 8,
+      "hints": 10,
+      "misplays": 1,
+      "plays": 4
+     },
+     {
+      "discards": 10,
+      "hints": 10,
+      "misplays": 1,
+      "plays": 2
+     }
+    ]
+   },
+   "calls": 67,
+   "ceiling": 25,
+   "completion_tokens": 206982,
+   "cost": 0.05467395,
+   "fallbacks": 0,
+   "information_strategy": 22,
+   "lives_lost": 2,
+   "score": 10,
+   "score_at_failure": 10,
+   "seed": 19,
+   "truncated": 0,
+   "turns": 67,
+   "verdict": "won"
+  },
+  {
+   "behavior": {
+    "fireworks": 16,
+    "hints": 28,
+    "hints_followed_by_a_touched_play": 12,
+    "lives_lost_by_fallbacks": 0,
+    "lives_lost_by_model": 0,
+    "score": 16,
+    "seats": [
+     {
+      "discards": 6,
+      "hints": 11,
+      "misplays": 0,
+      "plays": 5
+     },
+     {
+      "discards": 9,
+      "hints": 7,
+      "misplays": 0,
+      "plays": 5
+     },
+     {
+      "discards": 5,
+      "hints": 10,
+      "misplays": 0,
+      "plays": 6
+     }
+    ]
+   },
+   "calls": 64,
+   "ceiling": 25,
+   "completion_tokens": 235765,
+   "cost": 0.06167745,
+   "fallbacks": 0,
+   "information_strategy": 25,
+   "lives_lost": 0,
+   "score": 16,
+   "score_at_failure": 16,
+   "seed": 20,
+   "truncated": 0,
+   "turns": 64,
+   "verdict": "won"
+  },
+  {
+   "behavior": {
+    "fireworks": 13,
+    "hints": 29,
+    "hints_followed_by_a_touched_play": 12,
+    "lives_lost_by_fallbacks": 0,
+    "lives_lost_by_model": 0,
+    "score": 13,
+    "seats": [
+     {
+      "discards": 9,
+      "hints": 11,
+      "misplays": 0,
+      "plays": 2
+     },
+     {
+      "discards": 7,
+      "hints": 11,
+      "misplays": 0,
+      "plays": 4
+     },
+     {
+      "discards": 8,
+      "hints": 7,
+      "misplays": 0,
+      "plays": 7
+     }
+    ]
+   },
+   "calls": 66,
+   "ceiling": 25,
+   "completion_tokens": 222212,
+   "cost": 0.058425,
+   "fallbacks": 0,
+   "information_strategy": 23,
+   "lives_lost": 0,
+   "score": 13,
+   "score_at_failure": 13,
+   "seed": 21,
+   "truncated": 0,
+   "turns": 66,
+   "verdict": "won"
+  },
+  {
+   "behavior": {
+    "fireworks": 13,
+    "hints": 29,
+    "hints_followed_by_a_touched_play": 13,
+    "lives_lost_by_fallbacks": 0,
+    "lives_lost_by_model": 2,
+    "score": 13,
+    "seats": [
+     {
+      "discards": 8,
+      "hints": 9,
+      "misplays": 1,
+      "plays": 5
+     },
+     {
+      "discards": 8,
+      "hints": 6,
+      "misplays": 1,
+      "plays": 8
+     },
+     {
+      "discards": 5,
+      "hints": 14,
+      "misplays": 0,
+      "plays": 2
+     }
+    ]
+   },
+   "calls": 65,
+   "ceiling": 25,
+   "completion_tokens": 199275,
+   "cost": 0.052594100000000005,
+   "fallbacks": 0,
+   "information_strategy": 22,
+   "lives_lost": 2,
+   "score": 13,
+   "score_at_failure": 13,
+   "seed": 22,
+   "truncated": 0,
+   "turns": 65,
+   "verdict": "won"
+  },
+  {
+   "behavior": {
+    "fireworks": 15,
+    "hints": 29,
+    "hints_followed_by_a_touched_play": 12,
+    "lives_lost_by_fallbacks": 0,
+    "lives_lost_by_model": 0,
+    "score": 15,
+    "seats": [
+     {
+      "discards": 9,
+      "hints": 9,
+      "misplays": 0,
+      "plays": 4
+     },
+     {
+      "discards": 5,
+      "hints": 10,
+      "misplays": 0,
+      "plays": 7
+     },
+     {
+      "discards": 7,
+      "hints": 10,
+      "misplays": 0,
+      "plays": 4
+     }
+    ]
+   },
+   "calls": 65,
+   "ceiling": 25,
+   "completion_tokens": 227771,
+   "cost": 0.059708,
+   "fallbacks": 0,
+   "information_strategy": 22,
+   "lives_lost": 0,
+   "score": 15,
+   "score_at_failure": 15,
+   "seed": 23,
+   "truncated": 0,
+   "turns": 65,
+   "verdict": "won"
+  },
+  {
+   "behavior": {
+    "fireworks": 12,
+    "hints": 25,
+    "hints_followed_by_a_touched_play": 13,
+    "lives_lost_by_fallbacks": 0,
+    "lives_lost_by_model": 3,
+    "score": 0,
+    "seats": [
+     {
+      "discards": 5,
+      "hints": 9,
+      "misplays": 1,
+      "plays": 5
+     },
+     {
+      "discards": 8,
+      "hints": 7,
+      "misplays": 0,
+      "plays": 4
+     },
+     {
+      "discards": 4,
+      "hints": 9,
+      "misplays": 2,
+      "plays": 6
+     }
+    ]
+   },
+   "calls": 57,
+   "ceiling": 25,
+   "completion_tokens": 169429,
+   "cost": 0.044816550000000004,
+   "fallbacks": 0,
+   "information_strategy": 21,
+   "lives_lost": 3,
+   "score": 0,
+   "score_at_failure": 12,
+   "seed": 24,
+   "truncated": 0,
+   "turns": 57,
+   "verdict": "won"
+  },
+  {
+   "behavior": {
+    "fireworks": 11,
+    "hints": 29,
+    "hints_followed_by_a_touched_play": 8,
+    "lives_lost_by_fallbacks": 0,
+    "lives_lost_by_model": 2,
+    "score": 11,
+    "seats": [
+     {
+      "discards": 10,
+      "hints": 11,
+      "misplays": 0,
+      "plays": 2
+     },
+     {
+      "discards": 9,
+      "hints": 10,
+      "misplays": 0,
+      "plays": 3
+     },
+     {
+      "discards": 6,
+      "hints": 8,
+      "misplays": 2,
+      "plays": 8
+     }
+    ]
+   },
+   "calls": 67,
+   "ceiling": 25,
+   "completion_tokens": 221293,
+   "cost": 0.05821655,
+   "fallbacks": 0,
+   "information_strategy": 21,
+   "lives_lost": 2,
+   "score": 11,
+   "score_at_failure": 11,
+   "seed": 25,
+   "truncated": 0,
+   "turns": 67,
+   "verdict": "won"
+  },
+  {
+   "behavior": {
+    "fireworks": 14,
+    "hints": 30,
+    "hints_followed_by_a_touched_play": 11,
+    "lives_lost_by_fallbacks": 0,
+    "lives_lost_by_model": 1,
+    "score": 14,
+    "seats": [
+     {
+      "discards": 5,
+      "hints": 11,
+      "misplays": 1,
+      "plays": 7
+     },
+     {
+      "discards": 10,
+      "hints": 8,
+      "misplays": 0,
+      "plays": 4
+     },
+     {
+      "discards": 7,
+      "hints": 11,
+      "misplays": 0,
+      "plays": 4
+     }
+    ]
+   },
+   "calls": 67,
+   "ceiling": 25,
+   "completion_tokens": 209935,
+   "cost": 0.05531675,
+   "fallbacks": 0,
+   "information_strategy": 23,
+   "lives_lost": 1,
+   "score": 14,
+   "score_at_failure": 14,
+   "seed": 26,
+   "truncated": 0,
+   "turns": 67,
+   "verdict": "won"
+  },
+  {
+   "behavior": {
+    "fireworks": 15,
+    "hints": 28,
+    "hints_followed_by_a_touched_play": 13,
+    "lives_lost_by_fallbacks": 0,
+    "lives_lost_by_model": 2,
+    "score": 15,
+    "seats": [
+     {
+      "discards": 8,
+      "hints": 11,
+      "misplays": 1,
+      "plays": 3
+     },
+     {
+      "discards": 4,
+      "hints": 11,
+      "misplays": 1,
+      "plays": 7
+     },
+     {
+      "discards": 8,
+      "hints": 6,
+      "misplays": 0,
+      "plays": 7
+     }
+    ]
+   },
+   "calls": 65,
+   "ceiling": 25,
+   "completion_tokens": 212466,
+   "cost": 0.05593645,
+   "fallbacks": 0,
+   "information_strategy": 20,
+   "lives_lost": 2,
+   "score": 15,
+   "score_at_failure": 15,
+   "seed": 27,
+   "truncated": 0,
+   "turns": 65,
+   "verdict": "won"
+  },
+  {
+   "behavior": {
+    "fireworks": 14,
+    "hints": 29,
+    "hints_followed_by_a_touched_play": 12,
+    "lives_lost_by_fallbacks": 0,
+    "lives_lost_by_model": 2,
+    "score": 14,
+    "seats": [
+     {
+      "discards": 6,
+      "hints": 16
+     },
+     {
+      "discards": 8,
+      "hints": 6,
+      "misplays": 1,
+      "plays": 8
+     },
+     {
+      "discards": 7,
+      "hints": 7,
+      "misplays": 1,
+      "plays": 8
+     }
+    ]
+   },
+   "calls": 66,
+   "ceiling": 25,
+   "completion_tokens": 218762,
+   "cost": 0.05745905,
+   "fallbacks": 0,
+   "information_strategy": 20,
+   "lives_lost": 2,
+   "score": 14,
+   "score_at_failure": 14,
+   "seed": 28,
+   "truncated": 0,
+   "turns": 66,
+   "verdict": "won"
+  },
+  {
+   "behavior": {
+    "fireworks": 16,
+    "hints": 27,
+    "hints_followed_by_a_touched_play": 15,
+    "lives_lost_by_fallbacks": 0,
+    "lives_lost_by_model": 2,
+    "score": 16,
+    "seats": [
+     {
+      "discards": 7,
+      "hints": 10,
+      "misplays": 1,
+      "plays": 5
+     },
+     {
+      "discards": 6,
+      "hints": 6,
+      "misplays": 0,
+      "plays": 9
+     },
+     {
+      "discards": 6,
+      "hints": 11,
+      "misplays": 1,
+      "plays": 4
+     }
+    ]
+   },
+   "calls": 64,
+   "ceiling": 25,
+   "completion_tokens": 205886,
+   "cost": 0.0541891,
+   "fallbacks": 0,
+   "information_strategy": 22,
+   "lives_lost": 2,
+   "score": 16,
+   "score_at_failure": 16,
+   "seed": 29,
+   "truncated": 0,
+   "turns": 64,
+   "verdict": "won"
+  }
+ ],
+ "max_tokens": 16384,
+ "model": "openai/gpt-oss-120b",
+ "plan": "experiments/plans/H5.md",
+ "primary": {
+  "deals": 30,
+  "decision": "between: reported as it is",
+  "detectable_effect": 2.750427065411041,
+  "gap_to_information_strategy": 11.466666666666667,
+  "interval": [
+   9.666666666666666,
+   13.466666666666667
+  ],
+  "sd": 5.380253380351301,
+  "seeds": [
+   0,
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12,
+   13,
+   14,
+   15,
+   16,
+   17,
+   18,
+   19,
+   20,
+   21,
+   22,
+   23,
+   24,
+   25,
+   26,
+   27,
+   28,
+   29
+  ]
+ },
+ "provider": "novita",
+ "reasoning_effort": "medium",
+ "run": "confirmatory",
+ "secondary": {
+  "all_lives_lost": 5,
+  "all_lives_lost_wilson": [
+   0.07336434240351683,
+   0.33564705185680177
+  ],
+  "ceiling": 25.0,
+  "completion_tokens_per_call": 3269.4987120041214,
+  "cost": 1.6698071,
+  "fallbacks_per_game": 0.23333333333333334,
+  "gap_to_ceiling": {
+   "interval": [
+    12.6,
+    16.233333333333334
+   ],
+   "mean": 14.3
+  },
+  "gap_to_information_strategy_at_failure": {
+   "interval": [
+    8.9,
+    10.666666666666666
+   ],
+   "mean": 9.8
+  },
+  "hint_followed_share": 0.37990762124711314,
+  "information_strategy": 22.166666666666668,
+  "lives_lost_by_fallbacks": 0,
+  "lives_lost_by_model": 52,
+  "moves": {
+   "discards": 652,
+   "hints": 866,
+   "misplays": 52,
+   "plays": 423
+  },
+  "perfect": 0,
+  "perfect_wilson": [
+   0.0,
+   0.113517091390478
+  ],
+  "score": 10.7,
+  "score_at_failure": 12.366666666666667,
+  "truncated_share_of_calls": 0.0010303967027305513,
+  "turns_per_game": 64.7
+ },
+ "spent": 1.6698070999999983,
+ "stopped_at_seed": null
+}

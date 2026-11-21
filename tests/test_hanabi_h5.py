@@ -35,3 +35,32 @@ def test_last_move_and_first_prompts(tmp_path):
             "".join(json.dumps({"prompt": p}) + "\n" for p in prompts)
         )
     assert h5.first_prompts(tmp_path, 3) == ["a", "b", "c"]
+
+
+def test_committed_report_is_what_summarize_writes():
+    """h5.json's numbers follow from its per-deal records, and the strategy's scores recompute."""
+    import json
+    from pathlib import Path
+
+    path = Path(__file__).parent.parent / "hanabi" / "results" / "h5.json"
+    committed = json.loads(path.read_text())
+    meta = {
+        k: committed[k]
+        for k in (
+            "run",
+            "model",
+            "provider",
+            "max_tokens",
+            "reasoning_effort",
+            "spent",
+            "stopped_at_seed",
+        )
+    }
+    rebuilt = h5.summarize(meta, committed["deals"])
+    assert json.dumps(rebuilt, indent=1, sort_keys=True) + "\n" == path.read_text()
+    rules = Rules(players=3)
+    for d in committed["deals"]:
+        deck = seeded_deck(rules, d["seed"])
+        assert play_info_game(rules, deck, hansim=False).score == d["information_strategy"]
+        assert d["behavior"]["score"] == d["score"]
+        assert d["behavior"]["fireworks"] == d["score_at_failure"]

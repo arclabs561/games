@@ -1,0 +1,60 @@
+{
+ "plan": "experiments/plans/H5.md",
+ "cost_method": "the meter: reported tokens times Novita's listed price ($0.05 and $0.25 per million input and output tokens)",
+ "jobs": [
+  {
+   "run": "pilot-medium",
+   "job": "6b00b9134fdc5ab3c55bf31f",
+   "games": 2,
+   "scores": [12, 14],
+   "calls": 136,
+   "truncated": 0,
+   "spent": 0.12692725,
+   "cap": 0.2
+  },
+  {
+   "run": "confirmatory",
+   "job": "6b00c047efaf5e14f4b3eeea",
+   "games": 30,
+   "calls": 1941,
+   "seconds": 6118.7,
+   "spent": 1.6698071,
+   "cap": 3.05
+  },
+  {
+   "run": "repeat-pilot",
+   "job": "6b00c04aefaf5e14f4b3eeef",
+   "commit": "ef77ccfa54f52a9f6eabf942373e19e358f37aab",
+   "returncode": 1,
+   "spent": null,
+   "cap": 0.05,
+   "note": "stopped by the meter's cap error before writing; spending unknown, at most the cap"
+  },
+  {
+   "run": "repeat-pilot-2",
+   "job": "6b01155cefaf5e14f4b45404",
+   "prompts": 20,
+   "times": 2,
+   "move_changed": 16,
+   "served_providers": {"novita": 40},
+   "spent": 0.026072699999999994,
+   "cap": 0.06
+  },
+  {
+   "run": "repeat-test",
+   "job": "6b0115604fdc5ab3c55c58cd",
+   "prompts": 20,
+   "times": 2,
+   "move_changed": 12,
+   "served_providers": {"novita": 40},
+   "spent": 0.02430035,
+   "cap": 0.06
+  },
+  {
+   "run": "report",
+   "job": "6b0115594fdc5ab3c55c58ca",
+   "spent": 0.0,
+   "note": "no model calls; writes h5.json (24,540 bytes, the same size as the committed file)"
+  }
+ ]
+}
