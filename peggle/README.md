@@ -2,7 +2,9 @@
 
 <!-- shared:summary -->
 
-Two friends play a game with no draws, such as a Peggle duel, and one wins k of n games: what is the chance that this player is the better one? With a uniform prior it equals the chance of at most k heads in n + 1 fair coin flips, so six wins in ten give 743/1024, about 0.726. Playing on until one player is 95% sure declares one of two equal players better with chance 0.528 within 100 games; playing until the Bayes factor reaches 20 keeps that under 0.05 however long they play. Exact, by Bayes's billiard-table argument and a dynamic program over (wins, games).
+You beat a friend at Peggle six games out of ten. What are the chances you’re the better player? Suppose each duel is independent and your chance of winning stays the same. If you start out treating every win rate from 0% to 100% as equally plausible, those six wins give you about a 72.6% chance of being better. The exact answer under that uniform prior is 743/1024.
+
+What if you keep playing until one of you is 95% sure? Even two evenly matched players reach that threshold 52.8% of the time within 100 games.
 
 <!-- /shared -->
 

@@ -19,8 +19,8 @@ multimedia-learning experiments.
    (Knuth). The test: would a smart non-expert misread it?
 2. **Organize, and do not distract** (Halmos). Spend most effort on structure; fix the idea, not
    the sentence (Lamport).
-3. **Get everything up front.** A question as the title or first sentence works (Wilf). The opening
-   paragraph should be the best one. Say in plain words what the paper finds.
+3. **Give the reader a way in.** In Erase, a zero can absorb unused cards. Let the reader try the move
+   before asking them to follow the proof that uses it.
 4. **Concrete before abstract.** One running example used throughout, real data rather than cooked
    samples, examples that build on one another. Pose a puzzle the reader can try before the proof
    (Knuth §25: "builds exactly the right mental structures").
@@ -32,7 +32,7 @@ multimedia-learning experiments.
 7. **Factor long proofs**: state the crucial subgoal, prove it, then finish (Knuth §21).
 8. **Simplify first, then pay back the debt to truth** (Nilsson), but never print a false statement;
    say "roughly" or "almost" when simplifying.
-9. **State things twice**, especially definitions: once formally, once in other words or by example.
+9. **Test a definition on a case.** Pick an example where the boundary matters. Skip the paraphrase if it only repeats the definition.
 10. **Do not say everything** (Voltaire, via Knuth). Cut what does not serve the reader.
 
 ## Sentence and symbol rules (Knuth's 26 points, condensed)
@@ -121,7 +121,7 @@ From Norvig's pytudes notebooks, which explain a computation as they go.
 
 ## Writing for a parent and a young child too
 
-Keep all of the formal mathematics. Add a way in, at the point each idea first appears.
+Use these ideas for a paper meant to be read with a child. Choose the aids the reader needs. Keep the formal mathematics.
 
 - **Reading guide** on page 1: which sections tell the story with arithmetic only, which prove
   things, and that it is fine to skip proofs or stop anywhere (Schwartz's "bucking bronco").
@@ -242,7 +242,7 @@ Exercises"), Lamport's *How to Write a 21st Century Proof* (2011) and Tao's page
 - Is any page carrying more than two boxes?
 - Does every definition match the code that produced the numbers attached to it?
 - Does every "the authors say" match a quotation from the source?
-- Does every computed number follow a question and come before its interpretation?
+- Can readers tell what was counted and why the answer matters?
 - Hard-coded cross-references: `grep -n -o 'Section [0-9]\+' body.typ` should find nothing; use
   labels, so that reordering sections cannot leave stale numbers.
 - Bare openers: `grep -o '\(^\|[.:] \)\(That\|This\) \(is\|happens\|gives\|proves\)' body.typ`.

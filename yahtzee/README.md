@@ -1,6 +1,8 @@
 # Yahtzee
 
-In solitaire Yahtzee one player plays the thirteen turns alone for the highest average score. Optimal play scores 254.5896 on average, as Verhoeff (1999) and Glenn (2006) computed; repeated here exactly and checked against brute force. A printable [cheat sheet](#the-cheat-sheet) of 8 rules scores 243.18, 11.41 below optimal, and no card the search found came within 9 points. Glenn's rule lists for people score 226.09 here against his reported 218.18. Of 17 pieces of common advice, 9 cost under half a point each and three cost more than 9 points. All exact unless marked.
+How often can you beat the [eight-rule cheat sheet](#the-cheat-sheet)? Give each player their own dice and scorecard. If you always play for the highest average score and your opponent follows the sheet, you win 57.03% of games, tie 0.62%, and lose 42.35%. Those chances come from counting the two score distributions.
+
+Over many games the sheet averages 243.18 points, about 11.41 below optimal play. The scorecard shows where those points go.
 
 <img src="scorecard.svg" width="420" alt="A Yahtzee score card listing the thirteen boxes and the two bonuses, with the cheat sheet's average points in each box beside optimal play's.">
 
@@ -24,7 +26,7 @@ Verhoeff and Glenn let the player put a Yahtzee in any open box (**free choice**
 
 | Result | How it is known | Detail |
 |---|---|---|
-| Optimal play scores 254.5896094820 on average; 245.8707745141 without the Yahtzee bonus and the Joker | Exact; agrees with Verhoeff (254.5896, 245.87) and Glenn (254.59), and with thirteen positions of Verhoeff's slides to two decimals | [optimal](results/optimal.md) |
+| Optimal play scores 254.5896094820 on average; 245.8707745141 without the Yahtzee bonus and the Joker | Exact; agrees with Verhoeff (1999) on both means (254.5896, 245.87) and with Glenn (2006) on the first (254.59), and with thirteen positions of Verhoeff's slides to two decimals | [optimal](results/optimal.md) |
 | Kelly and Liese's exact fraction, 254.5893738837, is 0.000236 below that | Exact; disagrees with a cited source, cause unknown | [optimal](results/optimal.md) |
 | The score has standard deviation 59.6117 and median 248; it is 300 or more in 14.33% of games | Exact distribution; agrees with Verhoeff | [optimal](results/optimal.md) |
 | The Yahtzee box holds 50 in 33.74% of games; a Yahtzee bonus is earned in 8.245% | Exact | [optimal](results/optimal.md) |

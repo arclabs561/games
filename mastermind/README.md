@@ -1,6 +1,8 @@
 # Mastermind
 
-What is the fewest guesses that cracks every Mastermind code, and do the same strategies crack Fallout 3's terminals? The best strategy averages 5,625 / 1,296 ≈ 4.340 guesses, and the best that never needs a sixth guess 5,626 / 1,296. Koyama and Lai (1993) found both; they are recomputed here by exhaustive search, exact. On Fallout 3 terminals of 20 short words, the best play cracks 92.5% of passwords within four attempts and random consistent guessing 67.8%; simulated on 1,000 screens drawn from a word list, with exact results on each screen.
+How much does it cost to guarantee a win in five guesses? Play once against each of the 1,296 possible codes. The strategy with the best average takes 5,625 guesses in all. The best one that always finishes in five takes 5,626. One extra guess buys the guarantee across the whole set. Koyama and Lai found both totals in 1993. Here an exhaustive search reproduces them, and you can replay both [strategies](#what-is-the-best-strategy) against every code.
+
+Fallout 3 gives you four guesses at a terminal password. On 1,000 simulated screens of 20 short words each, the best strategy cracks 92.5% of passwords. Guessing at random among words that still fit the clues cracks 67.8%. Both chances were computed exactly for each screen.
 
 ![A dark terminal panel lists 18 five-letter words in two columns. A log on the right shows the guesses PLANT, QUEEN and RIVER with likeness 0, 1 and 2, then WATER as the one candidate left and an exact match.](figures/terminal.svg)
 

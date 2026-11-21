@@ -23,15 +23,12 @@ description: "Build Typst papers with fletcher, lilaq, codly and cetz when the p
   - print (US letter);
   - phone, a narrow page readable at a phone's size (`sys.inputs.edition == "phone"`);
   - HTML, where drawings become inline SVG through `html.frame`.
-- `--all` builds the three; CI checks that each committed file rebuilds byte for byte.
-- Peggle and Tenzi have only print so far. Copy Erase's edition switch, `fitw` and side-box
-  definitions rather than inventing new ones, so the papers look alike.
+- CI builds Erase, Cannonballs, Peggle and Tenzi with `--all`. It compares the print and phone PDFs with the committed PDFs. The HTML is a build output.
+- For a new paper, start with the edition switch and width handling in the closest existing paper.
 
 ## Text shared with the README
 
-The README and the paper share the results table, the rules as modeled, the checks and the
-open questions instead of keeping two copies (Erase and Cannonballs do this; Peggle and Tenzi
-can follow).
+Erase, Cannonballs, Peggle and Tenzi each share their results table, rules, checks and open questions with their README.
 - Write each shared part once, as Markdown in `<game>/docs/<name>.md`. Numbers are
   placeholders into the results file the game's scripts write, `<game>/results.json`:
   `{{deals.stuck}}` (commas added), `{{x.share:.4f}}`, `{{lists.found:and}}`; the formats are

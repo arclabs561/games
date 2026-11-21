@@ -1,53 +1,30 @@
 ---
 name: "results-readme"
-description: "Shape and checks for a game's README in this repository: findings first, a results table that says how each number is known, checks, data licenses, open questions, usage."
+description: "Use when writing or editing a game README, choosing a worked example, or checking a result quoted in the root index."
 ---
 
 # Results README
 
-Taken from the READMEs that read best here (Erase, Spot It, EV Nova, Boggle) and from the ones that did not (Codenames at 16,700 words, Ratscrew and Drive Ya Nuts with one heading or none).
+Start with a question someone could ask while playing. Look for a move or comparison already on the page that answers it. In Spot It, counting the symbol seen six times tells you what the two missing cards share. Keep the rule, opponent or information that makes the answer true.
 
-## Order of sections
+## What goes on the page
 
-1. **Opening, five lines at most.** The question in a player's words, then what was found. A reader who stops here should know the answer and how sure it is.
-2. **Rules as modeled.** Each ambiguous rule and the reading taken. Name other readings and say whether they change the answer.
-3. **Results.** One table, with one row per claim and a column "How it is known":
-   - proved;
-   - checked case by case, with certificates;
-   - exact computation;
-   - simulated (sample size, seed, 95% interval);
-   - or a cited source.
-
-   A line above the table can say "exact unless marked" when most rows are exact.
-4. **How the results are checked.** Each check states what it compares and what agreed: brute force on small cases, a second solver, a published count, a separate certificate checker. Say which checks CI runs.
-5. **Sections on single questions** (one per question, each starting with its answer). Experiments get one paragraph and one table each. They link to their plan and to the notes in `results/`, where the detail lives.
-6. **Data.** A table of source, what it is, license (quoted from the source), and whether it is committed.
-7. **Related work or sources.** Published results reproduced, and where this work agrees or disagrees with them.
-8. **Open questions.** Specific enough that someone could start on one.
-9. **Usage** with timings, then **Files**.
+- A single result can fit in a sentence with its evidence. Use a table when readers need to compare several results. Say which numbers were proved, checked case by case, computed exactly, observed, simulated or taken from a source.
+- Give enough of the rules to replay the example. If two readings change the outcome, show the move where they part.
+- Say what the check compared and what agreed. For a simulation, give the sample size, seed and interval. For recorded games, name the dataset and count the games that met the condition.
+- Put a command near the question it answers. Link to a longer proof, the experiment plan or the notes in `results/` where the reader needs them. Credit published results and record the sources and licenses of data you use.
+- Leave an open question where the evidence runs out. The nine-card deal in Egyptian Ratscrew goes on forever. Whether a full deck can do that is open.
 
 ## Shared with the paper
 
-When a game has a paper, the README keeps the opening, the results table, the rules as
-modeled, the checks and the open questions, and links into the paper by section name; proofs
-and long explanation live only in the paper. The shared parts are Markdown fragments in
-`<game>/docs/`, placed in the README between `<!-- shared:<name> -->` and `<!-- /shared -->` and
-filled by `uv run tools/sync_docs.py` from `<game>/results.json`, so every quoted number has one
-source. Edit the fragment, never the README between the markers; a test compares the two. The
-typst-paper-pipeline skill has the paper's side.
+A block marked `<!-- shared:name -->` comes from `<game>/docs/name.md`. Edit that file.
+Run `uv run tools/sync_docs.py <game>` to fill the block with the numbers in `results.json`.
+The paper reads the filled README. See `typst-paper-pipeline` to rebuild both editions.
 
 ## Pictures and demonstrations
 
-No README had a single image when this was written; every one should.
-- **Show the game first.** Near the top, put one picture of a real instance: a board, a deal, a hand, a terminal screen. Draw it with a script; don't use a photo or the publisher's art.
-- **One figure per key result,** next to its sentence:
-  - the distribution, not only the mean;
-  - the stuck hand;
-  - the best board;
-  - the route on the map;
-  - the cross-play matrix.
+Draw a board, route or hand when its arrangement explains the result. Put it beside the sentence that uses it and say what to look for. Two totals can stay in the sentence.
 
-  The caption says what to look at.
 - **Demonstrate tools with a transcript.** A short code block of a real run beats a screenshot, because it is searchable, readable on a phone and checkable. A test can run the same command and compare.
 - **Format:**
   - SVG for drawings and line plots, PNG only for dense plots.
