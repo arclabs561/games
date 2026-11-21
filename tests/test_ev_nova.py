@@ -498,3 +498,53 @@ def test_study_defaults_to_the_nova_export(monkeypatch, tmp_path):
     monkeypatch.delenv("EV_NOVA_CONTEXT")
     with pytest.raises(SystemExit):
         study.main()
+
+
+@pytest.mark.skipif(not CONTEXT, reason="set EV_NOVA_CONTEXT to the EV Nova 1.1.1 export")
+def test_free_eiric_changes_the_best_four_jump_landing_route():
+    tables = evnova.read_context(Path(CONTEXT or ""))
+    missions = {int(r["ID"]): r for r in tables["mïsn"]}
+    bits: set[int] = set()
+    # Wild Geese missions 1–5. The second mission randomly chooses the branch;
+    # follow b804 (Michaleen dies). Only the listed control bits enter the map test.
+    for mid, accept, success, granted in (
+        (634, "b511", "b800 b515 b518", {511, 800, 515, 518}),
+        (635, "", "b802 R(b804 b805)", {802, 804}),
+        (636, "", "b806", {806}),
+        (637, "", "b807", {807}),
+        (638, "S733", "b808 b6666", {808, 6666}),
+    ):
+        mission = missions[mid]
+        assert evnova.parse_test(mission["AvailBits"])(frozenset(bits))
+        assert (mission["OnAccept"], mission["OnSuccess"]) == (accept, success)
+        bits.update(granted)
+    rescue = missions[639]
+    assert evnova.parse_test(rescue["AvailBits"])(frozenset(bits))
+    assert (rescue["AvailStel"], rescue["ShipSyst"], rescue["OnShipDone"]) == ("139", "487", "b850")
+    systems = {r["ID"]: r for r in tables["sÿst"]}
+    assert systems["487"]["Name"] == "NGC-1894"
+    assert (systems["185"]["nav0"], systems["762"]["nav0"]) == ("139", "506")
+    ports = {r["ID"]: r for r in tables["spöb"]}
+    assert ports["139"]["Name"] == ports["506"]["Name"] == "New Ireland"
+    assert int(ports["139"]["Flags"], 16) & 2
+    assert not int(ports["506"]["Flags"], 16) & 2
+
+    def visible(state):
+        return {sid for sid, r in systems.items() if evnova.left_to_right(r["Visiblility"], state)}
+
+    before = frozenset(bits)
+    after = before | {850}
+    assert visible(before) - visible(after) == {"185"}
+    assert visible(after) - visible(before) == {"762"}
+    earth, ireland = "Earth (Sol)", "New Ireland (Tuatha)"
+    kane, europa = "Port Kane (Kania)", "Europa (Sol)"
+    for state, witness, rate in (
+        (before, (earth, ireland), Fraction(53)),
+        (after, (earth, kane, europa), Fraction(809, 16)),
+    ):
+        galaxy, _ = evnova.galaxy(tables, state)
+        assert (ireland in galaxy.prices) == (state == before)
+        legs = trade_graph(galaxy, landing=4)
+        assert route_rate(legs, witness) == rate
+        best = best_route(legs)
+        assert best is not None and best.rate == rate and check_certificate(legs, best)

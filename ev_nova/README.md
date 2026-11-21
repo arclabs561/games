@@ -30,6 +30,14 @@ EV Nova's data are not in this repository (see Data). These results come from a 
 - At x = 1 the best route stays within a single system, so it uses no jump fuel. Special commodities leave the optimum at the same rate, if they cost 80% of their base price where sold and fetch 125% where bought (an assumption; see below).
 - A new player has a 10-ton Shuttle and 25,000 credits, which fill the hold; the best rate at x = 1 is 1,670 credits per unit of cost. A 125-ton Terrapin with the same credits can fill only part of its hold. The best route is the same, but its rate is 10,004.5, against 20,875 with 100,000 credits.
 
+## What happens to the New Ireland run?
+
+On the Wild Geese branch where Michaleen dies, “Free Eiric” sends you to board the prison ship in NGC-1894. That objective sets control bit 850. When you return, New Ireland is still there, but its commodity exchange is gone.
+
+Count each landing as four jumps. Before the rescue, Earth–New Ireland earns 742 credits per ton in six jumps and two landings, or 53 per unit of travel cost. Afterward, carry Medical Supplies from Earth to Port Kane (+337), Equipment to Europa (+247), and Luxury Goods back to Earth (+225). The last leg stays in Sol. The loop earns 809 in four jumps and three landings, or 809/16 per unit.
+
+The [export check](../tests/test_ev_nova.py) follows the flags for missions 634–639 and compares the map immediately before and after the ship objective. Only Tuatha changes. This reconstructs that mission branch from the data, with other story flags clear and before New Ireland recovers. It has not been replayed in a save.
+
 ## Do the published EV Nova routes hold up?
 
 The EV Nova wiki lists recommended routes on its [Trade Routes](https://evnova.miraheze.org/wiki/Trade_Routes) and [Making Money](https://evnova.miraheze.org/wiki/Nova:Making_Money) pages. `guides.py` holds the 33 that use only standard commodities and no hypergate. `study.py` checks the price levels and jump counts the pages give, and scores each route.
@@ -67,7 +75,7 @@ The tests use a small made-up galaxy. Set `EV_NOVA_CONTEXT` to the path of an ex
 
 ## Open questions
 
-- Which routes change as the story opens new systems? The export uses the starting control bits. Disasters, hypergates and wormholes could change prices or distances.
+- Which other story changes move the best route? The starting map and the New Ireland rescue are checked above. Disasters, hypergates and wormholes could change prices or distances.
 - Do special commodity prices and rank discounts change which route pays best? Check them in a running copy of EV Nova.
 
 ## Run the study
