@@ -37,7 +37,9 @@ picks in order, up to the count, ending at the first word that is not the team's
 import argparse
 import hashlib
 import json
+import os
 import random
+import re
 from pathlib import Path
 
 from codenames import c4
@@ -47,7 +49,8 @@ HERE = Path(__file__).parent
 OUT = HERE / "results" / "human-pilot"
 PLAN = "experiments/plans/C11.md"
 BOARD_SEED = 11010
-ORDER_SEED = 11011
+ORDER_SEED = 11011  # historical order used by the model comparison
+PLAY_ORDER_SEED = 11012
 N_BOARDS = 40
 K = 10  # C10's K, chosen on its validation boards
 HELD_OUT = "potion"  # C10's task for the human-fitted and language-model guessers
@@ -252,7 +255,11 @@ def player_data(boards: dict) -> dict:
 
 def page(boards: dict) -> str:
     data = json.dumps(player_data(boards), sort_keys=True, separators=(",", ":"))
-    return PAGE.replace("/*DATA*/", data)
+    return (
+        PAGE.replace("/*DATA*/", data)
+        .replace("/*EDITION*/", json.dumps(boards["key_sha256"]))
+        .replace("/*LIVE*/", json.dumps(boards["order_seed"] == PLAY_ORDER_SEED))
+    )
 
 
 def rebuild(chosen_from_key: dict, words_seed: int = BOARD_SEED):
@@ -287,11 +294,14 @@ def score_response(boards: dict, key: dict, response: dict) -> list[dict]:
     items = {x["item"]: x for x in boards["items"]}
     order = boards["versions"][response["version"]]
     rows = []
-    for r in response["responses"]:
+    for position, r in enumerate(response["responses"]):
+        if position >= len(order) or r["item"] != order[position]:
+            raise ValueError("session items must follow the assigned order exactly once")
         x = items[r["item"]]
         b = boards["boards"][x["board"]]
         found, value = turn_value(b["words"], b["kinds"], r["picks"], x["count"])
-        position = order.index(r["item"])
+        if len(r["picks"]) > x["count"] or r["t_done"] < 0:
+            raise ValueError("invalid pick count or time")
         rows.append(
             {
                 "item": r["item"],
@@ -301,6 +311,8 @@ def score_response(boards: dict, key: dict, response: dict) -> list[dict]:
                 "position": position,
                 "count": x["count"],
                 "picks": len(r["picks"]),
+                "words": list(r["picks"]),
+                "assassin": value < -1,
                 "found": found,
                 "value": value,
                 "stopped_early": len(r["picks"]) < x["count"],
@@ -317,11 +329,198 @@ def write(texts, out: Path = OUT) -> None:
         print(out / name, sha256(text))
 
 
+def matched_benchmark() -> dict:
+    """Score the 40 pilot boards under the held-out potion model and the two saved LMs."""
+    from codenames import c11
+    from codenames.c4score import bootstrap
+    from codenames.game import Clue
+    from codenames.players import embedding_weigher, expected_value, space
+    from codenames.study import load
+
+    boards = json.loads((OUT / "boards.json").read_text())
+    key = json.loads((OUT / "key.json").read_text())
+    words = {w for b in boards["boards"] for w in b["words"]}
+    words.update(x["clue"] for x in boards["items"])
+    cfg = load("calibrate-game")["potion"]["best"]
+    weigh = embedding_weigher(space("potion", cfg["clue"], cfg["word"], sorted(words)), cfg["tau"])
+    guesses = c11.read_guesses(c11.GUESSES.read_text())
+    values: dict = {m: {} for m in ("potion", *c11.GUESSERS)}
+    for j, item in enumerate(boards["items"]):
+        i = item["board"]
+        b = boards["boards"][i]
+        board = Board(tuple(b["words"]), tuple(b["kinds"]))
+        arm = key["items"][item["item"]]
+        values["potion"][i, arm] = expected_value(weigh, board, Clue(item["clue"], item["count"]))
+        for model in c11.GUESSERS:
+            cell = c11.read_cell(guesses["items", model, c11.ITEM_SEED, 0][j])
+            if cell is None:
+                raise ValueError("pilot model reply missing")
+            values[model][i, arm] = cell[1]
+    out = {}
+    for model, table in values.items():
+        diffs = [table[i, "P"] - table[i, "F"] for i in range(len(boards["boards"]))]
+        out[model] = {"board_differences": diffs, "estimate": bootstrap(diffs)}
+    return out
+
+
+def summarize(boards: dict, key: dict, exports: list[dict], draws: int = 10_000) -> dict:
+    """The preregistered board-weighted contrasts; only consented, de-identified rows leave here."""
+    import numpy as np
+
+    retained: dict = {}
+    for session in exports:
+        code = session.get("session", "")
+        if (
+            not re.fullmatch(r"[a-f0-9]{8}", code)
+            or session.get("consent") is not True
+            or session.get("edition") != boards["key_sha256"]
+            or session.get("plan") != "C11"
+        ):
+            raise ValueError("invalid session code, consent or pilot edition")
+        old = retained.get(code)
+        if old:
+            shorter, longer = sorted((old, session), key=lambda s: len(s["responses"]))
+            if (
+                shorter["version"] != longer["version"]
+                or shorter["responses"] != longer["responses"][: len(shorter["responses"])]
+            ):
+                raise ValueError("conflicting exports for one session")
+            session = longer
+        retained[code] = session
+    if not retained:
+        raise ValueError("no response files to score")
+    n = boards["block"]
+    rows = []
+    for participant, session in enumerate(retained.values(), 1):
+        scored = score_response(boards, key, session)
+        rows.extend(r | {"participant": participant} for r in scored)
+    lengths = {p: len(s["responses"]) for p, s in enumerate(retained.values(), 1)}
+    complete = [p for p, count in lengths.items() if count == 2 * n]
+    one_block = [p for p, count in lengths.items() if count >= n]
+    eligible = [
+        r
+        for r in rows
+        if r["participant"] in one_block and (r["block"] == 1 or r["participant"] in complete)
+    ]
+    result: dict = {
+        "sessions": len(retained),
+        "complete": len(complete),
+        "completed_first_block": len(one_block),
+        "primary": None,
+        "first_block": None,
+        "second_block": None,
+        "block_by_arm": None,
+        "items": rows,
+    }
+    rng = np.random.default_rng(0)
+    board_draws = rng.integers(n, size=(draws, n))
+
+    def estimate(d):
+        return {
+            "mean": float(d.mean()),
+            "ci": np.percentile(d[board_draws].mean(axis=1), [2.5, 97.5]).tolist(),
+        }
+
+    if complete:
+        values = {(r["participant"], r["board"], r["arm"]): r["value"] for r in eligible}
+        pairs = np.array(
+            [[values[p, b, "P"] - values[p, b, "F"] for b in range(n)] for p in complete]
+        )
+        diffs = pairs.mean(axis=0)
+        result["primary"] = estimate(diffs)
+        result["primary"]["board_differences"] = diffs.tolist()
+        people_draws = rng.integers(len(complete), size=(draws, len(complete)))
+        two_way = np.array(
+            [
+                pairs[people][:, bs].mean()
+                for people, bs in zip(people_draws, board_draws, strict=True)
+            ]
+        )
+        result["primary"]["two_way_ci"] = np.percentile(two_way, [2.5, 97.5]).tolist()
+        result["primary"]["planned_detectable_effect"] = float(
+            2.8 * np.sqrt((0.09 + 2.25 / len(complete)) / n)
+        )
+        benchmark_path = OUT / "benchmark.json"
+        if n == N_BOARDS and boards["board_seed"] == BOARD_SEED:
+            benchmarks = json.loads(benchmark_path.read_text())
+            result["minus_matched_model"] = {
+                m: estimate(diffs - v["board_differences"]) for m, v in benchmarks.items()
+            }
+
+    block_diffs = {}
+    for block, label in ((1, "first_block"), (2, "second_block")):
+        cells = {
+            (b, a): [
+                r["value"]
+                for r in eligible
+                if r["block"] == block and r["board"] == b and r["arm"] == a
+            ]
+            for b in range(n)
+            for a in ARMS
+        }
+        if all(cells.values()):
+            d = np.array([np.mean(cells[b, "P"]) - np.mean(cells[b, "F"]) for b in range(n)])
+            result[label] = estimate(d)
+            block_diffs[block] = d
+    if len(block_diffs) == 2:
+        result["block_by_arm"] = estimate(block_diffs[2] - block_diffs[1])
+    result["by_arm"] = {
+        a: {
+            k: float(np.mean([r[k] for r in eligible if r["arm"] == a]))
+            for k in ("found", "stopped_early", "assassin", "seconds")
+        }
+        for a in ARMS
+        if any(r["arm"] == a for r in eligible)
+    }
+    return result
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("what", choices=["build", "check"])
+    parser.add_argument("what", choices=["build", "check", "prepare", "score", "benchmark"])
     parser.add_argument("--out", type=Path, default=OUT)
+    parser.add_argument("--key", type=Path, help="local private key for prepare or score")
+    parser.add_argument("--responses", type=Path, help="directory of consented response JSON files")
+    parser.add_argument("--materials", type=Path, help="directory of the active boards.json")
     args = parser.parse_args()
+    if args.what == "benchmark":
+        print(dumps(matched_benchmark()))
+        return
+    if args.what == "prepare":
+        if not args.key or args.out == OUT:
+            parser.error("prepare requires --out PUBLIC_DIR and --key PRIVATE_FILE")
+        if args.key.resolve().is_relative_to(
+            HERE.parent.resolve()
+        ) or args.key.resolve().is_relative_to(args.out.resolve()):
+            parser.error("keep the private key outside the repository and the delivery directory")
+        original = json.loads((OUT / "key.json").read_text())
+        boards, key, html = materials(*rebuild(original), order_seed=PLAY_ORDER_SEED)
+        args.key.parent.mkdir(parents=True, exist_ok=True)
+        if args.key.exists() and args.key.read_text() != key:
+            parser.error("the private key path already holds another key")
+        if not args.key.exists():
+            with open(args.key, "x", opener=lambda path, flags: os.open(path, flags, 0o600)) as f:
+                f.write(key)
+        args.out.mkdir(parents=True, exist_ok=True)
+        (args.out / "boards.json").write_text(boards)
+        (args.out / "play.html").write_text(html)
+        return
+    if args.what == "score":
+        if not args.key or not args.materials or not args.responses or args.out == OUT:
+            parser.error("score requires --materials DIR --key FILE --responses DIR --out FILE")
+        boards = json.loads((args.materials / "boards.json").read_text())
+        raw_key = args.key.read_text()
+        if args.out.resolve() == args.key.resolve() or args.out.resolve().is_relative_to(
+            args.responses.resolve()
+        ):
+            parser.error("write the de-identified summary separately from private inputs")
+        if boards["key_sha256"] != sha256(raw_key) or boards["order_seed"] != PLAY_ORDER_SEED:
+            parser.error("wrong key or materials edition")
+        files = sorted(args.responses.glob("*.json"), key=lambda p: (p.stat().st_mtime_ns, p.name))
+        sessions = [json.loads(p.read_text()) for p in files]
+        report = summarize(boards, json.loads(raw_key), sessions)
+        args.out.write_text(dumps(report))
+        return
     if args.what == "build":
         check_against_c10()
         write(materials(*choose_boards(BOARD_SEED, N_BOARDS)), args.out)
@@ -369,7 +568,8 @@ textarea { width: 100%; min-height: 6rem; font: inherit; box-sizing: border-box;
 <div id="app"></div>
 <script>
 const DATA = /*DATA*/;
-const STORE = "c11-pilot";
+const STORE = "c11-pilot-" + /*EDITION*/;
+const ACTIVE = /*LIVE*/;
 let S = null;
 try { S = JSON.parse(localStorage.getItem(STORE) || "null"); } catch (e) { S = null; }
 let shown = 0, picks = [], times = [], undos = 0;
@@ -383,6 +583,11 @@ const el = (tag, attrs, ...kids) => {
 };
 
 function intro() {
+  if (!ACTIVE) {
+    app.replaceChildren(el("h1", {}, "Codenames pilot materials"),
+      el("p", {}, "This is the archived edition used for the model comparison. Volunteers receive a separate local page."));
+    return;
+  }
   const v = new URLSearchParams(location.search).get("v");
   app.replaceChildren(
     el("h1", {}, "Codenames: you are the guesser"),
@@ -399,6 +604,8 @@ function intro() {
       "optional comment at the end. No name or contact detail is asked; please do not " +
       "write any in the comment. Nothing is sent anywhere: at the end you copy or share " +
       "a block of text with the person who gave you this page."),
+    el("p", {}, "This small study is for adults aged 18 or older who have never seen the keyed pilot boards. We study how people read one-word clues. By starting, you consent to take part. You may stop at any time. You can send your first half after 40 screens."),
+    el("p", {}, "If you send your answers, your picks and times may be published in a public code repository. Your session code and comment stay private. The coordinator keeps your sent answers in a private Hugging Face dataset and deletes the original message. Keep your code to withdraw through the coordinator. Withdrawal removes your private record and excludes your answers from future reports. Copies of a public release may persist."),
     ...(v === "A" || v === "B" ? [el("button", {onclick: () => start(v)}, "Start")] :
       [el("p", {}, "Version (as you were told):"),
        el("button", {onclick: () => start("A")}, "A"),
@@ -409,7 +616,7 @@ function start(version) {
   const r = new Uint8Array(4);
   crypto.getRandomValues(r);
   S = {plan: DATA.plan, version, session: Array.from(r, x => x.toString(16).padStart(2, "0")).join(""),
-       date: new Date().toISOString().slice(0, 10), responses: [], comment: ""};
+       consent: true, edition: /*EDITION*/, responses: [], comment: ""};
   save();
   next();
 }
@@ -438,7 +645,8 @@ function next() {
     counter.textContent = (k + 1) + " of " + order.length + " \\u00b7 " + picks.length + " of " + count + " picked";
   }
   app.replaceChildren(el("div", {id: "clue"}, clue.toUpperCase() + " \\u00b7 " + count), grid,
-    el("div", {id: "bar"}, counter, el("span", {}, undo, done)));
+    el("div", {id: "bar"}, counter, el("span", {}, undo, done)),
+    ...(k >= DATA.block ? [el("button", {onclick: result}, "Export completed turns")] : []));
   draw();
   shown = performance.now();
 }
@@ -455,6 +663,7 @@ function halfway() {
   app.replaceChildren(el("h1", {}, "Halfway"),
     el("p", {}, "The second half shows the same 40 boards again, each with a different clue. " +
       "Guess each one on its own, as if you had not seen the board before."),
+    el("button", {onclick: result}, "Export this half"),
     el("button", {onclick: () => { S.halfway = true; save(); next(); }}, "Continue"));
 }
 
@@ -464,6 +673,13 @@ function finish() {
   app.replaceChildren(el("h1", {}, "Done, thank you"),
     el("p", {}, "An optional comment (no names, please):"), box,
     el("button", {onclick: () => { S.comment = box.value; S.finished = true; save(); result(); }}, "Finish"));
+}
+
+function clearPhone() {
+  if (!window.confirm("Clear all saved answers on this phone?")) return;
+  try { localStorage.removeItem(STORE); } catch (e) { /* private browsing */ }
+  S = null;
+  intro();
 }
 
 function result() {
@@ -478,12 +694,19 @@ function result() {
     a.click(); }}, "Download");
   app.replaceChildren(el("h1", {}, "Your answers"),
     el("p", {}, "Send this text to the person who gave you the page, by any of the buttons."),
+    el("p", {}, "Keep this code to withdraw: " + S.session),
     area, el("div", {}, share, copy, file),
-    el("p", {className: "small"}, "It holds the version, a random session code, the date, " +
+    el("button", {onclick: clearPhone}, "Clear this phone's answers"),
+    ...(!S.finished ? [el("button", {onclick: next}, "Return to the pilot")] : []),
+    el("p", {className: "small"}, "It holds the version, a random session code, " +
       "your picks and times, and your comment."));
 }
 
-S ? (S.finished ? result() : next()) : intro();
+if (S) {
+  app.replaceChildren(el("h1", {}, "Saved answers on this phone"),
+    el("button", {onclick: () => S.finished ? result() : next()}, "Continue saved session"),
+    el("button", {onclick: clearPhone}, "Clear and start a new session"));
+} else { intro(); }
 </script>
 </body>
 </html>

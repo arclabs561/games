@@ -254,8 +254,8 @@ def cell(board: Board, count: int, rec: dict | None) -> str:
     if st not in ANSWERED:
         return f"-{st}"
     assert rec is not None
-    ranking = c4.read_ranking(rec["reply"], board.unrevealed())["ranking"]
-    found, value = c4.play_turn(board, ranking, count)
+    parsed = c4.read_ranking(rec["reply"], board.unrevealed())
+    found, value = c4.play_turn(board, parsed["ranking"][: parsed["named"]], count)
     return f"{found}/{value:g}" + ("c" if st == "cut" else "")
 
 
@@ -677,9 +677,66 @@ def score_items(g) -> dict:
     return out
 
 
+def replay_primary(logs: dict[str, Path], rows: list[dict], old: dict) -> dict:
+    """Replay the two strict arms on the test boards. Output only counts and estimates."""
+    from codenames.c4score import bootstrap, rounded
+
+    deals = c4.boards(TEST, len(rows))
+    values = {}
+    counts = {}
+    for model, path in logs.items():
+        final = {}
+        with path.open() as stream:
+            for line in stream:
+                record = json.loads(line)
+                tag = record["tag"]
+                if tag["part"] == "guess" and tag["seed"] == TEST:
+                    # When the original call failed, send_all appended its retry to the log.
+                    final[tag["board"], tag["clue"], tag["count"]] = record
+        for arm in ("P", "F"):
+            stats = Counter()
+            column_values = []
+            for i, (row, board) in enumerate(zip(rows, deals, strict=True)):
+                clue, n = row["strict"][arm].rsplit("/", 1)
+                count = int(n)
+                record = final[i, clue, count]
+                historical = read_cell(old[arm, model, TEST, 0][i])
+                status = status_of(record, board.unrevealed())
+                if status not in ANSWERED:
+                    if historical is not None:
+                        raise ValueError("logged failure differs from the committed score")
+                    column_values.append(np.nan)
+                    continue
+                result = c4.read_ranking(record["reply"], board.unrevealed())
+                ranking, named = result["ranking"], result["named"]
+                padded = c4.play_turn(board, ranking, count)
+                if historical != (*padded, status == "cut"):
+                    raise ValueError("replayed call differs from the committed score")
+                prefix = c4.play_turn(board, ranking[:named], count)
+                stats["answered"] += 1
+                stats["reached_appended_word"] += int(named < count and prefix[0] == named)
+                stats["score_changed"] += int(prefix != padded)
+                column_values.append(prefix[1])
+            counts[f"{model} {arm}"] = dict(stats)
+            values[arm, model] = np.array(column_values)
+    h1, h2, keep = primary_diffs(
+        values, exact(rows, "strict", "P", "potion"), exact(rows, "strict", "F", "potion")
+    )
+    return rounded(
+        {
+            "boards": len(rows),
+            "kept": int(keep.sum()),
+            "replies_by_arm": counts,
+            "h_a1": bootstrap(h1[keep]),
+            "h_a2": bootstrap(h2[keep]),
+        },
+        5,
+    )
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("what", choices=["lists", "guess", "repeat", "score"])
+    parser.add_argument("what", choices=["lists", "guess", "repeat", "score", "replay"])
     parser.add_argument("--models", default=",".join(GUESSERS))
     parser.add_argument("--seed", type=int, default=TEST)
     parser.add_argument("--boards", type=parse_range, help="guess: boards, as 0-1000")
@@ -692,7 +749,25 @@ def main() -> None:
     parser.add_argument("--workers", type=int, default=8)
     parser.add_argument("--cap", type=float, default=0.0)
     parser.add_argument("--out", type=Path)
+    parser.add_argument(
+        "--test-logs",
+        nargs=2,
+        type=Path,
+        metavar=("GPT_LOG", "LLAMA_LOG"),
+        help="private JSONL logs of the two test jobs; reads locally",
+    )
     args = parser.parse_args()
+    if args.what == "replay":
+        if not args.test_logs:
+            parser.error("replay requires --test-logs GPT_LOG LLAMA_LOG")
+        rows = [r for r in json.loads(LISTS.read_text())["boards"] if r["seed"] == TEST]
+        result = replay_primary(
+            dict(zip(GUESSERS, args.test_logs, strict=True)),
+            rows,
+            read_guesses(GUESSES.read_text()),
+        )
+        print(json.dumps(result, indent=2))
+        return
     if args.what == "lists":
         picks, lists_ = lists()
         PICKS.write_text(picks)

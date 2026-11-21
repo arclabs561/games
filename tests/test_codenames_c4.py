@@ -248,3 +248,22 @@ def test_crossguess_scores_pair_with_the_embedding_giver():
     assert out["pairs"]["m -> x"]["value"]["mean"] == -1
     assert out["givers"]["embeddinggemma-2"]["value"]["mean"] == pytest.approx(1.25)
     assert out["givers"]["m"]["minus_embeddinggemma_same_guessers"]["mean"] == -2.5
+
+
+def test_readme_example_matches_the_named_guessers_test_hits():
+    from pathlib import Path
+
+    folder = Path(c4.__file__).parent
+    lines = json.loads((folder / "results/c4.json").read_text())["guess"]["per_turn"]
+    [hits] = [
+        h
+        for model, split, h in (line.split() for line in lines)
+        if model == "gpt-oss-120b" and split == "test"
+    ]
+    assert hits[0] == "0" and hits.count("1") == 358 and len(hits) == 551
+    opening = (folder / "README.md").read_text().split("![", 1)[0]
+    assert "The model missed." in opening
+    assert (
+        f"Across {len(hits)} turns where a person picked one word, gpt-oss-120b matched them {hits.count('1')} times"
+        in opening
+    )
