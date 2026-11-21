@@ -112,8 +112,7 @@ other kinds of games needed, and section 10 the mistakes made along the way.
 - Standard-library solver and counter; z3 scripts separate and optional.
 - ruff check and format, pytest smoke tests (a dead deal, a cleared deal with its groups
   re-evaluated, the exception, a slice of freshly generated certificates through the checker).
-- README shape: see the `results-readme` skill (findings first, a results table that says how
-  each number is known, a picture of the game).
+- When writing up the result, use `results-readme`. Keep the rules and information assumptions that the solver used.
 - One commit on a feature branch; amend rather than stack while the PR is unpublished.
 - Code a notebook relies on lives in a module that both the notebook and the tests import;
   tests that execute notebook cells break silently when a cell is renamed.

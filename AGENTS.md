@@ -43,6 +43,8 @@ Check a result a second way when you can. Try brute force on a small deck, repla
 
 ## Skills
 
+Edit repo skills in `.claude/skills/`. Codex reads the same directory through `.agents/skills`.
+
 | Skill | Use it for |
 |---|---|
 | `results-readme` | The shape of a game's README and its table of results |

@@ -1,6 +1,6 @@
 ---
 name: pytudes-style-analysis
-description: Habits for short programs that answer questions about games and puzzles, drawn from Peter Norvig's pytudes notebooks: vocabulary first, small tested functions, brute force checked against fast methods, exhaustive evaluation.
+description: "Use when writing a short program or notebook to answer a game question. Start with small tested functions and check a faster method against brute force."
 ---
 
 # Pytudes-style analysis
