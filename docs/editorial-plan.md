@@ -4,10 +4,17 @@ Start with the question someone could ask while playing. Where the short answer 
 
 The first pass brought the symbol count forward in [Spot It](../spot_it/README.md) and put the shelf beside the question in [Maps](../maps/README.md). The [index](../README.md) now distinguishes an observed chess rating from the model and a Codenames test game from a test player. Those changes needed no new experiments.
 
-| Order | Page and question | Edit and check |
-|---|---|---|
-| 1 | [Hanabi](../hanabi/README.md) · We scored 23. Could anyone have made 25 with our cards? | Bring the human-games example forward. Of 1,858 two-player deals, 19 ruled out a perfect score even with every card visible. Check the count against the human-games note. Leave the share lost to hidden information versus decisions open. |
-| 2 | [Yahtzee](../yahtzee/README.md) · Is it worth learning eight rules? | Put the printable sheet beside its head-to-head result. Give the chance of beating the sheet and the chance of tying separately. Check both against the head-to-head section. Reserve the average-score comparison for the question it answers. |
-| 3 | [Peggle](../peggle/README.md) · Six wins in ten. Who is better? | Start with the record and the constant, independent win chance. Say what the uniform prior assumes. Introduce playing on until someone feels sure as a second question. Edit the shared summary, sync the README, and inspect the result in the paper and phone edition. |
+## Second pass
 
-Revisit the order after these three. If the example only repeats the result, cut it. If it lets the reader predict a move, exposes an assumption, or explains a surprise, it has earned the space.
+- [Hanabi](../hanabi/README.md) starts with a score of 23. The count behind the answer comes from the individual human games. A deal's ceiling assumes both hands and the draw pile are visible.
+- [Yahtzee](../yahtzee/README.md) puts the eight-rule sheet beside its chance of winning a single game. Its expected score and the per-box breakdown follow.
+- [Peggle](../peggle/README.md) opens with six wins in ten and states the prior behind the answer. Checking after every game is a separate question. The README and both paper editions now read the same opening.
+
+## Next
+
+| Order | Page | Edit and check |
+|---|---|---|
+| 1 | [Mastermind](../mastermind/README.md) | Start with the price of a guarantee. Across all 1,296 codes, the best strategy that always finishes in five guesses uses one more guess in total than the best strategy for the average. Check the two totals against the solved trees. |
+| 2 | [Egyptian Ratscrew](../egyptian_ratscrew/README.md) | Show the nine-card deal that keeps going even when someone slaps. Walk through one slappable pile. Check both choices of slap winner against the reachable positions before explaining why the game stays trapped. |
+
+Mastermind comes first because one comparison settles the opening question. Ratscrew needs a worked sequence that a reader can follow with a deck.
