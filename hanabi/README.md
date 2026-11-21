@@ -1,6 +1,6 @@
 # Hanabi
 
-How often can a deal of Hanabi reach 25, and how much of a team's shortfall did the deal rule out? With every card in view, a share of 0.9862 of two-player deals can (276 of 20,000 seeded deals are lost) and 0.9988 or more with three to five players, so no strategy averages above 24.9838 ± 0.0021 points with two players. In 1,858 two-player games from hanab.live, the deal ruled out 0.013 of the 1.63 points that teams fell short of 25: under 1%. The hat-guessing strategy of Cox et al. (2015) is reproduced game by game. Two solvers, exact search per deal, sampled deals with 95% intervals.
+We scored 23. Could we have made 25? In the hanab.live sample, 287 two-player games ended on 23. A search with both hands and the whole deck visible found a path to 25 on 282 of those 287 deals. At the table you see your partner’s hand. Your own hand and the draw pile stay hidden. The records tell us what the cards allowed. They leave open how much a team could have known when it chose a move.
 
 ![The start of a two-player game: two hands of five cards, five empty piles, eight hint tokens, three lives, and the 40 cards of the deck in draw order.](figures/deal.svg)
 
@@ -73,7 +73,7 @@ The bound is optimistic, since real players do not see the deck. Still, it says 
 
 ## Human games: the deal or the table?
 
-*"We finished on 23. Could any team have made 25 with these cards?"* Almost always, if it could have seen every card. Of the 1,858 two-player games from hanab.live that the AH2AC2 challenge released (Dizdarević et al., 2025), 19 were dealt a deck whose best possible score is below 25; of its 1,221 three-player games, none. Two-player teams averaged 1.63 points below 25. The deal ruled out 0.013 of those points (0.007 to 0.019). The other 1.62 (1.54 to 1.70) were lost to hidden information or to play, and these games cannot say how much to each. In two-player games, 30% of the traced points below the ceiling went on discards of a card whose other copies were gone. Detail, with where in the game the ceiling fell: [humans.md](results/humans.md).
+Of the 1,858 two-player games from hanab.live that the AH2AC2 challenge released (Dizdarević et al., 2025), 19 were dealt a deck whose best possible score is below 25; of its 1,221 three-player games, none. Two-player teams averaged 1.63 points below 25. The deal ruled out 0.013 of those points (0.007 to 0.019). The other 1.62 (1.54 to 1.70) were lost to hidden information or to play, and these games cannot say how much to each. In two-player games, 30% of the traced points below the ceiling went on discards of a card whose other copies were gone. Detail, with where in the game the ceiling fell: [humans.md](results/humans.md).
 
 ![Two grids of games, one per number of players, counted by the deal's best possible score (rows 22 to 25) and the team's score (columns 13 to 25). Nearly all games sit in the top row, ceiling 25, with the largest counts at 25, 24 and 23 points.](results/humans-ceiling.svg)
 
