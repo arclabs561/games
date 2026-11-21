@@ -10,11 +10,8 @@ The first pass brought the symbol count forward in [Spot It](../spot_it/README.m
 - [Yahtzee](../yahtzee/README.md) puts the eight-rule sheet beside its chance of winning a single game. Its expected score and the per-box breakdown follow.
 - [Peggle](../peggle/README.md) opens with six wins in ten and states the prior behind the answer. Checking after every game is a separate question. The README and both paper editions now read the same opening.
 
-## Next
+## Third pass
 
-| Order | Page | Edit and check |
-|---|---|---|
-| 1 | [Mastermind](../mastermind/README.md) | Start with the price of a guarantee. Across all 1,296 codes, the best strategy that always finishes in five guesses uses one more guess in total than the best strategy for the average. Check the two totals against the solved trees. |
-| 2 | [Egyptian Ratscrew](../egyptian_ratscrew/README.md) | Show the nine-card deal that keeps going even when someone slaps. Walk through one slappable pile. Check both choices of slap winner against the reachable positions before explaining why the game stays trapped. |
-
-Mastermind comes first because one comparison settles the opening question. Ratscrew needs a worked sequence that a reader can follow with a deck.
+- [Mastermind](../mastermind/README.md) plays every possible code once. Compare the total guesses with and without the five-guess guarantee.
+- [Egyptian Ratscrew](../egyptian_ratscrew/README.md) gives both players their cards in order. Follow the first sandwich and either slap winner into the same closed set of positions.
+- [Peggle](../peggle/README.md) gives the answer to six wins in ten before naming the uniform prior.
