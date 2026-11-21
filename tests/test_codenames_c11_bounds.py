@@ -28,6 +28,22 @@ def test_short_reply_bounds_match_every_named_order(kinds, count):
         assert {historical[1], *short.get(historical, ())} == scores
 
 
+def test_trooper_example_matches_the_published_board_and_score():
+    rows = json.loads(c11.LISTS.read_text())["boards"]
+    row = next(r for r in rows if (r["seed"], r["board"]) == (c11.TEST, 896))
+    assert row["strict"]["P"] == "trooper/2"
+    guesses = c11.read_guesses(c11.GUESSES.read_text())
+    cell = guesses["P", "gpt-oss-120b", c11.TEST, 0][896]
+    assert c11.read_cell(cell) == (1, -8.0, False)
+
+    board = c4.boards(c11.TEST, 897)[896]
+    for reply, corrected_value in [("SOLDIER", 1), ("SOLDIER, ROOM", -8)]:
+        parsed = c4.read_ranking(reply, board.words)
+        assert c4.play_turn(board, parsed["ranking"], 2) == (1, -8)
+        named = parsed["ranking"][: parsed["named"]]
+        assert c4.play_turn(board, named, 2) == (1, corrected_value)
+
+
 def test_committed_primary_bounds():
     rows = [r for r in json.loads(c11.LISTS.read_text())["boards"] if r["seed"] == c11.TEST]
     bounds = c11_bounds.primary_bounds(rows, c11.read_guesses(c11.GUESSES.read_text()))
