@@ -241,6 +241,30 @@ def run(
     return summary
 
 
+# Inputs from the private dataset (in a job), for files that are not committed.
+
+DATASET = "arclabs561/games-runs"
+
+
+def fetch_text(spec: str) -> str:
+    """The text of a committed path, or of `hf:<path>` files in the private dataset
+    (several, comma-separated, joined in order)."""
+    if not spec.startswith("hf:"):
+        return Path(spec).read_text()
+    import os
+
+    from huggingface_hub import hf_hub_download
+
+    parts = []
+    for item in spec.removeprefix("hf:").split(","):
+        item = item.removeprefix("hf:")
+        local = hf_hub_download(
+            DATASET, item, repo_type="dataset", token=os.environ.get("HF_TOKEN")
+        )
+        parts.append(Path(local).read_text())
+    return "".join(p if p.endswith("\n") else p + "\n" for p in parts)
+
+
 # Scoring (here).
 
 
@@ -315,12 +339,13 @@ def summarize(d: np.ndarray, reps: np.ndarray) -> dict:
     }
 
 
-def score(lists_path: Path = LISTS, guesses: Path = GUESSES, runs: Path = RUNS) -> dict:
+def score(lists_path: Path = LISTS, guesses: str = str(GUESSES), runs: Path = RUNS) -> dict:
     from codenames.c4score import bootstrap, holm, rounded
     from codenames.c11 import column, read_guesses, reply_counts
 
     data = json.loads(lists_path.read_text())
-    g = read_guesses(guesses.read_text())
+    text = fetch_text(guesses)
+    g = read_guesses(text)
     rows = [r for r in data["boards"] if r["seed"] == TEST]
     v = played(g, TEST)
     every = np.stack([v[k] for k in v])
@@ -391,7 +416,8 @@ def score(lists_path: Path = LISTS, guesses: Path = GUESSES, runs: Path = RUNS) 
         "plan": PLAN,
         "seed": TEST,
         "lists_sha256": sha256(lists_path.read_text()),
-        "guesses_sha256": sha256(guesses.read_text()),
+        "guesses_sha256": sha256(text),
+        "guesses": guesses,
         "boards_kept": int(keep.sum()),
         "boards_dropped": int((~keep).sum()),
         "primary": res,
@@ -448,6 +474,7 @@ def main() -> None:
     parser.add_argument("--workers", type=int, default=8)
     parser.add_argument("--cap", type=float, default=0.0)
     parser.add_argument("--out", type=Path)
+    parser.add_argument("--guesses", default=str(GUESSES), help="score: a file, or hf:path,...")
     args = parser.parse_args()
     if args.what == "lists":
         picks, text = lists()
@@ -456,7 +483,10 @@ def main() -> None:
         print(PICKS, sha256(picks), LISTS, sha256(text))
         return
     if args.what == "score":
-        result = score()
+        result = score(guesses=args.guesses)
+        if args.out and args.out.suffix != ".json":
+            args.out.mkdir(parents=True, exist_ok=True)
+            args.out = args.out / OUT.name
         (args.out or OUT).write_text(json.dumps(result, indent=1, sort_keys=True) + "\n")
         print(json.dumps(result["primary"], indent=1))
         return
