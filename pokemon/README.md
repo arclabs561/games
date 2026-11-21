@@ -1,6 +1,8 @@
 # Pokémon
 
-Which attacking types cover the type chart, which typings take the least damage, and what is the chart's equilibrium as a game? No six attacking types are super-effective against all 18; ten sets of seven are. Give each of the 18 attacking types one hit. Among the typings in the game, Steel/Fairy takes the least total damage from those hits. Played as a duel, the chart has a unique equilibrium on 11 types that matches every weight Schmitz (2021) published, and only 4.7% to 5.2% of the chart is a ranking. All exact. On the Gen 9 OU ladder, counting how many Pokémon have a typing ranks its usage better than the duel equilibrium does. No team of six is best: over 40 popular Pokémon, five models of a battle each have a mixed equilibrium of 3 to 15 teams.
+Dark, Electric, Fighting, Flying, Ground, Ice and Poison. With a move of each type, you can hit all 18 single types for super-effective damage. Drop any one and you lose coverage. There are ten sets of seven that work, and no set of six does. Fighting and Ground appear in all ten. What else hits Normal or Electric for double damage?
+
+On defense, give each attacking type one hit. Steel/Fairy takes the least total damage among typings that exist in the games. For team play, see the [five battle models](results/team-study.md). For what people actually use on the Gen 9 OU ladder, see the [usage study](results/usage-test.md).
 
 ![The Generation 6 type chart: attacking types down the side, defending types across the top. Colored cells are 2 (red), 1/2 (light blue) and 0 (black); blank cells are 1.](figures/type-chart.svg)
 
