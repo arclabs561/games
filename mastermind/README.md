@@ -1,6 +1,6 @@
 # Mastermind
 
-What is the fewest guesses that cracks every Mastermind code, and do the same strategies crack Fallout 3's terminals? The best strategy averages 5,625 / 1,296 ≈ 4.340 guesses, and the best that never needs a sixth guess 5,626 / 1,296. Koyama and Lai (1993) found both; they are recomputed here by exhaustive search, exact. On Fallout 3 terminals of 20 short words, the best play cracks 92.5% of passwords within four attempts and random consistent guessing 67.8%; simulated on 1,000 screens drawn from a word list, with exact results on each screen.
+What is the fewest guesses that cracks every Mastermind code, and do the same strategies crack Fallout 3's terminals? The best strategy averages 5,625 / 1,296 ≈ 4.340 guesses, and the best that never needs a sixth guess 5,626 / 1,296. Koyama and Lai (1993) found both; they are recomputed here by exhaustive search, exact. On Fallout 3 terminals of 20 short words, the best play cracks 92.5% of passwords within four attempts and random consistent guessing 67.8%; simulated on 1,000 screens drawn from a word list, with exact results on each screen. Screens of common words are slightly easier: the best play cracks 1.1 points more (0.8 to 1.3) than on screens from the full list (plan M1).
 
 ![A dark terminal panel lists 18 five-letter words in two columns. A log on the right shows the guesses PLANT, QUEEN and RIVER with likeness 0, 1 and 2, then WATER as the one candidate left and an exact match.](figures/terminal.svg)
 
@@ -40,6 +40,7 @@ On this screen it is sure to crack the password within four attempts, whichever 
 | Same, expected size | 88.1% ± 0.5 | same |
 | Same, random consistent guessing | 67.8% ± 0.4 | same |
 | From Average level up: minimax and expected size against the best possible | within 0.05 points | same |
+| Same, screens of common words (Zipf ≥ 3.0) minus the full list | +1.09 points (0.85 to 1.33): 93.94% against 92.85% | simulated, 5,000 screens per list (seeds 32 and 31), exact on each screen; bootstrap over screens; plan M1 |
 | Three published Fallout 4 screens | expected size and "closest word" reproduce Math Goes Pop's table exactly | exact |
 
 ## How the results are checked
@@ -125,6 +126,21 @@ Intervals under 0.1 points are left out. "100" means every password on every sam
 
 **The first guess matters less than the later ones.** Take a player who uses a rule for the first guess and then makes the best guess every time. On the screens with the most words at each level (5,000 screens), the minimax rule keeps 99.41% ± 0.05 of the best possible chance on average, and its first guess is an optimal one on 90.5% of screens. Expected size keeps 99.31% and common keeps 99.11%. A uniformly random first word keeps 96.91%.
 
+**Screens of common words** (plan M1, [`results/m1.json`](results/m1.json)). ENABLE has many words that a game would not show, such as JAUK and WHIT. The same study was run on screens drawn only from ENABLE words with a Zipf frequency of at least 3.0 in wordfreq 3.1.1 (1,842 four-letter words, down to 48 of fifteen letters), and, as a replicate, on new ENABLE screens. Each row has 5,000 screens per list, with seed 31 for ENABLE and 32 for the common list. The primary test is the best play on 20-word Very Easy screens, common minus ENABLE, with a bootstrap over screens (10,000 resamples, seed 0).
+
+- Common words make the hardest row easier. The best play cracks 93.94% ± 0.16 of passwords against 92.85% ± 0.18 on ENABLE, a difference of 1.09 points (0.85 to 1.33). The plan could detect 0.34 points. Every strategy gains about as much (0.79 to 1.21 points), and the share of screens where no strategy can always win falls from 70.0% to 65.7%.
+- The cut matters little. At Zipf 2.5 the gain is 0.93 points (0.69 to 1.18), at 3.5 it is 1.90 points (1.67 to 2.13; best play 94.75% ± 0.15).
+- From Easy up the two lists are within 0.9 points for every strategy, and the best play cracks every password on Average, Hard and Very Hard screens with either list.
+- Common short words are not more alike. Their mean likeness is 0.34 for four letters and 0.44 for five, against 0.32 and 0.44 for ENABLE.
+- The hardest common screen found is FLAG PILL CHEF BORA SECS RUDD DRUG GREY ECHO HASH, a 10-word screen on which the best play cracks 6 of 10.
+
+| 20-word Very Easy screens | Expected size | Minimax | Common | Random | Best possible |
+|---|---:|---:|---:|---:|---:|
+| ENABLE (seed 31) | 88.4 ± 0.2 | 88.1 ± 0.2 | 85.3 ± 0.2 | 68.2 ± 0.2 | 92.85 ± 0.18 |
+| Common words, Zipf ≥ 3.0 (seed 32) | 89.6 ± 0.2 | 89.2 ± 0.2 | 86.1 ± 0.2 | 69.4 ± 0.2 | 93.94 ± 0.16 |
+
+Two checks come with the run. Recomputed from seed 3, the code gives the table above it to every printed digit (42 cells). The new ENABLE screens (seed 31) agree with that table to within 0.44 points on every cell; 17 of the 126 cells fall outside a nominal 95% band of the two runs. Most of those are rows near 100% where the strategies miss on the same few screens, so the cells are not independent, and the largest gap is 0.44 points (random guessing on 20-word Very Easy screens, against a band of 0.43).
+
 ## Data
 
 | Source | What | License | Committed |
@@ -132,11 +148,12 @@ Intervals under 0.1 points are left out. "100" means every password on every sam
 | ENABLE (`boggle/enable1.txt`) | the word list the screens are drawn from | public domain | yes, in `boggle/` |
 | Math Goes Pop (2016) | three Fallout 4 screens and their results | not stated | the screens' words, in `fallout3.py` (`FALLOUT4_SCREENS`) |
 | Fallout wiki and GECK wiki | word lengths, word counts, the four-attempt rule | read, not copied | no |
+| wordfreq 3.1.1 (R. Speer), from SUBTLEX and other corpora | Zipf frequencies for the common-word screens (plan M1) | code Apache 2.0; data CC BY-SA 4.0, crediting the SUBTLEX authors | no; used at run time, and only counts are committed |
 
 ## Open questions
 
 - How does the game choose a screen's words, and are duds chosen to share letters with the password? A list of real screens would settle whether the ENABLE screens here are easier or harder than the game's.
-- ENABLE has many words that a game would not use, such as JAUK and WHIT. Would screens of common words change the table?
+- Common words (Zipf ≥ 3.0 in wordfreq) make 20-word Very Easy screens about a point easier. Does a second frequency source, such as the Google Books Ngram counts, give the same shift?
 - Is there a rule for the first guess that keeps more of the best possible chance than minimax's 99.41%?
 
 ## Usage
@@ -150,6 +167,7 @@ uv run python -m mastermind.fallout3 --best doctrines=3 batteries scorpions gene
 uv run python -m mastermind.fallout3 --study       # the Fallout table, about 4 minutes
 uv run python -m mastermind.fallout3 --published   # the Fallout 4 screens, about half a minute
 uv run python -m mastermind.figures                # the figures in figures/
+uv run python -m mastermind.m1 score                # results/m1.json from the committed slices (plan M1)
 ```
 
 ## Files
@@ -161,4 +179,5 @@ uv run python -m mastermind.figures                # the figures in figures/
 | `optimal.py` | The best strategies, by exhaustive search |
 | `results/optimal.json` | The two optimal trees and their totals, as `optimal.py` writes them |
 | `fallout3.py` | The same strategies on Fallout 3 terminals, the helper, and the study |
+| `m1.py`, `results/m1-slices/`, `results/m1.json` | Plan M1: the study on screens of common words, its five slices (run on GitHub Actions) and the scored result |
 | `figures.py`, `figures/` | This README's figures, as SVG; a test checks they are current |

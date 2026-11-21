@@ -1,0 +1,2570 @@
+{
+ "checks": {
+  "readme_seed_3": {
+   "cells": 42,
+   "mismatches": []
+  },
+  "replicate_seed_31_vs_3": {
+   "cells": 126,
+   "cells_detail": {
+    "Average 10 | best possible": {
+     "allowed": 0.00392,
+     "difference_points": -0.002,
+     "inside": true
+    },
+    "Average 10 | entropy": {
+     "allowed": 0.01108,
+     "difference_points": -0.016,
+     "inside": false
+    },
+    "Average 10 | expected size": {
+     "allowed": 0.007838,
+     "difference_points": -0.008,
+     "inside": false
+    },
+    "Average 10 | minimax": {
+     "allowed": 0.006788,
+     "difference_points": -0.006,
+     "inside": true
+    },
+    "Average 10 | most in common": {
+     "allowed": 0.154645,
+     "difference_points": -0.108,
+     "inside": true
+    },
+    "Average 10 | most parts": {
+     "allowed": 0.048197,
+     "difference_points": -0.064,
+     "inside": false
+    },
+    "Average 10 | random candidate": {
+     "allowed": 0.099522,
+     "difference_points": -0.016209,
+     "inside": true
+    },
+    "Average 15 | best possible": {
+     "allowed": 0.0,
+     "difference_points": 0.0,
+     "inside": true
+    },
+    "Average 15 | entropy": {
+     "allowed": 0.039412,
+     "difference_points": 0.014667,
+     "inside": true
+    },
+    "Average 15 | expected size": {
+     "allowed": 0.036482,
+     "difference_points": 0.021333,
+     "inside": true
+    },
+    "Average 15 | minimax": {
+     "allowed": 0.027983,
+     "difference_points": 0.006667,
+     "inside": true
+    },
+    "Average 15 | most in common": {
+     "allowed": 0.246982,
+     "difference_points": 0.074667,
+     "inside": true
+    },
+    "Average 15 | most parts": {
+     "allowed": 0.103582,
+     "difference_points": -0.118667,
+     "inside": false
+    },
+    "Average 15 | random candidate": {
+     "allowed": 0.153227,
+     "difference_points": 0.022677,
+     "inside": true
+    },
+    "Average 20 | best possible": {
+     "allowed": 0.0,
+     "difference_points": 0.0,
+     "inside": true
+    },
+    "Average 20 | entropy": {
+     "allowed": 0.063099,
+     "difference_points": -0.072,
+     "inside": false
+    },
+    "Average 20 | expected size": {
+     "allowed": 0.036972,
+     "difference_points": -0.03,
+     "inside": true
+    },
+    "Average 20 | minimax": {
+     "allowed": 0.035958,
+     "difference_points": -0.004,
+     "inside": true
+    },
+    "Average 20 | most in common": {
+     "allowed": 0.266459,
+     "difference_points": -0.17,
+     "inside": true
+    },
+    "Average 20 | most parts": {
+     "allowed": 0.20613,
+     "difference_points": 0.131,
+     "inside": true
+    },
+    "Average 20 | random candidate": {
+     "allowed": 0.182611,
+     "difference_points": 0.152772,
+     "inside": true
+    },
+    "Average 5 | best possible": {
+     "allowed": 0.013577,
+     "difference_points": -0.012,
+     "inside": true
+    },
+    "Average 5 | entropy": {
+     "allowed": 0.013577,
+     "difference_points": -0.012,
+     "inside": true
+    },
+    "Average 5 | expected size": {
+     "allowed": 0.013577,
+     "difference_points": -0.012,
+     "inside": true
+    },
+    "Average 5 | minimax": {
+     "allowed": 0.013577,
+     "difference_points": -0.012,
+     "inside": true
+    },
+    "Average 5 | most in common": {
+     "allowed": 0.061196,
+     "difference_points": -0.004,
+     "inside": true
+    },
+    "Average 5 | most parts": {
+     "allowed": 0.013577,
+     "difference_points": -0.012,
+     "inside": true
+    },
+    "Average 5 | random candidate": {
+     "allowed": 0.022234,
+     "difference_points": -0.010533,
+     "inside": true
+    },
+    "Easy 10 | best possible": {
+     "allowed": 0.047434,
+     "difference_points": 0.01,
+     "inside": true
+    },
+    "Easy 10 | entropy": {
+     "allowed": 0.103591,
+     "difference_points": 0.012,
+     "inside": true
+    },
+    "Easy 10 | expected size": {
+     "allowed": 0.09268,
+     "difference_points": 0.018,
+     "inside": true
+    },
+    "Easy 10 | minimax": {
+     "allowed": 0.083396,
+     "difference_points": -0.002,
+     "inside": true
+    },
+    "Easy 10 | most in common": {
+     "allowed": 0.2247,
+     "difference_points": -0.088,
+     "inside": true
+    },
+    "Easy 10 | most parts": {
+     "allowed": 0.203015,
+     "difference_points": -0.06,
+     "inside": true
+    },
+    "Easy 10 | random candidate": {
+     "allowed": 0.255303,
+     "difference_points": 0.251657,
+     "inside": true
+    },
+    "Easy 15 | best possible": {
+     "allowed": 0.046234,
+     "difference_points": 0.012,
+     "inside": true
+    },
+    "Easy 15 | entropy": {
+     "allowed": 0.179192,
+     "difference_points": 0.033333,
+     "inside": true
+    },
+    "Easy 15 | expected size": {
+     "allowed": 0.147625,
+     "difference_points": -0.037333,
+     "inside": true
+    },
+    "Easy 15 | minimax": {
+     "allowed": 0.137107,
+     "difference_points": -0.022667,
+     "inside": true
+    },
+    "Easy 15 | most in common": {
+     "allowed": 0.309279,
+     "difference_points": 0.061333,
+     "inside": true
+    },
+    "Easy 15 | most parts": {
+     "allowed": 0.34048,
+     "difference_points": -0.1,
+     "inside": true
+    },
+    "Easy 15 | random candidate": {
+     "allowed": 0.336351,
+     "difference_points": 0.3116,
+     "inside": true
+    },
+    "Easy 20 | best possible": {
+     "allowed": 0.077116,
+     "difference_points": -0.006,
+     "inside": true
+    },
+    "Easy 20 | entropy": {
+     "allowed": 0.23923,
+     "difference_points": -0.072,
+     "inside": true
+    },
+    "Easy 20 | expected size": {
+     "allowed": 0.213149,
+     "difference_points": 0.1,
+     "inside": true
+    },
+    "Easy 20 | minimax": {
+     "allowed": 0.220491,
+     "difference_points": 0.046,
+     "inside": true
+    },
+    "Easy 20 | most in common": {
+     "allowed": 0.354427,
+     "difference_points": 0.024,
+     "inside": true
+    },
+    "Easy 20 | most parts": {
+     "allowed": 0.444261,
+     "difference_points": -0.215,
+     "inside": true
+    },
+    "Easy 20 | random candidate": {
+     "allowed": 0.355217,
+     "difference_points": -0.007125,
+     "inside": true
+    },
+    "Easy 5 | best possible": {
+     "allowed": 0.074297,
+     "difference_points": 0.0,
+     "inside": true
+    },
+    "Easy 5 | entropy": {
+     "allowed": 0.074297,
+     "difference_points": 0.0,
+     "inside": true
+    },
+    "Easy 5 | expected size": {
+     "allowed": 0.074297,
+     "difference_points": 0.0,
+     "inside": true
+    },
+    "Easy 5 | minimax": {
+     "allowed": 0.074297,
+     "difference_points": 0.0,
+     "inside": true
+    },
+    "Easy 5 | most in common": {
+     "allowed": 0.076324,
+     "difference_points": -0.02,
+     "inside": true
+    },
+    "Easy 5 | most parts": {
+     "allowed": 0.074297,
+     "difference_points": 0.0,
+     "inside": true
+    },
+    "Easy 5 | random candidate": {
+     "allowed": 0.078695,
+     "difference_points": -0.0032,
+     "inside": true
+    },
+    "Hard 10 | best possible": {
+     "allowed": 0.0,
+     "difference_points": 0.0,
+     "inside": true
+    },
+    "Hard 10 | entropy": {
+     "allowed": 0.00392,
+     "difference_points": -0.002,
+     "inside": true
+    },
+    "Hard 10 | expected size": {
+     "allowed": 0.00392,
+     "difference_points": -0.002,
+     "inside": true
+    },
+    "Hard 10 | minimax": {
+     "allowed": 0.0,
+     "difference_points": 0.0,
+     "inside": true
+    },
+    "Hard 10 | most in common": {
+     "allowed": 0.122164,
+     "difference_points": -0.054,
+     "inside": true
+    },
+    "Hard 10 | most parts": {
+     "allowed": 0.012385,
+     "difference_points": -0.02,
+     "inside": false
+    },
+    "Hard 10 | random candidate": {
+     "allowed": 0.059669,
+     "difference_points": -0.062076,
+     "inside": false
+    },
+    "Hard 15 | best possible": {
+     "allowed": 0.0,
+     "difference_points": 0.0,
+     "inside": true
+    },
+    "Hard 15 | entropy": {
+     "allowed": 0.019195,
+     "difference_points": 0.008,
+     "inside": true
+    },
+    "Hard 15 | expected size": {
+     "allowed": 0.018836,
+     "difference_points": 0.010667,
+     "inside": true
+    },
+    "Hard 15 | minimax": {
+     "allowed": 0.0,
+     "difference_points": 0.0,
+     "inside": true
+    },
+    "Hard 15 | most in common": {
+     "allowed": 0.203929,
+     "difference_points": 0.190667,
+     "inside": true
+    },
+    "Hard 15 | most parts": {
+     "allowed": 0.050444,
+     "difference_points": -0.02,
+     "inside": true
+    },
+    "Hard 15 | random candidate": {
+     "allowed": 0.098687,
+     "difference_points": 0.071238,
+     "inside": true
+    },
+    "Hard 20 | best possible": {
+     "allowed": 0.0,
+     "difference_points": 0.0,
+     "inside": true
+    },
+    "Hard 20 | entropy": {
+     "allowed": 0.022392,
+     "difference_points": -0.011,
+     "inside": true
+    },
+    "Hard 20 | expected size": {
+     "allowed": 0.015299,
+     "difference_points": -0.001,
+     "inside": true
+    },
+    "Hard 20 | minimax": {
+     "allowed": 0.010371,
+     "difference_points": 0.002,
+     "inside": true
+    },
+    "Hard 20 | most in common": {
+     "allowed": 0.220105,
+     "difference_points": -0.023,
+     "inside": true
+    },
+    "Hard 20 | most parts": {
+     "allowed": 0.096606,
+     "difference_points": 0.022,
+     "inside": true
+    },
+    "Hard 20 | random candidate": {
+     "allowed": 0.124773,
+     "difference_points": -0.033255,
+     "inside": true
+    },
+    "Hard 5 | best possible": {
+     "allowed": 0.0,
+     "difference_points": 0.0,
+     "inside": true
+    },
+    "Hard 5 | entropy": {
+     "allowed": 0.0,
+     "difference_points": 0.0,
+     "inside": true
+    },
+    "Hard 5 | expected size": {
+     "allowed": 0.0,
+     "difference_points": 0.0,
+     "inside": true
+    },
+    "Hard 5 | minimax": {
+     "allowed": 0.0,
+     "difference_points": 0.0,
+     "inside": true
+    },
+    "Hard 5 | most in common": {
+     "allowed": 0.040738,
+     "difference_points": 0.012,
+     "inside": true
+    },
+    "Hard 5 | most parts": {
+     "allowed": 0.0,
+     "difference_points": 0.0,
+     "inside": true
+    },
+    "Hard 5 | random candidate": {
+     "allowed": 0.009457,
+     "difference_points": -0.002533,
+     "inside": true
+    },
+    "Very Easy 10 | best possible": {
+     "allowed": 0.240747,
+     "difference_points": 0.004,
+     "inside": true
+    },
+    "Very Easy 10 | entropy": {
+     "allowed": 0.32828,
+     "difference_points": -0.116,
+     "inside": true
+    },
+    "Very Easy 10 | expected size": {
+     "allowed": 0.308778,
+     "difference_points": -0.17,
+     "inside": true
+    },
+    "Very Easy 10 | minimax": {
+     "allowed": 0.303248,
+     "difference_points": -0.068,
+     "inside": true
+    },
+    "Very Easy 10 | most in common": {
+     "allowed": 0.376156,
+     "difference_points": -0.082,
+     "inside": true
+    },
+    "Very Easy 10 | most parts": {
+     "allowed": 0.48683,
+     "difference_points": -0.26,
+     "inside": true
+    },
+    "Very Easy 10 | random candidate": {
+     "allowed": 0.477593,
+     "difference_points": -0.145696,
+     "inside": true
+    },
+    "Very Easy 15 | best possible": {
+     "allowed": 0.307178,
+     "difference_points": -0.016,
+     "inside": true
+    },
+    "Very Easy 15 | entropy": {
+     "allowed": 0.467158,
+     "difference_points": 0.066667,
+     "inside": true
+    },
+    "Very Easy 15 | expected size": {
+     "allowed": 0.408328,
+     "difference_points": -0.013333,
+     "inside": true
+    },
+    "Very Easy 15 | minimax": {
+     "allowed": 0.39975,
+     "difference_points": -0.165333,
+     "inside": true
+    },
+    "Very Easy 15 | most in common": {
+     "allowed": 0.435653,
+     "difference_points": -0.005333,
+     "inside": true
+    },
+    "Very Easy 15 | most parts": {
+     "allowed": 0.652985,
+     "difference_points": 0.077333,
+     "inside": true
+    },
+    "Very Easy 15 | random candidate": {
+     "allowed": 0.482711,
+     "difference_points": 0.218582,
+     "inside": true
+    },
+    "Very Easy 20 | best possible": {
+     "allowed": 0.442106,
+     "difference_points": 0.33,
+     "inside": true
+    },
+    "Very Easy 20 | entropy": {
+     "allowed": 0.529049,
+     "difference_points": 0.367,
+     "inside": true
+    },
+    "Very Easy 20 | expected size": {
+     "allowed": 0.506894,
+     "difference_points": 0.285,
+     "inside": true
+    },
+    "Very Easy 20 | minimax": {
+     "allowed": 0.519976,
+     "difference_points": 0.483,
+     "inside": true
+    },
+    "Very Easy 20 | most in common": {
+     "allowed": 0.496106,
+     "difference_points": 0.175,
+     "inside": true
+    },
+    "Very Easy 20 | most parts": {
+     "allowed": 0.63601,
+     "difference_points": -0.062,
+     "inside": true
+    },
+    "Very Easy 20 | random candidate": {
+     "allowed": 0.426274,
+     "difference_points": 0.438174,
+     "inside": false
+    },
+    "Very Easy 5 | best possible": {
+     "allowed": 0.162869,
+     "difference_points": -0.192,
+     "inside": false
+    },
+    "Very Easy 5 | entropy": {
+     "allowed": 0.162869,
+     "difference_points": -0.192,
+     "inside": false
+    },
+    "Very Easy 5 | expected size": {
+     "allowed": 0.162869,
+     "difference_points": -0.192,
+     "inside": false
+    },
+    "Very Easy 5 | minimax": {
+     "allowed": 0.162869,
+     "difference_points": -0.192,
+     "inside": false
+    },
+    "Very Easy 5 | most in common": {
+     "allowed": 0.184969,
+     "difference_points": -0.108,
+     "inside": true
+    },
+    "Very Easy 5 | most parts": {
+     "allowed": 0.162869,
+     "difference_points": -0.192,
+     "inside": false
+    },
+    "Very Easy 5 | random candidate": {
+     "allowed": 0.167024,
+     "difference_points": -0.1882,
+     "inside": false
+    },
+    "Very Hard 12 | best possible": {
+     "allowed": 0.0,
+     "difference_points": 0.0,
+     "inside": true
+    },
+    "Very Hard 12 | entropy": {
+     "allowed": 0.0,
+     "difference_points": 0.0,
+     "inside": true
+    },
+    "Very Hard 12 | expected size": {
+     "allowed": 0.0,
+     "difference_points": 0.0,
+     "inside": true
+    },
+    "Very Hard 12 | minimax": {
+     "allowed": 0.0,
+     "difference_points": 0.0,
+     "inside": true
+    },
+    "Very Hard 12 | most in common": {
+     "allowed": 0.112665,
+     "difference_points": -0.01,
+     "inside": true
+    },
+    "Very Hard 12 | most parts": {
+     "allowed": 0.003267,
+     "difference_points": -0.001667,
+     "inside": true
+    },
+    "Very Hard 12 | random candidate": {
+     "allowed": 0.053449,
+     "difference_points": 0.053596,
+     "inside": false
+    },
+    "Very Hard 13 | best possible": {
+     "allowed": 0.0,
+     "difference_points": 0.0,
+     "inside": true
+    },
+    "Very Hard 13 | entropy": {
+     "allowed": 0.0,
+     "difference_points": 0.0,
+     "inside": true
+    },
+    "Very Hard 13 | expected size": {
+     "allowed": 0.0,
+     "difference_points": 0.0,
+     "inside": true
+    },
+    "Very Hard 13 | minimax": {
+     "allowed": 0.0,
+     "difference_points": 0.0,
+     "inside": true
+    },
+    "Very Hard 13 | most in common": {
+     "allowed": 0.118187,
+     "difference_points": 0.0,
+     "inside": true
+    },
+    "Very Hard 13 | most parts": {
+     "allowed": 0.007382,
+     "difference_points": -0.009231,
+     "inside": false
+    },
+    "Very Hard 13 | random candidate": {
+     "allowed": 0.048346,
+     "difference_points": -0.056626,
+     "inside": false
+    }
+   },
+   "outside": 17
+  }
+ },
+ "plan": "experiments/plans/M1.md",
+ "pool_sizes": {
+  "enable": {
+   "10": 20300,
+   "11": 15504,
+   "12": 11357,
+   "13": 7827,
+   "14": 5127,
+   "15": 3192,
+   "4": 3903,
+   "5": 8636,
+   "6": 15231,
+   "7": 23109,
+   "8": 28420,
+   "9": 24873
+  },
+  "zipf 2.5": {
+   "10": 3469,
+   "11": 2191,
+   "12": 1350,
+   "13": 738,
+   "14": 313,
+   "15": 160,
+   "4": 2392,
+   "5": 3801,
+   "6": 5149,
+   "7": 5771,
+   "8": 5436,
+   "9": 4651
+  },
+  "zipf 3.0": {
+   "10": 1952,
+   "11": 1161,
+   "12": 665,
+   "13": 359,
+   "14": 140,
+   "15": 48,
+   "4": 1842,
+   "5": 2686,
+   "6": 3414,
+   "7": 3649,
+   "8": 3325,
+   "9": 2698
+  },
+  "zipf 3.5": {
+   "10": 933,
+   "11": 561,
+   "12": 300,
+   "13": 155,
+   "14": 46,
+   "15": 10,
+   "4": 1300,
+   "5": 1741,
+   "6": 2012,
+   "7": 2034,
+   "8": 1812,
+   "9": 1334
+  }
+ },
+ "primary": {
+  "h_common": {
+   "detectable_effect_points": 0.34181,
+   "excludes_0": true,
+   "high": 1.331,
+   "low": 0.849,
+   "points": 1.089,
+   "resamples": 10000,
+   "sd_points": {
+    "a": 5.751165,
+    "b": 6.437064
+   },
+   "seed": 0
+  },
+  "metric": "best play, percent of passwords cracked within four attempts, common - ENABLE",
+  "row": "Very Easy 20"
+ },
+ "secondary": {
+  "common": {
+   "Average 10": {
+    "best possible": {
+     "half_width": 0.0,
+     "percent": 100.0,
+     "screens_missed": 0
+    },
+    "entropy": {
+     "half_width": 0.009597,
+     "percent": 99.988,
+     "screens_missed": 6
+    },
+    "expected size": {
+     "half_width": 0.005543,
+     "percent": 99.996,
+     "screens_missed": 2
+    },
+    "mean_likeness_by_length": {
+     "10": 0.945614,
+     "9": 0.843539
+    },
+    "minimax": {
+     "half_width": 0.00392,
+     "percent": 99.998,
+     "screens_missed": 1
+    },
+    "most in common": {
+     "half_width": 0.060059,
+     "percent": 99.546,
+     "screens_missed": 219
+    },
+    "most parts": {
+     "half_width": 0.020316,
+     "percent": 99.946,
+     "screens_missed": 27
+    },
+    "random candidate": {
+     "half_width": 0.039532,
+     "percent": 98.518972
+    },
+    "screens_no_sure_win_percent": 0.0
+   },
+   "Average 15": {
+    "best possible": {
+     "half_width": 0.0,
+     "percent": 100.0,
+     "screens_missed": 0
+    },
+    "entropy": {
+     "half_width": 0.015625,
+     "percent": 99.952,
+     "screens_missed": 36
+    },
+    "expected size": {
+     "half_width": 0.012505,
+     "percent": 99.969333,
+     "screens_missed": 23
+    },
+    "mean_likeness_by_length": {
+     "10": 0.949724,
+     "9": 0.844073
+    },
+    "minimax": {
+     "half_width": 0.009411,
+     "percent": 99.982667,
+     "screens_missed": 13
+    },
+    "most in common": {
+     "half_width": 0.083828,
+     "percent": 98.642667,
+     "screens_missed": 915
+    },
+    "most parts": {
+     "half_width": 0.045209,
+     "percent": 99.625333,
+     "screens_missed": 265
+    },
+    "random candidate": {
+     "half_width": 0.060351,
+     "percent": 95.501405
+    },
+    "screens_no_sure_win_percent": 0.0
+   },
+   "Average 20": {
+    "best possible": {
+     "half_width": 0.0,
+     "percent": 100.0,
+     "screens_missed": 0
+    },
+    "entropy": {
+     "half_width": 0.026487,
+     "percent": 99.821,
+     "screens_missed": 174
+    },
+    "expected size": {
+     "half_width": 0.018138,
+     "percent": 99.917,
+     "screens_missed": 81
+    },
+    "mean_likeness_by_length": {
+     "10": 0.950147,
+     "9": 0.842277
+    },
+    "minimax": {
+     "half_width": 0.014067,
+     "percent": 99.95,
+     "screens_missed": 49
+    },
+    "most in common": {
+     "half_width": 0.10288,
+     "percent": 97.223,
+     "screens_missed": 2141
+    },
+    "most parts": {
+     "half_width": 0.071711,
+     "percent": 98.841,
+     "screens_missed": 968
+    },
+    "random candidate": {
+     "half_width": 0.076357,
+     "percent": 91.771313
+    },
+    "screens_no_sure_win_percent": 0.0
+   },
+   "Average 5": {
+    "best possible": {
+     "half_width": 0.0,
+     "percent": 100.0,
+     "screens_missed": 0
+    },
+    "entropy": {
+     "half_width": 0.0,
+     "percent": 100.0,
+     "screens_missed": 0
+    },
+    "expected size": {
+     "half_width": 0.0,
+     "percent": 100.0,
+     "screens_missed": 0
+    },
+    "mean_likeness_by_length": {
+     "10": 0.952073,
+     "9": 0.822592
+    },
+    "minimax": {
+     "half_width": 0.0,
+     "percent": 100.0,
+     "screens_missed": 0
+    },
+    "most in common": {
+     "half_width": 0.013577,
+     "percent": 99.988,
+     "screens_missed": 3
+    },
+    "most parts": {
+     "half_width": 0.0,
+     "percent": 100.0,
+     "screens_missed": 0
+    },
+    "random candidate": {
+     "half_width": 0.005909,
+     "percent": 99.955133
+    },
+    "screens_no_sure_win_percent": 0.0
+   },
+   "Easy 10": {
+    "best possible": {
+     "half_width": 0.012988,
+     "percent": 99.978,
+     "screens_missed": 11
+    },
+    "entropy": {
+     "half_width": 0.034583,
+     "percent": 99.846,
+     "screens_missed": 76
+    },
+    "expected size": {
+     "half_width": 0.028914,
+     "percent": 99.89,
+     "screens_missed": 55
+    },
+    "mean_likeness_by_length": {
+     "6": 0.559084,
+     "7": 0.650731,
+     "8": 0.732338
+    },
+    "minimax": {
+     "half_width": 0.025,
+     "percent": 99.918,
+     "screens_missed": 41
+    },
+    "most in common": {
+     "half_width": 0.08556,
+     "percent": 99.044,
+     "screens_missed": 457
+    },
+    "most parts": {
+     "half_width": 0.077684,
+     "percent": 99.288,
+     "screens_missed": 327
+    },
+    "random candidate": {
+     "half_width": 0.093065,
+     "percent": 95.971572
+    },
+    "screens_no_sure_win_percent": 0.22
+   },
+   "Easy 15": {
+    "best possible": {
+     "half_width": 0.011069,
+     "percent": 99.976,
+     "screens_missed": 18
+    },
+    "entropy": {
+     "half_width": 0.065626,
+     "percent": 99.202667,
+     "screens_missed": 548
+    },
+    "expected size": {
+     "half_width": 0.055636,
+     "percent": 99.397333,
+     "screens_missed": 431
+    },
+    "mean_likeness_by_length": {
+     "6": 0.553791,
+     "7": 0.646199,
+     "8": 0.733395
+    },
+    "minimax": {
+     "half_width": 0.052031,
+     "percent": 99.504,
+     "screens_missed": 346
+    },
+    "most in common": {
+     "half_width": 0.122817,
+     "percent": 96.893333,
+     "screens_missed": 1898
+    },
+    "most parts": {
+     "half_width": 0.131981,
+     "percent": 97.277333,
+     "screens_missed": 1505
+    },
+    "random candidate": {
+     "half_width": 0.127368,
+     "percent": 89.870548
+    },
+    "screens_no_sure_win_percent": 0.36
+   },
+   "Easy 20": {
+    "best possible": {
+     "half_width": 0.024774,
+     "percent": 99.854,
+     "screens_missed": 137
+    },
+    "entropy": {
+     "half_width": 0.099622,
+     "percent": 97.792,
+     "screens_missed": 1653
+    },
+    "expected size": {
+     "half_width": 0.0804,
+     "percent": 98.484,
+     "screens_missed": 1241
+    },
+    "mean_likeness_by_length": {
+     "6": 0.554186,
+     "7": 0.650888,
+     "8": 0.72702
+    },
+    "minimax": {
+     "half_width": 0.083308,
+     "percent": 98.604,
+     "screens_missed": 1068
+    },
+    "most in common": {
+     "half_width": 0.138584,
+     "percent": 94.28,
+     "screens_missed": 3520
+    },
+    "most parts": {
+     "half_width": 0.171688,
+     "percent": 94.174,
+     "screens_missed": 3121
+    },
+    "random candidate": {
+     "half_width": 0.140636,
+     "percent": 83.718407
+    },
+    "screens_no_sure_win_percent": 2.74
+   },
+   "Easy 5": {
+    "best possible": {
+     "half_width": 0.019194,
+     "percent": 99.976,
+     "screens_missed": 6
+    },
+    "entropy": {
+     "half_width": 0.019194,
+     "percent": 99.976,
+     "screens_missed": 6
+    },
+    "expected size": {
+     "half_width": 0.019194,
+     "percent": 99.976,
+     "screens_missed": 6
+    },
+    "mean_likeness_by_length": {
+     "6": 0.558571,
+     "7": 0.642697,
+     "8": 0.730564
+    },
+    "minimax": {
+     "half_width": 0.019194,
+     "percent": 99.976,
+     "screens_missed": 6
+    },
+    "most in common": {
+     "half_width": 0.02477,
+     "percent": 99.96,
+     "screens_missed": 10
+    },
+    "most parts": {
+     "half_width": 0.019194,
+     "percent": 99.976,
+     "screens_missed": 6
+    },
+    "random candidate": {
+     "half_width": 0.022326,
+     "percent": 99.838733
+    },
+    "screens_no_sure_win_percent": 0.12
+   },
+   "Hard 10": {
+    "best possible": {
+     "half_width": 0.0,
+     "percent": 100.0,
+     "screens_missed": 0
+    },
+    "entropy": {
+     "half_width": 0.0,
+     "percent": 100.0,
+     "screens_missed": 0
+    },
+    "expected size": {
+     "half_width": 0.0,
+     "percent": 100.0,
+     "screens_missed": 0
+    },
+    "mean_likeness_by_length": {
+     "11": 1.104056,
+     "12": 1.219427
+    },
+    "minimax": {
+     "half_width": 0.0,
+     "percent": 100.0,
+     "screens_missed": 0
+    },
+    "most in common": {
+     "half_width": 0.037086,
+     "percent": 99.826,
+     "screens_missed": 85
+    },
+    "most parts": {
+     "half_width": 0.010365,
+     "percent": 99.986,
+     "screens_missed": 7
+    },
+    "random candidate": {
+     "half_width": 0.023236,
+     "percent": 99.293818
+    },
+    "screens_no_sure_win_percent": 0.0
+   },
+   "Hard 15": {
+    "best possible": {
+     "half_width": 0.0,
+     "percent": 100.0,
+     "screens_missed": 0
+    },
+    "entropy": {
+     "half_width": 0.002613,
+     "percent": 99.998667,
+     "screens_missed": 1
+    },
+    "expected size": {
+     "half_width": 0.0,
+     "percent": 100.0,
+     "screens_missed": 0
+    },
+    "mean_likeness_by_length": {
+     "11": 1.107811,
+     "12": 1.216562
+    },
+    "minimax": {
+     "half_width": 0.0,
+     "percent": 100.0,
+     "screens_missed": 0
+    },
+    "most in common": {
+     "half_width": 0.058648,
+     "percent": 99.310667,
+     "screens_missed": 497
+    },
+    "most parts": {
+     "half_width": 0.017071,
+     "percent": 99.945333,
+     "screens_missed": 40
+    },
+    "random candidate": {
+     "half_width": 0.03584,
+     "percent": 97.672329
+    },
+    "screens_no_sure_win_percent": 0.0
+   },
+   "Hard 20": {
+    "best possible": {
+     "half_width": 0.0,
+     "percent": 100.0,
+     "screens_missed": 0
+    },
+    "entropy": {
+     "half_width": 0.007324,
+     "percent": 99.986,
+     "screens_missed": 14
+    },
+    "expected size": {
+     "half_width": 0.003394,
+     "percent": 99.997,
+     "screens_missed": 3
+    },
+    "mean_likeness_by_length": {
+     "11": 1.101108,
+     "12": 1.22196
+    },
+    "minimax": {
+     "half_width": 0.002772,
+     "percent": 99.998,
+     "screens_missed": 2
+    },
+    "most in common": {
+     "half_width": 0.074665,
+     "percent": 98.616,
+     "screens_missed": 1184
+    },
+    "most parts": {
+     "half_width": 0.030294,
+     "percent": 99.786,
+     "screens_missed": 199
+    },
+    "random candidate": {
+     "half_width": 0.047406,
+     "percent": 95.500688
+    },
+    "screens_no_sure_win_percent": 0.0
+   },
+   "Hard 5": {
+    "best possible": {
+     "half_width": 0.0,
+     "percent": 100.0,
+     "screens_missed": 0
+    },
+    "entropy": {
+     "half_width": 0.0,
+     "percent": 100.0,
+     "screens_missed": 0
+    },
+    "expected size": {
+     "half_width": 0.0,
+     "percent": 100.0,
+     "screens_missed": 0
+    },
+    "mean_likeness_by_length": {
+     "11": 1.092511,
+     "12": 1.231303
+    },
+    "minimax": {
+     "half_width": 0.0,
+     "percent": 100.0,
+     "screens_missed": 0
+    },
+    "most in common": {
+     "half_width": 0.019194,
+     "percent": 99.976,
+     "screens_missed": 6
+    },
+    "most parts": {
+     "half_width": 0.0,
+     "percent": 100.0,
+     "screens_missed": 0
+    },
+    "random candidate": {
+     "half_width": 0.004708,
+     "percent": 99.9754
+    },
+    "screens_no_sure_win_percent": 0.0
+   },
+   "Very Easy 10": {
+    "best possible": {
+     "half_width": 0.085521,
+     "percent": 99.186,
+     "screens_missed": 361
+    },
+    "entropy": {
+     "half_width": 0.122447,
+     "percent": 98.132,
+     "screens_missed": 836
+    },
+    "expected size": {
+     "half_width": 0.116268,
+     "percent": 98.33,
+     "screens_missed": 751
+    },
+    "mean_likeness_by_length": {
+     "4": 0.337157,
+     "5": 0.437123
+    },
+    "minimax": {
+     "half_width": 0.111266,
+     "percent": 98.5,
+     "screens_missed": 673
+    },
+    "most in common": {
+     "half_width": 0.143201,
+     "percent": 97.208,
+     "screens_missed": 1245
+    },
+    "most parts": {
+     "half_width": 0.197573,
+     "percent": 94.932,
+     "screens_missed": 1958
+    },
+    "random candidate": {
+     "half_width": 0.186205,
+     "percent": 88.669246
+    },
+    "screens_no_sure_win_percent": 7.22
+   },
+   "Very Easy 15": {
+    "best possible": {
+     "half_width": 0.110945,
+     "percent": 97.852,
+     "screens_missed": 1299
+    },
+    "entropy": {
+     "half_width": 0.177472,
+     "percent": 93.674667,
+     "screens_missed": 3053
+    },
+    "expected size": {
+     "half_width": 0.156917,
+     "percent": 94.585333,
+     "screens_missed": 2861
+    },
+    "mean_likeness_by_length": {
+     "4": 0.338744,
+     "5": 0.439788
+    },
+    "minimax": {
+     "half_width": 0.158707,
+     "percent": 95.076,
+     "screens_missed": 2582
+    },
+    "most in common": {
+     "half_width": 0.175164,
+     "percent": 92.022667,
+     "screens_missed": 3743
+    },
+    "most parts": {
+     "half_width": 0.245181,
+     "percent": 87.672,
+     "screens_missed": 4188
+    },
+    "random candidate": {
+     "half_width": 0.182606,
+     "percent": 77.926317
+    },
+    "screens_no_sure_win_percent": 25.98
+   },
+   "Very Easy 20": {
+    "best possible": {
+     "half_width": 0.159414,
+     "percent": 93.939,
+     "screens_missed": 3283
+    },
+    "entropy": {
+     "half_width": 0.197752,
+     "percent": 88.338,
+     "screens_missed": 4517
+    },
+    "expected size": {
+     "half_width": 0.18714,
+     "percent": 89.597,
+     "screens_missed": 4397
+    },
+    "mean_likeness_by_length": {
+     "4": 0.339548,
+     "5": 0.437469
+    },
+    "minimax": {
+     "half_width": 0.199842,
+     "percent": 89.241,
+     "screens_missed": 4372
+    },
+    "most in common": {
+     "half_width": 0.188104,
+     "percent": 86.087,
+     "screens_missed": 4808
+    },
+    "most parts": {
+     "half_width": 0.253055,
+     "percent": 80.656,
+     "screens_missed": 4890
+    },
+    "random candidate": {
+     "half_width": 0.161927,
+     "percent": 69.405378
+    },
+    "screens_no_sure_win_percent": 65.66
+   },
+   "Very Easy 5": {
+    "best possible": {
+     "half_width": 0.068271,
+     "percent": 99.692,
+     "screens_missed": 77
+    },
+    "entropy": {
+     "half_width": 0.068271,
+     "percent": 99.692,
+     "screens_missed": 77
+    },
+    "expected size": {
+     "half_width": 0.068271,
+     "percent": 99.692,
+     "screens_missed": 77
+    },
+    "mean_likeness_by_length": {
+     "4": 0.343742,
+     "5": 0.442157
+    },
+    "minimax": {
+     "half_width": 0.068271,
+     "percent": 99.692,
+     "screens_missed": 77
+    },
+    "most in common": {
+     "half_width": 0.068271,
+     "percent": 99.692,
+     "screens_missed": 77
+    },
+    "most parts": {
+     "half_width": 0.068271,
+     "percent": 99.692,
+     "screens_missed": 77
+    },
+    "random candidate": {
+     "half_width": 0.069609,
+     "percent": 99.275867
+    },
+    "screens_no_sure_win_percent": 1.54
+   },
+   "Very Hard 12": {
+    "best possible": {
+     "half_width": 0.0,
+     "percent": 100.0,
+     "screens_missed": 0
+    },
+    "entropy": {
+     "half_width": 0.0,
+     "percent": 100.0,
+     "screens_missed": 0
+    },
+    "expected size": {
+     "half_width": 0.0,
+     "percent": 100.0,
+     "screens_missed": 0
+    },
+    "mean_likeness_by_length": {
+     "13": 1.403124,
+     "14": 1.508322,
+     "15": 1.778788
+    },
+    "minimax": {
+     "half_width": 0.0,
+     "percent": 100.0,
+     "screens_missed": 0
+    },
+    "most in common": {
+     "half_width": 0.0319,
+     "percent": 99.848333,
+     "screens_missed": 88
+    },
+    "most parts": {
+     "half_width": 0.007302,
+     "percent": 99.991667,
+     "screens_missed": 5
+    },
+    "random candidate": {
+     "half_width": 0.01638,
+     "percent": 99.447205
+    },
+    "screens_no_sure_win_percent": 0.0
+   },
+   "Very Hard 13": {
+    "best possible": {
+     "half_width": 0.0,
+     "percent": 100.0,
+     "screens_missed": 0
+    },
+    "entropy": {
+     "half_width": 0.0,
+     "percent": 100.0,
+     "screens_missed": 0
+    },
+    "expected size": {
+     "half_width": 0.0,
+     "percent": 100.0,
+     "screens_missed": 0
+    },
+    "mean_likeness_by_length": {
+     "13": 1.393921,
+     "14": 1.49951,
+     "15": 1.783538
+    },
+    "minimax": {
+     "half_width": 0.0,
+     "percent": 100.0,
+     "screens_missed": 0
+    },
+    "most in common": {
+     "half_width": 0.036065,
+     "percent": 99.783077,
+     "screens_missed": 138
+    },
+    "most parts": {
+     "half_width": 0.005222,
+     "percent": 99.995385,
+     "screens_missed": 3
+    },
+    "random candidate": {
+     "half_width": 0.017903,
+     "percent": 99.279605
+    },
+    "screens_no_sure_win_percent": 0.0
+   }
+  },
+  "common_minus_enable_points": {
+   "Average 10": {
+    "best possible": 0.002,
+    "entropy": 0.004,
+    "expected size": 0.004,
+    "minimax": 0.004,
+    "most in common": 0.154,
+    "most parts": 0.05,
+    "random candidate": 0.155797
+   },
+   "Average 15": {
+    "best possible": 0.0,
+    "entropy": -0.009333,
+    "expected size": -0.005333,
+    "minimax": 0.002667,
+    "most in common": 0.421333,
+    "most parts": 0.064,
+    "random candidate": 0.316811
+   },
+   "Average 20": {
+    "best possible": 0.0,
+    "entropy": 0.038,
+    "expected size": 0.002,
+    "minimax": 0.009,
+    "most in common": 0.608,
+    "most parts": 0.225,
+    "random candidate": 0.465931
+   },
+   "Average 5": {
+    "best possible": 0.012,
+    "entropy": 0.012,
+    "expected size": 0.012,
+    "minimax": 0.012,
+    "most in common": 0.032,
+    "most parts": 0.012,
+    "random candidate": 0.019667
+   },
+   "Easy 10": {
+    "best possible": 0.018,
+    "entropy": 0.054,
+    "expected size": 0.062,
+    "minimax": 0.07,
+    "most in common": 0.232,
+    "most parts": 0.138,
+    "random candidate": 0.240646
+   },
+   "Easy 15": {
+    "best possible": 0.024,
+    "entropy": 0.109333,
+    "expected size": 0.101333,
+    "minimax": 0.1,
+    "most in common": 0.318667,
+    "most parts": 0.397333,
+    "random candidate": 0.502943
+   },
+   "Easy 20": {
+    "best possible": 0.085,
+    "entropy": 0.169,
+    "expected size": 0.259,
+    "minimax": 0.198,
+    "most in common": 0.731,
+    "most parts": 0.704,
+    "random candidate": 0.810197
+   },
+   "Easy 5": {
+    "best possible": 0.036,
+    "entropy": 0.036,
+    "expected size": 0.036,
+    "minimax": 0.036,
+    "most in common": 0.04,
+    "most parts": 0.036,
+    "random candidate": 0.0416
+   },
+   "Hard 10": {
+    "best possible": 0.0,
+    "entropy": 0.002,
+    "expected size": 0.002,
+    "minimax": 0.0,
+    "most in common": 0.2,
+    "most parts": 0.006,
+    "random candidate": 0.157464
+   },
+   "Hard 15": {
+    "best possible": 0.0,
+    "entropy": 0.004,
+    "expected size": 0.002667,
+    "minimax": 0.0,
+    "most in common": 0.4,
+    "most parts": 0.045333,
+    "random candidate": 0.442604
+   },
+   "Hard 20": {
+    "best possible": 0.0,
+    "entropy": 0.017,
+    "expected size": 0.008,
+    "minimax": 0.001,
+    "most in common": 0.709,
+    "most parts": 0.129,
+    "random candidate": 0.849368
+   },
+   "Hard 5": {
+    "best possible": 0.0,
+    "entropy": 0.0,
+    "expected size": 0.0,
+    "minimax": 0.0,
+    "most in common": -0.016,
+    "most parts": 0.0,
+    "random candidate": 0.001267
+   },
+   "Very Easy 10": {
+    "best possible": 0.262,
+    "entropy": 0.518,
+    "expected size": 0.51,
+    "minimax": 0.428,
+    "most in common": 0.42,
+    "most parts": 0.762,
+    "random candidate": 0.884117
+   },
+   "Very Easy 15": {
+    "best possible": 0.641333,
+    "entropy": 0.841333,
+    "expected size": 0.798667,
+    "minimax": 0.861333,
+    "most in common": 0.781333,
+    "most parts": 1.234667,
+    "random candidate": 1.208989
+   },
+   "Very Easy 20": {
+    "best possible": 1.089,
+    "entropy": 1.041,
+    "expected size": 1.202,
+    "minimax": 1.193,
+    "most in common": 0.787,
+    "most parts": 1.208,
+    "random candidate": 1.184971
+   },
+   "Very Easy 5": {
+    "best possible": 0.144,
+    "entropy": 0.144,
+    "expected size": 0.144,
+    "minimax": 0.144,
+    "most in common": 0.16,
+    "most parts": 0.144,
+    "random candidate": 0.1744
+   },
+   "Very Hard 12": {
+    "best possible": 0.0,
+    "entropy": 0.0,
+    "expected size": 0.0,
+    "minimax": 0.0,
+    "most in common": 0.166667,
+    "most parts": -0.006667,
+    "random candidate": 0.190337
+   },
+   "Very Hard 13": {
+    "best possible": 0.0,
+    "entropy": 0.0,
+    "expected size": 0.0,
+    "minimax": 0.0,
+    "most in common": 0.152308,
+    "most parts": 0.004615,
+    "random candidate": 0.210551
+   }
+  },
+  "enable": {
+   "Average 10": {
+    "best possible": {
+     "half_width": 0.00392,
+     "percent": 99.998,
+     "screens_missed": 1
+    },
+    "entropy": {
+     "half_width": 0.01108,
+     "percent": 99.984,
+     "screens_missed": 8
+    },
+    "expected size": {
+     "half_width": 0.007838,
+     "percent": 99.992,
+     "screens_missed": 4
+    },
+    "mean_likeness_by_length": {
+     "10": 0.948096,
+     "9": 0.851855
+    },
+    "minimax": {
+     "half_width": 0.006788,
+     "percent": 99.994,
+     "screens_missed": 3
+    },
+    "most in common": {
+     "half_width": 0.069857,
+     "percent": 99.392,
+     "screens_missed": 289
+    },
+    "most parts": {
+     "half_width": 0.028123,
+     "percent": 99.896,
+     "screens_missed": 52
+    },
+    "random candidate": {
+     "half_width": 0.042579,
+     "percent": 98.363175
+    },
+    "screens_no_sure_win_percent": 0.02
+   },
+   "Average 15": {
+    "best possible": {
+     "half_width": 0.0,
+     "percent": 100.0,
+     "screens_missed": 0
+    },
+    "entropy": {
+     "half_width": 0.014034,
+     "percent": 99.961333,
+     "screens_missed": 29
+    },
+    "expected size": {
+     "half_width": 0.011956,
+     "percent": 99.974667,
+     "screens_missed": 18
+    },
+    "mean_likeness_by_length": {
+     "10": 0.952715,
+     "9": 0.850241
+    },
+    "minimax": {
+     "half_width": 0.010107,
+     "percent": 99.98,
+     "screens_missed": 15
+    },
+    "most in common": {
+     "half_width": 0.096246,
+     "percent": 98.221333,
+     "screens_missed": 1165
+    },
+    "most parts": {
+     "half_width": 0.050771,
+     "percent": 99.561333,
+     "screens_missed": 298
+    },
+    "random candidate": {
+     "half_width": 0.06191,
+     "percent": 95.184595
+    },
+    "screens_no_sure_win_percent": 0.0
+   },
+   "Average 20": {
+    "best possible": {
+     "half_width": 0.0,
+     "percent": 100.0,
+     "screens_missed": 0
+    },
+    "entropy": {
+     "half_width": 0.02983,
+     "percent": 99.783,
+     "screens_missed": 207
+    },
+    "expected size": {
+     "half_width": 0.017918,
+     "percent": 99.915,
+     "screens_missed": 85
+    },
+    "mean_likeness_by_length": {
+     "10": 0.95213,
+     "9": 0.85595
+    },
+    "minimax": {
+     "half_width": 0.015719,
+     "percent": 99.941,
+     "screens_missed": 57
+    },
+    "most in common": {
+     "half_width": 0.111358,
+     "percent": 96.615,
+     "screens_missed": 2494
+    },
+    "most parts": {
+     "half_width": 0.080126,
+     "percent": 98.616,
+     "screens_missed": 1114
+    },
+    "random candidate": {
+     "half_width": 0.07547,
+     "percent": 91.305382
+    },
+    "screens_no_sure_win_percent": 0.0
+   },
+   "Average 5": {
+    "best possible": {
+     "half_width": 0.013577,
+     "percent": 99.988,
+     "screens_missed": 3
+    },
+    "entropy": {
+     "half_width": 0.013577,
+     "percent": 99.988,
+     "screens_missed": 3
+    },
+    "expected size": {
+     "half_width": 0.013577,
+     "percent": 99.988,
+     "screens_missed": 3
+    },
+    "mean_likeness_by_length": {
+     "10": 0.957436,
+     "9": 0.853915
+    },
+    "minimax": {
+     "half_width": 0.013577,
+     "percent": 99.988,
+     "screens_missed": 3
+    },
+    "most in common": {
+     "half_width": 0.025976,
+     "percent": 99.956,
+     "screens_missed": 11
+    },
+    "most parts": {
+     "half_width": 0.013577,
+     "percent": 99.988,
+     "screens_missed": 3
+    },
+    "random candidate": {
+     "half_width": 0.015262,
+     "percent": 99.935467
+    },
+    "screens_no_sure_win_percent": 0.06
+   },
+   "Easy 10": {
+    "best possible": {
+     "half_width": 0.018355,
+     "percent": 99.96,
+     "screens_missed": 19
+    },
+    "entropy": {
+     "half_width": 0.041087,
+     "percent": 99.792,
+     "screens_missed": 100
+    },
+    "expected size": {
+     "half_width": 0.037709,
+     "percent": 99.828,
+     "screens_missed": 82
+    },
+    "mean_likeness_by_length": {
+     "6": 0.538129,
+     "7": 0.651374,
+     "8": 0.711951
+    },
+    "minimax": {
+     "half_width": 0.035683,
+     "percent": 99.848,
+     "screens_missed": 72
+    },
+    "most in common": {
+     "half_width": 0.094857,
+     "percent": 98.812,
+     "screens_missed": 564
+    },
+    "most parts": {
+     "half_width": 0.084163,
+     "percent": 99.15,
+     "screens_missed": 391
+    },
+    "random candidate": {
+     "half_width": 0.100207,
+     "percent": 95.730926
+    },
+    "screens_no_sure_win_percent": 0.38
+   },
+   "Easy 15": {
+    "best possible": {
+     "half_width": 0.016476,
+     "percent": 99.952,
+     "screens_missed": 34
+    },
+    "entropy": {
+     "half_width": 0.070107,
+     "percent": 99.093333,
+     "screens_missed": 618
+    },
+    "expected size": {
+     "half_width": 0.060636,
+     "percent": 99.296,
+     "screens_missed": 496
+    },
+    "mean_likeness_by_length": {
+     "6": 0.545696,
+     "7": 0.642497,
+     "8": 0.713728
+    },
+    "minimax": {
+     "half_width": 0.057561,
+     "percent": 99.404,
+     "screens_missed": 409
+    },
+    "most in common": {
+     "half_width": 0.128227,
+     "percent": 96.574667,
+     "screens_missed": 2059
+    },
+    "most parts": {
+     "half_width": 0.138665,
+     "percent": 96.88,
+     "screens_missed": 1724
+    },
+    "random candidate": {
+     "half_width": 0.129945,
+     "percent": 89.367605
+    },
+    "screens_no_sure_win_percent": 0.68
+   },
+   "Easy 20": {
+    "best possible": {
+     "half_width": 0.032348,
+     "percent": 99.769,
+     "screens_missed": 207
+    },
+    "entropy": {
+     "half_width": 0.102287,
+     "percent": 97.623,
+     "screens_missed": 1776
+    },
+    "expected size": {
+     "half_width": 0.087813,
+     "percent": 98.225,
+     "screens_missed": 1414
+    },
+    "mean_likeness_by_length": {
+     "6": 0.545464,
+     "7": 0.64436,
+     "8": 0.710629
+    },
+    "minimax": {
+     "half_width": 0.089481,
+     "percent": 98.406,
+     "screens_missed": 1209
+    },
+    "most in common": {
+     "half_width": 0.146974,
+     "percent": 93.549,
+     "screens_missed": 3731
+    },
+    "most parts": {
+     "half_width": 0.17735,
+     "percent": 93.47,
+     "screens_missed": 3394
+    },
+    "random candidate": {
+     "half_width": 0.142946,
+     "percent": 82.90821
+    },
+    "screens_no_sure_win_percent": 4.14
+   },
+   "Easy 5": {
+    "best possible": {
+     "half_width": 0.030322,
+     "percent": 99.94,
+     "screens_missed": 15
+    },
+    "entropy": {
+     "half_width": 0.030322,
+     "percent": 99.94,
+     "screens_missed": 15
+    },
+    "expected size": {
+     "half_width": 0.030322,
+     "percent": 99.94,
+     "screens_missed": 15
+    },
+    "mean_likeness_by_length": {
+     "6": 0.540976,
+     "7": 0.649728,
+     "8": 0.703871
+    },
+    "minimax": {
+     "half_width": 0.030322,
+     "percent": 99.94,
+     "screens_missed": 15
+    },
+    "most in common": {
+     "half_width": 0.034995,
+     "percent": 99.92,
+     "screens_missed": 20
+    },
+    "most parts": {
+     "half_width": 0.030322,
+     "percent": 99.94,
+     "screens_missed": 15
+    },
+    "random candidate": {
+     "half_width": 0.03222,
+     "percent": 99.797133
+    },
+    "screens_no_sure_win_percent": 0.3
+   },
+   "Hard 10": {
+    "best possible": {
+     "half_width": 0.0,
+     "percent": 100.0,
+     "screens_missed": 0
+    },
+    "entropy": {
+     "half_width": 0.00392,
+     "percent": 99.998,
+     "screens_missed": 1
+    },
+    "expected size": {
+     "half_width": 0.00392,
+     "percent": 99.998,
+     "screens_missed": 1
+    },
+    "mean_likeness_by_length": {
+     "11": 1.049287,
+     "12": 1.156547
+    },
+    "minimax": {
+     "half_width": 0.0,
+     "percent": 100.0,
+     "screens_missed": 0
+    },
+    "most in common": {
+     "half_width": 0.054886,
+     "percent": 99.626,
+     "screens_missed": 179
+    },
+    "most parts": {
+     "half_width": 0.012385,
+     "percent": 99.98,
+     "screens_missed": 10
+    },
+    "random candidate": {
+     "half_width": 0.025756,
+     "percent": 99.136354
+    },
+    "screens_no_sure_win_percent": 0.0
+   },
+   "Hard 15": {
+    "best possible": {
+     "half_width": 0.0,
+     "percent": 100.0,
+     "screens_missed": 0
+    },
+    "entropy": {
+     "half_width": 0.005225,
+     "percent": 99.994667,
+     "screens_missed": 4
+    },
+    "expected size": {
+     "half_width": 0.003695,
+     "percent": 99.997333,
+     "screens_missed": 2
+    },
+    "mean_likeness_by_length": {
+     "11": 1.040831,
+     "12": 1.158531
+    },
+    "minimax": {
+     "half_width": 0.0,
+     "percent": 100.0,
+     "screens_missed": 0
+    },
+    "most in common": {
+     "half_width": 0.076445,
+     "percent": 98.910667,
+     "screens_missed": 736
+    },
+    "most parts": {
+     "half_width": 0.022766,
+     "percent": 99.9,
+     "screens_missed": 74
+    },
+    "random candidate": {
+     "half_width": 0.040349,
+     "percent": 97.229726
+    },
+    "screens_no_sure_win_percent": 0.0
+   },
+   "Hard 20": {
+    "best possible": {
+     "half_width": 0.0,
+     "percent": 100.0,
+     "screens_missed": 0
+    },
+    "entropy": {
+     "half_width": 0.01088,
+     "percent": 99.969,
+     "screens_missed": 31
+    },
+    "expected size": {
+     "half_width": 0.006494,
+     "percent": 99.989,
+     "screens_missed": 11
+    },
+    "mean_likeness_by_length": {
+     "11": 1.042595,
+     "12": 1.160546
+    },
+    "minimax": {
+     "half_width": 0.003394,
+     "percent": 99.997,
+     "screens_missed": 3
+    },
+    "most in common": {
+     "half_width": 0.089503,
+     "percent": 97.907,
+     "screens_missed": 1709
+    },
+    "most parts": {
+     "half_width": 0.038485,
+     "percent": 99.657,
+     "screens_missed": 314
+    },
+    "random candidate": {
+     "half_width": 0.051026,
+     "percent": 94.65132
+    },
+    "screens_no_sure_win_percent": 0.0
+   },
+   "Hard 5": {
+    "best possible": {
+     "half_width": 0.0,
+     "percent": 100.0,
+     "screens_missed": 0
+    },
+    "entropy": {
+     "half_width": 0.0,
+     "percent": 100.0,
+     "screens_missed": 0
+    },
+    "expected size": {
+     "half_width": 0.0,
+     "percent": 100.0,
+     "screens_missed": 0
+    },
+    "mean_likeness_by_length": {
+     "11": 1.046305,
+     "12": 1.167092
+    },
+    "minimax": {
+     "half_width": 0.0,
+     "percent": 100.0,
+     "screens_missed": 0
+    },
+    "most in common": {
+     "half_width": 0.011086,
+     "percent": 99.992,
+     "screens_missed": 2
+    },
+    "most parts": {
+     "half_width": 0.0,
+     "percent": 100.0,
+     "screens_missed": 0
+    },
+    "random candidate": {
+     "half_width": 0.004538,
+     "percent": 99.974133
+    },
+    "screens_no_sure_win_percent": 0.0
+   },
+   "Very Easy 10": {
+    "best possible": {
+     "half_width": 0.096835,
+     "percent": 98.924,
+     "screens_missed": 475
+    },
+    "entropy": {
+     "half_width": 0.134118,
+     "percent": 97.614,
+     "screens_missed": 1066
+    },
+    "expected size": {
+     "half_width": 0.129098,
+     "percent": 97.82,
+     "screens_missed": 978
+    },
+    "mean_likeness_by_length": {
+     "4": 0.319731,
+     "5": 0.433312
+    },
+    "minimax": {
+     "half_width": 0.12361,
+     "percent": 98.072,
+     "screens_missed": 859
+    },
+    "most in common": {
+     "half_width": 0.150522,
+     "percent": 96.788,
+     "screens_missed": 1422
+    },
+    "most parts": {
+     "half_width": 0.208981,
+     "percent": 94.17,
+     "screens_missed": 2183
+    },
+    "random candidate": {
+     "half_width": 0.197851,
+     "percent": 87.785128
+    },
+    "screens_no_sure_win_percent": 9.5
+   },
+   "Very Easy 15": {
+    "best possible": {
+     "half_width": 0.127524,
+     "percent": 97.210667,
+     "screens_missed": 1596
+    },
+    "entropy": {
+     "half_width": 0.189965,
+     "percent": 92.833333,
+     "screens_missed": 3260
+    },
+    "expected size": {
+     "half_width": 0.168671,
+     "percent": 93.786667,
+     "screens_missed": 3105
+    },
+    "mean_likeness_by_length": {
+     "4": 0.322278,
+     "5": 0.436669
+    },
+    "minimax": {
+     "half_width": 0.168767,
+     "percent": 94.214667,
+     "screens_missed": 2910
+    },
+    "most in common": {
+     "half_width": 0.183709,
+     "percent": 91.241333,
+     "screens_missed": 3895
+    },
+    "most parts": {
+     "half_width": 0.265664,
+     "percent": 86.437333,
+     "screens_missed": 4264
+    },
+    "random candidate": {
+     "half_width": 0.190525,
+     "percent": 76.717328
+    },
+    "screens_no_sure_win_percent": 31.92
+   },
+   "Very Easy 20": {
+    "best possible": {
+     "half_width": 0.178426,
+     "percent": 92.85,
+     "screens_missed": 3498
+    },
+    "entropy": {
+     "half_width": 0.212659,
+     "percent": 87.297,
+     "screens_missed": 4603
+    },
+    "expected size": {
+     "half_width": 0.203689,
+     "percent": 88.395,
+     "screens_missed": 4513
+    },
+    "mean_likeness_by_length": {
+     "4": 0.320441,
+     "5": 0.437172
+    },
+    "minimax": {
+     "half_width": 0.210882,
+     "percent": 88.048,
+     "screens_missed": 4510
+    },
+    "most in common": {
+     "half_width": 0.195549,
+     "percent": 85.3,
+     "screens_missed": 4856
+    },
+    "most parts": {
+     "half_width": 0.270173,
+     "percent": 79.448,
+     "screens_missed": 4916
+    },
+    "random candidate": {
+     "half_width": 0.173054,
+     "percent": 68.220407
+    },
+    "screens_no_sure_win_percent": 69.96
+   },
+   "Very Easy 5": {
+    "best possible": {
+     "half_width": 0.082401,
+     "percent": 99.548,
+     "screens_missed": 113
+    },
+    "entropy": {
+     "half_width": 0.082401,
+     "percent": 99.548,
+     "screens_missed": 113
+    },
+    "expected size": {
+     "half_width": 0.082401,
+     "percent": 99.548,
+     "screens_missed": 113
+    },
+    "mean_likeness_by_length": {
+     "4": 0.323556,
+     "5": 0.438931
+    },
+    "minimax": {
+     "half_width": 0.082401,
+     "percent": 99.548,
+     "screens_missed": 113
+    },
+    "most in common": {
+     "half_width": 0.083813,
+     "percent": 99.532,
+     "screens_missed": 117
+    },
+    "most parts": {
+     "half_width": 0.082401,
+     "percent": 99.548,
+     "screens_missed": 113
+    },
+    "random candidate": {
+     "half_width": 0.082948,
+     "percent": 99.101467
+    },
+    "screens_no_sure_win_percent": 2.26
+   },
+   "Very Hard 12": {
+    "best possible": {
+     "half_width": 0.0,
+     "percent": 100.0,
+     "screens_missed": 0
+    },
+    "entropy": {
+     "half_width": 0.0,
+     "percent": 100.0,
+     "screens_missed": 0
+    },
+    "expected size": {
+     "half_width": 0.0,
+     "percent": 100.0,
+     "screens_missed": 0
+    },
+    "mean_likeness_by_length": {
+     "13": 1.272834,
+     "14": 1.457555,
+     "15": 1.629366
+    },
+    "minimax": {
+     "half_width": 0.0,
+     "percent": 100.0,
+     "screens_missed": 0
+    },
+    "most in common": {
+     "half_width": 0.045936,
+     "percent": 99.681667,
+     "screens_missed": 184
+    },
+    "most parts": {
+     "half_width": 0.003267,
+     "percent": 99.998333,
+     "screens_missed": 1
+    },
+    "random candidate": {
+     "half_width": 0.018729,
+     "percent": 99.256869
+    },
+    "screens_no_sure_win_percent": 0.0
+   },
+   "Very Hard 13": {
+    "best possible": {
+     "half_width": 0.0,
+     "percent": 100.0,
+     "screens_missed": 0
+    },
+    "entropy": {
+     "half_width": 0.0,
+     "percent": 100.0,
+     "screens_missed": 0
+    },
+    "expected size": {
+     "half_width": 0.0,
+     "percent": 100.0,
+     "screens_missed": 0
+    },
+    "mean_likeness_by_length": {
+     "13": 1.285191,
+     "14": 1.456387,
+     "15": 1.62769
+    },
+    "minimax": {
+     "half_width": 0.0,
+     "percent": 100.0,
+     "screens_missed": 0
+    },
+    "most in common": {
+     "half_width": 0.04696,
+     "percent": 99.630769,
+     "screens_missed": 233
+    },
+    "most parts": {
+     "half_width": 0.007382,
+     "percent": 99.990769,
+     "screens_missed": 6
+    },
+    "random candidate": {
+     "half_width": 0.020716,
+     "percent": 99.069055
+    },
+    "screens_no_sure_win_percent": 0.0
+   }
+  },
+  "hardest_common_screen": {
+   "cracked": 6,
+   "row": "Very Easy 10",
+   "screen": [
+    "FLAG",
+    "PILL",
+    "CHEF",
+    "BORA",
+    "SECS",
+    "RUDD",
+    "DRUG",
+    "GREY",
+    "ECHO",
+    "HASH"
+   ],
+   "words": 10
+  },
+  "hardest_enable_screen": {
+   "cracked": 7,
+   "row": "Very Easy 10",
+   "screen": [
+    "ADIT",
+    "KEPS",
+    "OFAY",
+    "HOSE",
+    "SORI",
+    "TIKI",
+    "JATO",
+    "CHEZ",
+    "ZORI",
+    "TRUG"
+   ],
+   "words": 10
+  },
+  "sensitivity_headline_row": {
+   "zipf 2.5": {
+    "common": {
+     "best possible": {
+      "half_width": 0.160243,
+      "percent": 93.783,
+      "screens_missed": 3359
+     },
+     "entropy": {
+      "half_width": 0.201368,
+      "percent": 88.29,
+      "screens_missed": 4511
+     },
+     "expected size": {
+      "half_width": 0.189817,
+      "percent": 89.435,
+      "screens_missed": 4396
+     },
+     "mean_likeness_by_length": {
+      "4": 0.336772,
+      "5": 0.437218
+     },
+     "minimax": {
+      "half_width": 0.200543,
+      "percent": 89.172,
+      "screens_missed": 4348
+     },
+     "most in common": {
+      "half_width": 0.19044,
+      "percent": 86.008,
+      "screens_missed": 4810
+     },
+     "most parts": {
+      "half_width": 0.255619,
+      "percent": 80.568,
+      "screens_missed": 4898
+     },
+     "random candidate": {
+      "half_width": 0.163153,
+      "percent": 69.293784
+     },
+     "screens_no_sure_win_percent": 67.18
+    },
+    "minus_enable": {
+     "detectable_effect_points": 0.3426,
+     "excludes_0": true,
+     "high": 1.176,
+     "low": 0.692,
+     "points": 0.933,
+     "resamples": 10000,
+     "sd_points": {
+      "a": 5.781055,
+      "b": 6.437064
+     },
+     "seed": 0
+    }
+   },
+   "zipf 3.5": {
+    "common": {
+     "best possible": {
+      "half_width": 0.147642,
+      "percent": 94.746,
+      "screens_missed": 3088
+     },
+     "entropy": {
+      "half_width": 0.192107,
+      "percent": 89.193,
+      "screens_missed": 4453
+     },
+     "expected size": {
+      "half_width": 0.181273,
+      "percent": 90.381,
+      "screens_missed": 4328
+     },
+     "mean_likeness_by_length": {
+      "4": 0.354826,
+      "5": 0.442333
+     },
+     "minimax": {
+      "half_width": 0.191398,
+      "percent": 90.123,
+      "screens_missed": 4260
+     },
+     "most in common": {
+      "half_width": 0.185882,
+      "percent": 86.91,
+      "screens_missed": 4766
+     },
+     "most parts": {
+      "half_width": 0.247589,
+      "percent": 81.785,
+      "screens_missed": 4869
+     },
+     "random candidate": {
+      "half_width": 0.157113,
+      "percent": 70.376104
+     },
+     "screens_no_sure_win_percent": 61.76
+    },
+    "minus_enable": {
+     "detectable_effect_points": 0.330843,
+     "excludes_0": true,
+     "high": 2.128,
+     "low": 1.666,
+     "points": 1.896,
+     "resamples": 10000,
+     "sd_points": {
+      "a": 5.326458,
+      "b": 6.437064
+     },
+     "seed": 0
+    }
+   }
+  }
+ },
+ "settings": {
+  "0": {
+   "screens": 5000,
+   "seed": 31,
+   "wordfreq": null,
+   "words": "enable",
+   "zipf": null
+  },
+  "1": {
+   "screens": 5000,
+   "seed": 32,
+   "wordfreq": "3.1.1",
+   "words": "common",
+   "zipf": 3.0
+  },
+  "2": {
+   "screens": 5000,
+   "seed": 32,
+   "wordfreq": "3.1.1",
+   "words": "common",
+   "zipf": 2.5
+  },
+  "3": {
+   "screens": 5000,
+   "seed": 32,
+   "wordfreq": "3.1.1",
+   "words": "common",
+   "zipf": 3.5
+  },
+  "4": {
+   "screens": 1000,
+   "seed": 3,
+   "wordfreq": null,
+   "words": "enable",
+   "zipf": null
+  }
+ },
+ "slices_sha256": {
+  "0": "546673984e6165a0cdd9ed6490a4c40a707c111406d8e378105728aa6410eb31",
+  "1": "b5e86cf6dfa52c43c39822e0feefa71a51f58ae3696a826d13140c632c88d32a",
+  "2": "bb3c1045e771f74b1ad941bb7cdc4d4144c0cd210decacf8eddac5131173a3e3",
+  "3": "023512ea247f84c4cda1643427384775a1b95cf1ee7d90186008750914ec644a",
+  "4": "07949f7c79f5ccdf75a6cad0772b82ff6d6e5724eb2b7f9f6bca34a1959d0102"
+ }
+}
