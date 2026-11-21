@@ -30,6 +30,8 @@ All results are exact.
 | Classes with exactly one solution | 4,417,343 of the 5,623,238 solvable (78.56%) | Burnside's lemma, per number of solutions |
 | Solvable multisets of seven nuts, a nut allowed more than once | 4,967,864,520, of which 919,853,040 repeat a nut | exact (`multisets.py`) |
 | Classes of those up to renaming | 6,901,100, as the Stack Exchange comment reports | two methods that agree: a direct listing and Burnside's lemma |
+| Search size of the original: calls of a fixed solver, one complete search from each side of the center, added up | 573 with the solver's look-ahead, 855 without | counted; two implementations agree |
+| One-solution sets that need a smaller search than the original | 42.64% with the look-ahead, 54.25% without | exact, by listing all 3,180,020,160 (`difficulty.c`); sampled, 200,000 sets, seeds 1 to 10: 42.67% (95% interval 42.46% to 42.89%) |
 
 ## How the results are checked
 
@@ -75,6 +77,20 @@ The full table is in [`exact_counts.csv`](exact_counts.csv). No set has more tha
    Each e_i must differ from i + 1, from i + 2 and from e_{i-1}, and 1,144 of the 6^6 sequences do. That gives 1,144 × 6^6 = 53,374,464 candidate rings around C0, of which 43,500,008 have seven distinct nuts.
 3. A ring with another center C and C0 among its outer nuts is a renamed ring around C0. For each C, the code renames the rings around C0 that contain the nut that becomes C0. This lists every ring whose set contains C0, 7 × 43,500,008 in all.
 4. Sorting those rings by set gives the count of every set that contains C0. Each nut is in the same number of sets with k solutions, so the number of all such sets is 120 / 7 times the number that contain C0.
+
+## How hard is the original set?
+
+About average among the sets with one solution. A fixed solver needs 573 steps for the original. Of the 3,180,020,160 sets with exactly one solution, 42.64% need fewer steps, 0.31% the same number and 57.05% more; the median is 597. Exact, by listing every such set.
+
+![A bar chart of the share of one-solution sets by search size, in bins of 20 steps, from about 270 to 1,860; the bars rise to a peak near 540 and fall off slowly to the right, and the bar holding the original set's 573 is drawn in orange just right of the peak.](figures/difficulty.svg)
+
+*Search sizes of all one-solution sets, with the look-ahead (`difficulty.json`). The original sits just right of the peak and left of the median.*
+
+The measure is the size of the search tree of the solver in `solver.py`. It puts each nut in the center and then fills the outer places in order around it. A nut fits a place when it matches the nut placed before it. The solver also skips a nut when its far side would show the number that the next nut must turn toward the center (the **look-ahead**). A **step** is one partial placement that passes these checks, dead ends included; the search finds every solution, so the order in which nuts are tried does not change the count. The count does depend on which side of the center the search starts from, so the **search size** adds the six complete searches, one from each side. It is then the same for every set of a class, and for mirror images.
+
+A plain search without the look-ahead needs 855 steps for the original, and 54.25% of one-solution sets need fewer (median 838). By both measures the original is near the middle of the range, which runs from 274 to 1,864 steps with the look-ahead. The measures differ only on which side of the median it falls.
+
+Each set with one solution has one ring, and renaming the numbers gives every center the same distribution of sizes. So `difficulty.c` lists the rings around C0 as in step 2 of the method above and keeps the 43,500,008 with seven different nuts. It solves the set of each and measures the 26,500,168 sets with one solution; 120 times that is the count of one-solution sets in `exact_counts.csv`. The number of rings in sets with k solutions, times 120 / k, also gives that table's count for every k. A separate Python search (`difficulty.py`) counts the same steps as `solver.recur`, call for call, and agrees with the C program on 61 sets. It drew 200,000 one-solution sets through random rings (seeds 1 to 10, 20,000 each, on GitHub Actions); their shares fall within the 95% intervals around the exact ones. The outputs are on the branches `compute/dyn-difficulty-exact-44790595008` and `compute/dyn-difficulty-sample-44790600897`.
 
 ## How many essentially different sets are there?
 
@@ -174,6 +190,9 @@ uv run --group drive_ya_nuts python -m drive_ya_nuts.exact     # every set exact
 uv run --group drive_ya_nuts python -m drive_ya_nuts.classes   # classes up to renaming: about 30 s
 uv run --group drive_ya_nuts python -m drive_ya_nuts.multisets # multisets, both methods: about 15 min and 3 GB
 uv run python -m drive_ya_nuts.figures              # the figures in figures/
+uv run python -m drive_ya_nuts.difficulty sample --samples 20000 --seed 1 --out DIR   # under a minute on Actions
+uv run python -m drive_ya_nuts.difficulty exact --part 0 --parts 8 --out DIR          # one eighth of every set; about 2 min
+uv run python -m drive_ya_nuts.difficulty report --runs DIR   # difficulty.json and figures/difficulty.svg
 ```
 
 `exact` takes `--write` to rewrite `exact_counts.csv` and `--check 3000` to solve 3,000 random sets one at a time and compare. `classes` takes `--direct 4` to list the classes with four or more solutions one by one, which takes about 6 minutes and 2 GB.
@@ -187,3 +206,4 @@ uv run python -m drive_ya_nuts.figures              # the figures in figures/
 | `classes.py`, `class_counts.csv` | Burnside's lemma and the classes up to renaming |
 | `multisets.py`, `multiset_counts.json` | Classes of solvable multisets, by the direct listing and by Burnside's lemma |
 | `figures.py`, `figures/` | This README's figures, as SVG; a test checks they are current |
+| `difficulty.py`, `difficulty.c`, `difficulty.json` | Search sizes of the fixed solver: the Python search and sampling, the C listing of every one-solution set, and their combined results |

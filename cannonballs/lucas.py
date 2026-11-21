@@ -6,7 +6,7 @@ proved. This module finds them three ways:
 
 - brute force over n up to a bound;
 - the split into six **cases** that every proof starts from, with a remainder test that rules
-  out four of them;
+  out four of them (the other two hold the real solutions 1 and 24, so no remainder test can);
 - a walk along the solutions of the Pell equation that each remaining case needs, which finds
   every n below a bound of thousands of digits.
 
@@ -16,7 +16,7 @@ It also searches the other coincidences between figurate numbers, truncated squa
     uv run python -m cannonballs.lucas
 """
 
-import sys
+import argparse
 from collections.abc import Callable, Iterator
 from math import isqrt
 from time import perf_counter
@@ -184,6 +184,27 @@ def square_piles_that_are_cubes(xmax: int) -> list[int]:
     return sorted(found)
 
 
+def cube_case_blocked_mod_7() -> list[Case]:
+    """The cube cases ruled out by remainders on division by 7, where a cube leaves 0, 1 or 6."""
+    return [case for case in CASES if blocked_mod(case, 7, k=3)]
+
+
+def euler_cube_solutions(bound: int) -> list[tuple[int, int]]:
+    """Every (u, v) with |u| <= bound and u^3 + 1 = 2 v^3: the case of Euler's theorem (the sum
+    of two cubes is twice a cube only when they are equal or opposite) that the proof for
+    square piles that are cubes uses."""
+    found = []
+    for u in range(-bound, bound + 1):
+        t = u**3 + 1
+        if t % 2:
+            continue
+        w = t // 2
+        v = icbrt(abs(w)) * (1 if w >= 0 else -1)
+        if v**3 == w:
+            found.append((u, v))
+    return found
+
+
 # ---------- other coincidences ----------
 
 PILES: dict[str, Callable[[int], int]] = {"tetrahedral": tetrahedral, "square pile": pyramid}
@@ -301,15 +322,6 @@ def oblong_square(a: int) -> tuple[int, int] | None:
     return b, x
 
 
-def threes(m: int) -> int:
-    """How many times 3 divides m."""
-    k = 0
-    while m % 3 == 0:
-        m //= 3
-        k += 1
-    return k
-
-
 def oblong_has_square(a: int) -> bool:
     """The rule proved in the note: some oblong pile of short side a holds a square number of
     balls exactly when a leaves remainder 1 on division by 3, or when the multiple of 3 among
@@ -332,34 +344,60 @@ def oblong_square_brute(a: int, longest: int) -> int | None:
     return next((b for b in range(a, longest + 1) if is_square(oblong(a, b))), None)
 
 
+def oblong_shape_squares(longer: int, widest: int) -> list[int]:
+    """The widths a, 2 <= a <= widest, for which the oblong pile on an a by a + longer base
+    holds a square number of balls. Fixing the shape this way gives one elliptic curve for
+    each `longer`, as Lucas's problem (longer = 0) does."""
+    return [a for a in range(2, widest + 1) if is_square(oblong(a, a + longer))]
+
+
+def oblong_ridge_squares(widest: int) -> list[int]:
+    """The widths a <= widest for which the oblong pile on an a by 2a - 1 base, whose top
+    ridge is as long as the base is wide, holds a square number of balls."""
+    return [a for a in range(1, widest + 1) if is_square(oblong(a, 2 * a - 1))]
+
+
 # ---------- distances to the nearest square, for the figure ----------
 
 
 def gap_to_square(m: int) -> int:
-    """How far m is from the nearest square."""
+    """How many balls m is from the nearest square."""
     r = isqrt(m)
     return min(m - r * r, (r + 1) ** 2 - m)
 
 
-def main() -> None:
-    limit = int(sys.argv[1]) if len(sys.argv) > 1 else 10**6
-    digits = int(sys.argv[2]) if len(sys.argv) > 2 else 1000
+def main(argv: list[str] | None = None) -> None:
+    parser = argparse.ArgumentParser(
+        description="The searches of Lucas's problem and its relatives."
+    )
+    parser.add_argument("limit", nargs="?", type=int, default=10**6, help="n for the brute force")
+    parser.add_argument(
+        "digits", nargs="?", type=int, default=1000, help="10^digits bounds the Pell walk"
+    )
+    args = parser.parse_args(argv)
+    limit, digits = args.limit, args.digits
     t = perf_counter()
     print(f"square piles that are squares, n <= {limit:,}:", square_piles_that_are_squares(limit))
     print(f"  brute force took {perf_counter() - t:.1f} s")
+
+    def verdict(case: Case, k: int) -> str:
+        m = first_block(case, k=k)
+        return "survives every modulus up to 200" if m is None else f"ruled out mod {m}"
+
     for case in CASES:
-        print("case", case, "ruled out mod", first_block(case))
+        print("case", case, verdict(case, 2))
     t = perf_counter()
     print(f"by Pell equations, n < 10^{digits}:", surviving_case_solutions(digits))
     print(f"  walked {pell_candidates(digits)} solutions in {perf_counter() - t:.1f} s")
     for case in CASES:
-        print("cubes: case", case, "ruled out mod", first_block(case, k=3))
+        print("cubes: case", case, verdict(case, 3))
     for key, ns in coincidences(10**5).items():
         print(key, ns)
     print("tetrahedral = square pile:", tetrahedral_equals_square_pile(10**5))
     for row in truncated_table(30, 10**5):
         print(row)
     print([(a, oblong_square(a)) for a in range(1, 31)])
+    print("oblong piles a by 2a - 1 that are squares, a <= 10^5:", oblong_ridge_squares(10**5))
 
 
 if __name__ == "__main__":

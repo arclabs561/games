@@ -1,27 +1,26 @@
 # Open questions
 
-79 open questions from 18 games' READMEs, collected by `tools/open_questions.py`. Edit the READMEs, not this file, then run `python3 tools/open_questions.py`; a test checks that this file is current.
+82 open questions from 18 games' READMEs, collected by `tools/open_questions.py`. Edit the READMEs, not this file, then run `python3 tools/open_questions.py`; a test checks that this file is current.
 
 Each status comes from the question's wording, by the rules in the script's docstring. It guides the choice of what to work on next and is not itself a finding.
 
 | Status | Questions |
 |---|---:|
-| blocked on data | 8 |
+| blocked on data | 10 |
 | blocked on compute | 3 |
-| partly answered | 7 |
+| partly answered | 8 |
 | open | 61 |
 
 | Game | Question | Status |
 |---|---|---|
 | [Common Words in Boggle](boggle/README.md) | **Findability and cancellation.** Whether a player finds a word, and whether an opponent finds it too, needs an experiment with people; the post describes one. | blocked on data |
-| [Common Words in Boggle](boggle/README.md) | **Exact board probability of longer words.** For words of two or three faces the chance is exact, by counting colorings of the slots with bit masks. Four distinct faces need 5<sup>16</sup> colorings, about 1.5 × 10<sup>11</sup>, so longer words have only the upper bound. A second-moment (Bonferroni) lower bound over pairs of paths would bracket each chance. | open |
-| [Common Words in Boggle](boggle/README.md) | **An estimator that can see the tail.** The estimators here use only the counts of rare sightings. Whether a model of the chances (for example a mixture fitted to the bounds) predicts the 160,719 from 15,000 boards is untested. | open |
+| [Common Words in Boggle](boggle/README.md) | **Unseen words.** The exact count of possible words lets estimators of the number of unseen words (Good and Turing, Chao) be scored against the truth. That has not been done. | open |
+| [Common Words in Boggle](boggle/README.md) | **Exact board probability of a word.** The chance of a whole board is a permanent. The chance that a board shows a given short word, such as "toe", is a finite sum over where the cubes carrying its letters land, but the paths overlap and the sum needs inclusion and exclusion. Only the simulated value is known here. | partly answered |
 | [Common Words in Boggle](boggle/README.md) | **Other editions.** Big Boggle (5 by 5) and Super Big Boggle (6 by 6) have other cubes and minimum lengths. The published listings of the 5 by 5 set disagree on one cube. | open |
 | [Common Words in Boggle](boggle/README.md) | **The best 5 by 5 board.** 1,920 searches found nothing above 10,397 points, Vanderkam's board. Whether any 5 by 5 board scores more is open: no bound is published, and branch and bound as for 4 by 4 boards is estimated at a billion CPU years. Longer searches, or a pool of boards climbed together as in Vanderkam's search, might find more. | open |
-| [Common Words in Boggle](boggle/README.md) | **The best board for `enable1.txt`.** Vanderkam's proof is for ENABLE2K. Whether `perslatgsineters` is also best for `enable1.txt` has not been checked. The 3 by 3 search here is too slow for 4 by 4 boards, or for 3 by 4: his 2009 numbers put 3 by 4 at about 3,000 times the work of 3 by 3. | partly answered |
-| [Cannonballs](cannonballs/README.md) | **Square piles that are cubes.** Is the single ball the only square pile that holds a cube number of balls? The search found no other up to 10<sup>18</sup> layers. Four of the six cases for cubes survive every divisor up to 200, so a proof would need another idea, perhaps a bound on equations of the form \|ax³ − by³\| = 1 as for tetrahedral piles. | open |
+| [Common Words in Boggle](boggle/README.md) | **The best board for `enable1.txt`.** Vanderkam's proof is for ENABLE2K. Whether `perslatgsineters` is also best for `enable1.txt` has not been checked. | partly answered |
 | [Cannonballs](cannonballs/README.md) | **A short proof for the tetrahedral pile of 34 layers.** Avanesov's proof that 7,140 is the last number that is both a triangle and a tetrahedral pile uses heavy machinery. Is there a proof by Pell equations and remainders, like Anglin's for Lucas's problem? | open |
-| [Cannonballs](cannonballs/README.md) | **Oblong piles that are triangles or cubes.** The rule for squares is proved. Which short sides allow an oblong pile with a triangular number of balls? For a fixed short side a, each extra ball of length adds a triangle of side a, so the remainder method of the square case applies, but it has not been worked out. | open |
+| [Cannonballs](cannonballs/README.md) | **Oblong piles of every fixed shape.** For a base of $a$ by $a + c$, the squares are known exactly for each $c$ up to 20, one elliptic curve at a time. Is there a rule for which $c$ allow a pile of two or more layers that holds a square, as there is for a fixed short side? Up to 20, no curve of rank 0 gives one, and some curves of rank 1 give none either. | open |
 | [Cannonballs](cannonballs/README.md) | **Other packings.** The piles here are pieces of the face-centered cubic packing. A pile can also be built with each new layer turned the other way, as in the hexagonal close packing, which is equally dense. Which pile shapes stay stable then, and how do their counts and touching pairs change? | open |
 | [Chess: what a rating says, and what a player at a rating plays](chess_ratings/README.md) | How much of the gap between real and model settling comes from players who improve, and how much from strong players on new accounts? Splitting real players by their rating at game 61 against their first results would separate them. | open |
 | [Chess: what a rating says, and what a player at a rating plays](chess_ratings/README.md) | Does Maia-3 expect fewer opening blunders when it sees the moves that led to a position? Running the common positions with each occurrence's history would tell. | open |
@@ -29,11 +28,14 @@ Each status comes from the question's wording, by the rules in the script's docs
 | [Chess: what a rating says, and what a player at a rating plays](chess_ratings/README.md) | Would Maia3-79M or Allie 2.1 estimate a rating from one game better than Maia3-5M, and is the error floor set by the model or by the noise in the rating itself (about 31 points)? | open |
 | [Chess: what a rating says, and what a player at a rating plays](chess_ratings/README.md) | With one game a day instead of back to back, the deviation grows between games by 0.21436 σ² per day. How does that change the games needed to settle? | open |
 | [Codenames](codenames/README.md) | Does the single-peak property of the value of a turn hold for every weighting? | open |
-| [Codenames](codenames/README.md) | Why does a guesser trained on people make a worse giver? | open |
+| [Codenames](codenames/README.md) | Why does a better model of human guesses not make a better giver? The linear maps gave fewer words per clue on 100 boards, without intervals, and the LoRA encoder shows no detectable difference. | open |
+| [Codenames](codenames/README.md) | Does population training add anything over a count of one when the rule is a preregistered baseline, and do C3's policies or the count-1 rule do better than self-play with language-model guessers or with people? | blocked on data |
+| [Codenames](codenames/README.md) | Did gpt-oss-120b see Cultural Codes in training? Its agreement with people could be rechecked on the test turns with the other board words swapped for words of the same frequency, against the same change for the embedding guessers. | blocked on data |
 | [Codenames](codenames/README.md) | Would five epochs on the human turns alone give part of the teacher's gain, and does the gain grow with more teacher turns? | open |
 | [Codenames](codenames/README.md) | Would language-model givers do better with a prompt that states the whole clue rule and the cost of the assassin, or with a retry after an illegal clue? | open |
 | [Codenames](codenames/README.md) | Do language-model clues fare better with people than with embedding guessers? | blocked on data |
-| [Codenames](codenames/README.md) | Would GRPO with an entropy bonus, more replies per board, or several gradient steps per batch keep exploring past the first listed clue? | open |
+| [Codenames](codenames/README.md) | Would a chooser with room to reason, or with a cap that cuts off fewer than 5% of replies, choose better than the first choice? | open |
+| [Codenames](codenames/README.md) | Would GRPO with the list shuffled for each sample, more replies per board, or an entropy bonus keep exploring past the first listed clue? | open |
 | [Codenames](codenames/README.md) | Why does gpt-oss-120b return empty replies on many test calls and almost no validation calls? | open |
 | [Drive Ya Nuts](drive_ya_nuts/README.md) | How many solutions do the 6,901,100 classes of multisets have? The listing counts rings around C0 for each class, which is not the number of solutions of one multiset. Counting those would need the listing of every ring that contains C0, as `exact.py` does for sets. | open |
 | [Drive Ya Nuts](drive_ya_nuts/README.md) | How were the original nuts chosen? A designer who kept drawing until a set had one solution would find one after about 18.7 draws on average. | open |
@@ -61,9 +63,10 @@ Each status comes from the question's wording, by the rules in the script's docs
 | [Hanabi](hanabi/README.md) | Whether the gap between self-play and cross-play at α = 0.05 closes with more training, as in Forkel et al. | blocked on compute |
 | [Maps](maps/README.md) | Does CIEDE2000 instead of Oklab distance change which shelf method wins? | open |
 | [Maps](maps/README.md) | A NeRV sweep (λ KL(P‖Q) + (1 − λ) KL(Q‖P)) would trace the whole frontier between precision and recall on these data; λ = 1 is SNE, already implemented. | open |
-| [Maps](maps/README.md) | How far apart are t-SNE's local minima on the Pokémon, over 20 seeds, in cost and in T and C? | open |
+| [Maps](maps/README.md) | How far apart are t-SNE's local minima on the Pokémon in cost? Over 20 seeds, T(10) runs from 0.966 to 0.972; the costs were not compared. | open |
+| [Maps](maps/README.md) | Do kNN affinities match Gaussian ones on the Pokémon under openTSNE's optimizer (exaggeration 12 for 250 steps, learning rate n/12), as Böhm et al. ran them? | open |
 | [Maps](maps/README.md) | How do T and C of a SOM move with grid size, and does Kohonen's batch algorithm reach the same scores? | open |
-| [Maps](maps/README.md) | How often does a random projection change which word a Codenames guesser picks? That asks about cosine rankings, a sharper test than distortion. | open |
+| [Maps](maps/README.md) | With clues from a larger vocabulary than the deck, and a giver who picks clues for a margin, do fewer picks change? | open |
 | [Mastermind](mastermind/README.md) | How does the game choose a screen's words, and are duds chosen to share letters with the password? A list of real screens would settle whether the ENABLE screens here are easier or harder than the game's. | blocked on data |
 | [Mastermind](mastermind/README.md) | ENABLE has many words that a game would not use, such as JAUK and WHIT. Would screens of common words change the table? | open |
 | [Mastermind](mastermind/README.md) | Is there a rule for the first guess that keeps more of the best possible chance than minimax's 99.41%? | open |

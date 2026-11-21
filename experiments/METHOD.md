@@ -48,3 +48,23 @@ A review of C4 to C10 and H2 found four gaps. Plans did not say what effect they
 - **Reply caps.** For a model that reasons before it answers, the pilot reports the share of replies that reached the token cap. Above 5%, the plan raises the cap or lowers the reasoning effort before the confirmatory run, or states that the cap is part of what is measured.
 - **Model partners are a proxy.** A score with partners that are models (embedding guessers, other training seeds, language models) is a proxy for play with people. It becomes a headline only after a check with people (human turns, or games with human players) or with partners out of the family of every model the agent was trained, tuned or selected against: another architecture, training method and data source. Until then the README states the result as a proxy result and does not open with it.
 
+### 2026-11-20, later: null results, reused test sets, and training seeds
+
+A review of the results written under the rules above found three more gaps. Null intervals were written as ties ("level", "matches"), with no margin set in advance. One human test set was scored by four plans in turn, each designed after the scores of the ones before. Intervals for trained arms on human turns resampled games but not training seeds. The amendment above stays in force. These rules apply to every result reported from this date and to every plan not yet run, including the unrun plans that the amendment above exempts (C9, H3, and part B of C11).
+
+- **Equivalence needs a margin.** A plan that wants to show that two arms do not differ states an equivalence margin δ, in the primary metric's units, before the run. A result is called a tie, "level", "the same" or "as good as" only when its whole 95% interval lies inside −δ to δ. Without a margin, or when the interval reaches past it, the text says "no detectable difference" and gives the interval, for example "no detectable difference (−0.04 to 0.03)", and may add which differences the interval excludes. The same holds for "no effect" and "does not predict".
+- **Test sets are counted across plans.** "Used once" holds per plan, but a test set scored by several plans is reused even if each plan scores it once. The ledger below lists every confirmatory use of each test set, in order. A result on a set reports its use number beside the interval (for example "use 4 of C1's test turns"). A plan whose arms, teacher or target were chosen after seeing scores on a test set either scores on a fresh test set reserved before the plan is written (for human data, held-out players), or reports its result on the reused set as exploratory. Exploratory analyses of a test set are listed too, without a number of their own.
+- **Training seeds are resampled.** For an arm with trained models, the interval resamples the training seeds within the arm together with the evaluation units (games, boards or deals), as C3's stratified bootstrap does. Arms that share seeds are resampled as pairs. When a plan's primary interval did not resample seeds, its note gives the interval with seeds resampled beside it. With three seeds this still understates the spread between seeds, so the note also reports that spread.
+
+#### Ledger of test sets
+
+| Test set | Use | Plan | What was scored |
+|---|---:|---|---|
+| Cultural Codes, C1's split by game: 551 turns in 68 games (`codenames/splits.json`) | 1 | C1 | untrained embedding guessers and linear maps |
+| | 2 | C2 | LoRA on Qwen3-Embedding-0.6B |
+| | 3 | C4 | hosted language models as guessers |
+| | 4 | C8 | LoRA trained on a language model's labels; its teacher was chosen from use 3 |
+| | exploratory | none | `heldout.py` (held-out players), `calibration.py` (calibration and agreement between people) |
+
+Every test game of this split shares a player with the training games ([c1.md](../codenames/results/c1.md)). A plan that scores human guesses after C8, such as C9, reserves a split by player first.
+

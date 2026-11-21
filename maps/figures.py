@@ -13,7 +13,7 @@ from matplotlib.colors import LinearSegmentedColormap
 from matplotlib.figure import Figure
 from matplotlib.patches import Rectangle
 
-from maps import data, draw, study
+from maps import data, draw, ranktsne, study
 
 plt = draw.plt
 OUT = Path(__file__).parent / "figures"
@@ -137,6 +137,210 @@ def color_som() -> Figure:
     return fig
 
 
+SET_TITLES = {"pokemon": "Pokémon stats", "colors": "CSS colors", "words": "Codenames words"}
+
+
+def ranktsne_scores() -> Figure:
+    """T(10) against C(10) for each seed and each affinity, with the PCA start marked."""
+    res = study.stored()["ranktsne"]
+    fig, axes = plt.subplots(1, 3, figsize=(8.0, 2.9))
+    for ax, name in zip(axes, ranktsne.SETS, strict=True):
+        for color, kind in zip(SERIES, ranktsne.AFFINITIES, strict=False):
+            rand = res[name]["random"][kind]
+            t = [row[1] for row in rand["T"]]
+            c = [row[1] for row in rand["C"]]
+            label = "Gaussian (perplexity 30)" if kind == "Gaussian" else "kNN (k = 15)"
+            ax.plot(
+                t, c, "o", mfc="none", mec=color, ms=4, mew=0.9, label=f"{label}, 20 random starts"
+            )
+            pca = res[name]["pca"][kind]
+            ax.plot(
+                pca["T"][1],
+                pca["C"][1],
+                "D",
+                color=color,
+                ms=6,
+                mec=INK,
+                mew=0.6,
+                label=f"{label}, PCA start",
+            )
+        ax.set_title(SET_TITLES[name], color=INK)
+        ax.set_xlabel("trustworthiness T(10)")
+        ax.grid(True, color="#e6e6e3", lw=0.6)
+        ax.tick_params(labelsize=7)
+    axes[0].set_ylabel("continuity C(10)")
+    handles, labels = axes[0].get_legend_handles_labels()
+    fig.legend(handles, labels, loc="lower center", ncol=2, frameon=False, fontsize=7.5)
+    fig.tight_layout(rect=(0, 0.16, 1, 1))
+    return fig
+
+
+def ranktsne_maps() -> Figure:
+    """The PCA-start maps of each set under the two affinities."""
+    maps = ranktsne.stored_maps()
+    layout = study.stored()["ranktsne"]
+    _, stats, _ = data.pokemon()
+    shade = {
+        "pokemon": BLUES((stats.sum(axis=1) - stats.sum(axis=1).min()) / np.ptp(stats.sum(axis=1))),
+        "colors": data.css_shelf()[1],
+        "words": MUTED,
+    }
+    fig, axes = plt.subplots(2, 3, figsize=(8.0, 5.4))
+    for col, name in enumerate(ranktsne.SETS):
+        for row, kind in enumerate(ranktsne.AFFINITIES):
+            ax = axes[row, col]
+            y = maps[f"{name}/{kind}"]
+            if name == "colors":  # a gray rim, so that white and near-white colors show
+                ax.scatter(
+                    y[:, 0], y[:, 1], c=shade[name], s=10, edgecolors="#aaaaaa", linewidths=0.3
+                )
+            else:
+                ax.scatter(y[:, 0], y[:, 1], c=shade[name], s=4, linewidths=0)
+            ax.set_xticks([])
+            ax.set_yticks([])
+            ax.set_aspect("equal", adjustable="datalim")
+            for side in ("left", "bottom"):
+                ax.spines[side].set_color("#cccccc")
+            if row == 0:
+                ax.set_title(SET_TITLES[name], color=INK)
+            else:
+                dcor = layout[name]["layout"]["pca"]["dcor"]
+                ax.set_xlabel(f"distance correlation {dcor:.3f}", fontsize=8, color=MUTED)
+            if col == 0:
+                ax.set_ylabel("Gaussian" if kind == "Gaussian" else "kNN, k = 15", color=INK)
+    fig.tight_layout()
+    return fig
+
+
+def guesses_plot() -> Figure:
+    """Share of clue-board pairs whose pick changes, and worst distortion, against k."""
+    res = study.stored()["guesses"]
+    ks = np.array(res["k"])
+    fig, (top, bottom) = plt.subplots(2, 1, figsize=(6.5, 5.2), sharex=True)
+    names = ("Gaussian", "±1", "sparse ±√3, 0")
+    for color, kind, label in zip(SERIES, ("gaussian", "binary", "sparse"), names, strict=True):
+        rows = res["kinds"][kind]
+        mean = [r["change"]["mean"] for r in rows]
+        top.fill_between(
+            ks,
+            [r["change"]["min"] for r in rows],
+            [r["change"]["max"] for r in rows],
+            color=color,
+            alpha=0.15,
+            lw=0,
+        )
+        top.plot(ks, mean, "o-", color=color, lw=1.8, ms=3.5, label=label)
+        bottom.plot(
+            ks, [r["median_worst"] for r in rows], "o-", color=color, lw=1.8, ms=3.5, label=label
+        )
+    pca_k = ks[: len(res["pca"])]
+    top.plot(
+        pca_k[:-1],
+        res["pca"][:-1],
+        "s--",
+        color=MUTED,
+        lw=1.3,
+        ms=3.5,
+        label="PCA (exact; none change at 256)",
+    )
+    top.axhline(0.05, color=MUTED, lw=0.8, ls=":")
+    top.set_yscale("log")
+    yt = [0.05, 0.1, 0.2, 0.5, 1]
+    top.set_yticks(yt, [f"{v:.0%}" for v in yt])
+    top.set_ylabel("picks changed")
+    top.legend(frameon=False, fontsize=7.5, loc="upper right")
+    bottom.axhline(0.2, color=MUTED, lw=0.8, ls=":")
+    bottom.set_yscale("log")
+    bt = [0.02, 0.05, 0.1, 0.2, 0.5, 1, 2, 5]
+    bottom.set_yticks(bt, [str(v) for v in bt])
+    bottom.set_ylabel("worst distortion ε")
+    bottom.set_xscale("log", base=2)
+    bottom.set_xticks(ks, [f"{k:,}" for k in ks], fontsize=7)
+    bottom.set_xlabel("dimensions k (the vectors have 256)")
+    for ax in (top, bottom):
+        ax.minorticks_off()
+        ax.grid(True, which="major", color="#e6e6e3", lw=0.6)
+    fig.tight_layout()
+    return fig
+
+
+def storage_plot() -> Figure:
+    """Picks changed against stored bits per word: random projections and quantizers."""
+    res = study.stored()
+    proj, quant = res["guesses"], res["quantize"]
+    fig, ax = plt.subplots(figsize=(6.5, 4.4))
+    k = np.array(proj["k"])
+    ax.plot(
+        32 * k,
+        [r["change"]["mean"] for r in proj["kinds"]["gaussian"]],
+        "o-",
+        color=SERIES[0],
+        lw=1.8,
+        ms=3.5,
+        label="Gaussian projection to k dimensions, 32 bits each",
+    )
+    for i in (0, 4, 8, 12):
+        ax.annotate(
+            f"k = {k[i]:,}",
+            (32 * k[i], proj["kinds"]["gaussian"][i]["change"]["mean"]),
+            xytext=(4, 4),
+            textcoords="offset points",
+            fontsize=7,
+            color=SERIES[0],
+        )
+    bits = np.array(quant["bits"])
+    styles = {
+        "RaBitQ": (SERIES[1], "s-"),
+        "rotated rounding": (SERIES[2], "^-"),
+        "rounding": (MUTED, "D--"),
+    }
+    labels = {
+        "RaBitQ": "RaBitQ (qntz)",
+        "rotated rounding": "rounding after a random rotation",
+        "rounding": "rounding each dimension",
+    }
+    for method, (color, style) in styles.items():
+        rows = quant["methods"][method]
+        y = [r["rate"] if "rate" in r else r["change"]["mean"] for r in rows]
+        ax.plot(
+            256 * bits,
+            y,
+            style,
+            color=color,
+            lw=1.5,
+            ms=3.5,
+            label=labels[method] + ", b bits per dimension",
+        )
+    for i, b in enumerate(bits):
+        if b in (1, 2, 4, 8):
+            y = quant["methods"]["RaBitQ"][i]["change"]["mean"]
+            ax.annotate(
+                f"b = {b}",
+                (256 * b, y),
+                xytext=(-6, -11) if b < 8 else (6, -3),
+                textcoords="offset points",
+                fontsize=7,
+                color=SERIES[1],
+                ha="right" if b < 8 else "left",
+            )
+    ax.axvline(256 * 16, color=MUTED, lw=0.8, ls=":")
+    ax.text(256 * 16 * 1.08, 0.004, "the committed\nfloat16 vectors", fontsize=7, color=MUTED)
+    ax.set_xscale("log", base=2)
+    ax.set_yscale("log")
+    yt = [0.003, 0.01, 0.03, 0.1, 0.3, 1]
+    ax.set_yticks(yt, [f"{v:.1%}" if v < 0.01 else f"{v:.0%}" for v in yt])
+    xt = [2**e for e in range(8, 22, 2)]
+    ax.set_xticks(xt, [f"{v:,}" for v in xt], fontsize=7)
+    ax.minorticks_off()
+    ax.set_xlabel("stored bits per word")
+    ax.set_ylabel("picks changed")
+    ax.grid(True, which="major", color="#e6e6e3", lw=0.6)
+    ax.set_ylim(0.003, 1.3)
+    ax.legend(frameon=False, fontsize=7, loc="upper center", bbox_to_anchor=(0.5, -0.17), ncol=2)
+    fig.tight_layout()
+    return fig
+
+
 FIGURES = {
     "shelf": hand_shelves,
     "css-shelves": css_shelves,
@@ -144,13 +348,18 @@ FIGURES = {
     "sne-pokemon": scatter_maps,
     "tradeoff": tradeoff,
     "som-colors": color_som,
+    "ranktsne": ranktsne_scores,
+    "ranktsne-maps": ranktsne_maps,
+    "guesses": guesses_plot,
+    "storage": storage_plot,
 }
 
 
 def main() -> None:
     OUT.mkdir(exist_ok=True)
     for name, make in FIGURES.items():
-        draw.save_svg(make(), OUT / f"{name}.svg")
+        with draw.style():
+            draw.save_svg(make(), OUT / f"{name}.svg")
         print(f"wrote maps/figures/{name}.svg")
 
 

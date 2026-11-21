@@ -1,21 +1,36 @@
-"""Pictures: shelves of book spines, and plots shared by the notebooks and the README figures."""
+"""Pictures: shelves of book spines, and plots shared by the notebooks and the README figures.
 
+Figures are drawn and saved inside style(), which starts from matplotlib's defaults, so
+that settings made by other modules do not reach them and these settings do not leak out.
+The notebooks apply RC themselves.
+"""
+
+from contextlib import contextmanager
+from typing import Any
+
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.figure import Figure
 from matplotlib.patches import Rectangle
+from matplotlib.typing import RcKeyType
 
-plt.rcParams.update(
-    {
-        "svg.hashsalt": "maps",
-        "figure.facecolor": "white",
-        "axes.facecolor": "white",
-        "savefig.facecolor": "white",
-        "font.size": 9,
-        "axes.spines.top": False,
-        "axes.spines.right": False,
-    }
-)
+RC: dict[RcKeyType, Any] = {
+    "svg.hashsalt": "maps",
+    "figure.facecolor": "white",
+    "axes.facecolor": "white",
+    "savefig.facecolor": "white",
+    "font.size": 9,
+    "axes.spines.top": False,
+    "axes.spines.right": False,
+}
+
+
+@contextmanager
+def style():
+    """matplotlib's default style with RC on top, for the duration of a block."""
+    with plt.style.context("default"), mpl.rc_context(RC):
+        yield
 
 
 def spine_sizes(n: int, seed: int = 0) -> tuple[np.ndarray, np.ndarray]:

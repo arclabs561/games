@@ -252,3 +252,20 @@ def test_run_copies_match_the_digests_written_in_the_job():
     for run, (full, small) in listed.items():
         digest = hashlib.sha256((folder / f"{run}.json").read_bytes()).hexdigest()
         assert digest in (full, small), run  # the job's summary.json, or its compact form
+
+
+def test_seed_resampling_changes_nothing_when_seeds_agree():
+    from codenames.stats import cluster_draws, clustered, clustered_seeds
+
+    rng = np.random.default_rng(3)
+    games = [str(g) for g in rng.integers(0, 12, size=90)]
+    index, counts = cluster_draws(games, draws=500)
+    a, b = rng.integers(0, 2, size=90), rng.integers(0, 2, size=90)
+    plain = clustered(b - a, index, counts)
+    same = clustered_seeds([a, a, a], [b, b, b], index, counts)
+    assert same["mean"] == pytest.approx(plain["mean"])
+    assert same["ci"] == pytest.approx(plain["ci"])
+    # Seeds that disagree widen the interval.
+    wide = clustered_seeds([a - 0.3, a, a + 0.3], [b, b, b], index, counts)
+    assert wide["mean"] == pytest.approx(plain["mean"])
+    assert wide["ci"][1] - wide["ci"][0] > plain["ci"][1] - plain["ci"][0]

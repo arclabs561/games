@@ -153,7 +153,7 @@ def teacher_agreement(label: dict) -> dict:
 
 def analyze(runs: dict[str, dict], c2_runs: dict[str, dict], label: dict, c4: dict) -> dict:
     from codenames.split import turns
-    from codenames.stats import cluster_draws, clustered
+    from codenames.stats import cluster_draws, clustered, clustered_seeds
 
     test = turns("game:test")
     index, counts = cluster_draws([t.game for t in test])
@@ -162,7 +162,7 @@ def analyze(runs: dict[str, dict], c2_runs: dict[str, dict], label: dict, c4: di
     for arm, names in ARMS.items():
         if all(r in runs for r in names):
             arm_runs[arm] = {r: runs[r] for r in names}
-    hits, arms = {}, {}
+    hits, arms, by_seed = {}, {}, {}
     for arm, rs in arm_runs.items():
         for name, s in rs.items():
             assert s["after"]["turns_sha256"] == digest, name
@@ -170,6 +170,7 @@ def analyze(runs: dict[str, dict], c2_runs: dict[str, dict], label: dict, c4: di
             want = "cultural" if arm == "A" else SOURCES[arm]
             assert s["config"]["sources"] == want, name
         each = [as_hits(s["after"]["hits"]) for s in rs.values()]
+        by_seed[arm] = each
         hits[arm] = np.mean(each, axis=0)
         arms[arm] = {
             "name": NAMES[arm],
@@ -210,6 +211,9 @@ def analyze(runs: dict[str, dict], c2_runs: dict[str, dict], label: dict, c4: di
             "(C2's arm 4, mean of 3 seeds), paired by turn",
             **diff("B", "A"),
         }
+        # METHOD.md, amendment of 2026-11-20 (later): the same difference with each arm's
+        # three training seeds resampled as well as the games.
+        out["primary_seeds_resampled"] = clustered_seeds(by_seed["A"], by_seed["B"], index, counts)
         out["b_minus_teacher"] = diff("B", TEACHER)
     for arm in ("C", "D"):
         if arm in hits:
