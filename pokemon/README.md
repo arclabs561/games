@@ -33,6 +33,7 @@ The last column links the note in [`results/`](results/README.md) with the detai
 | Teams of six from the 40 most used Pokémon of `gen9ou`, under perfect switching: the team game over all 3,838,380 teams has an equilibrium on 3, 11, 11, 15 and 11 teams at levels 1 to 5 (types, moves, abilities, stats, simulator). No team scores above 0 against it. | Exact: double oracle, then every team checked in rationals; level 5's matchups are simulated (50 battles per pair, seed 0) | [team-study](results/team-study.md) |
 | The share of the Pokémon matchups that one ranking explains rises from 12.7% (types) to 22.4% (stats) and 22.0% (simulator, 21.5% to 22.3%). Rankings: τ = 0.01 between types and stats, 0.86 (0.84 to 0.86) between stats and the simulator. | Exact for levels 1 to 4; bootstrap over battles for level 5 | [team-study](results/team-study.md) |
 | In full simulated battles among 63 teams, the equilibrium is unique, on 15 teams; the heaviest weighs 26.8% (20.4% to 32.2%). The six most used Pokémon, as one team, weigh 13.7%, though the perfect-switching models rank that team 55th to 62nd. | Simulated: 20 battles per pair, 39,060 battles, seed 0; bootstrap over battles | [team-study](results/team-study.md) |
+| With both sides switching by poke-env's rule (plan P2), that equilibrium is easier to exploit: the best team against it scores 0.43 net wins per battle, against 0.20 in a fresh replicate without switching, a gain of 0.23 (0.10 to 0.35). The switching equilibrium has 11 teams, shares 7 of its teams with the published one, and gives the six most used Pokémon no weight. | Simulated: two new round robins of 40 battles per pair (78,120 battles each, seeds `p2-switch` and `p2-replicate`); bootstrap over battles within pairs | [team-study](results/team-study.md) |
 | No level's ranking of Pokémon predicts their use: Spearman's ρ is between 0.02 and 0.08, every interval spanning 0. | Bootstrap over Pokémon, 1,000 resamples, seed 0 (exploratory) | [team-study](results/team-study.md) |
 | Emerald Kaizo: a nature chosen in advance turns up 4% of the time, so 74 catches give a 95% chance of at least one. | Exact under the independent uniform IV model | below |
 
@@ -101,6 +102,7 @@ Emerald Kaizo is a ROM hack of Pokémon Emerald. Its question: how many wild Pok
 | Kaggle, [Pokemon with stats](https://www.kaggle.com/datasets/abcsds/pokemon) (version 2) | `Pokemon.csv`, 800 forms through Generation 6 | CC0 1.0 | yes |
 | Smogon [usage statistics](https://www.smogon.com/stats/) | monthly "chaos" files for `gen9ou` and `gen1ou`, 2025-11 to 2026-10 | unknown | no; only derived shares |
 | Pokémon Showdown, at a pinned commit | chart files, names, moves, learnsets, and the simulator | MIT | no |
+| [poke-env](https://github.com/hsahovic/poke-env) 0.17.0, `SimpleHeuristicsPlayer` | the switching rule of policy S, ported into `teams_showdown.py` (plan P2) | MIT, notice kept in the module | the ported rule only |
 
 [data.md](results/data.md) quotes each license and says what was verified.
 
@@ -115,7 +117,7 @@ Emerald Kaizo is a ROM hack of Pokémon Emerald. Its question: how many wild Pok
 
 - **Schmitz's typing duel.** His matchup table is an image; reading it would settle whether his game or his solver differs from the one here.
 - **Weighted scores.** Weighting the notebook's sums by Showdown usage would change which typings and Pokémon rank first.
-- **Sets beyond damage.** Setup moves, recovery, hazards, items, Terastallization, and a policy that switches by choice. The six most used Pokémon do far better in full battles than under perfect switching.
+- **Sets beyond damage.** Setup moves, recovery, hazards, items and Terastallization. A policy that switches by choice moves the full-battle equilibrium (plan P2); a stronger policy than poke-env's rule may move it more. The six most used Pokémon do far better in full battles than under perfect switching.
 - **Beyond 63 teams.** A double oracle whose best response is searched in the simulator would say whether some other team beats the full-battle equilibrium.
 - **Level 4 played out**, through six-against-six battles with the level-5 policy, to separate perfect switching from Showdown's mechanics; and **a larger pool** of 60 or 80 Pokémon.
 - **Emerald Kaizo encounters.** How often each species appears, and the generator's timing.
@@ -155,6 +157,7 @@ The one-on-one battles (39,000) took 132 seconds on one core, and the 39,060 ful
 | `graph.py`, `graph_analysis.py`, `display/` | the chart as a directed graph, with PageRank and betweenness |
 | `teams_usage.py`, `teams_data.py`, `teams_model.py` | per-Pokémon use, the moves and abilities, sets and matchups at levels 1 to 4 |
 | `teams.py` | the team game, double oracle, the cross-level tournament; writes `results/teams.json` and `results/teams.md` |
-| `teams_showdown.py`, `teams_showdown.js`, `teams_figures.py` | level 5 in Pokémon Showdown; the team pictures |
+| `teams_showdown.py`, `teams_showdown.js`, `teams_figures.py` | level 5 in Pokémon Showdown, with the damage and switching policies; the team pictures |
+| `p2.py`, `results/p2.json`, `results/teams-battles-p2-*.json` | Plan P2: exploitability of the full-battle equilibrium under the switching policy |
 | `emerald_kaizo/` | IV and catch odds for Emerald Kaizo |
 | `results/` | results files, and notes with the detail behind each section ([index](results/README.md)) |

@@ -1,0 +1,209 @@
+{
+ "noise_model": {
+  "bootstrap_sd": {
+   "eps_Dprime": 0.047739,
+   "eps_S": 0.042301
+  },
+  "draws": 2000,
+  "eps_mean": 0.110879,
+  "eps_published_matrix_itself": 0.0,
+  "eps_sd": 0.035805,
+  "seed": 0
+ },
+ "plan": "experiments/plans/P2.md",
+ "primary": {
+  "best_response_Dprime": {
+   "pokemon": [
+    "iron-valiant",
+    "kyurem",
+    "ting-lu",
+    "rillaboom",
+    "clefable",
+    "iron-crown"
+   ],
+   "team": 37
+  },
+  "best_response_S": {
+   "pokemon": [
+    "ting-lu",
+    "iron-moth",
+    "rillaboom",
+    "deoxys-speed",
+    "primarina",
+    "enamorus-incarnate"
+   ],
+   "team": 51
+  },
+  "decision": "does not survive",
+  "delta": 0.232008,
+  "detectable_effect": 0.17867,
+  "eps_Dprime_sigma_D": 0.198933,
+  "eps_S_sigma_D": 0.430941,
+  "high": 0.349483,
+  "low": 0.101417,
+  "resamples": 10000,
+  "seed": 0
+ },
+ "secondary": {
+  "Dprime": {
+   "battles": {
+    "battles": 78120,
+    "choice_errors": 0,
+    "damage_checks": {
+     "agree": 217589
+    },
+    "stat_problems": [],
+    "ties": 0,
+    "turn_limit_share": 0.0,
+    "turn_limit_ties": 0,
+    "turns_mean": 15.490463,
+    "voluntary_switches_per_battle": {
+     "first_team": 0.0,
+     "second_team": 0.0
+    }
+   },
+   "equilibrium": {
+    "0": "57608977/776733560",
+    "1": "57237047/776733560",
+    "2": "198688747/776733560",
+    "33": "5931849/388366780",
+    "37": "88815539/776733560",
+    "40": "76849201/776733560",
+    "41": "265982/19418339",
+    "44": "45941767/388366780",
+    "45": "13081943/194183390",
+    "47": "12805619/388366780",
+    "48": "10152949/776733560",
+    "51": "5538387/97091695",
+    "52": "25374241/388366780"
+   },
+   "gradient_share": 0.29123,
+   "heaviest": {
+    "team": 2,
+    "weight": 0.2558
+   },
+   "jaccard_with_sigma_D": 0.473684,
+   "kendall_tau_with_published": 0.949014,
+   "own_exploitability": 0.0,
+   "six_most_used_weight": 0.074168,
+   "support_size": 13,
+   "total_variation_to_sigma_D": 0.437818,
+   "unique": true,
+   "value": "0/1",
+   "weight_intervals": {
+    "heaviest": [
+     0.18478,
+     0.351313
+    ],
+    "resamples": 1000,
+    "seed": 0,
+    "six_most_used": [
+     0.0,
+     0.15745
+    ]
+   }
+  },
+  "S": {
+   "battles": {
+    "battles": 78120,
+    "choice_errors": 0,
+    "damage_checks": {
+     "agree": 229818,
+     "differ": 5,
+     "differ:garchomp:earthquake:hatterene": 4,
+     "differ:kingambit:kowtow-cleave:slowking-galar": 1
+    },
+    "stat_problems": [],
+    "ties": 0,
+    "turn_limit_share": 0.0,
+    "turn_limit_ties": 0,
+    "turns_mean": 15.872862,
+    "voluntary_switches_per_battle": {
+     "first_team": 0.446429,
+     "second_team": 0.378891
+    }
+   },
+   "equilibrium": {
+    "2": "2130603/11352847",
+    "36": "34893/11352847",
+    "38": "5340773/22705694",
+    "4": "1873485/22705694",
+    "40": "18276/1032077",
+    "41": "4783213/22705694",
+    "48": "140501/11352847",
+    "51": "1804281/11352847",
+    "52": "510181/11352847",
+    "54": "28246/11352847",
+    "6": "1008741/22705694"
+   },
+   "gradient_share": 0.299631,
+   "heaviest": {
+    "team": 38,
+    "weight": 0.235217
+   },
+   "jaccard_with_sigma_D": 0.368421,
+   "kendall_tau_with_published": 0.761538,
+   "own_exploitability": 0.0,
+   "six_most_used_weight": 0.0,
+   "support_size": 11,
+   "total_variation_to_sigma_D": 0.619143,
+   "unique": true,
+   "value": "0/1",
+   "weight_intervals": {
+    "heaviest": [
+     0.127939,
+     0.292016
+    ],
+    "resamples": 1000,
+    "seed": 0,
+    "six_most_used": [
+     0.0,
+     0.0
+    ]
+   }
+  },
+  "kendall_tau_S_vs_Dprime": 0.751217,
+  "published": {
+   "gradient_share": 0.282253,
+   "heaviest": {
+    "team": 2,
+    "weight": 0.267615
+   },
+   "six_most_used_weight": 0.136748,
+   "support_size": 15
+  },
+  "strength": {
+   "D_wins": 1171,
+   "S_share_of_decided": 0.535317,
+   "S_share_of_decided_wilson": [
+    0.515805,
+    0.554722
+   ],
+   "S_stronger": true,
+   "S_win_share": 0.535317,
+   "S_win_share_wilson": [
+    0.515805,
+    0.554722
+   ],
+   "S_wins": 1349,
+   "battles": 2520,
+   "battles_detail": {
+    "battles": 2520,
+    "choice_errors": 0,
+    "damage_checks": {
+     "agree": 8387
+    },
+    "stat_problems": [],
+    "ties": 0,
+    "turn_limit_share": 0.0,
+    "turn_limit_ties": 0,
+    "turns_mean": 16.945635,
+    "voluntary_switches_per_battle": {
+     "first_team": 0.439286,
+     "second_team": 0.0
+    }
+   },
+   "ties": 0
+  }
+ }
+}
