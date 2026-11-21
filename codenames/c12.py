@@ -323,6 +323,51 @@ def guess(
     return summary
 
 
+# Inputs from the private dataset (in a job), for files that are not committed.
+
+DATASET = "arclabs561/games-runs"
+
+
+def fetch_text(spec: str) -> str:
+    """The text of a committed path, or of `hf:<path>` files in the private dataset
+    (several, comma-separated, joined in order)."""
+    if not spec.startswith("hf:"):
+        return Path(spec).read_text()
+    import os
+
+    from huggingface_hub import hf_hub_download
+
+    parts = []
+    for item in spec.removeprefix("hf:").split(","):
+        item = item.removeprefix("hf:")
+        local = hf_hub_download(
+            DATASET, item, repo_type="dataset", token=os.environ.get("HF_TOKEN")
+        )
+        parts.append(Path(local).read_text())
+    return "".join(p if p.endswith("\n") else p + "\n" for p in parts)
+
+
+def ensure_vectors() -> None:
+    """In a job: copy the word vectors from the branch outputs/codenames-embed."""
+    import shutil
+    import subprocess
+    import tempfile
+
+    from codenames import embed
+
+    if any(embed.COMPUTED.glob("*.npz")):
+        return
+    tmp = Path(tempfile.mkdtemp())
+    subprocess.run(
+        ["git", "clone", "-q", "--depth", "1", "--branch", "outputs/codenames-embed",
+         "https://github.com/arclabs561/games.git", str(tmp / "embed")],
+        check=True,
+    )  # fmt: skip
+    embed.COMPUTED.mkdir(parents=True, exist_ok=True)
+    for f in (tmp / "embed" / "codenames" / "vectors").glob("*.npz"):
+        shutil.copy(f, embed.COMPUTED / f.name)
+
+
 # Scoring (here).
 
 
@@ -338,11 +383,11 @@ def read_status(text: str) -> dict[tuple[str, int], list[str]]:
 def exact_values(clues: str, seed: int, arms) -> dict:
     """{arm: {guesser: per-board exact value}} under the seven strangers and EmbeddingGemma
     2's own guesser (and words found under the strangers)."""
-    from codenames.c4score import BASE, score_clue, spaces_with
+    from codenames.c4score import BASE, new_words, score_clue, spaces_with
     from codenames.game import Clue
     from codenames.players import embedding_weigher
 
-    spaces = spaces_with([])
+    spaces = spaces_with(new_words(clues))
     weighers = {m: embedding_weigher(*spaces[m]) for m in spaces}
     given = c4.read_clue_lines(clues)
     bs = c4.boards(seed, N[seed])
@@ -390,13 +435,22 @@ def ratio_boot(num: np.ndarray, den: np.ndarray, seed: int = 0, resamples: int =
     return {"ratio": float(num.mean() / den.mean()), "ci": [float(lo), float(hi)], "n": n}
 
 
-def score(clues_path: Path = CLUES, guesses: Path = GUESSES, runs: Path = RUNS) -> dict:
+def score(
+    clues: str = str(CLUES),
+    guesses: str = str(GUESSES),
+    status_spec: str = str(STATUS),
+    runs: Path = RUNS,
+) -> dict:
+    """Every number of part A, from the test's clue, status and guess lines (committed
+    files, or hf: paths in the private dataset)."""
     from codenames.c4score import bootstrap, rounded
     from codenames.c11 import column, read_guesses, reply_counts
 
-    text = clues_path.read_text() + E_LINES.read_text()
-    g = read_guesses(guesses.read_text())
-    status = read_status(STATUS.read_text())
+    clue_text = fetch_text(clues)
+    guess_text = fetch_text(guesses)
+    text = clue_text + E_LINES.read_text()
+    g = read_guesses(guess_text)
+    status = read_status(fetch_text(status_spec))
     arms = ("E", "A0", "A2", "A3")
     ex = exact_values(text, TEST, arms)
     played = {
@@ -473,8 +527,9 @@ def score(clues_path: Path = CLUES, guesses: Path = GUESSES, runs: Path = RUNS) 
         "plan": PLAN,
         "part": "A",
         "seed": TEST,
-        "clues_sha256": sha256(clues_path.read_text()),
-        "guesses_sha256": sha256(guesses.read_text()),
+        "clues_sha256": sha256(clue_text),
+        "guesses_sha256": sha256(guess_text),
+        "inputs": {"clues": clues, "guesses": guesses, "status": status_spec},
         "primary": primary,
         "secondary": sec,
     }
@@ -494,7 +549,9 @@ def main() -> None:
     parser.add_argument("--seed", type=int, default=PILOT)
     parser.add_argument("--n", type=int, help="give: boards")
     parser.add_argument("--boards", type=parse_range, help="guess: boards, as 0-500")
-    parser.add_argument("--clues", type=Path, help="guess: clue lines from give jobs and E")
+    parser.add_argument("--clues", help="guess, score: clue lines (a file, or hf:path)")
+    parser.add_argument("--guesses", default=str(GUESSES), help="score: a file, or hf:path,...")
+    parser.add_argument("--status", default=str(STATUS), help="score: a file, or hf:path")
     parser.add_argument("--max-tokens", default="", help="give: arm=tokens,... (the cap rule)")
     parser.add_argument("--repeat", type=int, default=0, help="give: boards whose prompt is resent")
     parser.add_argument("--times", type=int, default=2)
@@ -508,7 +565,11 @@ def main() -> None:
         print(E_LINES, sha256(text))
         return
     if args.what == "score":
-        result = score()
+        ensure_vectors()
+        result = score(str(args.clues or CLUES), args.guesses, args.status)
+        if args.out and args.out.suffix != ".json":
+            args.out.mkdir(parents=True, exist_ok=True)
+            args.out = args.out / OUT.name
         (args.out or OUT).write_text(json.dumps(result, indent=1, sort_keys=True) + "\n")
         print(json.dumps(result["primary"], indent=1))
         return
@@ -536,7 +597,7 @@ def main() -> None:
         return
     models = args.models.split(",")
     c4.price_models(models, args.out)
-    clues = args.clues.read_text() + E_LINES.read_text()
+    clues = fetch_text(args.clues) + E_LINES.read_text()
     times = args.times if args.what == "repeat" else 0
     guess(models, arms, clues, args.seed, args.boards, times, meter, args.out, args.workers)
 
