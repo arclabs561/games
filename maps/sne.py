@@ -16,6 +16,7 @@ from dataclasses import dataclass, field
 
 import numpy as np
 
+from maps import portable
 from maps.portable import exp, log, log2
 
 
@@ -74,6 +75,30 @@ def conditional_p(
 def joint_p(p_cond: np.ndarray) -> np.ndarray:
     """Symmetrized joint probabilities p_ij = (p(j | i) + p(i | j)) / 2n."""
     return (p_cond + p_cond.T) / (2 * len(p_cond))
+
+
+def knn_p(ranks: np.ndarray, k: int) -> np.ndarray:
+    """Joint probabilities from neighbor ranks alone (Böhm, Berens and Kobak 2022, section 3.1).
+
+    ranks[i, j] is j's rank among i's neighbors (1 for the nearest, 0 for i itself). The
+    pair i, j gets weight 1 if either is among the other's k nearest, and the weights are
+    divided by their sum. Any change of distance that keeps every point's order of
+    neighbors gives the same P.
+    """
+    near = (ranks >= 1) & (ranks <= k)
+    v = (near | near.T).astype(float)
+    return v / v.sum()
+
+
+def pca_start(x: np.ndarray, dims: int = 2, sd: float = 1e-2) -> np.ndarray:
+    """The leading principal components, scaled so that the first has standard deviation sd.
+
+    sd = 1e-2 is the spread of the random start in embed, as Kobak and Berens (2019)
+    scale theirs to the random start of their implementation.
+    """
+    _, axes = portable.principal_axes(x, dims)
+    y = portable.dot_rows(x - x.mean(axis=0), axes)
+    return y * (sd / y[:, 0].std())
 
 
 def kl(p: np.ndarray, q: np.ndarray) -> float:
@@ -155,6 +180,8 @@ def embed(
     exaggerate_until: int = 50,
     record_every: int = 50,
     p_cond: np.ndarray | None = None,
+    p: np.ndarray | None = None,
+    init: np.ndarray | None = None,
 ) -> Run:
     """Minimize the chosen cost with van der Maaten and Hinton's optimizer (section 3.4).
 
@@ -164,17 +191,24 @@ def embed(
     with the learning rate divided by 2n: its n conditional distributions carry 2n times
     the mass of the joint one, so its gradient is about 2n times as large.
     x_d2 holds squared distances in the data; p_cond, if given, is
-    conditional_p(x_d2, perplexity)[0], computed once for several runs.
+    conditional_p(x_d2, perplexity)[0], computed once for several runs. p, if given, is
+    the joint target itself (knn_p, say) for symmetric SNE and t-SNE, and x_d2 is unused.
+    init, if given, is the starting map (pca_start, say) in place of the random one.
     """
     rng = np.random.default_rng(seed)
-    n = len(x_d2)
-    if p_cond is None:
-        p_cond, _ = conditional_p(x_d2, perplexity)
-    target = p_cond if kind == "sne" else joint_p(p_cond)
+    if p is not None:
+        if kind == "sne":
+            raise ValueError("SNE takes conditional rows: pass p_cond, not p")
+        target = p
+    else:
+        if p_cond is None:
+            p_cond, _ = conditional_p(x_d2, perplexity)
+        target = p_cond if kind == "sne" else joint_p(p_cond)
+    n = len(target)
     q_grad = Q_GRAD[kind]
     if kind == "sne":
         learning_rate /= 2 * n
-    y = rng.normal(0.0, 1e-2, size=(n, dims))
+    y = rng.normal(0.0, 1e-2, size=(n, dims)) if init is None else init.astype(float).copy()
     step = np.zeros_like(y)
     gains = np.ones_like(y)
     run = Run(y)

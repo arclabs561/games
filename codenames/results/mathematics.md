@@ -1,6 +1,6 @@
 # The mathematics of a turn
 
-Detail behind the [Codenames README](../README.md), moved here from it. Every number is as it was in the README; the JSON files beside this note hold them with their seeds and settings.
+Part of the [Codenames README](../README.md). The JSON files beside this note hold its numbers, with their seeds and settings.
 
 **Exact turn odds.** For a Luce guesser with weights w over the unrevealed words, write p(S) for the chance that the first |S| picks are the team words in the set S, in some order. Then p of the empty set is 1, and
 
