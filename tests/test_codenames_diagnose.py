@@ -213,6 +213,18 @@ def test_slices_and_disagree_pages_are_rendered_from_their_json():
         assert (dg.OUT / "cases" / f"c10-{x['board']:03d}.md").exists()
 
 
+def test_slice_means_recover_the_full_c10_result():
+    report = json.loads((dg.OUT / "slices.json").read_text())
+    c10 = dg.c10_table(records.with_legality(records.c10_units()))
+    for name, split in report["tests"].items():
+        _, family = name.split(" | ")
+        inside, outside = split["in"], split["out"]
+        assert inside["n"] + outside["n"] == c10["n"]
+        pooled = (inside["n"] * inside["mean"] + outside["n"] * outside["mean"]) / c10["n"]
+        # The slice means are published to four decimal places.
+        assert pooled == pytest.approx(c10["d"][family].mean(), abs=5.1e-5), name
+
+
 def test_disagree_ranks_by_the_gap_from_committed_values():
     d = json.loads((dg.OUT / "disagree.json").read_text())
     t = dg.c10_table(records.with_legality(records.c10_units()))

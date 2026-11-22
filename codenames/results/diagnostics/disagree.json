@@ -14,16 +14,6 @@
   },
   {
    "F": "legal",
-   "P": "legal",
-   "board": 41,
-   "eat": 0.0,
-   "gap": -4.323,
-   "human": -0.8544,
-   "llm": 4.5,
-   "strangers": 0.177
-  },
-  {
-   "F": "legal",
    "P": "borderline",
    "board": 296,
    "eat": -0.5224,
@@ -91,6 +81,16 @@
    "human": 0.3484,
    "llm": -2.5,
    "strangers": 0.2637
+  },
+  {
+   "F": "legal",
+   "P": "illegal",
+   "board": 243,
+   "eat": -0.6055,
+   "gap": 2.72,
+   "human": -1.4741,
+   "llm": -3.0,
+   "strangers": -0.28
   },
   {
    "F": "legal",
