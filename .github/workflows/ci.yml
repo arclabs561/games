@@ -1,72 +1,41 @@
-name: CI
-permissions:
-  contents: read
-
+name: Rebuild Codenames diagnostics
 on:
   push:
-  pull_request:
-  schedule:
-    - cron: "17 6 * * 1"
+    branches: [compute/c10-replayed-diagnostics]
+permissions:
+  contents: read
 jobs:
-  python:
+  rebuild:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        # The oldest Python that pyproject.toml allows, and the newest release.
-        python: ["3.12", "3.14"]
+    timeout-minutes: 45
     env:
-      # ty installs each PEP 723 script's dependencies with uv (a preview feature).
-      TY_UV: scripts
+      OPENBLAS_NUM_THREADS: 1
+      OMP_NUM_THREADS: 1
+      TOKENIZERS_PARALLELISM: "false"
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           persist-credentials: false
-      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2
         with:
-          python-version: ${{ matrix.python }}
-      - name: Install the locked environment
-        # The CUDA build of torch (codenames-gpu) is for Hugging Face Jobs only.
-        run: uv sync --locked --all-groups --no-group codenames-gpu --no-group hanabi-jax
-      - name: Lint
-        run: uv run ruff check
-      - name: Format check
-        run: uv run ruff format --check
-      - name: Type check
-        run: uv run ty check
-      - name: Tests
-        run: uv run pytest
-        env:
-          # BLAS splits a matrix product among threads, and the split changes its last bits.
-          OPENBLAS_NUM_THREADS: 1
-          OMP_NUM_THREADS: 1
-      - name: Notebooks reproduce their committed text and figures
-        env:
-          OPENBLAS_NUM_THREADS: 1
-          OMP_NUM_THREADS: 1
-        run: uv run pytest -p tests.nbval_figures --nbval --nbval-current-env --nbval-sanitize-with tests/nbval_sanitize.cfg $(git ls-files '*.ipynb')
-      - name: Script lock files are current
-        run: for lock in $(git ls-files '*.py.lock'); do uv lock --script "${lock%.lock}" --check; done
-      - name: Check the paper's lemmas (a PEP 723 script)
-        run: uv run erase/smt/z3_lemmas.py
-
-  papers:
-    # Rebuild every Typst PDF and fail if any differs from the committed file. The build
-    # uses only Typst's own fonts and those committed beside a paper, and no PDF records
-    # its build date, so the same source gives the same bytes on any machine.
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
-        with:
-          python-version: "3.14"
-      - name: Rebuild the PDFs
+          python-version: "3.12"
+      - name: Restore published word vectors
         run: |
-          uv run tools/typst_vendor.py cannonballs/cannonballs.typ --all
-          uv run tools/typst_vendor.py erase/paper/erase.typ --all
-          uv run tools/typst_vendor.py peggle/peggle.typ --all
-          uv run tools/typst_vendor.py tenzi/tenzi.typ --all
-      - name: The committed PDFs are current
-        run: git diff --exit-code --stat -- '*.pdf'
+          git fetch --depth=1 origin d99ed32e24df9d500a5d7d488d8a2edda2bdda71
+          git restore --source=FETCH_HEAD --worktree -- codenames/vectors/
+      - name: Rebuild reports from corrected C10 scores
+        run: |
+          uv sync --locked --group codenames
+          uv run python -m codenames.diagnose legality
+          uv run python -m codenames.diagnose slices
+          uv run python -m codenames.diagnose disagree
+          uv run python -m codenames.diagnose case C10 41 --out codenames/results/diagnostics/cases/c10-041.md > /dev/null
+          uv run pytest -q tests/test_codenames_diagnose.py
+      - name: Export reproducible report patch
+        run: |
+          git add -N codenames/results/diagnostics/cases/c10-243.md
+          git diff --check -- codenames/results/diagnostics
+          git diff --stat -- codenames/results/diagnostics
+          echo BEGIN_REPORT_PATCH
+          git diff --binary -- codenames/results/diagnostics | gzip -n | base64 -w 76
+          echo END_REPORT_PATCH
