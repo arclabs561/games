@@ -223,6 +223,8 @@ def test_guess_reads_the_first_board_word(tmp_path, monkeypatch):
 def test_bootstrap_and_holm():
     from codenames.c4score import bootstrap, holm
 
+    with pytest.raises(ValueError, match="without an observed pair"):
+        bootstrap([])
     b = bootstrap([1.0] * 10)
     assert b["mean"] == 1 and b["ci"] == [1.0, 1.0] and b["p"] == 0
     b = bootstrap([1.0, -1.0] * 50)
