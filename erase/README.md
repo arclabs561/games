@@ -14,7 +14,7 @@ Now allow subtraction and multiplication too. A zero can take any spare cards wi
 
 Erase is a make-ten card game for classrooms. It is Game 9 in *Math Fact Fluency* by Jennifer Bay-Williams and Gina Kling.
 
-The analysis is written up in [`paper/erase.pdf`](paper/erase.pdf), with a narrow edition for phones in [`paper/erase-phone.pdf`](paper/erase-phone.pdf). Its first sections tell the story with arithmetic only and the rest proves each claim. The full classification of stuck deals is the theorem in its section "Big hands always make 10," and the counts for other readings of the rules are in "The other readings." The section "Is 10 special?" has the table for the targets 1 to 30, and "Relatives" has the Countdown and 24-game counts. A [shared page](https://docs.google.com/document/d/1VdsI4VDYDi-eOqQqQE0bXnzDgYPOyanYno4YNuDiPMU) links the latest print and phone PDFs and keeps a changelog of the versions.
+Start with the classroom deal in the [print paper](paper/erase.pdf) or the [phone edition](paper/erase-phone.pdf). “Playing it for real” shows a solvable deal that defeats pairs-first play. “Big hands always make 10” proves the classification from two finite bases. “Is 10 special?” follows the target experiment to all forty cards. The [shared page](https://docs.google.com/document/d/1VdsI4VDYDi-eOqQqQE0bXnzDgYPOyanYno4YNuDiPMU) keeps earlier editions and their changelog.
 
 ## Rules as modeled
 
@@ -44,12 +44,16 @@ All results are exact. A row that names no reading of the rules is for the gener
 |---|---|---|
 | Deals stuck under the printed rules (pairs that sum to 10) | 96.02% | proved by hand<!--raw-typst  (@prop-pairs)-->, then counted over every deal (`count.py --pairs`) |
 | Deals stuck with addition only | 71.10% | exact count (`count.py --addition`) |
-| **Deals stuck with +, − and ×** | **12,362,536 of 2,530,881,913,560, about 1 in 204,722** | brute-force count (`count.py`); the classification<!--raw-typst  (@thm-class)--> is proved using the theorem on big hands, which is checked case by case |
-| Groups needed to clear a deal | one: the whole hand plus at most one center card | proved<!--raw-typst  (@thm-single)--> using the theorem on big hands<!--raw-typst  (@thm-big)-->, whose 265,148 cases are checked with certificates |
+| **Deals stuck with +, − and ×** | **12,362,536 of 2,530,881,913,560, about 1 in 204,722** | brute-force count (`count.py`); the classification<!--raw-typst  (@thm-class)--> is proved using the theorem on big hands, by induction from two checked base sizes |
+| Groups needed to clear a deal | one: the whole hand plus at most one center card | proved<!--raw-typst  (@thm-single)--> using the theorem on big hands<!--raw-typst  (@thm-big)-->, with 32,939 certified base cases |
 | Stuck hands without a 0 | caught by a remainder argument, mod 3 or mod 4 | proved<!--raw-typst  (@thm-class)--> using the theorem on big hands |
 | Cards 1 to 10 only (40 cards) | 51,840 of 762,894,475,200 deals stuck, about 1 in 14.7 million | brute-force count (`count.py --no-zero`), and proved<!--raw-typst  (@prop-oneten)--> using the theorem on big hands |
 | With the four kings as wild cards | 12,362,536 of 7,456,416,121,440 deals stuck, about 1 in 603,146 | proved by hand: a deal with a wild card clears in one group<!--raw-typst  (@prop-wild)--> |
-| Targets 1 to 30: the hand size from which every hand that cannot make t is blocked by a remainder | 7, 8 or 9; 8 for 20 of the targets | every multiset of 1 to 11 cards checked, with certificates and a separate checker<!--raw-typst  (@sec-targets)--> |
+| Deals stuck with addition and subtraction | 101,040,164,560 of 2,530,881,913,560 | exact over all hand partitions and centers |
+| Solvable deals lost by taking hand pairs, then center pairs, then playing optimally | 606,004,356,804 of 2,530,869,551,024 | exact policy evaluation |
+| Solvable deals that need brackets | 17,592 with zeros, 0 without | full arithmetic compared with running totals on every deal |
+| Targets 1 to 30: the hand size from which every hand that cannot make t is blocked by a remainder | 7, 8 or 9; 8 for 20 of the targets | verified through 40 cards, with independent base counts and expression certificates through 11<!--raw-typst  (@sec-targets)--> |
+| First target with whole-hand threshold ten | 131 | exhaustive check from target 1 through 131; one nine-card exception |
 | Countdown problems with an exact solution | 10,858,746 of 11,905,457 (91.21%) | recomputed; agrees with Alliot (2015)<!--raw-typst  (@sec-relatives)--> |
 | 24 game hands that make 24 | 1,362 of 1,820 | exact, checked against a brute-force listing; agrees with published counts<!--raw-typst  (@sec-relatives)--> |
 
@@ -59,15 +63,11 @@ All results are exact. A row that names no reading of the rules is for the gener
 
 <!-- shared:checks -->
 
-- Facts about remainders, zeros and signs are proved by hand. `smt/z3_lemmas.py` checks each induction step with z3.
-- One step, the theorem on big hands<!--raw-typst  (@thm-big)-->, is a finite claim about 265,148 multisets of cards. `make_certs.py` writes one expression per case to `certificates.jsonl.gz`. `verify_certs.py` checks every expression and shares no code with the search. The file is generated, not stored in the repository.
-- `count.py` gets the count of stuck deals by brute force. It uses none of the theorems. With `--pairs` and `--addition` it counts the deals that the printed rules and addition alone leave stuck; the tests compare both rules with brute-force searches on random deals.
-- `simulate.py` reruns every simulated figure with fixed seeds: + and −, "grab the pairs first," small groups, and play without brackets. It also simulates addition only, as a check on the exact count.
-- `smt/z3_programs.py` and `smt/statespace.py` check the impossible cases with two other methods. The tests run `statespace.py`; the z3 check takes about 2.5 min and is run by hand.
-- For targets 1 to 30, `verify_targets.py` checks the thresholds in `results.json` through 11 cards. At each size it lists the multisets, evaluates the supplied expressions and checks that a remainder blocks each remaining hand. One hand just below each threshold can neither make the target nor be ruled out by those remainders. A separate search checks that hand. The checker shares no code with `targets.py`.
-- `report.py` writes every number quoted in the README and the paper to `results.json`. The tests recompute its cheaper parts and check that the README's shared sections are what `tools/sync_docs.py` writes from `docs/` and `results.json`.
-
-CI runs the tests and the z3 lemma check, and rebuilds the paper's PDFs to check that they are current. The certificate files are generated, not stored, so CI does not check them.
+- The remainder arguments, zero trick and induction on hand size have hand proofs. The induction reduces the big-hands theorem<!--raw-typst  (@thm-big)--> to seven and eight cards. `make_certs.py` emits 32,939 base witnesses. A separate parser in `verify_certs.py` checks their values, cards and coverage. `smt/statespace.py` checks the exceptional hand cannot make ten with all seven cards.
+- `count.py` and `exact_play.py` independently count stuck deals under the printed rules, with addition, and with full arithmetic. The latter also scores running totals, capped group sizes and the pairs-first policy on every legal hand and center. It checks the physical deal weights against the deck totals. `simulate.py` preserves five seeded comparisons.
+- `exact_variants.py` counts the hand-size and division rows, checks the congruence shapes against their residue tests, and produces the list of missed hands. `smt/z3_lemmas.py` checks the induction steps for the hand proofs. `smt/z3_programs.py` checks the ten impossible six-card hands.
+- For targets 1–30, `verify_targets.py` independently evaluates the original expression certificates through eleven cards. The C++20 counter in `deck_targets.cpp` reproduces those rows, then checks targets 1–131 through all 40 cards. Every larger hand either inherits a construction or has a modular obstruction.
+- `report.py` writes the computed tables to `results.json`. CI regenerates the base witnesses and new table sections, runs the tests and lemma checks, and rebuilds the print and phone PDFs. The README also gives the commands to generate and verify the original certificates for thirty targets.
 
 <!-- /shared -->
 
@@ -92,15 +92,13 @@ The paper gives the full references.
 
 <!-- shared:open -->
 
-- A proof of the theorem on big hands<!--raw-typst  (@thm-big)--> that does not check cases is still open; in particular, a short reason why any seven nonzero cards outside the two families make 10 using all of them, apart from 1 6 6 7 7 7 7.
-- Do the thresholds hold for multisets of more than 11 cards, for 10 or for any other target? A deal never holds more than 11 cards, and every threshold here, that of 10 included, is checked only that far.
-- Does any target above 30 have a threshold above 9? Among the targets checked only 14 reaches 9, because of one multiset of eight cards.
+- Can the seven-card base of the big-hands theorem<!--raw-typst  (@thm-big)--> be proved by hand? Find a short reason why seven nonzero cards outside the two families make 10 using all their cards, apart from 1 6 6 7 7 7 7. The induction handles sizes nine through forty once the seven- and eight-card bases are known.
 
 <!-- /shared -->
 
 ## Usage
 
-The scripts need only the standard library, except for the z3 checks and the paper build, which declare their dependencies inline (PEP 723) and run with `uv run`. Their lock files (`*.py.lock`) pin the versions that produced the paper: z3-solver 5.4.1.0 and typst 0.15.2. Times are from one run on one machine.
+The counters use the Python standard library. The whole-deck study also needs a C++20 compiler named `c++`. The z3 checks and paper build declare their dependencies inline (PEP 723) and run with `uv run`. Their lock files (`*.py.lock`) pin the versions that produced the paper: z3-solver 5.4.1.0 and typst 0.15.2. Times are from one run on one machine.
 
 ```bash
 python3 erase/erase.py 4 4 6 9 5 8 5 --center 7 5 1 8   # prints one group per line
@@ -109,9 +107,11 @@ python3 erase/count.py          # 12362536 2530881913560 1 in 204,722 (about 35 
 python3 erase/count.py --pairs  # 2430260556960 2530881913560 96.02% (a second)
 python3 erase/count.py --addition   # 1799426861128 2530881913560 71.10% (about 2 min)
 python3 erase/count.py --alone  # 42060 38320568 1 in 911: hands with no center cards (about 10 s)
-python3 erase/make_certs.py     # writes certificates.jsonl.gz (about 2.5 min)
-python3 erase/verify_certs.py   # all 265,148 cases certified (about 10 s)
-python3 erase/simulate.py       # simulated figures, 30,000 deals each (about 4 min)
+python3 erase/make_certs.py     # writes seven- and eight-card base certificates
+python3 -O erase/verify_certs.py  # all 32,939 base cases certified
+python3 erase/simulate.py       # seeded comparison runs, 30,000 deals each (about 4 min)
+python3 erase/report.py exact_play variants make_ten hand_features  # rule variants and source tables
+python3 erase/report.py whole_deck  # targets 1–131, all 40 cards
 python3 erase/targets.py --max 11 --certs   # targets 1 to 30 (about an hour)
 python3 -O erase/verify_targets.py  # 7,682,542 expressions and 23,648 blocked hands across 30 targets
 python3 erase/countdown.py      # Alliot's Countdown counts (about 3 min)
@@ -135,14 +135,16 @@ Build the paper with `typst compile --root . --ignore-system-fonts --font-path e
 |---|---|
 | `erase.py` | Solver: target-directed search for an expression, and the hand-clearing search |
 | `count.py` | Brute-force count of stuck deals; also the counts under the printed rules, with addition only, and with no center cards |
-| `make_certs.py` | Writes the certificates for the theorem on big hands (`certificates.jsonl.gz`, 2.1 MB, not committed) |
+| `make_certs.py` | Writes the certificates for the theorem on big hands (`certificates.jsonl.gz`, generated locally) |
 | `verify_certs.py` | Independent checker for the certificates |
+| `exact_play.py`, `exact_variants.py` | Count legal moves and partitions, division, hand sizes and congruence shapes, with physical deal weights |
+| `deck_study.py`, `deck_targets.cpp` | Verify thresholds through forty cards and compare the base with the published target table |
 | `simulate.py` | Seeded simulations: addition only, + and −, pairs first, small groups, no brackets |
 | `targets.py` | Thresholds for the targets 1 to 30, and certificates for them (`targets_certs.jsonl.gz`, not committed) |
 | `verify_targets.py` | Independent checker for those certificates |
 | `countdown.py` | Countdown numbers round: Alliot's counts of solvable problems, with a second method |
 | `twenty_four.py` | The 24 game: exact counts under three division rules, with a brute-force check |
-| `report.py`, `results.json` | Every number the README and the paper quote, from the scripts above; `results.json` is what `report.py` writes |
+| `report.py`, `results.json` | Computed tables used by the paper and README; `results.json` is what `report.py` writes |
 | `docs/` | The sections the README and the paper share, with placeholders for the numbers in `results.json` |
 | `smt/` | z3 checks of the lemmas and of the impossible cases, plus a state-space search |
 | `paper/` | Typst source, print and phone PDFs, and build script |

@@ -61,6 +61,8 @@ multimedia-learning experiments.
 - Consistent spelling variety (American or British) throughout.
 - Humble: no superlatives about your own results. Humor only where the joke needs the math.
 
+Give the reader one legal hand or boundary case before the odds. In a mixed proof, name the finite premise at the step that uses it.
+
 ## Proofs and claims
 
 - Every claim says how it is known: proved by hand, checked by computer case by case (with
@@ -131,7 +133,7 @@ Use these ideas for a paper meant to be read with a child. Choose the aids the r
   what a solver like z3 does, exact versus simulated numbers.
 - **Try-it puzzles** (Gardner) placed before the answer, with answers in an appendix. Spread them
   out: no more than one or two boxes per page (Crowell).
-- **A picture for every key concept**, placed right beside the words about it (Mayer's spatial
+- **Draw a picture when it makes an inference visible.** Place it beside the words about it (Mayer's spatial
   contiguity; Strogatz). Go concrete to abstract: draw the real cards first, then the letters.
 - **Glossary** of words and symbols with how to read each aloud.
 - **A sense of scale** for big numbers ("one minute per hand, about twenty weeks").
@@ -147,8 +149,7 @@ Use these ideas for a paper meant to be read with a child. Choose the aids the r
   a sentence long, spoken lines only, from things children of the current era know. Check the
   wording against a source. Never lengthen a quote with invented words; if the real line is too
   short, choose another line or leave the section without one.
-- **Margin notes:** one short remark in a child's voice beside the first line of the paragraph it
-  belongs to.
+- **Margin notes:** use a child's question when it adds a way to try the idea. Omit a note that repeats the paragraph.
 - In a section that is all puzzles, set them as plain numbered items; boxes are for interruptions
   in running text.
 - An Idea box belongs at the first use of its word. If the word must appear earlier (in the

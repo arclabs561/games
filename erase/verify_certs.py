@@ -1,8 +1,8 @@
 """Independent checker for the big-hands theorem (Theorem 15 of the paper). Shares no code with the search.
 
-Theorem. Let M be a multiset of 7 to 11 nonzero cards (values 1..10, at most four of
+Theorem. The base cases use 7 or 8 nonzero cards (values 1..10, at most four of
 each), in neither the 3-family (all multiples of 3) nor the 4-family (no 2, 6 or 10,
-at most one odd card). Then M makes 10 using every card, except M = {1,6,6,7,7,7,7},
+at most one odd card). Such a multiset M makes 10 using every card, except M = {1,6,6,7,7,7,7},
 which makes 10 with a sub-collection.
 
     python3 erase/make_certs.py      # writes erase/certificates.jsonl.gz
@@ -40,27 +40,42 @@ def in_families(m):
 
 def check(m, cert):
     leaves = []
-    assert value(cert["expr"], leaves) == 10, m
-    if cert["uses"] == "all":
-        assert Counter(leaves) == Counter(m), m
-    else:  # the one exception
-        assert m == (1, 6, 6, 7, 7, 7, 7)
-        assert not Counter(leaves) - Counter(m)
+    if value(cert["expr"], leaves) != 10:
+        raise ValueError(f"expression does not make ten: {m}")
+    used, available = Counter(leaves), Counter(m)
+    if cert["uses"] == "all" and used == available:
+        return
+    if cert["uses"] == "subset" and m == (1, 6, 6, 7, 7, 7, 7) and used < available:
+        return
+    raise ValueError(f"wrong cards or use mode: {m}")
 
 
 def main(path):
-    if not Path(path).exists():
-        sys.exit(f"{path} not found; run make_certs.py first")
+    # Older archives have sizes 9–11 as well. Check every supplied witness and
+    # require complete coverage of every supplied layer in addition to both bases.
+    seen = set()
+    sizes = {7, 8}
     with gzip.open(path, "rt") as f:
-        certs = {tuple(c["cards"]): c for c in map(json.loads, f)}
-    checked = 0
-    for n in range(7, 12):
+        for cert in map(json.loads, f):
+            m = tuple(cert["cards"])
+            if (
+                not 7 <= len(m) <= 11
+                or any(type(v) is not int or not 1 <= v <= 10 for v in m)
+                or m != tuple(sorted(m))
+                or max(Counter(m).values()) > 4
+                or in_families(m)
+            ):
+                raise ValueError(f"unexpected case: {m}")
+            if m in seen:
+                raise ValueError(f"duplicate case: {m}")
+            check(m, cert)
+            seen.add(m)
+            sizes.add(len(m))
+    for n in sorted(sizes):
         for m in multisets(range(1, 11), n):
-            if max(Counter(m).values()) > 4 or in_families(m):
-                continue
-            check(m, certs[m])  # a missing case raises KeyError
-            checked += 1
-    print(f"all {checked:,} cases certified")
+            if max(Counter(m).values()) <= 4 and not in_families(m) and m not in seen:
+                raise ValueError(f"missing certificate: {m}")
+    print(f"all {len(seen):,} cases certified")
 
 
 if __name__ == "__main__":

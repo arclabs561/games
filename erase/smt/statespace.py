@@ -25,4 +25,5 @@ def finals(state):
 if __name__ == "__main__":
     ok = 10 in finals((1, 6, 6, 7, 7, 7, 7))
     print("all seven cards of 1,6,6,7,7,7,7 make 10:", ok)
-    assert not ok
+    if ok:
+        raise ValueError("the exceptional hand makes ten using every card")

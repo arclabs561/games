@@ -7,6 +7,8 @@ description: "Running paid or learned-model experiments in this repository: plan
 
 The rules are in `experiments/METHOD.md`: plan merged before the run, one factor at a time, paired designs, held-out partners, test sets used once, bootstrap intervals, and nulls reported. This skill adds the practice that made those rules work, and the ways runs went wrong.
 
+A deterministic enumeration needs its rules, domain, counter and coverage check. Use a participant protocol when the question turns on what a player actually does. For example, counting losses after a pairs-first move cannot establish how often people choose that move.
+
 ## Running
 
 - Launch with `experiments/hfrun.py` at a pushed commit. It clones that commit, installs one dependency group, runs one module and writes a manifest (commit, hardware, return code, seconds). Outputs go to the private dataset, and summaries go to the game's `results/`.

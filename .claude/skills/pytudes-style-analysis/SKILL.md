@@ -33,6 +33,8 @@ about a game or puzzle with code.
    then say in prose what the output means. Time anything slow and report the time.
 8. **End with variations and open questions**: other rules, other sizes, ideas not tried.
 
+Before choosing a sample size, estimate the exact search. Seven labeled hand cards have only 127 nonempty subsets. In Erase, combine the possible centers for each subset as a bit set and count their physical weights at the end.
+
 ## Method
 
 - **Solve the general problem, then look up the specific one.** Countdown builds a table of

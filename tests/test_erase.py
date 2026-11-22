@@ -67,7 +67,7 @@ def test_zero_hand_is_one_group():
 
 def test_search_certificates_pass_the_checker():
     # The first 300 seven-card cases of Theorem 15, certified by the search and
-    # checked by the independent checker. make_certs.py does all 265,148.
+    # checked by the independent checker. make_certs.py does all 32,939 base cases.
     cases = (m for m in multisets(7, [0] + [4] * 10) if not in_families(m))
     for m in islice(cases, 300):
         check(m, {"expr": make(m, 10), "uses": "all"})

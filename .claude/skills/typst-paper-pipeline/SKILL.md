@@ -26,6 +26,8 @@ description: "Build Typst papers with fletcher, lilaq, codly and cetz when the p
 - CI builds Erase, Cannonballs, Peggle and Tenzi with `--all`. It compares the print and phone PDFs with the committed PDFs. The HTML is a build output.
 - For a new paper, start with the edition switch and width handling in the closest existing paper.
 
+Read the densest table in the rendered phone PDF at page width. Check the actual text size after scaling. If a table falls below the 9 pt used for shared tables, split it into narrow groups with repeated headers or move detail to an appendix.
+
 ## Text shared with the README
 
 Erase, Cannonballs, Peggle and Tenzi each share their results table, rules, checks and open questions with their README.

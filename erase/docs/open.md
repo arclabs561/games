@@ -1,3 +1,1 @@
-- A proof of the theorem on big hands<!--raw-typst  (@thm-big)--> that does not check cases is still open; in particular, a short reason why any seven nonzero cards outside the two families make 10 using all of them, apart from 1 6 6 7 7 7 7.
-- Do the thresholds hold for multisets of more than {{targets.max_cards}} cards, for 10 or for any other target? A deal never holds more than {{targets.max_cards}} cards, and every threshold here, that of 10 included, is checked only that far.
-- Does any target above 30 have a threshold above 9? Among the targets checked only 14 reaches 9, because of one multiset of eight cards.
+- Can the seven-card base of the big-hands theorem<!--raw-typst  (@thm-big)--> be proved by hand? Find a short reason why seven nonzero cards outside the two families make 10 using all their cards, apart from 1 6 6 7 7 7 7. The induction handles sizes nine through forty once the seven- and eight-card bases are known.

@@ -1,0 +1,29 @@
+name: Erase evidence
+on:
+  pull_request:
+    paths: ["erase/**", "tests/test_erase*.py", ".github/workflows/erase-evidence.yml"]
+  push:
+    branches: [main]
+    paths: ["erase/**", "tests/test_erase*.py", ".github/workflows/erase-evidence.yml"]
+permissions:
+  contents: read
+jobs:
+  recount:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Generate and verify the finite bases
+        run: |
+          python3 erase/make_certs.py
+          python3 -O erase/verify_certs.py
+          python3 -O erase/smt/statespace.py
+      - name: Reproduce the playing rules, paper tables and whole-deck thresholds
+        run: |
+          cp erase/results.json "$RUNNER_TEMP/erase-results.json"
+          for section in certificates hand_features make_ten exact_play variants whole_deck; do
+            python3 erase/report.py "$section" --out "$RUNNER_TEMP/erase-results.json"
+          done
+          cmp erase/results.json "$RUNNER_TEMP/erase-results.json"
