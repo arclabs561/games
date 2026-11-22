@@ -161,3 +161,79 @@ def test_score_response_on_a_made_up_session():
         (2, "P"): 20,
     }
     assert {r["seconds"] for r in rows} == {1.5}
+
+
+def test_prepared_page_consent_resume_partial_export_and_key(tmp_path, monkeypatch):
+    import sys
+
+    dest, private = tmp_path / "delivery", tmp_path / "keys/key.json"
+    monkeypatch.setattr(
+        sys, "argv", ["pilot", "prepare", "--out", str(dest), "--key", str(private)]
+    )
+    hp.main()
+    assert {p.name for p in dest.iterdir()} == {"boards.json", "play.html"}
+    boards = json.loads((dest / "boards.json").read_text())
+    assert boards["key_sha256"] == hp.sha256(private.read_text())
+    assert boards["order_seed"] == 11012
+    assert private.stat().st_mode & 0o077 == 0
+    page = (dest / "play.html").read_text()
+    for text in (
+        "const ACTIVE = true",
+        "18 or older",
+        "Keep this code to withdraw",
+        "Export this half",
+        "Continue saved session",
+        "localStorage.removeItem(STORE)",
+    ):
+        assert text in page
+    assert "new Date()" not in page and "const ACTIVE = false" in (hp.OUT / "play.html").read_text()
+
+
+def test_summary_is_paired_and_excludes_incomplete_blocks_and_private_fields():
+    boards, key = (json.loads(t) for t in committed()[:2])
+    items = {x["item"]: x for x in boards["items"]}
+
+    def sample(code, version, n):
+        responses = []
+        for i in boards["versions"][version][:n]:
+            b = boards["boards"][items[i]["board"]]
+            good = next(w for w, k in zip(b["words"], b["kinds"], strict=True) if k == "T")
+            responses.append(
+                {"item": i, "picks": [good] if key["items"][i] == "P" else [], "t_done": 1000}
+            )
+        return {
+            "version": version,
+            "session": code,
+            "plan": "C11",
+            "consent": True,
+            "comment": "private comment",
+            "edition": boards["key_sha256"],
+            "responses": responses,
+        }
+
+    a = sample("abcd1234", "A", 80)
+    b = sample("dbca1234", "B", 40)
+    r = hp.summarize(
+        boards, key, [b, sample("abcd1234", "A", 40), a, sample("ffff1234", "A", 39)], draws=100
+    )
+    assert (r["complete"], r["completed_first_block"], r["sessions"]) == (1, 2, 3)
+    assert r["primary"]["mean"] == r["first_block"]["mean"] == 1.0
+    assert r["second_block"] is None and r["block_by_arm"] is None
+    assert not any(v in json.dumps(r) for v in ("abcd1234", "private comment", "dbca1234"))
+    with pytest.raises(ValueError, match="conflicting"):
+        hp.summarize(boards, key, [a, b | {"session": "abcd1234"}])
+    with pytest.raises(ValueError, match="consent"):
+        hp.summarize(boards, key, [a | {"consent": False}])
+    with pytest.raises(ValueError, match="order"):
+        hp.summarize(boards, key, [a | {"responses": a["responses"][1:]}])
+
+
+def test_benchmark_model_scores_match_historical_pilot_board_cells():
+    from codenames import c11
+
+    reference = json.loads((hp.OUT / "benchmark.json").read_text())
+    historical = json.loads(c11.OUT.read_text())["items"]
+    for name in c11.GUESSERS:
+        d = reference[name]["board_differences"]
+        assert len(d) == 40 and sum(d) / 40 == pytest.approx(historical[name]["P_minus_F"]["mean"])
+    assert len(reference["potion"]["board_differences"]) == 40

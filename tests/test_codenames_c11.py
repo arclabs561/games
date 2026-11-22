@@ -277,3 +277,46 @@ def test_committed_score_is_what_score_writes():
         pytest.skip("no test replies yet")
     want = json.dumps(c11.score(), indent=1, sort_keys=True) + "\n"
     assert c11.OUT.read_text() == want
+
+
+@pytest.mark.parametrize("finish", ["length", "stop"])
+def test_score_stops_at_last_word_the_model_named(finish):
+    from codenames.game import Board
+
+    board = Board(("apple", "berry", "stone"), ("T", "T", "A"))
+    assert c11.read_cell(c11.cell(board, 2, rec("apple", finish))) == (1, 1.0, finish == "length")
+
+
+def test_replay_checks_historical_scores_and_reports_only_aggregates(tmp_path):
+    b = c4.boards(c11.TEST, 1)[0]
+    # Select a team word and ensure the first padding word is the board's first word.
+    picked = next(w for w, k in zip(b.words[1:], b.kinds[1:], strict=True) if k == "T")
+    old = {}
+    logs = {}
+    rows = [
+        {
+            "strict": {
+                "P": "clue/2",
+                "F": "clue/1",
+                "values": {"P": {"potion": 1.0}, "F": {"potion": 1.0}},
+            }
+        }
+    ]
+    for m in c11.GUESSERS:
+        log = tmp_path / m
+        logs[m] = log
+        records = []
+        for a, n in (("P", 2), ("F", 1)):
+            r = rec(picked, "length") | {
+                "tag": {"part": "guess", "seed": c11.TEST, "board": 0, "clue": "clue", "count": n}
+            }
+            found, value = c4.play_turn(b, [picked, b.words[0]], n)
+            old[a, m, c11.TEST, 0] = [f"{found}/{value:g}c"]
+            records.append(json.dumps(r))
+        log.write_text("\n".join(records))
+    summary = c11.replay_primary(logs, rows, old)
+    assert summary["h_a1"]["mean"] == 0 and summary["kept"] == 1
+    assert all(summary["replies_by_arm"][f"{m} P"]["reached_appended_word"] == 1 for m in logs)
+    old["P", c11.GUESSERS[0], c11.TEST, 0] = ["9/9c"]
+    with pytest.raises(ValueError, match="differs"):
+        c11.replay_primary(logs, rows, old)

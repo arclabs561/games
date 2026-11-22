@@ -408,3 +408,20 @@ def test_committed_search_summary_is_what_the_script_writes():
     }
     assert anneal.canonical("sepesdsracietilmanesligdr") == "ligdrmanesietildsracsepes"
     assert anneal.canonical("rslcsdeiaegntrpatesesmidr") == summary["top boards"][1]["board"]
+
+
+@pytest.mark.skipif(anneal.compiler_missing(), reason="anneal.c needs a C compiler")
+def test_nondefault_run_settings_survive_summary(tmp_path):
+    rows = anneal.anneal(7, 1, steps=2000)
+    path = tmp_path / "run.jsonl"
+    path.write_text(json.dumps(rows[0]) + "\n")
+    assert anneal.summary(path)["settings"]["steps"] == 2000
+    with pytest.raises(ValueError, match="duplicate"):
+        anneal.summarize(rows * 2)
+    changed = dict(rows[0], seed=8, settings=dict(rows[0]["settings"], steps=100))
+    with pytest.raises(ValueError, match="different settings"):
+        anneal.summarize(rows + [changed])
+    without_settings = {k: v for k, v in rows[0].items() if k != "settings"}
+    path.write_text(json.dumps(without_settings) + "\n")
+    with pytest.raises(ValueError, match="settings"):
+        anneal.summary(path)

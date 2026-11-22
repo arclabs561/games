@@ -287,6 +287,7 @@ def run(table: dict, resamples: int = RESAMPLES) -> dict:
         "primary": {
             "delta": primary["vs_availability"]["delta"],
             "interval": [lo, hi],
+            # P1's original field name: two separate rankings, with no joint predictor.
             "predicts_beyond_availability": lo > 0,
         },
         "files": [

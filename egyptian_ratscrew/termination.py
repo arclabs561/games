@@ -96,9 +96,11 @@ def play_from(
     """Play on from `state`, drawing slap winners as `game.play_game` does. Returns (cards
     laid, winner), with winner None if the game has not ended after max_cards cards."""
     players = range(len(slap_shares))
-    for laid in range(max_cards):
+    for laid in range(max_cards + 1):
         if ended(state):
             return laid, next(i for i, h in enumerate(state.hands) if h)
+        if laid == max_cards:
+            break
         options = moves(state)
         if len(options) == 1:
             state = options[0][1]

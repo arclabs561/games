@@ -6,6 +6,7 @@ import random
 from itertools import combinations_with_replacement
 
 import countdown
+import pytest
 import targets
 import verify_targets
 
@@ -52,17 +53,13 @@ def test_checker_accepts_fresh_certificates_and_rejects_a_bad_one(tmp_path, caps
     lines += [{"target": 7, "cards": c, "expr": e} for n, c, e in certs if n >= s]
     with gzip.open(path, "wt") as f:
         f.writelines(json.dumps(x) + "\n" for x in lines)
-    verify_targets.main(path)
+    verify_targets.main(path, targets=[7], max_cards=7)
     assert "t= 7: sizes 7 to 7" in capsys.readouterr().out
     lines[1]["expr"] = str(lines[1]["expr"]).replace("+", "*", 1)
     with gzip.open(path, "wt") as f:
         f.writelines(json.dumps(x) + "\n" for x in lines)
-    try:
-        verify_targets.main(path)
-    except AssertionError:
-        pass
-    else:
-        raise AssertionError("a wrong expression must be rejected")
+    with pytest.raises(ValueError, match="wrong expression"):
+        verify_targets.main(path, targets=[7], max_cards=7)
 
 
 def test_countdown_values_match_a_search_over_moves():
@@ -97,3 +94,55 @@ def test_fourteen_has_an_exception_of_eight_cards():
     cards = (9, 9, 9, 9, 10, 10, 10, 10)
     assert len(values(4, 4)) == 17_982 and 14 not in values(4, 4)
     assert targets.make(cards, 14) is None and not targets.blocking_moduli(cards, 14)
+
+
+@pytest.mark.parametrize(
+    ("records", "error"),
+    [
+        ([], "missing targets"),
+        ([{"target": 14, "threshold": 12, "max": 11}], "expected sizes"),
+        ([{"target": 7, "threshold": 7, "max": 11}], "missing targets"),
+        (2 * [{"target": 7, "threshold": 7, "max": 11}], "duplicate target"),
+        ([{"target": 7, "threshold": 7, "max": 10}], "expected sizes"),
+        (
+            [{"target": 7, "threshold": 7, "max": 11}]
+            + 2 * [{"target": 7, "cards": [2, 5], "expr": "2+5"}],
+            "duplicate expression",
+        ),
+    ],
+)
+def test_release_checker_rejects_incomplete_or_duplicate_records(tmp_path, records, error):
+    path = tmp_path / "targets.gz"
+    with gzip.open(path, "wt") as f:
+        for rec in records:
+            f.write(json.dumps(rec) + "\n")
+    with pytest.raises(ValueError, match=error):
+        verify_targets.main(path)
+
+
+@pytest.mark.parametrize("example", [[4, 6], [3, 3], [5, 5, 5, 5, 5]])
+def test_threshold_needs_a_legal_unblocked_hand_that_cannot_make_target(example):
+    with pytest.raises(ValueError, match="witness"):
+        verify_targets.check_target(10, {"threshold": len(example) + 1, "example": example}, 8, {})
+
+
+def test_checker_compares_complete_count_to_published_result(tmp_path, monkeypatch, capsys):
+    # With one card, 1 makes the target and the other nine are blocked.
+    row = {"threshold": 1, "example": None, "made_from_threshold": 2}
+    published = {"targets": {"max_cards": 1, "by_target": {"1": row}}}
+    monkeypatch.setattr(verify_targets, "__file__", str(tmp_path / "verify_targets.py"))
+    path = tmp_path / "one.gz"
+    with gzip.open(path, "wt") as f:
+        for rec in (
+            {"target": 1, "threshold": 1, "max": 1},
+            {"target": 1, "cards": [1], "expr": "1"},
+        ):
+            f.write(json.dumps(rec) + "\n")
+    results = tmp_path / "results.json"
+    results.write_text(json.dumps(published))
+    with pytest.raises(ValueError, match="expression count is 1, results.json claims 2"):
+        verify_targets.main(path, targets=[1], max_cards=1)
+    row["made_from_threshold"] = 1
+    results.write_text(json.dumps(published))
+    verify_targets.main(path, targets=[1], max_cards=1)
+    assert "expressions 1, hands blocked by a remainder 9" in capsys.readouterr().out

@@ -49,7 +49,8 @@ def round_to_cells(x: np.ndarray, bits: int) -> np.ndarray:
     lo, hi = x.min(axis=0), x.max(axis=0)
     cells = 2**bits
     step = (hi - lo) / cells
-    code = np.clip(np.floor((x - lo) / step), 0, cells - 1)
+    scaled = np.divide(x - lo, step, out=np.zeros_like(x - lo, dtype=float), where=step != 0)
+    code = np.clip(np.floor(scaled), 0, cells - 1)
     return lo + (code + 0.5) * step
 
 

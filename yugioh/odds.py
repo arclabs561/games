@@ -68,6 +68,10 @@ class Name:
     role: str
     copies: int
 
+    def __post_init__(self):
+        if self.role not in ROLES or not 1 <= self.copies <= 3:
+            raise ValueError("a named card needs a known role and one to three copies")
+
 
 # Needs. Each takes a hand (s, e, b, o).
 
@@ -161,6 +165,8 @@ def fewest(target: Fraction | float, size: int, n: int, need_cards=p_at_least_on
 
 def named(deck: Deck, copies: int = 3) -> list[Name]:
     """A named deck with the roles of `deck`, each role split into names of `copies` copies."""
+    if not 1 <= copies <= 3:
+        raise ValueError("use one to three copies per name")
     names = []
     for role, count in zip(ROLES, deck.counts(), strict=True):
         i = 0
@@ -172,12 +178,26 @@ def named(deck: Deck, copies: int = 3) -> list[Name]:
     return names
 
 
+def merged_names(names: Sequence[Name]) -> list[Name]:
+    """Combine rows of the same card, enforcing one role and the copy limit."""
+    cards: dict[str, Name] = {}
+    for card in names:
+        previous = cards.get(card.name)
+        if previous is not None:
+            if previous.role != card.role:
+                raise ValueError(f"{card.name} has conflicting roles")
+            card = Name(card.name, card.role, previous.copies + card.copies)
+        cards[card.name] = card
+    return list(cards.values())
+
+
 def p_named(names: Sequence[Name], n: int, need: NamedNeed) -> Fraction:
     """Chance that n cards drawn meet the named need: exact, by a dynamic program over names.
 
     The state after some names is (cards drawn, cards per role, different names per role),
     weighted by the number of ways to draw it; drawing j of a name's c copies has C(c, j) ways.
     """
+    names = merged_names(names)
     states: Counter[tuple[int, Hand, Hand]] = Counter({(0, (0,) * 4, (0,) * 4): 1})
     for card in names:
         r = ROLES.index(card.role)
@@ -195,7 +215,7 @@ def p_named(names: Sequence[Name], n: int, need: NamedNeed) -> Fraction:
 
 def physical(names: Sequence[Name]) -> list[Name]:
     """One entry per physical card: a name with 3 copies appears three times."""
-    return [card for card in names for _ in range(card.copies)]
+    return [card for card in merged_names(names) for _ in range(card.copies)]
 
 
 def summary(hand: Sequence[Name]) -> tuple[Hand, Hand]:

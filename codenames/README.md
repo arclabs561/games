@@ -1,22 +1,30 @@
 # Codenames
 
-Which models guess the word a person would pick, and do clues chosen for one model work for a guesser built on another? On 551 held-out human turns, EmbeddingGemma 2 and the small table potion-base-8M pick the person's word about 55% of the time, with no detectable difference between them; a linear map trained on human turns lifts potion to 63%, and gpt-oss-120b, untrained, reaches 65%.
+Can you guess what someone else picked? On the first test turn, 23 words were still on the board. The model missed. Try the same turn from the repo root:
 
-Every result about giving clues is scored by model guessers only, a proxy for people that no person has checked. With such guessers a clue keeps 57% to 73% of its value on another model. Training the giver against six other embedding models gains 0.31 words per turn (0.26 to 0.36) with a seventh. But a rule with no training that always asks for one word gets 97% of that gain (exploratory), the trained potion giver's clues break the printed clue rule on 17% of boards against 3.5% for self-play, and it does worse on the AI competition's own score. Under language-model guessers a population pick shows no detectable lead (−0.10 to 0.05), and language models as givers, choosers and listeners all did worse than the embedding giver.
+```sh
+uv run python -c 'from codenames.split import turns
+g = turns("game:test")[0].guess
+print("Clue:", g.clue, "· Words:", ", ".join(g.words))
+input("Your pick? ")
+print("The player picked", g.picked)'
+```
+
+Across 551 turns where a person picked one word, gpt-oss-120b matched them 358 times (65%). The turns came from 68 held-out games of Codenames Duet. The model saw the remaining words and got each clue with a count of one. [Guessing experiment](results/c4.md)
 
 ![A 5 by 5 board of 25 generic nouns: 9 blue team words, 8 orange opponent words, 7 beige neutral words and one dark assassin, each cell labeled with its kind.](figures/board.svg)
 
-*A board dealt by `game.deal` from this folder's 400 WordNet nouns (seed 0). The giver sees the colors; the guesser sees only the words.*
+*An example board dealt by `game.deal` from this folder's 400 WordNet nouns (seed 0). The giver sees the colors; the guesser sees only the words.*
 
 ## Findings in plain words
 
 **Guessing, scored against people's picks** (Cultural Codes, 551 test turns in 68 games):
 
-- **No detectable difference at the top.** potion picks the person's word in 54.4% of turns and EmbeddingGemma 2 in 54.8%. The difference has the interval −3.8 to 4.6 points. Training on human turns helps more than a bigger model: a linear map on potion adds 8.8 points (6.3 to 11.4). LoRA lifts Qwen3-Embedding-0.6B from 43.4% to 62.6%, with no detectable difference from the potion map, for one untuned configuration.
-- **A language model guesses best.** gpt-oss-120b, untrained, picks the person's word in 65.0% of turns, 10.2 points (7.1 to 13.5) above EmbeddingGemma 2. Its labels on about 19,000 more turns raise the LoRA encoder by 3.3 points (0.9 to 5.9).
+- **Two untrained embedding models tie within the uncertainty.** potion picks the person's word in 54.4% of turns and EmbeddingGemma 2 in 54.8%. The difference has the interval −3.8 to 4.6 points. Training on human turns helps more than a bigger model: a linear map on potion adds 8.8 points (6.3 to 11.4). LoRA lifts Qwen3-Embedding-0.6B from 43.4% to 62.6%, with no detectable difference from the potion map, for one untuned configuration.
+- **Which guesser matched more human picks?** gpt-oss-120b, untrained, picks the person's word in 65.0% of turns, 10.2 points (7.1 to 13.5) above EmbeddingGemma 2. Its labels on about 19,000 more turns raise the LoRA encoder by 3.3 points (0.9 to 5.9).
 - **How far these hold.** Every test game shares a player with the training games. C1, C2, C4 and C8 scored this one test set in turn, and C8's teacher was chosen from C4's score ([METHOD.md](../experiments/METHOD.md) lists the uses). Cultural Codes is public on GitHub, so gpt-oss-120b may have seen these turns; that was not measured.
 
-**Giving, scored by model guessers only.** METHOD.md counts these as proxy results.
+**Would the same clue work with another partner?** Here a model gives the clue and another model guesses. These experiments have yet to measure how people play the clues.
 
 - **What a clue loses with a stranger.** A giver expects 1.8 to 2.1 of its words per clue from a guesser on its own model. A guesser on another model finds 57% to 73% of that, and one that follows human association counts finds 37% to 53%.
 - **Population training, and what it amounts to.** Trained by policy gradient against six other embedding models, a giver gains 0.31 words per turn with a seventh, in all 70 runs, at a cost of 0.50 with its own model. Three checks qualify the gain:
@@ -24,7 +32,7 @@ Every result about giving clues is scored by model guessers only, a proxy for pe
   - The trained potion giver's clues are a form of a board word, or share a compound part with one, on 16.6% of boards, against 3.5% for self-play. The rulebook forbids both; every experiment here filtered clues only by substrings.
   - On the AI competition's single-team score, it takes 1.24 turns (0.48 to 2.00) more than self-play when the framework's own guessers play (exploratory).
 
-  No language model or person has scored C3's policies. C11 scored a related population pick (C10's, untrained) with two language models: no detectable lead (−0.023, interval −0.101 to 0.054), against a lead of 0.22 under potion.
+  No language model or person has scored C3's policies. C11 scored a related population pick (C10's, untrained) with two language models: no detectable lead (−0.020, interval −0.096 to 0.055), against a lead of 0.22 under potion.
 - **What did not help.**
   - Language models as givers lose 0.29 to 0.89 words per turn, with a fixed prompt, little or no reasoning and no retry.
   - Choosing among 120 legal actions, Qwen3.8-27B is 0.059 words per turn below the embedding giver's first choice. The 64-token reply cap decided that result: on 58% of boards its action was the first choice, by fallback.
@@ -67,7 +75,7 @@ Guessing results are shares of turns where the guess is the person's word; givin
 | Language-model giver minus the embedding giver | −0.304 (−0.460 to −0.166) | exact under seven unseen embedding guessers, 200 boards; plan C4 | [c4](results/c4.md) |
 | Language model choosing among 120 actions, minus first choice | −0.059 (−0.116 to −0.005); first choice by fallback on 58% of boards | same, 200 boards; plan C6 | [c6](results/c6.md) |
 | gpt-oss-120b as listener, minus first choice | −0.151 (−0.204 to −0.099) | exact, 300 boards; Holm over four tests; plan C10 | [c10](results/c10.md) |
-| Population pick minus first choice, two language-model guessers | −0.023 (−0.101 to 0.054), no detectable difference | played out once per clue, 998 boards; Holm over two tests; plan C11 | [c11](results/c11.md) |
+| Population pick minus first choice, two language-model guessers | −0.020 (−0.096 to 0.055), no detectable difference | played out once per clue, 998 boards; Holm over two tests; plan C11 | [c11](results/c11.md) |
 | GRPO-trained Qwen3.5-2B minus the feature policy | −0.107 (−0.162 to −0.057); a collapsed run | exact, 200 boards, three seed pairs; plan C7 | [c7](results/c7.md) |
 | A higher assassin cost never raises the largest best count | holds | proved | [mathematics](results/mathematics.md) |
 | The value of asking for n words has a single peak in n | holds on 267,237 clues and 100,000 random weightings | checked by computer, not proved | [mathematics](results/mathematics.md) |
@@ -163,12 +171,12 @@ No (plan C10). gpt-oss-120b guesses on each of the giver's 10 best clues, and th
 
 ## Does the population pick's lead hold with language-model guessers?
 
-No lead is detectable (plan C11, part A). C10's population pick P leads the first choice F by 0.239 words per turn under the embedding strangers. On 1,000 fresh boards with strictly legal clues, P − F is 0.22 under potion and −0.023 (−0.101 to 0.054) under gpt-oss-120b and Llama 3.3 70B, each answering once per clue. With P the models find fewer words and hit the assassin less often, and the two effects cancel. The language models never stop early and potion's τ is fitted to people, so H-A2 compares this protocol with the fitted guesser more than one model family with another. Part B, the pilot with people, has not been played. Detail: [c11.md](results/c11.md).
+On the 998 boards where both models answered both clues, the population pick P scored 0.020 below the giver’s first choice F. The interval allows a small lead either way. The held-out embedding guesser, potion, scored 0.222 higher with P on those same boards. Potion’s willingness to guess was fitted to human first picks. The two language models each answered once per clue. People have yet to play the pilot. [Scores and replay](results/c11.md).
 
 | Hypothesis (Holm over both) | Difference (95% interval) | Holm |
 |---|---|---|
-| H-A1: P − F, mean of the two language models | −0.023 (−0.101 to 0.054) | does not reject |
-| H-A2: H-A1's difference minus P − F under potion | −0.245 (−0.329 to −0.161) | rejects 0 |
+| H-A1: P − F, mean of the two language models | −0.020 (−0.096 to 0.055) | does not reject |
+| H-A2: H-A1's difference minus P − F under potion | −0.242 (−0.324 to −0.160) | rejects 0 |
 
 ## The best count
 
@@ -187,7 +195,7 @@ The official word lists belong to Czech Games Edition and are not committed. `be
 | SWOW-EN18, USF norms | word associations | CC BY-NC-ND 3.0; no license stated | no; loaders only |
 | Eight embedding models | potion, wordllama, granite, bge, Qwen3, two harrier, EmbeddingGemma 2 | MIT or Apache 2.0 | no |
 
-Only Cultural Codes and EAT are used in the numbers above. Prompts, replies, adapters and the teacher's labels are in the private dataset `arclabs561/games-runs`.
+Only Cultural Codes and EAT are used in the numbers above. Prompts, replies, adapters and the teacher's labels are kept privately.
 
 ## Related work
 

@@ -34,6 +34,8 @@ uv run ruff check . && uv run ruff format --check . && TY_UV=scripts uv run ty c
 
 Say which results come from a hand proof, an exhaustive case check, an exact calculation, a simulation or a cited source. For case checks, provide certificates and a separate checker. For simulations, give the sample size, seed and interval. For observed games, name the dataset and say which games were counted.
 
+Before rewriting a headline, try to break it with one legal move, deal or route. Start from the board, resource records or original replies. Name the observation that would change the answer. In EV Nova a single jump pays 337 credits per ton. Pricing the return load explains how a 217-per-jump loop can still be best.
+
 Check a result a second way when you can. Try brute force on a small deck, replay a strategy against every code, or compare the total with a published count. If the counts disagree, report both.
 
 ## Attribution and data

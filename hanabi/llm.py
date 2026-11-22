@@ -17,6 +17,7 @@ from __future__ import annotations
 import re
 from collections import Counter
 from collections.abc import Callable
+from itertools import combinations
 
 from hanabi.rules import (
     COLOR_NAMES,
@@ -85,7 +86,7 @@ def possible_values(state: State, player: int) -> list[list[int]]:
     for p, hand in enumerate(state.hands):
         if p != player:
             seen.update(hand)
-    out = []
+    candidates = []
     for cm, rm in state.knowledge[player]:
         vals = [
             t
@@ -94,8 +95,21 @@ def possible_values(state: State, player: int) -> list[list[int]]:
             and rm >> (rank_of(t, rules) - 1) & 1
             and seen[t] < copies(t, rules)
         ]
-        out.append(vals)
-    return out
+        candidates.append(vals)
+
+    # Each group of slots needs one card per slot. If it needs every unseen copy
+    # of its candidate values, no other slot can take one of those copies.
+    # Conversely, forcing a candidate can only break a previously tight group
+    # (Hall's marriage theorem applied to individual copies).
+    allowed = [set(values) for values in candidates]
+    for size in range(1, len(candidates)):
+        for group in combinations(range(len(candidates)), size):
+            values = {t for i in group for t in candidates[i]}
+            if sum(copies(t, rules) - seen[t] for t in values) == size:
+                for i, slot in enumerate(allowed):
+                    if i not in group:
+                        slot.difference_update(values)
+    return [sorted(slot) for slot in allowed]
 
 
 def observation(

@@ -158,6 +158,15 @@ def test(strat: list[Record], pop: list[Record], fit: dict, bias_arm: str = BIAS
     new_only = int(np.sum(cov_n & ~cov_o))
     old_only = int(np.sum(cov_o & ~cov_n))
     p_cov = cal.mcnemar_one_sided(new_only, old_only)
+    # A sensitivity check. Each board supplies two player ratings. Resample whole games
+    # for the size of the gain and count each game's sign once for the sign test.
+    coverage_gain = cov_n.astype(int) - cov_o.astype(int)
+    coverage_interval, _ = cal.game_bootstrap(strat, lambda i: coverage_gain[i].mean(), seed=18)
+    gain_by_game: dict[str, int] = {}
+    for r, delta in zip(strat, coverage_gain, strict=True):
+        gain_by_game[r.game] = gain_by_game.get(r.game, 0) + int(delta)
+    gain_games = sum(delta > 0 for delta in gain_by_game.values())
+    loss_games = sum(delta < 0 for delta in gain_by_game.values())
     adjusted = cal.holm({"bias": p_bias, "coverage": p_cov})
     (bias_lo, bias_hi), _ = cal.game_bootstrap(low_records, lambda i: lo_n[i].mean(), seed=12)
     (old_lo, old_hi), _ = cal.game_bootstrap(low_records, lambda i: lo_o[i].mean(), seed=13)
@@ -178,6 +187,13 @@ def test(strat: list[Record], pop: list[Record], fit: dict, bias_arm: str = BIAS
         "covered_by_new_only": new_only,
         "covered_by_old_only": old_only,
         "coverage_p": p_cov,
+        "coverage_by_game": {
+            "gain": float(coverage_gain.mean()),
+            "gain_interval": list(coverage_interval),
+            "games_gaining": gain_games,
+            "games_losing": loss_games,
+            "one_sided_sign_p": cal.mcnemar_one_sided(gain_games, loss_games),
+        },
         "holm": adjusted,
         "player_games": len(strat),
         "games": len({r.game for r in strat}),

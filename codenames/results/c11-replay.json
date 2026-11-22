@@ -1,0 +1,42 @@
+{
+  "boards": 1000,
+  "kept": 998,
+  "replies_by_arm": {
+    "gpt-oss-120b F": {
+      "answered": 999,
+      "reached_appended_word": 16,
+      "score_changed": 11
+    },
+    "gpt-oss-120b P": {
+      "answered": 999,
+      "reached_appended_word": 10,
+      "score_changed": 8
+    },
+    "llama-3.3-70b F": {
+      "answered": 999,
+      "reached_appended_word": 54,
+      "score_changed": 29
+    },
+    "llama-3.3-70b P": {
+      "answered": 1000,
+      "reached_appended_word": 34,
+      "score_changed": 22
+    }
+  },
+  "h_a1": {
+    "ci": [
+      -0.09569,
+      0.05511
+    ],
+    "mean": -0.02004,
+    "n": 998
+  },
+  "h_a2": {
+    "ci": [
+      -0.3238,
+      -0.15957
+    ],
+    "mean": -0.24187,
+    "n": 998
+  }
+}

@@ -2,7 +2,7 @@
 
 <!-- shared:summary -->
 
-How many cannonballs are in a pile, and which piles hold a square number of them? A square pile of 24 layers holds 4,900 balls, which also make a flat square of 70 by 70. No other square pile does, apart from the single ball. Watson proved this in 1918; a search here below 10<sup>10,000</sup> layers agrees, and serves as a check of the code. The single ball is also the only square pile that holds a cube number of balls, by a short argument from a theorem of Euler. Some oblong pile of short side a holds a square number of balls for 7/12 of all short sides in the long run, and never for a = 2 or 3. That rule is elementary, and is proved here.
+Spread out a square pile of 24 layers and the 4,900 cannonballs make a flat square, 70 on a side. Watson proved in 1918 that the only other square pile you can lay out this way is a single ball. A search below 10<sup>10,000</sup> layers recovers both.
 
 <!-- /shared -->
 

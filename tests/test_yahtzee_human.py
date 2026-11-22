@@ -10,6 +10,7 @@ from yahtzee import advice, cards
 from yahtzee.glenn import GLENN
 from yahtzee.human import (
     BASE,
+    BOX,
     Box,
     Keep,
     Strategy,
@@ -18,6 +19,7 @@ from yahtzee.human import (
     expected_score,
     moves,
     play,
+    run_keep,
 )
 from yahtzee.learn import from_json, to_json
 from yahtzee.rules import OFFICIAL
@@ -92,6 +94,15 @@ def test_committed_results(t):
     for row in data["frontier"][:4]:
         assert row["score"] == pytest.approx(expected_score(from_json(row["card"]), t), abs=1e-9)
     assert [r["size"] for r in data["frontier"]] == sorted(r["size"] for r in data["frontier"])
+
+
+def test_printed_sheet_breaks_ties_like_the_scored_policy(t):
+    data = json.loads((HERE / "results" / "cards.json").read_text())
+    sheet = from_json(data["cheat"]["card"])
+    # Aces and Twos both score two below par. Aces comes first on the sheet.
+    boxes, _ = sheet.box_choice(t, np.array([t.index(0, 0, 0)]))
+    assert boxes[0, t.rolls.index((1, 1, 2, 2, 3))] == BOX["aces"]
+    assert run_keep((1, 2, 4, 4, 5)) == (4, 5)
 
 
 def test_cheat_sheet_in_readme():

@@ -39,7 +39,7 @@ Exact unless marked. The last column links the note in [`results/`](results/READ
 
 ## How the results are checked
 
-- **Two constructions.** `plane.py` builds every plane of prime-power order up to 13 in coordinates and by slopes, and checks each from the definition: every pair of cards shares one symbol and every pair of symbols lies on one card. The field axioms behind the slopes are checked on every pair and triple of elements (`field.py`).
+- **Two constructions.** `plane.py` builds the coordinate plane PG(2, q) two ways for every prime power q up to 13, and checks each from the definition: every pair of cards shares one symbol and every pair of symbols lies on one card. The field axioms behind the slopes are checked on every pair and triple of elements (`field.py`).
 - **Two methods for the missing cards.** Counting symbols and an exact-cover search that shares no code with it agree on every one of the 1,596 ways to remove two cards from the plane of order 7, and on every pair for the orders 2, 3, 4, 5, 8 and 9.
 - **Proofs against counts.** The identities of Lemma 2 are checked on random subfamilies, and Theorem 4 exhaustively for orders 2 and 3. The planes of orders 2, 3 and 4 are counted by exhaustive search and agree with the counts that their automorphism groups predict.
 - **Chances.** Two of the chances are also computed by listing pairs and triples, and the Triplet counts are checked against a count by hand and the number of conics.

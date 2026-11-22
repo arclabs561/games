@@ -22,7 +22,7 @@ from freecell.deals import (
 from freecell.draw import figures
 from freecell.fence import check, fence_a, fence_b
 from freecell.open_levels import hunt_c, solve_b_layers, solve_c
-from freecell.report import FAQ_ZERO_CELLS, published_least
+from freecell.report import FAQ_ZERO_CELLS, by_level, least, load, published_least
 from freecell.rules import Rules, apply, autoplay, can_stack, replay, safe, start
 from freecell.small import orders
 from freecell.solver import run_moves, solve
@@ -346,3 +346,34 @@ def test_open_levels_summary_and_readme_agree():
         if level["verdict"] == "lost":
             states = level["positions"]["c"]
             assert level["positions"]["bl"] == states and f"{states:,} positions" in readme
+
+
+@pytest.mark.parametrize("reverse", [False, True])
+def test_rerun_reconciles_partial_results_and_reports_conflicts(tmp_path, reverse):
+    full, part = tmp_path / "full", tmp_path / "part"
+    full.mkdir()
+    part.mkdir()
+
+    def record(k, verdict):
+        return json.dumps({"deal": 1, "cells": k, "verdict": verdict}) + "\n"
+
+    a = full / "survey-a-full.jsonl"
+    b = part / "survey-a-cells1.jsonl"
+    a.write_text(record(0, "lost") + record(1, "unknown") + record(2, "won"))
+    b.write_text(record(1, "won"))
+    folders = [part, full] if reverse else [full, part]
+    assert least(load(folders, "a")) == {1: 1}
+    a.write_text(record(1, "lost"))
+    with pytest.raises(ValueError) as error:
+        load(folders, "a")
+    assert str(a) in str(error.value) and str(b) in str(error.value)
+
+
+def test_minimum_requires_matching_bounds():
+    lone_win = [{"deal": 1, "cells": 2, "verdict": "won"}]
+    assert least(lone_win) == {1: None}
+    high_loss = [{"deal": 2, "cells": 2, "verdict": "lost"}]
+    assert by_level(high_loss, [2])[0]["lost"] == 1
+    assert least([{"deal": 2, "cells": 4, "verdict": "lost"}]) == {2: 5}
+    with pytest.raises(ValueError, match="won at 1 cells but lost at 2"):
+        least([*high_loss, {"deal": 2, "cells": 1, "verdict": "won"}])

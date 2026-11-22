@@ -9,6 +9,7 @@ from egyptian_ratscrew.game import (
     CHANCES,
     DECK,
     ROYALS,
+    Draw,
     answer_chance,
     challenger_keeps,
     challenger_keeps_by_orders,
@@ -170,3 +171,23 @@ def test_committed_svgs_are_what_the_script_writes(tmp_path):
         assert (tmp_path / name).read_bytes() == (figures.HERE / "figures" / name).read_bytes(), (
             name
         )
+
+
+def test_card_cap_includes_the_last_card():
+    from egyptian_ratscrew.termination import play_from, start
+
+    for hands, cap, expected in [
+        ([[2], []], 0, (0, 0)),
+        ([[2], [3]], 0, (0, None)),
+        ([[2], [3]], 1, (1, 1)),
+        ([[2], [3]], 2, (1, 1)),
+    ]:
+        shares = [0.5, 0.5]
+        assert play(shares, random.Random(0), cap, hands) == expected
+        assert play_from(start(hands), shares, random.Random(0), cap) == expected
+
+
+def test_penalty_burns_the_last_card_with_no_claim_on_the_pile():
+    result = play_game([0.5, 0.5], random.Random(0), hands=[[2], [3]], misslaps=[0, 1])
+    assert isinstance(result, Draw)
+    assert (result.cards, result.winner, result.paid) == (1, None, 1)

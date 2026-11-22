@@ -5,6 +5,8 @@ from itertools import product
 from math import comb
 from pathlib import Path
 
+import pytest
+
 from peggle import stopping, variations
 from peggle.peggle import beta_integral, better
 
@@ -29,6 +31,20 @@ def test_beta_prior_coin_flips_equal_the_integral():
     )
     # Beta(12, 12) is a record of 11 wins and 11 losses on the uniform prior.
     assert variations.better_beta(6, 10, 12) == better(17, 32)
+
+
+def test_fewest_best_of_handles_unreachable_targets():
+    assert variations.fewest_best_of(HALF, HALF) == variations.fewest_best_of_float(0.5, 0.5) == 1
+    assert (
+        variations.fewest_best_of(Fraction(1), Fraction(0))
+        == variations.fewest_best_of_float(1, 0)
+        == 1
+    )
+    for p, alpha in ((HALF, Fraction(1, 20)), (1 - P55, Fraction(1, 20)), (P55, Fraction(0))):
+        with pytest.raises(ValueError, match="no finite"):
+            variations.fewest_best_of(p, alpha)
+        with pytest.raises(ValueError, match="no finite"):
+            variations.fewest_best_of_float(float(p), float(alpha))
 
 
 def test_beta_path_chance_is_the_prior_average():

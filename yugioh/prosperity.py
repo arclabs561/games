@@ -132,14 +132,16 @@ def play(order: list[int], n: int, look: int, need: Need, choice: str) -> bool:
     base = (count[0], count[1], count[2], count[3] + count[4] + count[5])
     if need(base):
         return True
+    played = (*base[:3], base[3] - 1)
     if choice == "prosperity" and count[PROSPERITY]:
         for card in order[n : n + look]:
-            if card < 4 and need(tuple(h + (i == card) for i, h in enumerate(base))):
+            role = min(card, OTHER)
+            if need(tuple(h + (i == role) for i, h in enumerate(played))):
                 return True
         return False
     if choice == "draw2" and count[DRAW2]:
         drawn = order[n : n + 2]
-        h = list(base)
+        h = list(played)
         for card in drawn:
             h[card if card < 4 else OTHER] += 1
         return need(tuple(h))

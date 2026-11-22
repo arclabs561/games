@@ -13,7 +13,7 @@ How would you arrange books by color? Sorting by hue puts the grays together at 
 - **Self-organizing maps** keep the Pokémon's neighbors about as trustworthily as t-SNE but lose more of them, as Venna and Kaski (2001) found on other data.
 - **t-SNE from neighbor ranks alone** (kNN affinities, k = 15) matches Gaussian t-SNE's T(10) and C(10) on the Pokémon: over 20 paired seeds, both 95% intervals for the difference lie within ±0.0014. Its layouts match too, as Böhm, Berens and Kobak (2022) found on MNIST. It keeps fewer 5-neighborhoods, and on the word vectors it does better than Gaussian t-SNE.
 - **A random projection changes the guesser's pick** for 53% of Codenames boards and clues at k = 256 and 32% at k = 1,024, where the worst distortion is already about 0.2. Of the k tried, only 65,536 changes fewer than 5%.
-- **Quantized word vectors keep the pick far more cheaply.** RaBitQ, from the qntz library (arclabs561/qntz), changes 8.2% of picks at 4 bits per dimension and 4.0% at 5 bits. Rounding each dimension changes 10.7% and 5.4%, and a random rotation before rounding does not help it.
+- **Five bits per coordinate keep the original pick on 96% of boards.** RaBitQ, from the qntz library (arclabs561/qntz), changes 8.2% of picks at 4 bits per dimension and 4.0% at 5 bits. Rounding each dimension changes 10.7% and 5.4%, and a random rotation before rounding does not help it.
 
 ## The questions as modeled
 
@@ -156,6 +156,8 @@ On the Pokémon and the colors the two affinities give the same overall layout, 
 
 ## Random projections and the guesser's pick ([`guesses.py`](guesses.py))
 
+Try **bay** as the clue on a board made from the first 25 words in this deck. The word vectors put **ball** just ahead of **bag** (cosines 0.151 and 0.142). Map those same vectors to 256 dimensions with the seed-0 Gaussian projection. Now **bag** edges ahead, 0.226 to 0.225. That counts as one changed pick.
+
 ![Share of clue-board pairs whose pick changes, and the worst distortion, against k from 4 to 65,536, for three kinds of random map and for PCA.](figures/guesses.svg)
 
 *Above, the share of picks changed; below, the median worst distortion of the same 20 maps. The range over 20 maps is narrower than the lines. The dotted lines mark 5% and ε = 0.2.*
@@ -180,9 +182,9 @@ On the Pokémon and the colors the two affinities give the same overall layout, 
 
 ## Bits per dimension and the guesser's pick ([`quantize.py`](quantize.py))
 
-![Share of picks changed against stored bits per word, for random projections to k dimensions and for three quantizers at 1 to 8 bits per dimension.](figures/storage.svg)
+![Share of picks changed against coordinate bits per word, for random projections to k dimensions and for three quantizers at 1 to 8 bits per dimension.](figures/storage.svg)
 
-*The same picks as above, against the storage each word needs. Projections store k coordinates of 32 bits; quantizers store 256 codes of b bits. The dotted line is the committed table, 256 float16 values per word.*
+*The x-axis counts coordinate bits. Each projection uses k 32-bit coordinates. Each quantizer uses 256 codes of b bits. The dotted line marks 256 float16 coordinates per word.*
 
 **Question.** The word table could be stored in fewer bits instead of fewer dimensions. How many bits per dimension keep the pick? Here the guesser keeps the clue's own vector and ranks the other words by their approximate squared distance to it. For unit vectors that ranking is the cosine ranking. The clues and boards are those above, and the share is again exact for each quantizer.
 
@@ -202,7 +204,7 @@ On the Pokémon and the colors the two affinities give the same overall layout, 
 *Exact for each quantizer and seed. Seeds 0 to 9; each mean's 95% t interval is within ±0.3 points.*
 
 - **RaBitQ leads at every bit count**, by 2.5 to 11.5 points from 1 to 4 bits. Rotation alone does not account for it: rounding after a rotation matches plain rounding within 0.3 points. What remains is RaBitQ's per-word correction and its estimator. Which of the two matters was not tested.
-- **Storage.** Under 5% of picks change at 5 bits per dimension, 1,280 bits per word, a third of the float16 table. A random projection needs k = 65,536 coordinates for the same share. Quantizing keeps every dimension and adds small errors to each, while projecting mixes all dimensions together.
+- **What is counted.** At five bits, the 256 codes take 1,280 bits per word and 4% of picks change. A working RaBitQ index also needs correction factors for each word, shared quantizer settings and an uncoded vector for the clue. The plot leaves those out.
 - **Not the same guesser.** The quantized guesser keeps the clue's own vector; the projected guesser has only projected vectors on both sides.
 
 ## Data

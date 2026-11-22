@@ -391,25 +391,36 @@ def safe_threshold(cap: int, alpha: Fraction = Fraction(5, 100)) -> tuple[Fracti
 
     Every threshold t with w < t <= s gives the same rule, under which equal players are
     declared unequal with chance at most alpha. Every threshold t <= w gives a chance above
-    alpha. Here s is a posterior that occurs, and w is the next smaller one.
+    alpha. If even the most extreme attainable verdict is unsafe, s is 1 and this
+    interval never declares a winner. The cap is positive and 0 <= alpha < 1.
     """
-    lo, hi = SURE, better(cap, cap)  # the chance is above alpha at lo and below it at hi
-    assert equal_verdict_chance(cap, posterior_rule(lo)) > alpha
+    if cap < 1 or not 0 <= alpha < 1:
+        raise ValueError("need at least one game and 0 <= alpha < 1")
+    lo, hi = Fraction(1, 2), Fraction(1)  # always a verdict at lo, never one at hi
     while (values := posteriors_between(lo, hi, cap, 200)) is None:
         mid = (lo + hi) / 2
         if equal_verdict_chance(cap, posterior_rule(mid)) <= alpha:
             hi = mid
         else:
             lo = mid
-    # The rule changes only at the posteriors in (lo, hi], and the largest of them is safe.
-    i, j = 0, len(values) - 1
+
+    # Find the last unsafe threshold within this bracket. Its endpoints may be
+    # bisection midpoints, so recover the neighboring attainable posteriors below.
+    i, j = 0, len(values)
     while i < j:
         m = (i + j) // 2
         if equal_verdict_chance(cap, posterior_rule(values[m])) <= alpha:
             j = m
         else:
             i = m + 1
-    return (values[i - 1] if i else lo), values[i]
+    cut = values[i - 1] if i else lo
+    last, following = Fraction(1, 2), Fraction(1)
+    for n in range(1, cap + 1):
+        k = fewest_wins(n, cut, strict=True)
+        last = max(last, better(k - 1, n))
+        if k <= n:
+            following = min(following, better(k, n))
+    return last, following
 
 
 def bounds_hi(n: int) -> int:

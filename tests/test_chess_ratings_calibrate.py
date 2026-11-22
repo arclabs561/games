@@ -196,6 +196,10 @@ def test_pilot_and_test_steps_run_end_to_end():
     out = calibration.test(held, pop, fit)
     json.dumps(rounded(out, 4))
     p = out["primary"]
+    by_game = p["coverage_by_game"]
+    assert by_game["gain"] == pytest.approx(p["coverage_new"] - p["coverage_old"])
+    assert by_game["games_gaining"] + by_game["games_losing"] <= p["games"]
+    assert by_game["gain_interval"][0] <= by_game["gain"] <= by_game["gain_interval"][1]
     assert p["player_games"] == 80 and set(p["holm"]) == {"bias", "coverage"}
 
 

@@ -200,6 +200,11 @@ def play_turn(board: Board, ranking: list[str], count: int, nmax: int = 4) -> tu
     return found, float(found)
 
 
+def score_reply(board: Board, reply: str, count: int) -> tuple[int, float]:
+    parsed = read_ranking(reply, board.unrevealed())
+    return play_turn(board, parsed["ranking"][: parsed["named"]], count)
+
+
 def crossguess(
     guessers, clues_text: str, seed: int, meter: Meter, out: Path, distinct: bool = False
 ) -> str:
@@ -245,8 +250,7 @@ def crossguess(
                 if rec is None:
                     cells.append("-")
                     continue
-                ranking = read_ranking(rec["reply"], b.unrevealed())["ranking"]
-                found, value = play_turn(b, ranking, count or 1)
+                found, value = score_reply(b, rec["reply"], count or 1)
                 cells.append(f"{found}/{value:g}")
             lines.append(" ".join([giver, name, str(seed), *cells]))
             print(giver, name, f"${meter.spent:.4f}", flush=True)

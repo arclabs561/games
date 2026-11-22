@@ -12,7 +12,7 @@ The question at the table is how often the opening hand has what the deck needs.
 - **The hand.** Each player draws 5 cards, and the player who goes first does not draw on the first turn (same rulebook, "Let the Duel Begin!" and "Draw Phase"). So the first turn is played with 5 cards going first and 6 going second, before any card effect.
 - **Roles.** Which card is a starter depends on the deck, and the player decides it. The model only counts. A **starter** begins the deck's main play by itself, and a card that searches a starter counts as one. An **extender** adds to a play after a starter but cannot begin one. A **brick** is dead in the opening hand. **Other** is everything else: playable cards that neither start nor extend, such as cards used on the opponent's turn.
 - **"A starter and an extender"** is read in two ways. Strictly, the hand needs at least one of each. More loosely, a second starter can take the extender's place ("a starter and another engine card"). Both are reported; the loose reading gives 78.00% for the example deck going first, against 61.01% for the strict one.
-- Nothing about the opponent is modeled: no interruptions, no hand traps, no choice of going first.
+- The hand-trap calculation asks whether you drew an answer in time. The opponent’s plays and the effect of stopping them are outside the model.
 
 ## Results
 
@@ -33,8 +33,8 @@ Exact unless marked. Percentages are rounded; the exact fractions are in [`resul
 | Pot of Prosperity with 3 draw-2 cards, against the generic model that plays both | a starter 90.90% against 91.15%; a starter and an extender 73.18% against 73.98% | exact; simulated, 200,000 decks, seed 1, each within its 95% interval |
 | c draw-1 cards added to a deck of N | the same hands as the N cards without them | proved below, and checked exactly |
 | Public calculators | three agree with every value in their tables; one disagrees in 10 of 13 | exact values against values read on 2026-11-19 |
-| Fewest hand traps in 40 for at least one going second, 80 / 90 / 95% of the time; for at least two | 9 / 12 / 15; 17 / 20 / 23 | exact |
-| 12 starters and 12 hand traps, going second: a starter and a hand trap; the example deck with 12 hand traps: a starter, an extender and a hand trap | 80.58%; 62.81% | exact; simulated, 200,000 hands, seed 1, each within its 95% interval |
+| Fewest hand traps in 40 for at least one in the opening five, 80 / 90 / 95% of the time; for at least two | 11 / 14 / 18; 20 / 23 / 26 | exact |
+| 12 starters and 12 hand traps, going second: a starter and a hand trap; the example deck with 12 hand traps: a starter, an extender and a hand trap | 75.69%; 58.52% | exact; simulated, 200,000 hands, seed 1, each within its 95% interval |
 | Example deck with 3 of its starters also extenders, going first: a starter and an extender | 70.13%; 71.90% if one card may count for both | exact; checked by brute force on small decks |
 | Example deck with 8 starters and 3 extenders that need the Normal Summon, going first: a starter and an extender, one Normal Summon | 53.86%, against 61.01% with none | exact; simulated as above |
 
@@ -87,17 +87,17 @@ Each brick lowers the chance of a clean hand. With 3 bricks in 40 cards, the han
 
 ## Going second: hand traps, two roles and the Normal Summon
 
-Going second, the question at the table is whether the hand holds a starter and a hand trap. With 12 starters and 12 hand traps in 40 cards, the 6-card hand holds both 80.58% of the time. In the example deck with 12 of its 16 other cards as hand traps, it holds a starter, an extender and a hand trap 62.81% of the time. Cards that fill two roles help, but a calculator that lets one card count for both overstates the chance. Starters and extenders that need the turn's one Normal Summon lower it further. All exact ([`results/second.md`](results/second.md)), with the method in `roles.py`.
+You go second. Your hand trap needs to be in your first five cards to interrupt your opponent. Your starter can arrive on draw six. With 12 of each in 40 cards and no overlap, the chance of having both on time is 75.69%. Counting all six for both roles gives 80.58%, including hands where the trap arrives too late. Add 9 extenders in separate slots and the chance of finding all three roles on time is 58.52%. [Exact counts](results/second.md).
 
 A **hand trap** is a card played from the hand during the opponent's turn. Here a card may carry several roles, and a need is a list of slots that different cards of the hand must fill. A card that is both a starter and an extender fills one slot, not two. A card that needs the **Normal Summon** competes with every other such card, since a turn has one Normal Summon.
 
 | Going second in 40 cards | 9 hand traps | 12 | 15 |
 |---|---:|---:|---:|
-| 9 starters: a starter and a hand trap | 63.58% | 71.71% | 76.41% |
-| 12 starters | 71.71% | 80.58% | 85.62% |
-| 15 starters | 76.41% | 85.62% | 90.78% |
+| 9 starters: a starter and a hand trap | 57.97% | 67.19% | 73.24% |
+| 12 starters | 65.52% | 75.69% | 82.24% |
+| 15 starters | 69.94% | 80.56% | 87.33% |
 
-At least one hand trap takes the same counts as at least one starter: 12 for 90% going second. At least two takes 20. With 28 cards to split between starters and hand traps, 14 of each give the most, 88.03%.
+For a 90% chance to open one trap, use 14. For two, use 23. With 28 slots to split between starters and traps, 13 starters and 15 traps give the best chance of finding both on time, 84.29%.
 
 In the example deck going first, making 3 of the 12 starters also extenders raises "a starter and an extender" from 61.01% to 70.13%. Counting each of those cards once for each role gives 71.90%, which is 1.77 points too high. With all 12 starters also extenders the error is 7.07 points. The correct value then equals "a starter and another engine card" for the plain deck, 78.00%, since a second starter can now be the extender.
 

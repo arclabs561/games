@@ -90,21 +90,29 @@ def fuel_jumps(
     The ship leaves `start` with a full tank. Dijkstra's algorithm on (system, fuel left).
     """
     best: dict[System, tuple[Fraction, int]] = {}
-    seen: set[tuple[System, int]] = set()
-    heap: list[tuple[Fraction, int, System, int]] = [(Fraction(0), 0, start, tank)]
+    for (system, _), reach in fuel_arrivals(
+        links, refuel_systems, tank, landing, start, tank
+    ).items():
+        if system not in best or reach < best[system]:
+            best[system] = reach
+    return best
+
+
+def fuel_arrivals(links, refuel_systems, tank: int, landing: Fraction, start: str, initial: int):
+    """Cheapest trip to each (system, remaining fuel), with paid stops en route."""
+    reached: dict[tuple[str, int], tuple[Fraction, int]] = {}
+    heap = [(Fraction(0), 0, start, initial)]
     while heap:
         cost, stops, here, fuel = heapq.heappop(heap)
-        if (here, fuel) in seen:
+        if (here, fuel) in reached:
             continue
-        seen.add((here, fuel))
-        if here not in best:
-            best[here] = (cost, stops)
+        reached[here, fuel] = (cost, stops)
         if here in refuel_systems and fuel < tank:
             heapq.heappush(heap, (cost + landing, stops + 1, here, tank))
         if fuel > 0:
             for there in links.get(here, ()):
                 heapq.heappush(heap, (cost + 1, stops, there, fuel - 1))
-    return best
+    return reached
 
 
 # Legs and routes
@@ -176,6 +184,33 @@ def trade_graph(
             continue
         g = (gain or (lambda x, y: best_trade(x, y)[0]))(galaxy.prices[a], galaxy.prices[b])
         edges[a, b] = (g, Fraction(t))
+    return edges
+
+
+def fuel_trade_graph(galaxy: Galaxy, tank: int, landing: Fraction) -> Edges:
+    """Trade between (stop, fuel left) states. A trade landing can refuel in a fuel system."""
+    if tank < 0 or landing <= 0:
+        raise ValueError("tank must be nonnegative and a landing must have positive cost")
+    by_system: dict[str, list[str]] = {}
+    for stop, system in galaxy.stop_system.items():
+        by_system.setdefault(system, []).append(stop)
+    edges: Edges = {}
+    for start, origins in by_system.items():
+        for initial in (tank,) if start in galaxy.refuel_systems else range(tank + 1):
+            reach = fuel_arrivals(
+                galaxy.links, galaxy.refuel_systems, tank, landing, start, initial
+            )
+            for (system, left), (travel, _) in reach.items():
+                fuel = tank if system in galaxy.refuel_systems else left
+                cost = travel + landing
+                for a in origins:
+                    for b in by_system.get(system, []):
+                        if a == b:
+                            continue
+                        leg = (f"{a} [{initial}]", f"{b} [{fuel}]")
+                        if leg not in edges or cost < edges[leg][1]:
+                            gain, _ = best_trade(galaxy.prices[a], galaxy.prices[b])
+                            edges[leg] = gain, cost
     return edges
 
 
@@ -350,21 +385,28 @@ def check_certificate(edges: Edges, best: Best) -> bool:
 
     Independent of how the answer was found: it checks every leg once, in exact arithmetic.
     """
+    if not best.route or any(
+        (a, b) not in edges
+        for a, b in zip(best.route, best.route[1:] + best.route[:1], strict=True)
+    ):
+        return False
     if route_rate(edges, best.route) != best.rate:
         return False
-    for (a, b), (g, t) in edges.items():
-        if a in best.rates and best.rates.get(b) == best.rates[a]:
-            if best.potentials[a] < g - best.rates[a] * t + best.potentials[b]:
-                return False
     nodes = {a for a, _ in edges} | {b for _, b in edges}
-    for part in strongly_connected(sorted(nodes), edges):
-        if len(part) == 1:
+    component = {}
+    for i, part in enumerate(strongly_connected(sorted(nodes), edges)):
+        if len(part) == 1 and (part[0], part[0]) not in edges:
             continue
-        if any(v not in best.rates for v in part):
+        if any(v not in best.rates or v not in best.potentials for v in part):
             return False
         rates = {best.rates[v] for v in part}
         if len(rates) != 1 or max(rates) > best.rate:
             return False
+        component.update((v, i) for v in part)
+    for (a, b), (gain, cost) in edges.items():
+        if a in component and component[a] == component.get(b):
+            if best.potentials[a] < gain - best.rates[a] * cost + best.potentials[b]:
+                return False
     return True
 
 

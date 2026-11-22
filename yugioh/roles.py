@@ -96,6 +96,24 @@ def p_need(deck: Deck, n: int, want: Need, total: int | None = None) -> Fraction
     return Fraction(ways, comb(total, n))
 
 
+def p_going_second(deck: Deck, n: int, want: Need, total: int) -> Fraction:
+    """The trap must be in the opening n−1 cards. The last card can fill its other roles."""
+    if not 1 <= n <= total or total < size(deck):
+        raise ValueError("draw and groups must fit in the deck")
+    groups = (*deck, group(total - size(deck)))
+    counts = tuple(g.cards for g in groups)
+    good = 0
+    for last, g in enumerate(groups):
+        if not g.cards:
+            continue
+        rest = tuple(c - (j == last) for j, c in enumerate(counts))
+        late = Group(g.roles - {"hand trap"}, 1, g.summon)
+        for h, ways in hands(rest, n - 1):
+            if fits((*groups, late), (*h, 1), want):
+                good += g.cards * ways
+    return Fraction(good, total * comb(total - 1, n - 1))
+
+
 def physical(deck: Deck, total: int) -> list[Group | None]:
     """One entry per card, None for cards with no role."""
     return [g for g in deck for _ in range(g.cards)] + [None] * (total - size(deck))
@@ -120,11 +138,27 @@ def p_brute(deck: Deck, n: int, want: Need, total: int) -> Fraction:
     return Fraction(good, comb(total, n))
 
 
-def simulate(deck: Deck, n: int, want: Need, total: int, trials: int, seed: int) -> int:
+def simulate(
+    deck: Deck,
+    n: int,
+    want: Need,
+    total: int,
+    trials: int,
+    seed: int,
+    *,
+    going_second: bool = False,
+) -> int:
     """How many of `trials` seeded random hands meet the need."""
     rng = Random(seed)
     cards = physical(deck, total)
-    return sum(fits_cards(rng.sample(cards, n), want) for _ in range(trials))
+    hits = 0
+    for _ in range(trials):
+        hand = rng.sample(cards, n)
+        last = hand[-1] if going_second else None
+        if last is not None:
+            hand[-1] = Group(last.roles - {"hand trap"}, 1, last.summon)
+        hits += fits_cards(hand, want)
+    return hits
 
 
 def p_naive(deck: Deck, n: int, roles: Sequence[str], total: int) -> Fraction:

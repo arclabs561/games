@@ -29,6 +29,8 @@ V = len(PLANE)  # 57
 
 def deck_55(i: int = 0, j: int = 1) -> Deck:
     """The plane of order 7 without cards i and j."""
+    if i == j or not (0 <= i < V and 0 <= j < V):
+        raise ValueError(f"remove two distinct card indices from 0 to {V - 1}")
     return [c for k, c in enumerate(PLANE) if k not in (i, j)]
 
 

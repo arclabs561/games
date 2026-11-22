@@ -7,7 +7,8 @@ from math import exp
 
 import pytest
 
-from egyptian_ratscrew.game import play_game
+from egyptian_ratscrew import study
+from egyptian_ratscrew.game import Draw, Game, play_game
 from egyptian_ratscrew.study import (
     RUNS,
     chunk_summary,
@@ -111,3 +112,11 @@ def test_recorded_runs_are_consistent(runs):
         assert sum(run["tricks_counts"].values()) == sum(run["wins"])
     for name in ("vectors_3", "vectors_4"):
         assert all(sum(r["wins"]) == 4_000 for r in runs[name])
+
+
+def test_draws_and_capped_runs_are_counted_separately(monkeypatch):
+    outcomes = [Draw(1, None, 0, 1), Game(1, None, 0, 0), Game(1, 0, 1, 0)]
+    monkeypatch.setattr(study, "games", lambda *args, **kwargs: outcomes)
+    row = chunk_summary(([0.5, 0.5], 0, 0, {}))
+    assert row["draws"] == row["unfinished"] == 1
+    assert row["wins"] == [1, 0]

@@ -193,14 +193,27 @@ def test_run_and_report_end_to_end(tmp_path):
     main(["report", "--runs", str(runs), "--out", str(out)])
     result = json.loads(out.read_text())
     arms = {a["run"]: a for a in result["arms"]}
+    assert arms["on"]["deduction_method"] == "whole hand"
+    assert arms["off"]["deduction_method"] == "off"
     assert arms["on"]["gap_mean"] == pytest.approx(25 - arms["on"]["score_mean"])
     assert arms["off"]["truncated_share_of_calls"] == 1.0
     assert arms["p3"]["information_strategy"]["deals"] == 2
     assert len(result["deduction_effect"]) == 1
     effect = result["deduction_effect"][0]
+    assert effect["deduction_method"] == "whole hand"
     assert effect["deals"] == 3 and effect["mean"] == pytest.approx(
         arms["off"]["gap_mean"] - arms["on"]["gap_mean"]
     )
+
+    # An old slotwise run can share every arm field except the new method.
+    # Reporting it alongside these runs must never silently choose one version.
+    other = runs / "historical"
+    other.mkdir()
+    del summary["deduction_method"]
+    (other / "summary.json").write_text(json.dumps(summary))
+    (other / "scores.jsonl").write_bytes((runs / "on" / "scores.jsonl").read_bytes())
+    with pytest.raises(ValueError, match="different labels"):
+        main(["report", "--runs", str(runs), "--out", str(out)])
 
 
 def test_a_run_stops_at_its_cap_and_keeps_a_prefix(tmp_path):

@@ -5,7 +5,6 @@ Exploratory. Written by `uv run python -m codenames.diagnose disagree`. Each row
 | Board | Strangers | Human-fitted | EAT | Language models | Gap | F | P | Case |
 |---:|---:|---:|---:|---:|---:|---|---|---|
 | 209 | 1.265 | 2.388 | 0.279 | 8.500 | -7.235 | legal | illegal | [c10-209](cases/c10-209.md) |
-| 41 | 0.177 | -0.854 | 0.000 | 4.500 | -4.323 | legal | legal | [c10-041](cases/c10-041.md) |
 | 296 | 0.888 | -0.853 | -0.522 | 5.000 | -4.112 | legal | borderline | [c10-296](cases/c10-296.md) |
 | 85 | -0.022 | -0.906 | 1.018 | 4.000 | -4.022 | legal | legal | [c10-085](cases/c10-085.md) |
 | 224 | 0.496 | 0.615 | -1.000 | 4.500 | -4.004 | legal | illegal | [c10-224](cases/c10-224.md) |
@@ -13,6 +12,7 @@ Exploratory. Written by `uv run python -m codenames.diagnose disagree`. Each row
 | 244 | 1.461 | 0.340 | 1.904 | -2.000 | 3.461 | legal | illegal | [c10-244](cases/c10-244.md) |
 | 66 | 0.816 | 1.368 | -0.800 | 4.000 | -3.184 | legal | illegal | [c10-066](cases/c10-066.md) |
 | 15 | 0.264 | 0.348 | -1.240 | -2.500 | 2.764 | legal | legal | [c10-015](cases/c10-015.md) |
+| 243 | -0.280 | -1.474 | -0.606 | -3.000 | 2.720 | legal | illegal | [c10-243](cases/c10-243.md) |
 | 89 | 1.007 | 1.704 | 0.254 | -1.500 | 2.507 | legal | legal | [c10-089](cases/c10-089.md) |
 | 294 | -0.004 | -0.077 | 0.643 | 2.500 | -2.504 | legal | illegal |  |
 | 44 | 0.432 | -1.079 | 1.460 | -2.000 | 2.432 | legal | legal |  |

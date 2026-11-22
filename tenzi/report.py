@@ -71,6 +71,7 @@ def sci(x) -> list:
     return [float(mantissa), -int(exponent)]
 
 
+@maximum.sixty_digits()
 def harmonic() -> dict:
     gap = {n: maximum.decimal(maximum.exact_mean(n)) - maximum.harmonic_approximation(n)
            for n in HARMONIC_DICE}  # fmt: skip

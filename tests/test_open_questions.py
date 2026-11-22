@@ -71,3 +71,20 @@ def test_every_question_has_a_known_status():
 def test_paper_only_comments_are_left_out():
     readme = "## Open questions\n\n- Proved<!--raw-typst  (@thm-x)-->. Is it?\n"
     assert oq.open_questions(readme) == ["Proved. Is it?"]
+
+
+def test_links_are_relative_to_the_game_readme(tmp_path):
+    game = tmp_path / "cards"
+    game.mkdir()
+    (game / "README.md").write_text(
+        "# Cards\n## Open questions\n"
+        "- See [results](results/run.md#sample), [rules](#rules), "
+        "[plan](../plans/run.md), [site](https://example.org/x), "
+        "and `[example](example.md)`.\n"
+    )
+    index = oq.render(tmp_path)
+    assert "[results](cards/results/run.md#sample)" in index
+    assert "[rules](cards/README.md#rules)" in index
+    assert "[plan](plans/run.md)" in index
+    assert "[site](https://example.org/x)" in index
+    assert "`[example](example.md)`" in index

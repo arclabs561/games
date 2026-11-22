@@ -29,10 +29,10 @@ Intervals are 95% intervals. The last column links the note in [`results/`](resu
 | Winnable orderings of small decks, such as 5,934 of 75,600 for one color, one player and a hand of one card | Exact, every deal; matches van den Bergh's Appendix A to all four digits | [open-game](results/open-game.md) |
 | Two-player deals that can reach 25: 0.9862 (0.9845 to 0.9877); 276 of 20,000 lost | Two solvers on seeded deals 0 to 19,999 (plan H1), with certificates added after the plan; Wilson interval | [h1](results/h1.md) |
 | Three, four and five players: 0.9988 to 0.9992, 0.99965 to 0.99985 and 0.99935 to 0.99995; 23 deals still undecided | Same | [h1](results/h1.md) |
-| No strategy averages more than 24.9838 ± 0.0021 with two players; 24.9990, 24.9998 and 24.9999 with three to five | Same | [h1](results/h1.md) |
+| On the sampled deals the mean score is at most 24.9838 ± 0.0021 with two players; 24.9990, 24.9998 and 24.9999 with three to five | Same | [h1](results/h1.md) |
 | Human two-player games: the deal ruled out 0.013 (0.007 to 0.019) of 1.63 points below 25; 19 of 1,858 deals stop below 25, and none of 1,221 three-player deals | Exact search of each deal; bootstrap over games, 10,000 resamples, seed 0 | [humans](results/humans.md) |
 | gpt-oss-120b in self-play plays 18.63 (16.70 to 20.57) points below the ceiling; DeepSeek-V3.2 loses every game | Plan H2: 30 seeded deals, one game each; bootstrap over deals | [h2](results/h2.md) |
-| Listing what each own card can still be changes gpt-oss-120b's gap by −0.79 (−3.71 to 2.25) | Plan H2, paired on 24 deals | [h2](results/h2.md) |
+| Listing candidates for each slot separately changes gpt-oss-120b's gap by −0.79 (−3.71 to 2.25) | Plan H2, paired on 24 deals | [h2](results/h2.md) |
 | A larger entropy bonus raises cross-play of independent PPO by 1.12 (0.83 to 1.41) points in a two-color game | Plan H4: 8 seeds an arm, 2,000 deals; bootstrap over deals and seeds | [h4](results/h4.md) |
 
 ## How the results are checked
@@ -69,7 +69,7 @@ Plan H1 ([plan](../experiments/plans/H1.md)) fixed the full-game measurement bef
 | 4 | 3 | 4 | 0.99965 to 0.99985 | 0.9993 to 0.9999 | 24.9998 ± 0.0002 |
 | 5 | 1 | 12 | 0.99935 to 0.99995 | 0.9989 to 1 | 24.9999 ± 0.0001 |
 
-The bound is optimistic, since real players do not see the deck. Still, it says how much of each agent's gap to 25 is out of reach for anyone: 1.7% for SAD with an auxiliary task (Hu and Foerster, 2020) and 4.1% for SAD with SPARTA search (Lerer et al., 2020), whose gaps are 0.92 and 0.39 points.
+The mean bounds apply to these sampled deals. The ± values estimate sampling error from the sample standard deviation. With only one known loss at five players, use the winnable-share interval to judge how rare a loss might be on fresh deals. The bound is optimistic, since real players do not see the deck. Still, it says how much of each agent's gap to 25 is out of reach for anyone: 1.7% for SAD with an auxiliary task (Hu and Foerster, 2020) and 4.1% for SAD with SPARTA search (Lerer et al., 2020), whose gaps are 0.92 and 0.39 points.
 
 ## Human games: the deal or the table?
 
@@ -90,7 +90,7 @@ Best possible score: 24 (exact).
 
 ## Language-model players
 
-Plan H2 ([plan](../experiments/plans/H2.md), with two dated amendments) seats the same hosted model in both chairs of a two-player game on seeded deals 0 to 29, all with ceiling 25. `llm.py` writes everything one player may know as text; with deduction on, it also lists what each own card can still be. With deduction on, 24% of gpt-oss-120b's turns reached the 4,096-token cap before writing a move and fell back to a default move. DeepSeek-V3.2 wrote a legal move in 1,545 of its 1,546 replies and lost its lives to misplays. A later note, [h2-harness.md](results/h2-harness.md), finds that the cap limits gpt-oss-120b's numbers. The ten runs, pilot included, cost $3.60 by the providers' listed prices, against a cap of $4. Detail: [h2.md](results/h2.md).
+Plan H2 ([plan](../experiments/plans/H2.md), with two dated amendments) seats the same hosted model in both chairs of a two-player game on seeded deals 0 to 29, all with ceiling 25. `llm.py` writes everything one player may know as text; with deduction on, the tested aid listed candidates for each slot separately. A card known to occupy another slot could still appear on the list. With deduction on, 24% of gpt-oss-120b's turns reached the 4,096-token cap before writing a move and fell back to a default move. DeepSeek-V3.2 wrote a legal move in 1,545 of its 1,546 replies and lost its lives to misplays. A later note, [h2-harness.md](results/h2-harness.md), finds that the cap limits gpt-oss-120b's numbers. The ten runs, pilot included, cost $3.60 by the providers' listed prices, against a cap of $4. Detail: [h2.md](results/h2.md).
 
 | Two players | Deals | Gap to the ceiling | Mean score | Lost all lives |
 |---|---:|---|---:|---:|
@@ -134,9 +134,9 @@ Because the dataset's license comes from a metadata tag alone and the site state
 
 ## Open questions
 
-- Split the points between a team's score and its deal's ceiling into what hidden information costs and what play costs. That needs an agent that plays the real game well, scored on the same 3,079 decks.
+- How much of the gap to the ceiling can one fixed convention recover on the same 3,079 decks? Choose the convention before testing it. Its remaining gap includes both hidden information and choices another convention might improve.
 - Settle the 23 deals still undecided ([h1.md](results/h1.md) lists them). No certificate proves any of them lost, and 13 are won in the free-order game.
-- The best real (not open-information) score of each deal is unknown.
+- How close to the open-game ceiling can one strategy get on average when it must play every deal with only the information at the table?
 - Whether the gap between self-play and cross-play at α = 0.05 closes with more training, as in Forkel et al.
 
 [open-questions.md](results/open-questions.md) has the full list, with tokens, endgames and the clusters of low-entropy seeds.

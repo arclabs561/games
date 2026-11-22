@@ -326,9 +326,22 @@ def best_of_games(p: Fraction, n: int) -> Fraction:
     )
 
 
+def _best_of_one(p: Fraction | float, alpha: Fraction | float) -> bool:
+    """Check feasibility and whether one game already meets the target."""
+    if not 0 <= p <= 1 or not 0 <= alpha <= 1:
+        raise ValueError("p and alpha must be probabilities")
+    if p >= 1 - alpha:
+        return True
+    if p <= 0.5 or alpha == 0:
+        raise ValueError("no finite best-of match reaches the requested win chance")
+    return False
+
+
 def fewest_best_of(p: Fraction, alpha: Fraction = Fraction(5, 100)) -> int:
     """The shortest best-of-n match (n odd) that the better player wins with chance >= 1 - alpha."""
-    n = 1
+    if _best_of_one(p, alpha):
+        return 1
+    n = 3
     while best_of(p, n) < 1 - alpha:
         n += 2
     return n
@@ -366,7 +379,9 @@ def lead_float(p: float, c: int) -> tuple[float, float]:
 
 def fewest_best_of_float(p: float, alpha: float = 0.05) -> int:
     """fewest_best_of in floating point, summing the binomial tail with logs."""
-    n = 1
+    if _best_of_one(p, alpha):
+        return 1
+    n = 3
     while True:
         tail = sum(
             exp(

@@ -1,6 +1,6 @@
 # Drive Ya Nuts
 
-Do the seven nuts fit together in only one way, and was the designer lucky to get a set like that? The original nuts have exactly one solution. Of all 59,487,568,920 sets of seven distinct nuts, 6.805% can be solved, and 78.56% of those have exactly one solution, so a single solution is the usual case once a set can be solved at all. Up to renaming the numbers there are 82,628,379 different sets. If a nut may appear twice, 6,901,100 classes can be solved, as a comment on Mathematics Stack Exchange reports. Every count is exact, by counting every arrangement and by Burnside's lemma, and checked against brute force.
+Do the seven nuts fit together in only one way, and was the designer lucky to get a set like that? The original nuts have exactly one solution. Of all 59,487,568,920 sets of seven distinct nuts, 6.805% can be solved, and 78.56% of those have exactly one solution, so a single solution is the usual case once a set can be solved at all. Up to renaming the numbers there are 82,628,379 different sets. If nuts may repeat, 6,901,100 classes can be solved. Two even use four copies of one nut and three of another. Every count is exact, by counting every arrangement and by Burnside's lemma, and checked against brute force.
 
 ![Seven hexagons, one in the center and six around it, each with the numbers 1 to 6 on its sides; every pair of touching sides shows the same number, drawn in the same color.](figures/puzzle.svg)
 
@@ -80,7 +80,7 @@ The full table is in [`exact_counts.csv`](exact_counts.csv). No set has more tha
 
 ## How hard is the original set?
 
-About average among the sets with one solution. A fixed solver needs 573 steps for the original. Of the 3,180,020,160 sets with exactly one solution, 42.64% need fewer steps, 0.31% the same number and 57.05% more; the median is 597. Exact, by listing every such set.
+A solver that tries each nut in the center needs 573 steps for the original, close to the median for sets with one solution. Of the 3,180,020,160 sets with exactly one solution, 42.64% need fewer steps, 0.31% the same number and 57.05% more; the median is 597. Exact, by listing every such set.
 
 ![A bar chart of the share of one-solution sets by search size, in bins of 20 steps, from about 270 to 1,860; the bars rise to a peak near 540 and fall off slowly to the right, and the bar holding the original set's 573 is drawn in orange just right of the peak.](figures/difficulty.svg)
 

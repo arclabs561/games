@@ -6,7 +6,7 @@ What optimal play keeps from each of the 252 first rolls; `openings.csv` has the
 `openings.csv` gives, for each of the 252 first rolls of the game, the best keep and its expected final score, with the second-best keep. Counting the 7,776 equally likely ordered rolls:
 
 - Only Yahtzees and large straights are kept whole, 246 of the 7,776 rolls. Some dice are always kept.
-- 6,156 rolls hold a pair or more, and the best keep is every die of the most common face. That includes full houses: with 5 5 6 6 6, keep 6 6 6 (265.12) rather than the full house.
+- 7,056 rolls have a pair or more. On 6,156 of them, the best keep is every die of a most common face. That includes full houses: with 5 5 6 6 6, keep 6 6 6 (265.12) rather than the full house.
 - In the other 900 rolls with a pair, the pair is given up:
   - for a straight draw. With 1 1 3 4 5, keep 3 4 5; with 2 3 4 5 5, keep 2 3 4 5.
   - for a single die of 4 or more, when the pair is of 1s. With 1 1 2 3 6, keep the 6; with 1 1 2 4 5, keep the 5.

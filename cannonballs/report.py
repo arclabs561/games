@@ -53,6 +53,10 @@ def results(quick: bool = False) -> dict:
     neighbors = piles.contacts_per_ball(big)
     pell = lucas.surviving_case_solutions(b["digits"])
     tops = lucas.truncated_table(30, b["tops"])
+    if unresolved := [n for n, status, _ in tops if status == "unresolved"]:
+        raise ValueError(
+            f"cannot publish a complete table with unresolved layer counts {unresolved}"
+        )
     oblong_rows = {a: lucas.oblong_square(a) for a in range(1, 31)}
     residue_agree = all(
         lucas.oblong_has_square(a) == (lucas.oblong_square(a) is not None)

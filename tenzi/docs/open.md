@@ -1,4 +1,4 @@
 - **A proof for every deadline.** Switching is best for every deadline up to turn {{deadline.last}}, by computation. An argument that covers every deadline, and every number of dice and faces, is still missing.
 - **Speed.** The slides ask how much a faster player gains; in a lockstep race every player rolls at the same pace. Their chart of a player who rolls faster gives a jump of 0.0235 at equal speeds, about half the exact chance of a tie between two players, {{race.target first.2.1:.3f}}. Where does 0.0235 come from?
-- **Players who react.** What is the best strategy in a race against players who watch our dice and react to them? The argument that switching is best assumes that the others' choices do not depend on our dice.
-- **Other sizes.** The same chain and decision process work for any number of dice and faces. Every deadline has been checked only for ten dice on six faces and for two to six dice on two to six faces.
+- **Players who react.** What is the best strategy in a race against players who watch our dice and react to them? The race bound assumes that the other players make their choices independently of our dice.
+- **Other sizes.** The same chain and decision process work for any number of dice and faces. For two to six dice on two to six faces, switching was best through the last deadline checked for each game.

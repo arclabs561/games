@@ -265,7 +265,7 @@ def guesses_plot() -> Figure:
 
 
 def storage_plot() -> Figure:
-    """Picks changed against stored bits per word: random projections and quantizers."""
+    """Picks changed against coordinate bits per word: random projections and quantizers."""
     res = study.stored()
     proj, quant = res["guesses"], res["quantize"]
     fig, ax = plt.subplots(figsize=(6.5, 4.4))
@@ -332,7 +332,7 @@ def storage_plot() -> Figure:
     xt = [2**e for e in range(8, 22, 2)]
     ax.set_xticks(xt, [f"{v:,}" for v in xt], fontsize=7)
     ax.minorticks_off()
-    ax.set_xlabel("stored bits per word")
+    ax.set_xlabel("coordinate bits per word")
     ax.set_ylabel("picks changed")
     ax.grid(True, which="major", color="#e6e6e3", lw=0.6)
     ax.set_ylim(0.003, 1.3)

@@ -230,14 +230,25 @@ def report(runs: Path) -> dict:
     """Combine the Actions outputs (one file per seed or part) into difficulty.json."""
     samples = [json.loads(p.read_text()) for p in sorted(runs.rglob("difficulty-sample-*.json"))]
     parts = [json.loads(p.read_text()) for p in sorted(runs.rglob("difficulty-exact-*.json"))]
-    assert sorted(p["part"] for p in parts) == list(range(parts[0]["parts"]))
+    if not parts:
+        raise ValueError("no exact shards found")
+    count = parts[0]["parts"]
+    if any(p["parts"] != count for p in parts) or sorted(p["part"] for p in parts) != list(
+        range(count)
+    ):
+        raise ValueError("exact shards must cover the same partition once each")
+    seeds = sorted(s["seed"] for s in samples)
+    if seeds != list(range(1, 11)):
+        raise ValueError("the published sample needs seeds 1 through 10 once each")
+    if any(s["samples"] != 20_000 for s in samples):
+        raise ValueError("the published sample needs 20,000 sets per seed")
     out: dict = {"exact": {}, "sampled": {}}
     assert len({p["edge_sequences"] for p in parts}) == 1  # each part counts them all
     out["exact"]["edge_sequences"] = parts[0]["edge_sequences"]
     for key in ("rings", "distinct", "one"):
         out["exact"][key] = sum(p[key] for p in parts)
     out["exact"]["solutions"] = [sum(c) for c in zip(*(p["solutions"] for p in parts), strict=True)]
-    out["sampled"]["seeds"] = sorted(s["seed"] for s in samples)
+    out["sampled"]["seeds"] = seeds
     out["sampled"]["samples"] = sum(s["samples"] for s in samples)
     for k in ("look_ahead", "plain"):
         mine = size(original(), k == "look_ahead")

@@ -1,6 +1,5 @@
-"""Answer the trade questions for Naev (committed data) and, given its data, EV Nova.
+"""Find EV Nova's best trade routes from a ConText export.
 
-    uv run python -m ev_nova.study                       # Naev only, about two minutes
     uv run python -m ev_nova.study --evnova NovaConText.txt
 
 Every rate is exact (a fraction of credits per ton), and every best route comes with potentials
@@ -8,6 +7,7 @@ that are checked to prove that no route does better.
 """
 
 import argparse
+import os
 import time
 from fractions import Fraction
 from pathlib import Path
@@ -25,7 +25,7 @@ from .routes import (
     check_certificate,
     components,
     eccentricities,
-    fuel_jumps,
+    fuel_trade_graph,
     jump_table,
     karp_rate,
     landing_envelope,
@@ -136,19 +136,12 @@ def routes_report(g: Galaxy) -> None:
 def fuel_report(g: Galaxy, landing: Fraction, tanks: tuple[int, ...]) -> None:
     """The best route when the tank holds `tank` jumps and refueling costs a landing."""
     for tank in tanks:
-        reach = {
-            s: fuel_jumps(g.links, g.refuel_systems, tank, landing, s)
-            for s in set(g.stop_system.values())
-        }
-
-        def cost(a, b, reach=reach):
-            sa, sb = g.stop_system[a], g.stop_system[b]
-            found = reach[sa].get(sb)
-            return None if found is None else found[0] + landing
-
-        edges = trade_graph(g, landing, cost=cost)
+        edges = fuel_trade_graph(g, tank, landing)
         best = best_route(edges)
-        assert best is not None and check_certificate(edges, best)
+        if best is None:
+            print(f"  tank of {tank} jumps: no repeatable trade route")
+            continue
+        assert check_certificate(edges, best)
         print(f"  tank of {tank} jumps: {show(best.rate)}, route {' -> '.join(best.route)}")
 
 
@@ -230,11 +223,7 @@ def naev_drift(
     return min(gains), max(gains)
 
 
-def main() -> None:
-    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--evnova", type=Path, help="a ConText export of EV Nova's data files")
-    args = parser.parse_args()
-
+def archived_study() -> None:
     data = naev.load()
     print(f"Naev, data from commit {data['source']['commit'][:12]}")
     g = naev.galaxy(data, hidden=False)
@@ -258,26 +247,45 @@ def main() -> None:
         f" {sum(best_trade(g.prices[a], g.prices[b])[0] for a, b in zip(best.route, best.route[1:] + best.route[:1], strict=True))}"
     )
 
-    if args.evnova:
-        from . import evnova
 
-        tables = evnova.read_context(args.evnova)
-        g, levels = evnova.galaxy(tables)
-        print(f"\nEV Nova, from {args.evnova.name}, at the start of a game")
-        print(f"  {len(g.stop_system)} stops with a commodity exchange")
-        structure(g)
-        routes_report(g)
-        print("  fuel, landing costs 1 jump, refueling costs another landing:")
-        fuel_report(g, Fraction(1), (1, 2))
-        print("  credits limit the load (a new player has a 10-ton Shuttle and 25,000 credits):")
-        capital_report(g, Fraction(1), [(10, 25_000), (125, 25_000), (125, 100_000)])
-        junk = evnova.junk_markets(tables, g)
-        gj = evnova.with_junk(g, junk)
-        print("  with special commodities, priced 80% of base where sold and 125% where bought:")
-        solve(trade_graph(gj, 1), "landing costs 1 jump")
-        solve(trade_graph(gj, 0), "one landing per visit, landing free")
-        print("  published routes, checked:")
-        guide_report(g, levels)
+def nova_study(path: Path) -> None:
+    from . import evnova
+
+    tables = evnova.read_context(path)
+    g, levels = evnova.galaxy(tables)
+    print(f"\nEV Nova, from {path.name}, at the start of a game")
+    print(f"  {len(g.stop_system)} stops with a commodity exchange")
+    structure(g)
+    routes_report(g)
+    print("  fuel, landing costs 1 jump, refueling costs another landing:")
+    fuel_report(g, Fraction(1), (1, 2))
+    print("  credits limit the load (a new player has a 10-ton Shuttle and 25,000 credits):")
+    capital_report(g, Fraction(1), [(10, 25_000), (125, 25_000), (125, 100_000)])
+    junk = evnova.junk_markets(tables, g)
+    gj = evnova.with_junk(g, junk)
+    print("  with special commodities, priced 80% of base where sold and 125% where bought:")
+    solve(trade_graph(gj, 1), "landing costs 1 jump")
+    solve(trade_graph(gj, 0), "one landing per visit, landing free")
+    print("  published routes, checked:")
+    guide_report(g, levels)
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument(
+        "--evnova",
+        type=Path,
+        default=os.getenv("EV_NOVA_CONTEXT"),
+        help="ConText export (defaults to EV_NOVA_CONTEXT)",
+    )
+    parser.add_argument("--naev", action="store_true", help="also run the archived comparison")
+    args = parser.parse_args()
+    if not args.evnova and not args.naev:
+        parser.error("supply --evnova PATH or set EV_NOVA_CONTEXT to your ConText export")
+    if args.evnova:
+        nova_study(args.evnova)
+    if args.naev:
+        archived_study()
 
 
 if __name__ == "__main__":

@@ -93,8 +93,9 @@ def test_example_deck_variations_keep_their_totals():
 
 def test_small_simulation_agrees():
     for _, deck, n, want in second.CHECKS:
-        p = roles.p_need(deck, n, want, second.SIZE)
-        hits = roles.simulate(deck, n, want, second.SIZE, 4000, seed=2)
+        score = roles.p_going_second if n == SECOND else roles.p_need
+        p = score(deck, n, want, second.SIZE)
+        hits = roles.simulate(deck, n, want, second.SIZE, 4000, seed=2, going_second=n == SECOND)
         lo, hi = odds.wilson(hits, 4000, z=3.29)  # 99.9%: four rows, one seed
         assert lo <= p <= hi
 
@@ -113,8 +114,32 @@ def test_committed_simulation_matches_exact_values():
     for line, (label, deck, n, want) in zip(body, second.CHECKS, strict=True):
         cells = [c.strip() for c in line.strip("|").split("|")]
         assert cells[0] == label and cells[-1] == "yes"
-        assert cells[1] == odds_pct(roles.p_need(deck, n, want, second.SIZE))
+        score = roles.p_going_second if n == SECOND else roles.p_need
+        assert cells[1] == odds_pct(score(deck, n, want, second.SIZE))
 
 
 def odds_pct(p: Fraction) -> str:
     return f"{float(p) * 100:.4f}%"
+
+
+def test_late_card_can_start_but_cannot_interrupt():
+    from itertools import permutations
+
+    deck = (group(1, "hand trap"), group(1, "hand trap", "starter"), group(2, "starter"))
+    cards = roles.physical(deck, 5)
+    orders = list(permutations(cards, 3))
+
+    def on_time(order):
+        return any(
+            t and "hand trap" in t.roles and s and "starter" in s.roles
+            for i, t in enumerate(order[:2])
+            for j, s in enumerate(order)
+            if i != j
+        )
+
+    assert roles.p_going_second(deck, 3, second.STARTER_AND_TRAP, 5) == Fraction(
+        sum(on_time(order) for order in orders), len(orders)
+    )
+    assert roles.p_going_second(second.plain(12, 12), 6, second.STARTER_AND_TRAP, 40) == Fraction(
+        7981, 10545
+    )

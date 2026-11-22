@@ -32,6 +32,9 @@ SOURCE = HERE / "anneal.c"
 WORDS = HERE / "enable1.txt"
 RESULTS = HERE / "results"
 STEPS, T0, T1 = 300_000, 300.0, 5.0
+# Run 44725584401 predates per-row settings. Only these exact records inherit its settings.
+ARCHIVE_SHA256 = "18033573f9eee6ec01f36411bd10bf2669a879ee0fc05c0a2c146521f630ec07"
+ARCHIVE_WORDS_SHA256 = "a392640f14602fcbb36779eb6671d170260c06d43f41c16383e7f0e35b221b4a"
 
 
 def compiler() -> str | None:
@@ -108,11 +111,24 @@ def anneal(seed: int, runs: int, steps: int = STEPS, words: Path = WORDS) -> lis
         text=True,
         check=True,
     )
+    settings = {
+        "steps": steps,
+        "t0": T0,
+        "t1": T1,
+        "word_list_sha256": hashlib.sha256(words.read_bytes()).hexdigest(),
+    }
     recs = []
     for line in out.stdout.splitlines():
         _, s, i, pts, count, board = line.split()
         recs.append(
-            {"seed": int(s), "run": int(i), "points": int(pts), "words": int(count), "board": board}
+            {
+                "seed": int(s),
+                "run": int(i),
+                "points": int(pts),
+                "words": int(count),
+                "board": board,
+                "settings": settings,
+            }
         )
     return recs
 
@@ -124,10 +140,36 @@ def canonical(letters: str) -> str:
     return min("".join("".join(row) for row in b) for b in [board, *orientations(board)])
 
 
+def read_records(path: Path) -> list[dict]:
+    raw = path.read_bytes()
+    records = [json.loads(line) for line in raw.splitlines()]
+    if hashlib.sha256(raw).hexdigest() == ARCHIVE_SHA256:
+        settings = {
+            "steps": 300_000,
+            "t0": 300.0,
+            "t1": 5.0,
+            "word_list_sha256": ARCHIVE_WORDS_SHA256,
+        }
+        for row in records:
+            row["settings"] = settings
+    return records
+
+
 def summary(path: Path = RESULTS / "anneal-5x5.jsonl") -> dict:
-    """The boards the searches ended on, up to symmetry, best first, with how many searches
-    ended on each; the best is rescored by board.get_words."""
-    recs = [json.loads(x) for x in path.open()]
+    return summarize(read_records(path))
+
+
+def summarize(recs: list[dict]) -> dict:
+    if not recs or not recs[0].get("settings"):
+        raise ValueError("missing search records or settings")
+    settings = recs[0]["settings"]
+    if any(r.get("settings") != settings for r in recs):
+        raise ValueError("searches used different settings or lack settings")
+    if settings["word_list_sha256"] != hashlib.sha256(WORDS.read_bytes()).hexdigest():
+        raise ValueError(f"searches must use {WORDS.name} to compare with Boyan’s score")
+    ids = [(r["seed"], r["run"]) for r in recs]
+    if len(set(ids)) != len(ids):
+        raise ValueError("duplicate (seed, run) search record")
     boards: dict[str, dict] = {}
     for r in recs:
         b = boards.setdefault(
@@ -143,7 +185,7 @@ def summary(path: Path = RESULTS / "anneal-5x5.jsonl") -> dict:
     points = sorted(r["points"] for r in recs)
     return {
         "word_list": WORDS.name,
-        "settings": {"steps": STEPS, "t0": T0, "t1": T1},
+        "settings": {k: settings[k] for k in ("steps", "t0", "t1")},
         "searches": len(recs),
         "seeds": sorted({r["seed"] for r in recs}),
         "best": best,
@@ -187,11 +229,12 @@ def main() -> None:
             list(pool.map(one, seeds))
     elif args.cmd == "summary":
         path = RESULTS / "anneal-5x5.jsonl"
-        if args.records:  # merge run outputs into the committed records, in seed order
-            recs = [json.loads(x) for p in args.records for x in p.open()]
+        recs = [r for p in args.records or [path] for r in read_records(p)]
+        result = summarize(recs)
+        if args.records:
             recs.sort(key=lambda r: (r["seed"], r["run"]))
             path.write_text("".join(json.dumps(r) + "\n" for r in recs))
-        (RESULTS / "best-5x5.json").write_text(json.dumps(summary(path), indent=1) + "\n")
+        (RESULTS / "best-5x5.json").write_text(json.dumps(result, indent=1) + "\n")
         print((RESULTS / "best-5x5.json").read_text())
     else:
         trie = make_trie(w for w in WORDS.read_text().split() if len(w) >= 3)
