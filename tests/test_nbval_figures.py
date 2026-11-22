@@ -5,6 +5,7 @@ import io
 import matplotlib
 import numpy as np
 import pytest
+from PIL import Image
 
 from tests.nbval_figures import TOLERANCE, figure_mismatches, rms_difference
 
@@ -50,6 +51,14 @@ def test_one_missing_point_fails(base, tmp_path):
     problems = figure_mismatches([base], [scatter(range(199))], TOLERANCE, tmp_path)
     assert len(problems) == 1 and problems[0].startswith("figure 1:")
     assert (tmp_path / "figure1-failed-diff.png").exists()
+
+
+def test_disappearing_figure_fails(base, tmp_path):
+    with Image.open(io.BytesIO(base)) as image:
+        image.putalpha(0)
+        transparent = io.BytesIO()
+        image.save(transparent, format="PNG")
+    assert figure_mismatches([base], [transparent.getvalue()], TOLERANCE, tmp_path)
 
 
 def test_other_size_fails(base, tmp_path):
