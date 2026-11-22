@@ -6,7 +6,7 @@ Exploratory. Written by `uv run python -m codenames.diagnose legality` from comm
 
 - Every experiment here filtered clues with `words.legal`, which forbids a board word and a clue that contains one or is contained in one. That lets through forms of a board word (residency with RESIDENCE, teaching with TEACHER) and shared compound parts (railway with RAILROAD), which the rulebook forbids.
 - Under a stricter check (`codenames/legality.py`), C10's population pick P is illegal (a form of a board word or a shared compound part) on 28.0% (23.0% to 33.3%) of test boards, against 7.0% (4.3% to 10.0%) for the first choice F and 28.3% (23.3% to 33.7%) for the oracle. Picks chosen by their value to embedding guessers break the rule most often.
-- On the 188 of 300 C10 boards where neither F nor any of P's seven picks is flagged illegal, P − F under the embedding strangers is 0.232 (0.180 to 0.284), against 0.239 (0.198 to 0.282) on all boards; under the two language models it is 0.048 (-0.093 to 0.197), against 0.025 (-0.095 to 0.153). The embedding-only advantage (strangers minus language models) is 0.184 (0.034 to 0.330) on clean boards and 0.214 (0.088 to 0.334) on all. Leaving those boards out does not shrink it beyond its interval.
+- On the 188 of 300 C10 boards where neither F nor any of P's seven picks is flagged illegal, P − F under the embedding strangers is 0.232 (0.180 to 0.284), against 0.239 (0.198 to 0.282) on all boards; under the two language models it is 0.019 (-0.117 to 0.157), against -0.005 (-0.123 to 0.120). The embedding-only advantage (strangers minus language models) is 0.214 (0.072 to 0.355) on clean boards and 0.244 (0.122 to 0.360) on all. Leaving those boards out does not shrink it beyond its interval.
 - With every arm choosing among strictly legal clues, P − F under the strangers is 0.215 (0.173 to 0.258) on all 300 boards (C10: 0.239 (0.198 to 0.282)); under the human-fitted guesser 0.139 (0.058 to 0.223) (C10: 0.140 (0.054 to 0.229)); under EAT 0.133 (0.042 to 0.224) (C10: 0.003 (-0.081 to 0.087)). These are exact values; the language models were not asked about the new picks. So with legal clues the population's lead holds under the embedding and human-fitted guessers and appears under EAT: the advantage of the strangers over EAT falls from 0.236 (0.150 to 0.323) to 0.083 (-0.010 to 0.178). Part of EAT's change is coverage: in C10, 39.3% of P's illegal clues are EAT cues, against 63.5% of its legal ones, and a clue that is not a cue gets EAT's uniform guess.
 - The C11 pilot's first materials had 14 illegal and 4 borderline items of 80, on 16 of 40 boards. They were made again with the strict filter before anyone played; the new 80 items have 0 flags (experiments/plans/C11.md, amendment of 2026-11-19).
 
@@ -123,7 +123,7 @@ C10's 300 test boards (seed 9004). A board is flagged when F's clue or one of P'
 | seven embedding strangers (C10's mean over tasks) | 0.239 (0.198 to 0.282) | 0.232 (0.180 to 0.284) | 0.231 (0.179 to 0.283) | 0.019 (-0.066 to 0.107) |
 | human-fitted guesser (five potion maps) | 0.140 (0.054 to 0.229) | 0.130 (0.019 to 0.243) | 0.161 (0.052 to 0.270) | 0.029 (-0.147 to 0.213) |
 | EAT association guesser | 0.003 (-0.081 to 0.087) | 0.025 (-0.085 to 0.132) | 0.031 (-0.086 to 0.142) | -0.059 (-0.225 to 0.108) |
-| Llama 3.3 70B and DeepSeek-V3.2, one played-out reply each | 0.025 (-0.095 to 0.153) | 0.048 (-0.093 to 0.197) | 0.045 (-0.093 to 0.185) | -0.061 (-0.321 to 0.221) |
+| Llama 3.3 70B and DeepSeek-V3.2, one played-out reply each | -0.005 (-0.123 to 0.120) | 0.019 (-0.117 to 0.157) | 0.014 (-0.115 to 0.143) | -0.063 (-0.328 to 0.221) |
 
 The embedding-only advantage, per board, strangers' P − F minus another family's:
 
@@ -131,7 +131,7 @@ The embedding-only advantage, per board, strangers' P − F minus another family
 |---|---|---|---|---|
 | strangers − human-fitted | 0.099 (0.025 to 0.174) | 0.103 (0.006 to 0.201) | 0.070 (-0.023 to 0.166) | -0.010 (-0.167 to 0.140) |
 | strangers − EAT | 0.236 (0.150 to 0.323) | 0.207 (0.095 to 0.325) | 0.200 (0.083 to 0.320) | 0.077 (-0.094 to 0.247) |
-| strangers − language models | 0.214 (0.088 to 0.334) | 0.184 (0.034 to 0.330) | 0.186 (0.043 to 0.330) | 0.080 (-0.190 to 0.341) |
+| strangers − language models | 0.244 (0.122 to 0.360) | 0.214 (0.072 to 0.355) | 0.217 (0.084 to 0.353) | 0.082 (-0.189 to 0.342) |
 
 The language-model column is one sampled reply per clue, so its per-board values are noisy (C11's plan puts the standard deviation of a board's P − F near 1.1).
 
