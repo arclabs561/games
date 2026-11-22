@@ -254,8 +254,7 @@ def cell(board: Board, count: int, rec: dict | None) -> str:
     if st not in ANSWERED:
         return f"-{st}"
     assert rec is not None
-    parsed = c4.read_ranking(rec["reply"], board.unrevealed())
-    found, value = c4.play_turn(board, parsed["ranking"][: parsed["named"]], count)
+    found, value = c4.score_reply(board, rec["reply"], count)
     return f"{found}/{value:g}" + ("c" if st == "cut" else "")
 
 
