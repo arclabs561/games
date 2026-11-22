@@ -70,4 +70,5 @@ if __name__ == "__main__":
     for m in SIX:
         r = can_make(m)
         print(m, "some part makes 10:", r, f"{time.time() - t:.0f}s", flush=True)
-        assert r == z3.unsat
+        if r != z3.unsat:
+            raise RuntimeError(f"expected unsat for {m}, got {r}")

@@ -23,7 +23,7 @@ uv run ruff check . && uv run ruff format --check . && TY_UV=scripts uv run ty c
 
 ## Layout
 
-- One folder per game, run as `uv run python -m <game>.<module>`. Third-party packages go in the dependency group named after the folder; a test enforces this. A new game is added to `module-name` in `pyproject.toml` and gets a row in the root README.
+- One folder per game, run as `uv run python -m <game>.<module>` for packaged games. Erase uses scripts directly, for example `python3 erase/count.py --pairs`. Third-party packages go in the dependency group named after the folder; a test enforces this. A new game is added to `module-name` in `pyproject.toml` and gets a row in the root README.
 - Tests are `tests/test_<game>*.py`. Code a notebook uses lives in a module that the notebook and the tests both import.
 - Figure scripts draw inside `matplotlib.style.context("default")`, and no module changes matplotlib's global settings when imported. pytest imports every test module before running any, so a global change leaks into other games' byte-for-byte figure tests.
 - Results that a README quotes are written by a script to the game's folder or its `results/`. A test checks that the committed file is what the script writes.
@@ -32,7 +32,7 @@ uv run ruff check . && uv run ruff format --check . && TY_UV=scripts uv run ty c
 
 ## Show how the answer is known
 
-Say which results come from a hand proof, an exhaustive case check, an exact calculation, a simulation or a cited source. For case checks, provide certificates and a separate checker. For simulations, give the sample size, seed and interval. For observed games, name the dataset and say which games were counted.
+Try a hand proof first. Identify the smallest finite premise it needs and verify every case when feasible. Publish the command, rules and count. If enumeration is too costly, say why, then sample. Label a heuristic guess and name a counterexample that would refute it. Give the source for quoted results, including numbers that appear only in a paper. For case checks, provide certificates and a separate checker. For simulations, give the sample size, seed and interval. For observed games, name the dataset and say which games were counted.
 
 Before rewriting a headline, try to break it with one legal move, deal or route. Start from the board, resource records or original replies. Name the observation that would change the answer. In EV Nova a single jump pays 337 credits per ton. Pricing the return load explains how a 217-per-jump loop can still be best.
 

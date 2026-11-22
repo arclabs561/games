@@ -8,7 +8,7 @@ multisets that neither make t nor are blocked by a remainder (the **exceptions**
 **threshold** of t is one more than the largest size with an exception, among the sizes
 checked.
 
-For t = 10 the two families of the paper are exactly the multisets blocked by 3 and by 4, and
+For t = 10 at sizes eight and above, the two families are the complete obstructions, and
 the only exception of 7 to 11 cards is {1, 6, 6, 7, 7, 7, 7} (Theorem 15).
 
 Remainders are tried for moduli 2 to 12 (`MODULI`). A modulus larger than every value the

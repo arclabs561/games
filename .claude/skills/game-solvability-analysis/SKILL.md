@@ -25,7 +25,9 @@ other kinds of games needed, and section 10 the mistakes made along the way.
   other cards, sorted, always lies in range), then the stuck count is the base count over a
   larger total.
 
-## 2. Count exactly before theorizing
+## 2. Estimate the search and look for a proof
+
+- Follow the evidence order in the root guide. An independent evaluator catches invalid witnesses; a coverage check catches omitted cases. Test a deliberately corrupted witness with optimized Python.
 
 - Solve the general problem first (every value a multiset of cards can make, as in Norvig's
   Countdown notebook), so each specific question becomes a lookup.
@@ -74,7 +76,7 @@ other kinds of games needed, and section 10 the mistakes made along the way.
 ## 4. Reduce the rest to a finite certified statement
 
 - State the remaining fact as a theorem over an explicit finite set of cases, sized to cover the
-  game (here: 7 to 11 nonzero cards outside two families, 265,148 cases, one exception).
+  game (Erase reserves witnesses outside the two families, then removes a neutral pair. Only sizes 7 and 8 need certificates: 32,939 cases including a subset witness for the exception).
 - Emit one certificate per case (an expression string). Check them with a separate program that
   shares no code with the search: enumerate the cases itself, parse with `ast`, allow only the
   permitted operators and card values, compare the multiset of leaves with the case.
@@ -129,8 +131,7 @@ solver, and compare with the text:
 - Every table row: shape shares, the list of hands the test misses with their deal counts, the
   hand-size table for each size, the bar chart, the sample certificates (evaluate each
   expression and compare its cards).
-- Every worked example and witness deal: each is stuck, and each witness is caught at its own
-  modulus only.
+- Every worked example and witness deal: check the claimed moves or obstructions. Distinguish a least blocking modulus from a unique one. Test uniqueness only when the claim requires it.
 - Closed forms (parity, pairs only by inclusion and exclusion per hand, any-center, wild cards).
 - Rounded statements: compute the unrounded value and round it yourself.
 - Outside results: a published count, board or sequence (OEIS) that the same code reproduces.

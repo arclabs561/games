@@ -15,6 +15,8 @@ Start with a question someone could ask while playing. Look for a move or compar
 - Put a command near the question it answers. Link to a longer proof, the experiment plan or the notes in `results/` where the reader needs them. Credit published results and record the sources and licenses of data you use.
 - Leave an open question where the evidence runs out. The nine-card deal in Egyptian Ratscrew goes on forever. Whether a full deck can do that is open.
 
+Give each paper-only count a producer and read its output in the paper. For a strategy, state the move order, how ties are resolved and which deals enter the denominator. A policy’s loss rate and the frequency of that policy among people answer different questions.
+
 ## Shared with the paper
 
 A block marked `<!-- shared:name -->` comes from `<game>/docs/name.md`. Edit that file.

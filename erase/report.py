@@ -1,5 +1,4 @@
-"""Write results.json: every number that the README, its shared fragments in docs/ and the
-paper quote, each computed here by the scripts that own it.
+"""Write the numerical results used by the Erase paper and README.
 
     python3 erase/report.py                      # every section; over an hour, mostly targets
     python3 erase/report.py deals countdown      # only these sections; the rest are kept
@@ -10,16 +9,21 @@ wild, certificates, ten_free and pairs (a few seconds), addition (about 4 min) a
 twenty_four (about 10 s), countdown (about 3 min), simulated (about 4 min, simulate.py with
 its fixed seeds), plus_minus (instant, from simulated) and targets (about an hour for
 targets 1 to 30 and up to 11 cards). The tests recompute the cheap sections in full and the
-others in part.
+others in part. exact_play and variants exhaust the rule variants. whole_deck uses
+a C++20 compiler and cross-checks the published base rows before extending to 40 cards.
 """
 
 import argparse
 import json
-from math import comb, exp, lgamma, log
+from collections import Counter
+from math import comb, exp, lgamma, log, prod
 from pathlib import Path
 
 import count
 import countdown
+import deck_study
+import exact_play
+import exact_variants
 import simulate
 import targets
 import twenty_four
@@ -56,11 +60,9 @@ def wild(stuck: int, stuck_no_zero: int) -> dict:
 
 
 def certificates() -> dict:
-    """The cases of the big-hands theorem: multisets of 7 to 11 nonzero cards, at most four of
+    """The cases of the big-hands theorem: base multisets of 7 or 8 nonzero cards, at most four of
     each value, outside both families. make_certs.py writes one expression for each."""
-    by_size = {
-        n: sum(not in_families(m) for m in multisets(n, [0] + [4] * 10)) for n in range(7, 12)
-    }
+    by_size = {n: sum(not in_families(m) for m in multisets(n, [0] + [4] * 10)) for n in (7, 8)}
     return {"cases": sum(by_size.values()), "by_size": by_size}
 
 
@@ -229,6 +231,43 @@ def targets_section(data: dict, only: list[int] | None = None) -> dict:
     return targets_summary(by)
 
 
+def hand_features() -> dict:
+    """Physical seven-card hands and the closed-form any-center family count."""
+    total = comb(44, 7)
+    equal = consecutive = 0
+    for hand in multisets(7, [4] * 11):
+        counts = Counter(hand)
+        ways = prod(comb(4, n) for n in counts.values())
+        equal += ways * (len(counts) < 7)
+        consecutive += ways * any(v + 1 in counts for v in counts)
+    # Choose the distinct eleven cards first, then which seven belong to the hand.
+    partitions = comb(11, 7)
+    return {
+        "total": total,
+        "zero": total - comb(40, 7),
+        "equal": equal,
+        "consecutive": consecutive,
+        "any_center": {
+            "zero": (comb(16, 11) + comb(12, 11) + 20 * comb(12, 10)) * partitions,
+            "no_zero": comb(12, 11) * partitions,
+        },
+    }
+
+
+def whole_deck(data: dict) -> dict:
+    # A standalone run with a fresh --out still compares with the printed table.
+    published = data.get("targets") or json.loads(RESULTS.read_text())["targets"]
+    if set(published["by_target"]) != {str(t) for t in TARGETS}:
+        raise ValueError("whole_deck requires the complete 30-target comparison table")
+    result = deck_study.study(published["by_target"])
+    example = tuple(published["by_target"]["14"]["example"])
+    values = exact_play.values(example)
+    if 14 in values:
+        raise ValueError("the published exception for target 14 makes 14")
+    result["example_14_values"] = len(values)
+    return result
+
+
 # Each section is computed from the results so far (wild reuses the two counts of deals).
 SECTIONS = {
     "deals": lambda data: deals(True),
@@ -244,6 +283,11 @@ SECTIONS = {
     "simulated": lambda data: simulated(),
     "plus_minus": lambda data: plus_minus(data["simulated"]),
     "targets": targets_section,
+    "exact_play": lambda data: exact_play.survey(),
+    "variants": lambda data: exact_variants.survey(),
+    "make_ten": lambda data: exact_variants.make_ten(),
+    "hand_features": lambda data: hand_features(),
+    "whole_deck": whole_deck,
 }
 ORDER = list(SECTIONS)
 

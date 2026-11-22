@@ -20,7 +20,8 @@ def prove(name, claim):
     s.add(Not(claim))
     r = s.check()
     print(f"{'proved' if r == unsat else 'FAILED'}  {name}")
-    assert r == unsat
+    if r != unsat:
+        raise RuntimeError(f"{name}: expected unsat, got {r}")
 
 
 def sign(e):
@@ -101,4 +102,5 @@ bad = [
     and 10 % 4 in reach(xx if xx % 4 else 0, cc, 4)
 ]
 print(("proved" if not bad else "FAILED") + "  five moduli: mod-8 test implies mod-4 test")
-assert not bad
+if bad:
+    raise ValueError(f"mod-8 counterexamples: {bad}")

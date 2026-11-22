@@ -1,8 +1,8 @@
-"""Write certificates.jsonl.gz: one expression for every case of the big-hands theorem
+"""Write certificates.jsonl.gz: one expression for each base case of the big-hands theorem
 (Theorem 15 of the paper).
 
-Cases: multisets of 7 to 11 nonzero cards (at most four of each value) outside both
-families. Takes about two and a half minutes. Check the output with verify_certs.py.
+Cases: multisets of 7 or 8 nonzero cards (at most four of each value) outside both
+families. Check the output with verify_certs.py.
 """
 
 import gzip
@@ -19,14 +19,15 @@ OUT = Path(__file__).parent / "certificates.jsonl.gz"
 def main():
     # mtime=0 keeps the file byte-for-byte reproducible
     with io.TextIOWrapper(gzip.GzipFile(OUT, "wb", mtime=0)) as f:
-        for n in range(7, 12):
+        for n in (7, 8):
             count = 0
             for m in multisets(n, [0] + [4] * 10):
                 if in_families(m):
                     continue
                 e = make(m, 10)
                 if e is None:  # the single exception makes 10 only with a sub-collection
-                    assert m == EXCEPTION
+                    if m != EXCEPTION:
+                        raise ValueError(f"missing whole-hand witness: {m}")
                     rec = {"cards": m, "expr": "(1+(((7+(7+7))-6)-6))", "uses": "subset"}
                 else:
                     rec = {"cards": m, "expr": e, "uses": "all"}
