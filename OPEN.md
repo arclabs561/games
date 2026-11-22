@@ -1,6 +1,6 @@
 # Open questions
 
-81 open questions from 18 games' READMEs, collected by `tools/open_questions.py`. Edit the READMEs, not this file, then run `python3 tools/open_questions.py`; a test checks that this file is current.
+79 open questions from 18 games' READMEs, collected by `tools/open_questions.py`. Edit the READMEs, not this file, then run `python3 tools/open_questions.py`; a test checks that this file is current.
 
 Each status comes from the question's wording, by the rules in the script's docstring. It guides the choice of what to work on next and is not itself a finding.
 
@@ -8,8 +8,8 @@ Each status comes from the question's wording, by the rules in the script's docs
 |---|---:|
 | blocked on data | 10 |
 | blocked on compute | 3 |
-| partly answered | 7 |
-| open | 61 |
+| partly answered | 6 |
+| open | 60 |
 
 | Game | Question | Status |
 |---|---|---|
@@ -43,9 +43,7 @@ Each status comes from the question's wording, by the rules in the script's docs
 | [Egyptian Ratscrew](egyptian_ratscrew/README.md) | Which nine-card deck types have a trap with three players? The census was run for two players only. | open |
 | [Egyptian Ratscrew](egyptian_ratscrew/README.md) | What is the smallest deck with a trap with slaps in it for three players? For two players it has nine cards, and the census finds one such deck type among the 1,349. | open |
 | [Egyptian Ratscrew](egyptian_ratscrew/README.md) | Is the seat effect with four players zero, or too small to see in 200,000 games? | open |
-| [Erase](erase/README.md) | A proof of the theorem on big hands that does not check cases is still open; in particular, a short reason why any seven nonzero cards outside the two families make 10 using all of them, apart from 1 6 6 7 7 7 7. | open |
-| [Erase](erase/README.md) | Do the thresholds hold for multisets of more than 11 cards, for 10 or for any other target? A deal never holds more than 11 cards, and every threshold here, that of 10 included, is checked only that far. | open |
-| [Erase](erase/README.md) | Does any target above 30 have a threshold above 9? Among the targets checked only 14 reaches 9, because of one multiset of eight cards. | partly answered |
+| [Erase](erase/README.md) | Can the seven-card base of the big-hands theorem be proved by hand? Find a short reason why seven nonzero cards outside the two families make 10 using all their cards, apart from 1 6 6 7 7 7 7. The induction handles sizes nine through forty once the seven- and eight-card bases are known. | open |
 | [Escape Velocity Nova](ev_nova/README.md) | Which other story changes move the best route? The starting map and the New Ireland rescue are checked above. Disasters, hypergates and wormholes could change prices or distances. | open |
 | [Escape Velocity Nova](ev_nova/README.md) | Do special commodity prices and rank discounts change which route pays best? Check them in a running copy of EV Nova. | blocked on data |
 | [FreeCell](freecell/README.md) | **A search in layers.** Cards never leave a foundation, so the four foundation heights only grow. Solver C (`solver_c.c`) groups positions by their foundations and searches one group at a time, in order of cards home. A group is complete when its turn comes, since every position that can enter it has fewer cards home. Only that group is held in memory, and positions waiting for a later group go to files when memory runs short. A group can be split further. In each dealt column, the cards still in their dealt places end in a run where each card fits on the one below it. Where that run starts never rises: a card returns to its dealt place only by fitting on the card below, which lengthens the run. So a group and the eight starting points together also only move one way. This split cut the largest group of deal 11982 from 39,573 positions to 1,936. Solver C writes a position in about 120 bits relative to the deal: how many of each column's dealt cards are still in place, then one bit per card for the suit of each run card, since a run card is one rank lower and of the other color than the card below it. | open |

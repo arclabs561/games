@@ -67,7 +67,7 @@ All results are exact. A row that names no reading of the rules is for the gener
 - `count.py` and `exact_play.py` independently count stuck deals under the printed rules, with addition, and with full arithmetic. The latter also scores running totals, capped group sizes and the pairs-first policy on every legal hand and center. It checks the physical deal weights against the deck totals. `simulate.py` preserves five seeded comparisons.
 - `exact_variants.py` counts the hand-size and division rows, checks the congruence shapes against their residue tests, and produces the list of missed hands. `smt/z3_lemmas.py` checks the induction steps for the hand proofs. `smt/z3_programs.py` checks the ten impossible six-card hands.
 - For targets 1–30, `verify_targets.py` independently evaluates the original expression certificates through eleven cards. The C++20 counter in `deck_targets.cpp` reproduces those rows, then checks targets 1–131 through all 40 cards. Every larger hand either inherits a construction or has a modular obstruction.
-- `report.py` writes the computed tables to `results.json`. CI regenerates the base witnesses and new table sections, runs the tests and lemma checks, and rebuilds the print and phone PDFs. The original 30-target expression archive can be generated and checked separately with the commands in the README.
+- `report.py` writes the computed tables to `results.json`. CI regenerates the base witnesses and new table sections, runs the tests and lemma checks, and rebuilds the print and phone PDFs. The README also gives the commands to generate and verify the original certificates for thirty targets.
 
 <!-- /shared -->
 
@@ -92,7 +92,7 @@ The paper gives the full references.
 
 <!-- shared:open -->
 
-Can the seven-card base of the big-hands theorem<!--raw-typst  (@thm-big)--> be proved by hand? Find a short reason why seven nonzero cards outside the two families make 10 using all their cards, apart from 1 6 6 7 7 7 7. The induction handles sizes nine through forty once the seven- and eight-card bases are known.
+- Can the seven-card base of the big-hands theorem<!--raw-typst  (@thm-big)--> be proved by hand? Find a short reason why seven nonzero cards outside the two families make 10 using all their cards, apart from 1 6 6 7 7 7 7. The induction handles sizes nine through forty once the seven- and eight-card bases are known.
 
 <!-- /shared -->
 
