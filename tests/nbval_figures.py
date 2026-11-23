@@ -6,7 +6,7 @@ compared its text, the plugin compares the cell's PNG outputs with the committed
 so each notebook still runs once.
 
 Two PNGs match if their bytes are equal, or else if the root mean square difference of
-their pixels is at most TOLERANCE on the 0-255 scale (matplotlib.testing.compare). On the
+their RGB or alpha channels is at most TOLERANCE on the 0-255 scale (matplotlib.testing.compare). On the
 GitHub runners the PNG bytes differed from locally saved ones even where every pixel was
 equal, so the pixel comparison is the one that usually decides. A figure
 drawn from the same data in another order differs by about 0.004 at most, since only the
@@ -38,11 +38,12 @@ def pngs(outputs) -> list[bytes]:
 
 
 def rms_difference(expected: bytes, actual: bytes) -> float:
-    """The root mean square difference of two PNGs' RGB pixels, on the 0-255 scale."""
+    """The larger RMS difference of RGB pixels and opacity, on the 0-255 scale."""
     exp, act = (
-        np.asarray(Image.open(io.BytesIO(png)).convert("RGB")) for png in (expected, actual)
+        np.asarray(Image.open(io.BytesIO(png)).convert("RGBA"), dtype=float)
+        for png in (expected, actual)
     )
-    return calculate_rms(exp.astype(float), act.astype(float))
+    return max(calculate_rms(exp[..., :3], act[..., :3]), calculate_rms(exp[..., 3], act[..., 3]))
 
 
 # (notebook cell, figure number, RMS difference or None for equal bytes), for the summary.
@@ -72,7 +73,11 @@ def figure_mismatches(
         exp_path.write_bytes(exp)
         act_path.write_bytes(act)
         if rms != float("inf"):
-            err = compare_images(str(exp_path), str(act_path), tol)  # also writes the diff
+            try:
+                err = compare_images(str(exp_path), str(act_path), tol) or f"RGBA RMS = {rms:.4f}"
+            except ImageComparisonFailure as e:
+                # Matplotlib loads opaque PNGs as RGB and transparent PNGs as RGBA.
+                err = str(e)
         problems.append(f"figure {i}: {err}")
     return problems
 
