@@ -462,8 +462,10 @@ def primary_diffs(v: dict, pot_p: np.ndarray, pot_f: np.ndarray, models=GUESSERS
 
 
 def mde(d: np.ndarray) -> dict:
-    sd = float(np.std(d, ddof=1))
     n = len(d)
+    if n < 2:
+        return {"sd": None, "n": n, "at_0.05": None, "at_holm_0.025": None}
+    sd = float(np.std(d, ddof=1))
     return {
         "sd": sd,
         "n": n,
@@ -484,7 +486,10 @@ def nanboot(x: np.ndarray) -> dict:
     from codenames.c4score import bootstrap
 
     x = np.asarray(x, dtype=float)
-    return bootstrap(x[~np.isnan(x)])
+    observed = x[~np.isnan(x)]
+    if not observed.size:
+        return {"mean": None, "ci": None, "p": None, "n": 0}
+    return bootstrap(observed)
 
 
 def reply_counts(cells: list[str]) -> dict:
@@ -502,13 +507,14 @@ def score_filter(rows, g, filt: str, seed: int) -> dict:
     f = played(g, seed, 0, filt, what=0)
     ex = {(a, m): exact(rows, filt, a, m) for a in ARMS for m in MEASURES}
     h1, h2, keep = primary_diffs(v, ex[("P", "potion")], ex[("F", "potion")])
+    estimate = bootstrap if filt == "strict" else nanboot
     out: dict = {
         "boards": len(rows),
         "boards_kept": int(keep.sum()),
         "boards_dropped": int((~keep).sum()),
-        "h_a1": bootstrap(h1[keep]),
-        "h_a2": bootstrap(h2[keep]),
-        "potion_p_minus_f": bootstrap((ex[("P", "potion")] - ex[("F", "potion")])[keep]),
+        "h_a1": estimate(h1[keep]),
+        "h_a2": estimate(h2[keep]),
+        "potion_p_minus_f": estimate((ex[("P", "potion")] - ex[("F", "potion")])[keep]),
         "mde": {"h_a1": mde(h1[keep]), "h_a2": mde(h2[keep])},
     }
     sec: dict = {}
@@ -525,14 +531,19 @@ def score_filter(rows, g, filt: str, seed: int) -> dict:
     mask = {a: ~np.isnan(both[a]) for a in ARMS}
     k_of = mask["oracle"] & mask["F"]
     sec["mean_of_guessers"] = {
-        "oracle_minus_F": bootstrap((both["oracle"] - both["F"])[k_of]),
-        "oracle_minus_P": bootstrap((both["oracle"] - both["P"])[k_of & mask["P"]]),
+        "oracle_minus_F": nanboot((both["oracle"] - both["F"])[k_of]),
+        "oracle_minus_P": nanboot((both["oracle"] - both["P"])[k_of & mask["P"]]),
     }
     kinds = {m: {a: nanboot(v[(a, m)]) for a in ARMS} for m in GUESSERS}
     for m in ("strangers", "potion", "human", "eat"):
         kinds[m] = {a: bootstrap(ex[(a, m)]) for a in ARMS}
     sec["arm_means"] = kinds
-    sec["order"] = {k: " > ".join(sorted(ARMS, key=lambda a: -kinds[k][a]["mean"])) for k in kinds}
+    sec["order"] = {
+        k: " > ".join(sorted(ARMS, key=lambda a: -values[a]["mean"]))
+        if all(values[a]["n"] for a in ARMS)
+        else None
+        for k, values in kinds.items()
+    }
     sec["exact_P_minus_F"] = {
         m: bootstrap(ex[("P", m)] - ex[("F", m)])
         for m in ("strangers_c10", "strangers", "potion", "human", "eat")
@@ -578,8 +589,6 @@ def score_filter(rows, g, filt: str, seed: int) -> dict:
 def repeat_summary(rows, g, seed: int, models=GUESSERS) -> dict:
     """Prompts of the strict arms on the first boards whose played-out value changed in
     either repeat, and H-A1 recomputed from each send on those boards."""
-    from codenames.c4score import bootstrap
-
     sends = sorted({s for (_, _, sd, s) in g if sd == seed and s > 0})
     if not sends:
         return {}
@@ -606,12 +615,12 @@ def repeat_summary(rows, g, seed: int, models=GUESSERS) -> dict:
     for s in [0, *sends]:
         v = {(a, m): column(g[(a, m, seed, s)][:n]) for a in ("P", "F") for m in models}
         h1, _, keep = primary_diffs(v, pot, np.zeros(n), models)
-        out["h_a1_by_send"][s] = bootstrap(h1[keep])
+        out["h_a1_by_send"][s] = nanboot(h1[keep])
     return out
 
 
 def score(lists_path: Path = LISTS, guesses: Path = GUESSES, runs: Path = RUNS) -> dict:
-    from codenames.c4score import bootstrap, holm, rounded
+    from codenames.c4score import holm, rounded
 
     data = json.loads(lists_path.read_text())
     g = read_guesses(guesses.read_text())
@@ -638,7 +647,7 @@ def score(lists_path: Path = LISTS, guesses: Path = GUESSES, runs: Path = RUNS) 
     both = [i for i in range(len(a)) if a[i]["kept"] and b[i]["kept"]]
     paired: dict = {"boards": len(both)}
     for h in ("h_a1", "h_a2"):
-        paired[h] = bootstrap([a[i][h] - b[i][h] for i in both])
+        paired[h] = nanboot(np.array([a[i][h] - b[i][h] for i in both]))
     result["strict_minus_c10"] = paired
     result["repeat"] = repeat_summary(rows, g, TEST)
     result["pilot_replies"] = {
@@ -655,8 +664,6 @@ def score(lists_path: Path = LISTS, guesses: Path = GUESSES, runs: Path = RUNS) 
 
 def score_items(g) -> dict:
     """P - F under each guesser on the 80 items of part B (secondary; no people yet)."""
-    from codenames.c4score import bootstrap
-
     if not any(k[0] == "items" for k in g):
         return {}
     boards = json.loads(ITEMS.read_text())
@@ -671,8 +678,7 @@ def score_items(g) -> dict:
             got = read_cell(c)
             by[(x["board"], key["items"][x["item"]])] = np.nan if got is None else got[1]
         d = np.array([by[(b, "P")] - by[(b, "F")] for b in range(len(boards["boards"]))])
-        d = d[~np.isnan(d)]
-        out[m] = {"P_minus_F": bootstrap(d), "replies": reply_counts(cells)}
+        out[m] = {"P_minus_F": nanboot(d), "replies": reply_counts(cells)}
     return out
 
 

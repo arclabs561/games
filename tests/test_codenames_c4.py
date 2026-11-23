@@ -225,6 +225,8 @@ def test_bootstrap_and_holm():
 
     with pytest.raises(ValueError, match="without an observed pair"):
         bootstrap([])
+    with pytest.raises(ValueError, match="finite"):
+        bootstrap([float("nan")])
     b = bootstrap([1.0] * 10)
     assert b["mean"] == 1 and b["ci"] == [1.0, 1.0] and b["p"] == 0
     b = bootstrap([1.0, -1.0] * 50)

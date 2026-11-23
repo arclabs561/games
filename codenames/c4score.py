@@ -44,6 +44,8 @@ def bootstrap(d, resamples: int = RESAMPLES, seed: int = 0) -> dict:
     d = np.asarray(d, dtype=float)
     if not d.size:
         raise ValueError("cannot estimate a bootstrap interval without an observed pair")
+    if not np.isfinite(d).all():
+        raise ValueError("bootstrap observations must be finite")
     rng = np.random.default_rng(seed)
     means = d[rng.integers(0, len(d), (resamples, len(d)))].mean(axis=1)
     m = float(d.mean())

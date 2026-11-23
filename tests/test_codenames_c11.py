@@ -320,3 +320,35 @@ def test_replay_checks_historical_scores_and_reports_only_aggregates(tmp_path):
     old["P", c11.GUESSERS[0], c11.TEST, 0] = ["9/9c"]
     with pytest.raises(ValueError, match="differs"):
         c11.replay_primary(logs, rows, old)
+
+
+def test_missing_secondary_oracle_preserves_primary_result():
+    if not c11.GUESSES.exists():
+        pytest.skip("no test replies yet")
+    data = json.loads(c11.LISTS.read_text())
+    rows = [r for r in data["boards"] if r["seed"] == c11.TEST][:5]
+    g = {k: cells[:5] for k, cells in c11.read_guesses(c11.GUESSES.read_text()).items()}
+    before = c11.score_filter(rows, g, "strict", c11.TEST)
+    guesser = c11.GUESSERS[0]
+    g["oracle", guesser, c11.TEST, 0] = ["-empty"] * len(rows)
+    after = c11.score_filter(rows, g, "strict", c11.TEST)
+    assert after["h_a1"] == before["h_a1"]
+    assert after["h_a2"] == before["h_a2"]
+    assert after["secondary"][guesser]["oracle_minus_F"] == {
+        "mean": None,
+        "ci": None,
+        "p": None,
+        "n": 0,
+    }
+    assert after["secondary"]["mean_of_guessers"]["oracle_minus_F"]["n"] == 0
+    assert after["secondary"]["order"][guesser] is None
+
+    # Strict primary comparisons require observed pairs. The exploratory
+    # C10 filter can be unavailable without discarding strict estimates.
+    g["P", guesser, c11.TEST, 0] = ["-empty"] * len(rows)
+    with pytest.raises(ValueError, match="without an observed pair"):
+        c11.score_filter(rows, g, "strict", c11.TEST)
+    g["P-c10", guesser, c11.TEST, 0] = ["-empty"] * len(rows)
+    exploratory = c11.score_filter(rows, g, "c10", c11.TEST)
+    assert exploratory["h_a1"]["n"] == 0
+    assert exploratory["mde"]["h_a1"]["at_0.05"] is None
